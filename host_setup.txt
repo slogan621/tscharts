@@ -1,0 +1,131 @@
+
+Configure python, install django and dependencies
+
+sudo apt-get install python-setuptools
+sudo apt-get install python-pip
+sudo pip install django
+
+sudo pip install django-simple-captcha
+sudo apt-get install mysql-server
+sudo pip install django-registration-redux
+sudo apt-get install build-essential python-dev libmysqlclient-dev
+sudo pip install MySQL-python
+
+sudo apt-get build-dep python-imaging
+sudo apt-get install libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev
+sudo pip install Pillow
+cd /usr/share/fonts/truetype; sudo ln -s dejavu ttf-dejavu
+sudo pip install --upgrade pillow
+
+Install apache, lighttpd and phpmysql
+
+sudo apt-get install apache2
+sudo apt-get install lighttpd
+sudo apt-get install php5-fpm php5
+
+Hack on /etc/lighttpd/lighttpd.conf:
+
+At the top of the file, add server.port = 81
+
+In server.modules, add:
+
+"mod_fastcgi"
+"mod_cgi"
+
+sudo apt-get install phpmyadmin  (select lighted as web server)
+
+/etc/init.d/mysql start
+
+To enable PHP5 in Lighttpd, we must modify /etc/php5/fpm/php.ini and 
+uncomment the line cgi.fix_pathinfo=1:
+
+/etc/init.d/php5-fpm start
+/etc/init.d/lighttpd start
+
+cd /etc/lighttpd/conf-available/ 
+cp 15-fastcgi-php.conf 15-fastcgi-php.conf.bak 
+vi 15-fastcgi-php.conf and make it look like the following
+
+# /usr/share/doc/lighttpd-doc/fastcgi.txt.gz
+# http://redmine.lighttpd.net/projects/lighttpd/wiki/Docs:ConfigurationOptions#mod_fastcgi-fastcgi
+
+## Start an FastCGI server for php (needs the php5-cgi package)
+fastcgi.server += ( ".php" =>
+((
+"socket" => "/var/run/php5-fpm.sock",
+"broken-scriptfilename" => "enable"
+))
+)
+
+To enable the fastcgi configuration, run the following commands:
+
+lighttpd-enable-mod fastcgi 
+lighttpd-enable-mod fastcgi-php
+
+Visit http://server:81/phpmymyadmin - it should be running
+
+Login using the user and password configured when you installed the MySQL 
+package.
+
+create database tsdatabase
+
+new django.wsgi:
+
+import os
+import sys
+
+sys.path.append('/home/ts/')
+sys.path.append('/home/ts')
+sys.path.append('/home/ts/tscharts')
+sys.path.append('/home/ts/tscharts/')
+sys.path.append('/home/ts/tscharts/tscharts')
+sys.path.append('/home/ts/tscharts/tscharts/')
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+
+# end of new django.wsgi
+
+sudo apt-get install libapache2-mod-wsgi
+
+add following to end of /etc/apache2/apache2.conf:
+
+WSGIScriptAlias / /home/ts/tscharts/django.wsgi
+WSGIPythonPath /home/ts/tscharts/tscharts/
+
+<Directory /home/ts/tscharts/>
+<Files django.wsgi>
+Require all granted
+</Files>
+</Directory>
+
+Alias /static/ /home/ts/tscharts/tscharts/static/
+
+<Directory "/home/ts/tscharts/tscharts/static">
+Require all granted
+</Directory>
+
+SSL instructions:
+
+sudo a2enmod ssl
+sudo a2ensite default-ssl
+sudo service apache2 restart
+
+The above is from https://help.ubuntu.com/lts/serverguide/httpd.html#https-configuration - but I had to also do the following to get it to work without an 
+error:
+
+sudo ln -s /etc/apache2/sites-available/default-ssl /etc/apache2/sites-enabled/000-default-ssl 
+sudo a2ensite default-ssl
+sudo service apache2 restart
+
+python manage.py syncdb
+
+python manage.py runserver
+
+For REST API:
+
+Add following to /etc/apache2/apache2.conf
+
+WSGIPassAuthorization On
