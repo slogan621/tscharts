@@ -1,3 +1,4 @@
+Instructions are for Ubuntu 14.04
 
 Configure python, install django and dependencies
 
@@ -13,11 +14,10 @@ sudo pip install MySQL-python
 
 sudo apt-get build-dep python-imaging
 sudo apt-get install libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev
-sudo pip install Pillow
 cd /usr/share/fonts/truetype; sudo ln -s dejavu ttf-dejavu
 sudo pip install --upgrade pillow
 
-Install apache, lighttpd and phpmysql
+Install apache, lighttpd and phpmysql:
 
 sudo apt-get install apache2
 sudo apt-get install lighttpd
@@ -32,7 +32,7 @@ In server.modules, add:
 "mod_fastcgi"
 "mod_cgi"
 
-sudo apt-get install phpmyadmin  (select lighted as web server)
+sudo apt-get install phpmyadmin  (select lighttpd as web server)
 
 /etc/init.d/mysql start
 
@@ -67,7 +67,7 @@ Visit http://server:81/phpmymyadmin - it should be running
 Login using the user and password configured when you installed the MySQL 
 package.
 
-create database tsdatabase
+create database tscharts
 
 new django.wsgi:
 
