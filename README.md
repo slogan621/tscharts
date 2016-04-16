@@ -1,4 +1,4 @@
-# tscharts
+# TSCharts
 Patient Registration and Clinic Charts backend for Thousand Smiles Foundation
 
 # License
