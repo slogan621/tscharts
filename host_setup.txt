@@ -126,6 +126,8 @@ python manage.py runserver
 
 For REST API:
 
+pip install djangorestframework
+
 Add following to /etc/apache2/apache2.conf
 
 WSGIPassAuthorization On
