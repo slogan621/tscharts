@@ -6,11 +6,8 @@ registration
    returns registration with given ID
    post
 /tscharts/registration 
-   {patient_id:id, clinic_id:id, ....}
+   {patient_id:id, clinic_id:id}
    returns registration id 
-   put
-/tscharts/registration/id
-   {....}
    delete
 /tscharts/registration/id
 registrations
@@ -19,4 +16,3 @@ registrations
    {patient_id:id, clinic_id:id}
    above parameters filter if present
    returns array of registration ids
-
