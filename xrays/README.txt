@@ -4,6 +4,10 @@ xray
    get 
 /tscharts/xray/id
    returns xray with given ID
+/tscharts/xray
+   {patient_id:id, clinic_id:id, sort:[true|false]}
+   above parameters filter if present
+   returns base64 content
    post
 /tscharts/xray 
    {patient_id:id, clinic_id:id, xray:base64}
@@ -13,9 +17,3 @@ xray
    {xray:base64}
    delete
 /tscharts/xray/id
-xrays
-   get
-/tscharts/xrays
-   {patient_id:id, clinic_id:id, sort:[true|false]}
-   above parameters filter if present
-   returns base64 content
