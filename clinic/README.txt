@@ -12,8 +12,8 @@ clinic
 /tscharts/clinic/id
 clinics
    get
-/tscharts/clinic
-   {year:id, location:id}
+/tscharts/clinics
+   {year:year, location:id}
    above parameters filter if present
    returns array of clinic ids
 
