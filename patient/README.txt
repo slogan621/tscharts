@@ -4,6 +4,10 @@ patient
    get 
 /tscharts/patient/id
    returns patient with given ID
+/tscharts/patient
+   {search terms (clinic id, patient id, name, gender, DOB, etc.)}
+   above parameters filter if present
+   returns array of patient ids
    post
 /tscharts/patient 
    {...}
@@ -13,9 +17,3 @@ patient
    {...}
    delete
 /tscharts/patient/id
-patients
-   get
-/tscharts/patients
-   {search terms (clinic id, patient id, name, gender, DOB, etc.)}
-   above parameters filter if present
-   returns array of patient ids
