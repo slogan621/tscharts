@@ -92,16 +92,16 @@ sudo apt-get install libapache2-mod-wsgi
 
 add following to end of /etc/apache2/apache2.conf:
 
-WSGIScriptAlias / /home/ts/tscharts/django.wsgi
-WSGIPythonPath /home/ts/tscharts/tscharts/
+WSGIScriptAlias / /home/slogan/ts/tscharts/tscharts/wsgi.py
+WSGIPythonPath /home/slogan/ts/tscharts/
 
-<Directory /home/ts/tscharts/>
-<Files django.wsgi>
+<Directory /home/slogan/ts/tscharts/tscharts/>
+<Files wsgi.py>
 Require all granted
 </Files>
 </Directory>
 
-Alias /static/ /home/ts/tscharts/tscharts/static/
+Alias /static/ /home/slogan/ts/tscharts/tscharts/static/
 
 <Directory "/home/ts/tscharts/tscharts/static">
 Require all granted
