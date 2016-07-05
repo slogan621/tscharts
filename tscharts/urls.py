@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+admin.autodiscover()
+#from registration.backends.default.views import RegistrationView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^clinic/', include('clinic.urls', namespace='clinic')),
+    url(r'^accounts/', include('registration.backends.simple.urls')),
 ]
+
