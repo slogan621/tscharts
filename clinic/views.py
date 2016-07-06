@@ -43,12 +43,6 @@ class ClinicView(APIView):
             struct = json.loads(resp)
             return Response(struct)
 
-        '''
-    curl -X POST http://127.0.0.1:8000/badges/ -d '{"name": "Bob Chalfa",
-"date": "November 2015", "job": "Inventory"}' -H 'Authorization: Token
-9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'
-        '''
-
     def post(self, request, format=None):
         badRequest = False
         implError = False
