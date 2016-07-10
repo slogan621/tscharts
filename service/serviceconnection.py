@@ -114,35 +114,5 @@ class ServiceConnection():
        
   def makeRequest(self, request):
     r, json_data = self.__makeRequest(request)
-
-    '''
-    if r.status_code == 401:
-        conf = self.getAuthConf()
-        try:
-            auth_method = r.headers["WWW-Authenticate"]
-        except:
-            # RFC 2616 requires a WWW-Authenticate header in 401 responses. If
-            # we get here, it was missing. Check if there is configuration that
-            # declares an auth method and use that.
-            LOG.info("makeRequest: 401 but no WWW-Authenticate")
-            auth_method = conf["auth"]
-        if auth_method:
-            auth_method = auth_method.lower()
-            if auth_method == "basic":
-                self._auth = requests.HTTPBasicAuth(conf["username"], conf["password"])
-            elif auth_method == "digest":
-                self._auth = requests.HTTPDigestAuth(conf["username"], conf["password"])
-            elif auth_method == "sidauth":
-                self._auth = SIDAuth(self.host, self.port, conf["username"], conf["password"])
-            else:
-                LOG.info("unknown auth {}".format(auth_method))
-                # return the 401 here
-                return (r.status_code, json_data)
-        
-            # try again
-
-            r, json_data = self.__makeRequest(request)
-    '''
-
     return (r.status_code, json_data)
 
