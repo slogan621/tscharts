@@ -107,6 +107,8 @@ Alias /static/ /home/slogan/ts/tscharts/tscharts/static/
 Require all granted
 </Directory>
 
+WSGIPassAuthorization On
+
 SSL instructions:
 
 sudo a2enmod ssl
