@@ -18,7 +18,7 @@ class Login(ServiceAPI):
 
         payload = {"username": username, "password": password}
         self.setPayload(payload)
-        self.setURL("login/")
+        self.setURL("tscharts/v1/login/")
 
 class Logout(ServiceAPI):
     def __init__(self, host, port):
@@ -26,7 +26,7 @@ class Logout(ServiceAPI):
         self.setHttpMethod("POST")
         self.setHost(host)
         self.setPort(port)
-        self.setURL("logout/")
+        self.setURL("tscharts/v1/logout/")
 
 class TestTSCharts(unittest.TestCase):
 
@@ -56,15 +56,15 @@ class TestTSCharts(unittest.TestCase):
         self.assertEqual(ret[0], 403)
 
     def testInvalidPassword(self):
-        validUser = "replace with valid username"
+        validUser = username
         invalidPassword = "sdfsfsdfscewe"
         login = Login(host, port, validUser, invalidPassword)
         ret = login.send(timeout=30)
         self.assertEqual(ret[0], 403)
 
     def testValidLogin(self):
-        validUser = "replace with valid username"
-        validPassword = "replace with valid password"
+        validUser = username
+        validPassword = password
         login = Login(host, port, validUser, validPassword)
         ret = login.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -90,11 +90,11 @@ class TestTSCharts(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
 def usage():
-    print("tscharts [-h host -p port]") 
+    print("tscharts [-h host] [-p port] [-u username] [-w password]") 
 
-def main():
+def main(rgv=[sys.argv[0]]):
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -103,14 +103,22 @@ def main():
     host = "127.0.0.1"
     global port
     port = 80
+    global username
+    username = None
+    global password
+    password = None
     for o, a in opts:
         if o == "-h":
             host = a
-        elif p in ("-p"):
+        elif o == "-p":
             port = int(a)
+        elif o == "-u":
+            username = a
+        elif o == "-w":
+            password = a
         else:   
             assert False, "unhandled option"
-    unittest.main()
+    unittest.main(argv=[sys.argv[0]])
 
 if __name__ == "__main__":
     main()

@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from clinic.models import *
 from datetime import *
 from django.core import serializers
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+
 import json
 
 class ClinicView(APIView):
@@ -19,29 +21,31 @@ class ClinicView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, clinic_id = None, format=None):
+    def get(self, request, clinic_id=None, format=None):
         clinic = None
         if clinic_id:
             try:
                 clinic = Clinic.objects.filter(id = clinic_id)
-                if clinic and len(clinic) > 0:
-                    clinic = clinic[0]
             except:
                 clinic = None
         else:
             try:
                 clinic = Clinic.objects.all()
-                if clinic and len(clinic) == 0:
-                    clinic = None
             except:
                 clinic = None
 
         if not clinic:
             raise NotFound
         else:
-            resp = serializers.serialize("json", clinic)
-            struct = json.loads(resp)
-            return Response(struct)
+            ret = []
+            for x in clinic:
+                m = {}
+                m["id"] = x.id  
+                m["start"] = x.start  
+                m["end"] = x.end  
+                m["location"] = x.location
+                ret.append(m)
+            return Response(ret)
 
     def post(self, request, format=None):
         badRequest = False
@@ -54,12 +58,12 @@ class ClinicView(APIView):
             badRequest = True
         try:
             start = data["start"]
-            start = datetime.datetime.strptime(start, "%m/%d/%Y")
+            start = datetime.strptime(start, "%m/%d/%Y")
         except:
             badRequest = True
         try:
             end = data["end"]
-            end = datetime.datetime.strptime(start, "%m/%d/%Y")
+            end = datetime.strptime(end, "%m/%d/%Y")
         except:
             badRequest = True
 
@@ -74,6 +78,8 @@ class ClinicView(APIView):
                                                end=end)
                 if not clinic or len(clinic) == 0:
                     clinic = None
+                else:
+                    clinic = clinic[0]
             except:
                 pass
 
@@ -91,7 +97,7 @@ class ClinicView(APIView):
         if implError:
             return HttpResponseServerError() 
         else:
-            return Response({'id': clinic})
+            return Response({'id': clinic.id})
         
     def delete(self, request, clinic_id=None, format=None):
         clinic = None

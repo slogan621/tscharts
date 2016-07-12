@@ -7,6 +7,7 @@ class ServiceAPI(object):
         self._httpMethod = "POST"
         self._host = None
         self._port = None
+        self._token = None
         self._url = None
         self._payload = {}
 
@@ -15,6 +16,12 @@ class ServiceAPI(object):
 
     def getHost(self):
         return self._host
+
+    def setToken(self, token):
+        self._token = token
+
+    def getToken(self):
+        return self._token
 
     def setPort(self, port):
         self._port = port

@@ -58,6 +58,8 @@ class ServiceConnection():
   def __makeRequest(self, request):
 
     headers = {"Content-Type": "application/json"}
+    if request.getToken():
+        headers["Authorization"] = "Token {}".format(request.getToken())
     timeout = False
 
     isGet = False
