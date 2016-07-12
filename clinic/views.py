@@ -27,12 +27,6 @@ import json
 
 class ClinicView(APIView):
 
-    '''
-    All volunteers at specified clinic 
-    Returns 404 if clinic not found
-    Otherwise, 200 OK and (possibly empty) array of volunteers. 
-    '''
-
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
