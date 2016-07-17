@@ -11,7 +11,7 @@ patient
    post
 /tscharts/patient 
    {...}
-   returns patient id 
+   returns array of patient ids (same as above but with empty search terms)
    put
 /tscharts/patient/id
    {...}

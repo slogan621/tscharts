@@ -21,7 +21,7 @@ from rest_framework.permissions import IsAuthenticated
 from clinic.models import *
 from datetime import *
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
 import json
 
