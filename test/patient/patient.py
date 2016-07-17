@@ -90,6 +90,10 @@ class TestTSPatient(unittest.TestCase):
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        id = int(ret[1]["id"])
+        x = GetPatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
 
     def testDeletePatient(self):
         data = {}
@@ -108,6 +112,9 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = int(ret[1]["id"])
+        x = GetPatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)

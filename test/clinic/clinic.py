@@ -67,15 +67,26 @@ class TestTSClinic(unittest.TestCase):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        id = int(ret[1]["id"])
+        x = GetClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
 
     def testDeleteClinic(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = DeleteClinic(host, port, token, int(ret[1]["id"]))
+        id = int(ret[1]["id"])
+        x = GetClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        x = DeleteClinic(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        x = GetClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)  # not found
 
     def testGetClinic(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
@@ -91,6 +102,9 @@ class TestTSClinic(unittest.TestCase):
         self.assertTrue("location" in ret[0])
         self.assertTrue("start" in ret[0])
         self.assertTrue("end" in ret[0])
+        self.assertEqual(ret[0]["location"], "Ensenada")
+        self.assertEqual(ret[0]["start"], "02/05/2016")
+        self.assertEqual(ret[0]["end"], "02/06/2016")
     
     def testGetAllClinics(self):
         ids = []
@@ -112,6 +126,13 @@ class TestTSClinic(unittest.TestCase):
         x = GetAllClinics(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        clinics = ret[1]
+        for x in clinics:
+            if x["id"] in ids:
+                ids.remove(x["id"])
+
+        if len(ids):
+            self.assertTrue("failed to remove items {}".format(ids) == None)
 
 def usage():
     print("tscharts [-h host] [-p port] [-u username] [-w password]") 

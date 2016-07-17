@@ -50,8 +50,8 @@ class ClinicView(APIView):
             for x in clinic:
                 m = {}
                 m["id"] = x.id  
-                m["start"] = x.start  
-                m["end"] = x.end  
+                m["start"] = x.start.strftime("%m/%d/%Y")
+                m["end"] = x.end.strftime("%m/%d/%Y")  
                 m["location"] = x.location
                 ret.append(m)
             return Response(ret)
@@ -124,5 +124,7 @@ class ClinicView(APIView):
 
         if not clinic:
             raise NotFound
+        else:
+            clinic.delete()
 
         return Response({})
