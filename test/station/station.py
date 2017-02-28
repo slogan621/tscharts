@@ -1,5 +1,5 @@
 '''
-unit tests for clinic application. Assumes django server is up
+unit tests for station application. Assumes django server is up
 and running on the specified host and port
 '''
 
@@ -10,50 +10,50 @@ import json
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 
-class CreateClinic(ServiceAPI):
-    def __init__(self, host, port, token, location, start, end):
-        super(CreateClinic, self).__init__()
+class CreateStation(ServiceAPI):
+    def __init__(self, host, port, token, name):
+        super(CreateStation, self).__init__()
         
         self.setHttpMethod("POST")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"location": location, "start": start, "end": end}
+        payload = {"name": name}
         self.setPayload(payload)
-        self.setURL("tscharts/v1/clinic/")
+        self.setURL("tscharts/v1/station/")
     
-class GetClinic(ServiceAPI):
+class GetStation(ServiceAPI):
     def __init__(self, host, port, token, id):
-        super(GetClinic, self).__init__()
+        super(GetStation, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/clinic/{}/".format(id))
+        self.setURL("tscharts/v1/station/{}/".format(id))
 
-class GetAllClinics(ServiceAPI):
+class GetAllStations(ServiceAPI):
     def __init__(self, host, port, token):
-        super(GetAllClinics, self).__init__()
+        super(GetAllStations, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/clinic/")
+        self.setURL("tscharts/v1/station/")
 
-class DeleteClinic(ServiceAPI):
+class DeleteStation(ServiceAPI):
     def __init__(self, host, port, token, id):
-        super(DeleteClinic, self).__init__()
+        super(DeleteStation, self).__init__()
         
         self.setHttpMethod("DELETE")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/clinic/{}/".format(id))
+        self.setURL("tscharts/v1/station/{}/".format(id))
 
-class TestTSClinic(unittest.TestCase):
+class TestTSStation(unittest.TestCase):
 
     def setUp(self):
         login = Login(host, port, username, password)
@@ -63,71 +63,68 @@ class TestTSClinic(unittest.TestCase):
         global token
         token = ret[1]["token"]
 
-    def testCreateClinic(self):
-        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+    def testCreateStation(self):
+        x = CreateStation(host, port, token, "ENT")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinic(host, port, token, id)
+        x = GetStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
+        self.assertEqual(ret[1][0]["name"], "ENT")
 
-    def testDeleteClinic(self):
-        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+    def testDeleteStation(self):
+        x = CreateStation(host, port, token, "Speech")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = int(ret[1]["id"])
-        x = GetClinic(host, port, token, id)
+        x = GetStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
-        x = DeleteClinic(host, port, token, id)
+        x = DeleteStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinic(host, port, token, id)
+        x = GetStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
-    def testGetClinic(self):
-        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+    def testGetStation(self):
+        x = CreateStation(host, port, token, "DENTAL")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = GetClinic(host, port, token, int(ret[1]["id"]))
+        x = GetStation(host, port, token, int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         self.assertTrue(len(ret) == 1)
         self.assertTrue("id" in ret[0])
-        self.assertTrue("location" in ret[0])
-        self.assertTrue("start" in ret[0])
-        self.assertTrue("end" in ret[0])
-        self.assertEqual(ret[0]["location"], "Ensenada")
-        self.assertEqual(ret[0]["start"], "02/05/2016")
-        self.assertEqual(ret[0]["end"], "02/06/2016")
+        self.assertTrue("name" in ret[0])
+        self.assertEqual(ret[0]["name"], "DENTAL")
     
-    def testGetAllClinics(self):
+    def testGetAllStations(self):
         ids = []
-        x = CreateClinic(host, port, token, "test1", "02/05/2016", "02/06/2016")
+        x = CreateStation(host, port, token, "test1")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
-        x = CreateClinic(host, port, token, "test2", "02/05/2016", "02/06/2016")
+        x = CreateStation(host, port, token, "test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
-        x = CreateClinic(host, port, token, "test3", "02/05/2016", "02/06/2016")
+        x = CreateStation(host, port, token, "test3")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
-        x = GetAllClinics(host, port, token)
+        x = GetAllStations(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        clinics = ret[1]
-        for x in clinics:
+        stations = ret[1]
+        for x in stations:
             if x["id"] in ids:
                 ids.remove(x["id"])
 
@@ -135,7 +132,7 @@ class TestTSClinic(unittest.TestCase):
             self.assertTrue("failed to remove items {}".format(ids) == None)
 
 def usage():
-    print("clinic [-h host] [-p port] [-u username] [-w password]") 
+    print("station [-h host] [-p port] [-u username] [-w password]") 
 
 def main():
     try:

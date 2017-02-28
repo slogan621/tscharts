@@ -269,7 +269,7 @@ class TestTSPatient(unittest.TestCase):
             self.assertTrue("failed to remove items {}".format(ids) == None)
 
 def usage():
-    print("tscharts [-h host] [-p port] [-u username] [-w password]") 
+    print("patient [-h host] [-p port] [-u username] [-w password]") 
 
 def main():
     try:
@@ -281,7 +281,7 @@ def main():
     global host
     host = "127.0.0.1"
     global port
-    port = 80
+    port = 8000
     global username
     username = None
     global password
