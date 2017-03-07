@@ -95,6 +95,10 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
 
+        x = DeletePatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testDeletePatient(self):
         data = {}
 
@@ -122,6 +126,10 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
+        x = DeletePatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404) # not found
+
     def testGetPatient(self):
 
         data = {}
@@ -142,6 +150,7 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
+        id = int(ret[0]["id"])
         self.assertTrue("paternal_last" in ret[0])
         self.assertTrue("maternal_last" in ret[0])
         self.assertTrue("first" in ret[0])
@@ -160,6 +169,10 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret[0]["dob"] == "04/01/1962")
         self.assertTrue(ret[0]["gender"] == "m")
     
+        x = DeletePatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testUpdatePatient(self):
 
         data = {}
