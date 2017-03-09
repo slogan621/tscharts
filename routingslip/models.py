@@ -36,17 +36,23 @@ class RoutingSlip(models.Model):
 
 '''
 A given patient will be associated with a routing slip and a set of 
-stations that he or she must visit. A record in this table defines
-one such station and its order of visitation. Its order may change
-during the clinic. Routing slip entries can be added or removed to
-the routing slip during the patient stay. The initial set is defined
-by the patient classification (e.g., dental patients only need to be
-routed to dental). A specialist can add, remove, or change the 
-relative order of items in the routing slip. When an item is added
-to the routing slip, its state is SCHEDULED. Removal does not result
-in the record being deleted from the database, it is just a state 
-change REMOVED. Once a patient has visited a station, the routing 
-slip entry is marked VISITED.
+routing slip entries that represent both stations in the clinic the
+patient must visit, and the order of visitation.
+
+The order of visitation may change during the clinic based on 
+modification by staff at any one of the stations. Routing slip entries 
+can be added or removed to the routing slip during the patient stay. 
+
+The initial list of routing slip entries is defined by the patient 
+classification (e.g., dental patients will only need to be seen by 
+a dentist). This classification is made by assigning the patient a
+category at registration. The category can also be changed during a
+stay, which will trigger in some way changes to the routing slip.
+
+When an item is added to the routing slip, its state is SCHEDULED. 
+Removal does not result in the record being deleted from the database, 
+rather it is just a state change to REMOVED state. Once a patient has 
+visited a station, the routing slip entry is marked VISITED.
 '''
  
 class RoutingSlipEntry(models.Model):

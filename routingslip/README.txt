@@ -5,56 +5,79 @@ Routing slip is a list of station IDs associated with a clinic and patient.
 routingslip
    get 
 /tscharts/routingslip
-   {clinic_id:id}
-   returns array of routing slip ids
-/tscharts/routingslip/id
-   returns routing slip with given ID (see blow)
+   {patient:id, clinic:id}
+   returns routing slip id for patient, clinic pair
 /tscharts/routingslip
-   {patient_id:id, clinic_id:id}
-   both clinic_id and patient_id are required
+   {clinic_id:id}
+   returns array of routing slips ids corresponding to the specified clinic
+/tscharts/routingslip/id
+   returns routing slip with given ID 
 
-The last two of the above return data as following:
+   A routing slip looks like the following:
+
    { 
      -- routing slip id
-     id: id
+     id: id,
+     -- patient id
+     patient: id,
+     -- clinic ids
+     clinic: id,
      -- how patient was categorized at registration (or later)
+     -- will be reported as English text
      category: category,   
-     -- array of routing slip entries in order of visitation
-     routing: [                  
-                 {
-                  station: id,
-                  state: state
-                 },
-                 ...
-              ],
-
-      -- array of comments in timestamp order
-      comments: [ 
-                    {
-                     author: id,
-                     timestamp: datetime,
-                     comment: comment_text
-                    },
-                    ...
-                ]
+     -- array of routing slip entry ids in visitation order
+     routing: routing, 
+      -- array of commentids in timestamp order
+      comments: comments,
     }
    post
 /tscharts/routingslip 
    {
-    patient_id: id, -- required
-    clinic_id: id,  -- required
-    category: categoryid,  -- optional, but typically supplied
-    routing: [ordered array of clinicstation ids] -- optional
+    patient: id, -- required
+    clinic: id,  -- required
+    category: string,  -- required 
+        valid values: "Dental", "Ortho", "New Cleft", "Returning Cleft",
+        "Unknown", "Other" 
    }
    returns routing slip id 
    put
 /tscharts/routingslip/id
-   -- at least one of the fields in below payload must be present or param error
-   {
-    category: category,    -- change category of patient
-    routing: [ordered array of clinicstation ids],  -- change routing order
-    state: {clinicstation:id, state:state} -- change state of an entry
-    comment: {author:id, comment:text} -- add a comment
-   }
+   {category: category,    -- change category of patient}
    delete
 /tscharts/routingslip/id
+
+routingslipentry
+    get
+/tscharts/routingslipentry
+    {routingslip:id}
+    returns an ordered array of routingslip entries associated with a routing slip
+/tscharts/routingslipentry/id
+    returns content of a routing slip entry for the given ID
+    post
+/tscharts/routingslipentry
+    {routingslip:id, clinicstation:id}
+    creates a routingslip entry. Initial state is scheduled. Initial order
+    relative to other entries is undefined. Use put to set order and change
+    state
+    put
+/tscharts/routingslipentry/id
+    {order:order, state:state}
+    one or both of the above params are updated
+    delete
+/tscharts/routingslipentry/id
+
+routingslipcomment
+    get
+/tscharts/routingslipcomment
+    {routingslip:id}
+    returns an ordered array of routingslip comment IDs 
+/tscharts/routingslipcomment/id
+    returns a routing slip comment for the given ID
+    {id: id, comment:comment, author:id, timestamp:timestamp}
+    post
+/tscharts/routingslipcomment
+    {routingslip:id, comment:text, author:id}
+    creates a routingslip comment.
+    delete
+/tscharts/routingslipcomment/id
+
