@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'clinic.apps.ClinicConfig',
     'patient',
+    'statechange',
     'xrays',
     'station.apps.StationConfig',
     'clinicstation.apps.ClinicstationConfig',
