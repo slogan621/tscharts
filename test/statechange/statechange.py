@@ -242,7 +242,7 @@ class TestTSStateChange(unittest.TestCase):
  
         # create with invalid state
 
-    def testCreateStateChange(self):
+    def testCreateStateChangeBadState(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
