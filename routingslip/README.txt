@@ -6,7 +6,7 @@ routingslip
    get 
 /tscharts/routingslip
    {patient:id, clinic:id}
-   returns routing slip id for patient, clinic pair
+   returns routing slip for patient, clinic pair
 /tscharts/routingslip
    {clinic_id:id}
    returns array of routing slips ids corresponding to the specified clinic
@@ -42,7 +42,7 @@ routingslip
    returns routing slip id 
    put
 /tscharts/routingslip/id
-   {category: category,    -- change category of patient}
+   {category: category}    -- change category of patient}
    delete
 /tscharts/routingslip/id
 
@@ -57,8 +57,8 @@ routingslipentry
 /tscharts/routingslipentry
     {routingslip:id, clinicstation:id}
     creates a routingslip entry. Initial state is scheduled. Initial order
-    relative to other entries is undefined. Use put to set order and change
-    state
+    relative to other entries is undefined. Use put to set order and/or to
+    change state
     put
 /tscharts/routingslipentry/id
     {order:order, state:state}
@@ -70,9 +70,10 @@ routingslipcomment
     get
 /tscharts/routingslipcomment
     {routingslip:id}
-    returns an ordered array of routingslip comment IDs 
+    returns an ordered (by timestamp) array of routingslip comment IDs 
 /tscharts/routingslipcomment/id
-    returns a routing slip comment for the given ID
+    returns a routing slip comment for the given record ID
+    format of data:
     {id: id, comment:comment, author:id, timestamp:timestamp}
     post
 /tscharts/routingslipcomment

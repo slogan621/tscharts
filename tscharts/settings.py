@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'patient',
     'statechange',
     'xrays',
+    'routingslip',
     'station.apps.StationConfig',
     'clinicstation.apps.ClinicstationConfig',
     'tscharts',

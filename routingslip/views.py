@@ -24,7 +24,7 @@ from clinic.models import *
 from routingslip.models import *
 from datetime import *
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseBadParam, HttpResponseServerError, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
 import json
 
@@ -33,19 +33,23 @@ class RoutingSlipView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    catsToText = {'n': "New Cleft",
-                  'd': "Dental",
-                  'r': "Returning Cleft",
-                  'o': "Ortho",
-                  't': "Other",
-                  'u': "Unknown"} 
+    def __init__(self):
 
-    textToCats = {"New Cleft": 'n',
-                  "Dental": 'd',
-                  "Returning Cleft": 'r',
-                  "Ortho": 'o',
-                  "Other": 't',
-                  "Unknown": 'u'} 
+        super(RoutingSlipView, self).__init__()
+
+        self.catsToText = {'n': "New Cleft",
+                           'd': "Dental",
+                           'r': "Returning Cleft",
+                           'o': "Ortho",
+                           't': "Other",
+                           'u': "Unknown"} 
+
+        self.textToCats = {"New Cleft": 'n',
+                           "Dental": 'd',
+                           "Returning Cleft": 'r',
+                           "Ortho": 'o',
+                           "Other": 't',
+                           "Unknown": 'u'} 
 
     def serialize(self, entry):
 
@@ -55,29 +59,38 @@ class RoutingSlipView(APIView):
         m["id"] = entry.id  
         m["patient"] = entry.patient_id
         m["clinic"] = entry.clinic_id
-        m["category"] = catsToText[entry.category]
+        m["category"] = self.catsToText[entry.category]
 
-        m["routing"] = []
         try:
-            entries = RoutingSlipEntry.objects.filter(routingslip_id = entry.id).order_by("order")
-            for x in entries:
-                y = {}
-                y["id"] = x.id
-                m["routing"].append(y)
+            routingslip = RoutingSlip.objects.get(id=entry.id)
         except:
             error = True
 
-        # get and record all comments
+        if not error:
+            m["routing"] = []
+            try:
+                entries = RoutingSlipEntry.objects.filter(routingslip = routingslip)
+                if entries and len(entries):
+                    #entries = entries.order_by("order")
+                    for x in entries:
+                        y = {}
+                        y["id"] = x.id
+                        m["routing"].append(y)
+            except:
+                error = True
 
-        m["comments"] = []
-        try:
-            entries = RoutingSlipComments.objects.filter(routingslip_id = entry.id).order_by('-datetime')
-            for x in entries:
-                y = {}
-                y["id"] = x.id
-                m["comments"].append(y)
-        except:
-            error = True
+        if not error:
+            m["comments"] = []
+            try:
+                entries = RoutingSlipComment.objects.filter(routingslip = routingslip)
+                if entries and len(entries):
+                    #entries = entries.order_by('-updatetime')
+                    for x in entries:
+                        y = {}
+                        y["id"] = x.id
+                        m["comments"].append(y)
+            except:
+                error = True
 
         if error:
             m = None
@@ -107,7 +120,7 @@ class RoutingSlipView(APIView):
                     aClinic = None
                     notFound = True
             except:
-                badParam = True
+                pass
 
             if not notFound and not badParam:
                 try:
@@ -117,39 +130,42 @@ class RoutingSlipView(APIView):
                     except:
                         notFound = True
                 except:
+                    pass
 
-            if not notFound and not badParam:
+            if aPatient or aClinic:
                 try:
-                    if aPatient:
+                    if aPatient and aClinic:
                         routing_slip = RoutingSlip.objects.filter(patient=aPatient, clinic=aClinic)
-                    else:
+                    elif aPatient:
+                        routing_slip = RoutingSlip.objects.filter(patient=aPatient)
+                    elif aClinic:
                         routing_slip = RoutingSlip.objects.filter(clinic=aClinic)
                 except:
                     notFound = True
                     routing_slip = None
 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip: 
             if routing_slip_id:
                 # one based on ID
-                ret = this.serialize(routing_slip)
+                ret = self.serialize(routing_slip)
             elif aPatient:
-                # one for patient, clinic pair
-                ret = this.serialize(routing_slip[0])
+                # one for patient [,clinic] pair
+                ret = self.serialize(routing_slip[0])
             else:
                 # array for all patients in clinic
                 ret = []
                 for x in routing_slip:
-                    m = self.serializeRoutingSlipEntry(x);
+                    m = self.serialize(x);
                     if m == None:
                         ret = None
                         break
                     ret.append(m)
         if not ret:
-            return HttpResponseInternalError()
+            return HttpResponseServerError()
         return Response(ret)
 
     def post(self, request, format=None):
@@ -175,7 +191,7 @@ class RoutingSlipView(APIView):
         if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Unknown", "Other"]:
             badParam = True
         else:
-            category = textToCats[category]
+            category = self.textToCats[category]
 
         if not badParam:
 
@@ -224,7 +240,7 @@ class RoutingSlipView(APIView):
                     implError = True
                     implMsg = sys.exc_info()[0] 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
@@ -241,7 +257,7 @@ class RoutingSlipView(APIView):
             if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Unknown", "Other"]:
                 badParam = True
             else:
-                category = textToCats[category]
+                category = self.textToCats[category]
         except:
             badParam = True
 
@@ -266,8 +282,8 @@ class RoutingSlipView(APIView):
                 except:
                     implError = True
                     implMsg = sys.exc_info()[0] 
-        if badparam:
-            return HttpResponseBadParam()
+        if badParam:
+            return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if implError:
@@ -293,9 +309,12 @@ class RoutingSlipView(APIView):
         if not routing_slip:
             notFound = True
 
-        if not notFound:
+        if not badParam and not notFound:
+
+            # remove dependent objects
+
             try:
-                comments = RoutingSlipComment.objects.get(routingslip=routing_slip)
+                comments = RoutingSlipComment.objects.filter(routingslip=routing_slip)
             except:
                 comments = None
 
@@ -303,7 +322,7 @@ class RoutingSlipView(APIView):
                 x.delete()
 
             try:
-                entries = RoutingSlipEntry.objects.get(routingslip=routing_slip)
+                entries = RoutingSlipEntry.objects.filter(routingslip=routing_slip)
             except:
                 entries = None
 
@@ -313,7 +332,7 @@ class RoutingSlipView(APIView):
             routing_slip.delete()
 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         return Response({})
@@ -375,7 +394,7 @@ class RoutingSlipEntryView(APIView):
                     routing_slip_entry = None
 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip_entry:
@@ -445,7 +464,7 @@ class RoutingSlipEntryView(APIView):
                     implError = True
                     implMsg = sys.exc_info()[0] 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
@@ -568,7 +587,7 @@ class RoutingSlipCommentView(APIView):
                     notFound = True
 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip_comment:
@@ -630,7 +649,7 @@ class RoutingSlipCommentView(APIView):
                 implMsg = sys.exc_info()[0] 
 
         if badParam:
-            return HttpResponseBadParam()
+            return HttpResponseBadRequest()
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
