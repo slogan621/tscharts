@@ -71,7 +71,7 @@ class RoutingSlipView(APIView):
             try:
                 entries = RoutingSlipEntry.objects.filter(routingslip = routingslip)
                 if entries and len(entries):
-                    #entries = entries.order_by("order")
+                    entries = entries.order_by("order")
                     for x in entries:
                         y = {}
                         y["id"] = x.id
@@ -84,7 +84,7 @@ class RoutingSlipView(APIView):
             try:
                 entries = RoutingSlipComment.objects.filter(routingslip = routingslip)
                 if entries and len(entries):
-                    #entries = entries.order_by('-updatetime')
+                    entries = entries.order_by('-updatetime')
                     for x in entries:
                         y = {}
                         y["id"] = x.id
