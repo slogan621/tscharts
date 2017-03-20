@@ -51,7 +51,8 @@ class LoginView(APIView):
                 forbidden = True
         if not forbidden and not badRequest:
             token = Token.objects.get_or_create(user=user)[0]
-            return JsonResponse({"token": "{}".format(token.key) })
+            return JsonResponse({"token": "{}".format(token.key),
+                                 "id": "{}".format(user.id)})
         elif forbidden:
             return HttpResponseForbidden()
         else:
