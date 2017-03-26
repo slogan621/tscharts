@@ -49,8 +49,9 @@ routingslip
 routingslipentry
     get
 /tscharts/routingslipentry
-    {routingslip:id}
-    returns an ordered array of routingslip entries associated with a routing slip
+    {routingslip:id, clinicstation:id}
+    returns an ordered array of routingslip entries associated with a routing 
+    slip and or a clinicstation
 /tscharts/routingslipentry/id
     returns content of a routing slip entry for the given ID
     post
@@ -62,6 +63,7 @@ routingslipentry
     put
 /tscharts/routingslipentry/id
     {order:order, state:state}
+    valid states "Scheduled", "Checked In", "Checked Out", "Removed"
     one or both of the above params are updated
     delete
 /tscharts/routingslipentry/id

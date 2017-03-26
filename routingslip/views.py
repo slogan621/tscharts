@@ -23,6 +23,7 @@ from station.models import *
 from clinic.models import *
 from routingslip.models import *
 from datetime import *
+import sys
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
@@ -342,8 +343,10 @@ class RoutingSlipEntryView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    stateToText = {"a": "Scheduled", "v": "Visited", "r": "Removed"}
-    textToState = {"Scheduled": "a", "Visited": "v", "Removed": "r"}
+    def __init__(self):
+        super(RoutingSlipEntryView, self).__init__()
+        self.stateToText = {"s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed"}
+        self.textToState = {"Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r"}
 
     def serialize(self, entry):
         error = False
@@ -353,8 +356,8 @@ class RoutingSlipEntryView(APIView):
             m["id"] = entry.id  
             m["routingslip"] = entry.routingslip_id  
             m["clinicstation"] = entry.clinicstation_id
-            m["order"] = entry.clinic_id
-            m["state"] = stateToText[entry.state]
+            m["order"] = entry.order
+            m["state"] = self.stateToText[entry.state]
         except:
             error = True
 
@@ -367,12 +370,14 @@ class RoutingSlipEntryView(APIView):
         badParam = False
         notFound = False
         aRoutingSlip = None
+        aClinicStation = None
 
         if routing_slip_entry_id:
             try:
-                routing_slip_entry = RoutingSlipEntry.objects.filter(id = routing_slip_entry_id)
+                routing_slip_entry = RoutingSlipEntry.objects.get(id = routing_slip_entry_id)
             except:
                 routing_slip_entry = None
+                notFound = True
         else:
             data = json.loads(request.body)
             try:
@@ -385,26 +390,50 @@ class RoutingSlipEntryView(APIView):
                     aRoutingSlip = None
                     notFound = True
             except:
-                badParam = True
+                pass
+            try:
+                clinicstationid = int(data["clinicstation"])
+                try:
+                    aClinicStation = ClinicStation.objects.get(id=clinicstationid)
+                    if not aClinicStation:
+                        notFound = True
+                except:
+                    aClinicStation = None
+                    notFound = True
+            except:
+                pass
 
             if not notFound and not badParam:
-                try:
-                    routing_slip_entry = RoutingSlipEntry.objects.filter(routingslip=aRoutingSlip)
-                except:
-                    routing_slip_entry = None
-
+                if aRoutingSlip and not aClinicStation:
+                    try:
+                        routing_slip_entry = RoutingSlipEntry.objects.filter(routingslip=aRoutingSlip)
+                    except:
+                        routing_slip_entry = None
+                elif aClinicStation and not aRoutingSlip:
+                    try:
+                        routing_slip_entry = RoutingSlipEntry.objects.filter(clinicstation=aClinicStation)
+                    except:
+                        routing_slip_entry = None
+                else:
+                    try:
+                        routing_slip_entry = RoutingSlipEntry.objects.filter(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                    except:
+                        routing_slip_entry = None
         if badParam:
             return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip_entry:
             if routing_slip_entry_id:
-                ret = serialize(routing_slip_entry)
+                ret = self.serialize(routing_slip_entry)
             else:
                 ret = []
                 for x in routing_slip_entry:
                     ret.append(x.id)
-            return Response(ret)
+            if ret:
+                return Response(ret)
+            else:
+                return HttpResponseServerError() 
 
     def post(self, request, format=None):
         badParam = False
@@ -431,7 +460,7 @@ class RoutingSlipEntryView(APIView):
                 aRoutingSlip = None
  
             try:
-                aClinicStation = ClinicStation.objects.get(id=clinicstationd)
+                aClinicStation = ClinicStation.objects.get(id=clinicstationid)
             except:
                 aClinicStation = None
 
@@ -455,8 +484,8 @@ class RoutingSlipEntryView(APIView):
 
             if not routing_slip_entry:
                 try:
-                    routing_slip_entry = RoutingSlipEntry(clinicstation=aClinicStation, order=0, category='a', routingslip=aRoutingSlip)
-                    if routing_slipentry:
+                    routing_slip_entry = RoutingSlipEntry(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                    if routing_slip_entry:
                         routing_slip_entry.save()
                     else:
                         implError = True
@@ -470,8 +499,29 @@ class RoutingSlipEntryView(APIView):
         else:
             return Response({'id': routing_slip_entry.id})
 
+    def verifyState(self, old, new):
+
+        ret = True
+
+        try:
+            new = self.textToState[new]
+        except:
+            ret = False
+
+        if ret:
+            if old == "i":
+                if new == "s":
+                    ret = False
+            elif old == "o":
+                if new == "s" or new == "r":
+                    ret = False
+            elif old == "r":
+                if new == "i" or new == "o":
+                    ret = False
+        return ret
+
     def put(self, request, routing_slip_entry_id=None, format=None):
-        badParam = False
+        badRequest = False
         implError = False
         notFound = False
 
@@ -485,14 +535,14 @@ class RoutingSlipEntryView(APIView):
         except:
             state = None
 
-        if not routing_slip_id:
-            badParam = True
+        if not routing_slip_entry_id:
+            badRequest = True
 
-        if not badParam:
+        if not badRequest:
             if not state and not order: 
-                badParam = True
+                badRequest = True
 
-        if not badParam:
+        if not badRequest:
             routing_slip_entry = None
 
             try:
@@ -503,15 +553,20 @@ class RoutingSlipEntryView(APIView):
             if not routing_slip_entry:
                 notFound = True 
             else:
-                if order:
-                    routing_slip_entry.order = order
+
                 if state:
-                    routing_slip_entry.state = state
-                try:
-                    routing_slip_entry.save()
-                except:
-                    implError = True
-                    implMsg = sys.exc_info()[0] 
+                    badRequest = not self.verifyState(routing_slip_entry.state, state)
+                if not badRequest:
+                    if order:
+                        routing_slip_entry.order = order
+                    if state:
+                        routing_slip_entry.state = self.textToState[state]
+                    try:
+                        routing_slip_entry.save()
+                    except:
+                        implError = True
+                        implMsg = sys.exc_info()[0] 
+
         if badRequest:
             return HttpResponseBadRequest()
         if notFound:
@@ -550,8 +605,9 @@ class RoutingSlipCommentView(APIView):
 
         m = {}
         m["id"] = entry.id  
+        m["routingslip"] = entry.routingslip_id  
         m["author"] = entry.author_id
-        m["timestamp"] = entry.timestmap
+        m["updatetime"] = entry.updatetime
         m["comment"] = entry.comment
 
         return m
@@ -567,6 +623,7 @@ class RoutingSlipCommentView(APIView):
                 routing_slip_comment = RoutingSlipComment.objects.get(id = routing_slip_comment_id)
             except:
                 routing_slip_comment = None
+                notFound = True
         else:
             data = json.loads(request.body)
             try:
@@ -577,22 +634,22 @@ class RoutingSlipCommentView(APIView):
                     aRoutingSlip = None
                     notFound = True
             except:
-                badParam = True
+                badRequest = True
 
-            if not notFound and not badParam:
+            if not notFound and not badRequest:
                 try:
                    routing_slip_comment = RoutingSlipComment.objects.filter(routingslip=aRoutingSlip)
                 except:
                     routing_slip_comment = None
                     notFound = True
 
-        if badParam:
+        if badRequest:
             return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip_comment:
             if routing_slip_comment_id:
-                ret = serialize(routing_slip_comment)
+                ret = self.serialize(routing_slip_comment)
             else:
                 ret = []
                 for x in routing_slip_comment:

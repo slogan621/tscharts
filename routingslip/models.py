@@ -59,11 +59,13 @@ class RoutingSlipEntry(models.Model):
     routingslip = models.ForeignKey(RoutingSlip)
     clinicstation = models.ForeignKey(ClinicStation)
     order = models.IntegerField(default=0)   
-    SCHEDULED = 'a'   # checkin to station is pending (or clinic ended)
-    VISITED = 'v'     # patient was checked in at the station
+    SCHEDULED = 's'   # checkin to station is pending (or clinic ended)
+    CHECKEDIN = 'i'     # patient was checked in at the station
+    CHECKEDOUT = 'o'     # patient was checked in at the station
     REMOVED = 'r'     # entry was removed by someone before seen by station
     STATE_CHOICES = ((SCHEDULED, "Scheduled"), 
-                     (VISITED, "Visited"),
+                     (CHECKEDIN, "Checked In"),
+                     (CHECKEDOUT, "Checked Out"),
                      (REMOVED, "Removed"),)
 
     state = models.CharField(
