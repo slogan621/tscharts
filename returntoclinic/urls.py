@@ -1,5 +1,5 @@
 #(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Thousand Smiles Foundation 2016
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -13,18 +13,10 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-from __future__ import unicode_literals
+from django.conf.urls import url
+from returntoclinic.views import ReturnToClinicView
 
-from django.db import models
-
-# Create your models here.
-
-from clinic.models import Clinic
-from patient.models import Patient
-from station.models import Station
-
-class ReturnToClinic(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
-    station = models.ForeignKey(Station)
-    interval = models.IntegerField()
+urlpatterns = [
+    url(r'^$', ReturnToClinicView.as_view()),
+    url(r'^([0-9]+)/$', ReturnToClinicView.as_view()),
+]
