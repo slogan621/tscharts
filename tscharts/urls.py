@@ -42,11 +42,12 @@ urlpatterns = [
     url(r'^tscharts/v1/clinicstation/', include('clinicstation.urls', namespace='clinicstation')),
     url(r'^tscharts/v1/login/$', LoginView.as_view()),
     url(r'^tscharts/v1/logout/$', LogoutView.as_view()),
+    url(r'^tscharts/v1/medicalhistory/', include('medicalhistory.urls', namespace='medicalhistory')),
     url(r'^tscharts/v1/patient/', include('patient.urls', namespace='patient')),
     url(r'^tscharts/v1/returntoclinic/', include('returntoclinic.urls', namespace='returntoclinic')),
     url(r'^tscharts/v1/routingslip/', include('routingslip.rsurls', namespace='routingslip')),
-    url(r'^tscharts/v1/routingslipentry/', include('routingslip.rsentryurls', namespace='routingslipentry')),
     url(r'^tscharts/v1/routingslipcomment/', include('routingslip.rscommenturls', namespace='routingslipcomment')),
+    url(r'^tscharts/v1/routingslipentry/', include('routingslip.rsentryurls', namespace='routingslipentry')),
     url(r'^tscharts/v1/statechange/', include('statechange.urls', namespace='statechange')),
     url(r'^tscharts/v1/station/', include('station.urls', namespace='station')),
 ]

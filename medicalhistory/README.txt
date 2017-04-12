@@ -1,19 +1,19 @@
 Medical history service
 
-medhist
+medicalhistory
    get 
-/tscharts/medhist/id
+/tscharts/medicalhistory/id
    returns medical history with given ID
-/tscharts/medhist
+/tscharts/medicalhistory
    {patient_id:id, clinic_id:id}
    above parameters filter if present
    returns array of medical history ids
    post
-/tscharts/medhist 
+/tscharts/medicalhistory 
    {patient_id:id, clinic_id:id, ...}
    returns medical history id 
    put
-/tscharts/medhist/id
+/tscharts/medicalhistory/id
    {...}
    delete
-/tscharts/medhist/id
+/tscharts/medicalhistory/id
