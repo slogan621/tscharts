@@ -166,8 +166,6 @@ class MedicalHistoryView(APIView):
         valid = True
         kwargs = data
 
-        print data
-
         try:
             if not (data["health"] == "Good" or data["health"] == "Poor"):
                 valid = False
@@ -248,10 +246,8 @@ class MedicalHistoryView(APIView):
             if not (val == True or val == False):
                 valid = False
         except:
-            print "Exception!"
             valid = False
 
-        print valid
         return valid, kwargs
 
     def validatePutArgs(self, data, medical_history):
@@ -441,8 +437,6 @@ class MedicalHistoryView(APIView):
         # creating the object 
 
         valid, kwargs = self.validatePostArgs(data)
-
-        print valid, kwargs
 
         if not valid:
             badRequest = True
