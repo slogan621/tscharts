@@ -61,15 +61,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'clinic.apps.ClinicConfig',
+    'clinicstation.apps.ClinicstationConfig',
     'medicalhistory',
     'patient',
-    'statechange',
-    'xrays',
-    'routingslip',
+    'register',
     'returntoclinic',
+    'routingslip',
+    'statechange',
     'station.apps.StationConfig',
-    'clinicstation.apps.ClinicstationConfig',
     'tscharts',
+    'xrays',
 ]
 
 MIDDLEWARE_CLASSES = [
