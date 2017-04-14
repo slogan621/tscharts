@@ -1,5 +1,5 @@
 '''
-unit tests for station application. Assumes django server is up
+unit tests for clinic station application. Assumes django server is up
 and running on the specified host and port
 '''
 
@@ -36,16 +36,24 @@ class GetClinicStation(ServiceAPI):
         self.setURL("tscharts/v1/clinicstation/{}".format(id))
 
 class UpdateClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, id, active):
+    def __init__(self, host, port, token, id):
         super(UpdateClinicStation, self).__init__()
         
         self.setHttpMethod("PUT")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        payload = {"active": active}
+        payload = {}
         self.setPayload(payload)
         self.setURL("tscharts/v1/clinicstation/{}/".format(id))
+
+    def setActive(self, active):
+        self._payload["active"] = active
+        self.setPayload(self._payload)
+
+    def setLevel(self, level):
+        self._payload["level"] = level
+        self.setPayload(self._payload)
 
 class GetAllClinicStations(ServiceAPI):
     def __init__(self, host, port, token, clinicid, active):
@@ -248,7 +256,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue("active" in ret[1][0])
         self.assertTrue(ret[1][0]["active"] == True) 
 
-        x = UpdateClinicStation(host, port, token, clinicstationid, False)
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setActive(False)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -258,7 +267,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue("active" in ret[1][0])
         self.assertTrue(ret[1][0]["active"] == False)
 
-        x = UpdateClinicStation(host, port, token, clinicstationid, True)
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setActive(True)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -267,6 +277,31 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("active" in ret[1][0])
         self.assertTrue(ret[1][0]["active"] == True)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setLevel(15)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token, clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("level" in ret[1][0])
+        self.assertTrue(int(ret[1][0]["level"]) == 15)
+        self.assertTrue(ret[1][0]["active"] == True)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setLevel(0)
+        x.setActive(False)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token, clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("level" in ret[1][0])
+        self.assertTrue(int(ret[1][0]["level"]) == 0)
+        self.assertTrue(ret[1][0]["active"] == False)
 
         x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
@@ -281,7 +316,6 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
     def testGetAllClinicStations(self):
-
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)

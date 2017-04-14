@@ -43,29 +43,26 @@ class ClinicStationView(APIView):
             except:
                 clinic_station = None
         else:
+            kwargs = {}
             data = json.loads(request.body)
             try:
                 clinicid = int(data["clinic"])
                 try:
                     aClinic = Clinic.objects.get(id=clinicid)
+                    kwargs["clinic"] = aClinic
                 except:
-                    aClinic = None
                     badRequest = True
             except:
                 badRequest = True
 
             if not badRequest:
-                try:
-                    active = data["active"]
-                    noActive = False
-                except:
-                    noActive = True
+                if "active" in data:
+                    kwargs["active"] = data["active"]
+                if "level" in data:
+                    kwargs["level"] = data["level"]
 
                 try:
-                    if noActive:
-                        clinic_station = ClinicStation.objects.filter(clinic=aClinic)
-                    else:
-                        clinic_station = ClinicStation.objects.filter(clinic=aClinic, active=active)
+                    clinic_station = ClinicStation.objects.filter(**kwargs)
                 except:
                     clinic_station = None
 
@@ -79,12 +76,15 @@ class ClinicStationView(APIView):
                 m["clinic"] = x.clinic_id
                 m["station"] = x.station_id
                 m["active"] = x.active
+                m["level"] = x.level
                 ret.append(m)
             return Response(ret)
 
     def post(self, request, format=None):
         badRequest = False
         implError = False
+
+        kwargs = {}
 
         data = json.loads(request.body)
         try:
@@ -97,12 +97,15 @@ class ClinicStationView(APIView):
         except:
             badRequest = True
 
-        try:
+        if "active" in data:
             active = data["active"]
             if not active == True and not active == False:
                 badRequest = True
-        except:
-            active = False
+            else:
+                kwargs["active"] = active
+
+        if "level" in data:
+            kwargs["level"] = data["level"]
 
         if not badRequest:
 
@@ -120,9 +123,11 @@ class ClinicStationView(APIView):
 
             if not aStation or not aClinic:
                 raise NotFound
+            else:
+                kwargs["station"] = aStation   
+                kwargs["clinic"] = aClinic   
 
         if not badRequest:
-                
  
             clinic_station = None
 
@@ -140,7 +145,7 @@ class ClinicStationView(APIView):
 
             if not clinic_station:
                 try:
-                    clinic_station = ClinicStation(clinic=aClinic, station=aStation, active=active)
+                    clinic_station = ClinicStation(**kwargs)
                     if clinic_station:
                         clinic_station.save()
                     else:
@@ -159,24 +164,26 @@ class ClinicStationView(APIView):
         badRequest = False
         implError = False
         notFound = False
+        active = None
+        level = None
 
         data = json.loads(request.body)
-        try:
+
+        if "active" in data:
             active = data["active"]
-        except:
+        if "level" in data:
+            level = data["level"]
+
+        if level == None and active == None:
             badRequest = True
 
         if not badRequest:
             clinic_station = None
 
-            # see if the patient already exists
+            # see if the clinic station already exists
 
             try:
-                clinic_station = ClinicStation.objects.filter(id=clinic_station_id)
-                if not clinic_station or len(clinic_station) == 0:
-                    clinic_station = None
-                else:
-                    clinic_station = clinic_station[0]
+                clinic_station = ClinicStation.objects.get(id=clinic_station_id)
             except:
                 pass
 
@@ -184,7 +191,10 @@ class ClinicStationView(APIView):
                 notFound = True 
             else:
                 try:
-                    clinic_station.active=active
+                    if not (active == None):
+                        clinic_station.active=active
+                    if not (level == None):
+                        clinic_station.level=level
                     clinic_station.save()
                 except:
                     implError = True

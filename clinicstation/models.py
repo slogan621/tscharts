@@ -17,10 +17,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
-
-#  {location:location, start:date, end:date}
-
 from clinic.models import Clinic
 from station.models import Station
 
@@ -46,4 +42,5 @@ she attends).
 class ClinicStation(models.Model):
     station = models.ForeignKey(Station)
     clinic = models.ForeignKey(Clinic)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
+    level = models.IntegerField(default=1)
