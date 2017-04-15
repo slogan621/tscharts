@@ -4,7 +4,7 @@ RESTful Patient Registration and Clinic Charts backend for Thousand Smiles Found
 # Overview
 
 For background on the context in which this project is being developed,
-please read the [the requirements document](../blob/master/docs/requirements/pdf/registration_requirements_1.2.pdf)
+please read the [the requirements document](../master/docs/requirements/pdf/registration_requirements_1.2.pdf)
 
 # API
 
