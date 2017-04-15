@@ -50,8 +50,8 @@ names are documented in the next section.
 
  * clinic - represents an instance of one of our clinics held at a specific location over a specific range of dates
  * station - represents a class of station that care is given, e.g., a dental chair, ENT, Speech, Audiology, etc.
- * clinicstation - a tuple consisting of a clinic and a station. Each clinic instance will have a number of clinic stations.
- * patient - name, agem gender, and demographics of a specific patient that has registered at one of our clinics.
+ * clinicstation - a tuple consisting of a clinic and a station. Each clinic instance will have a number of clinicstations.
+ * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time.
  * medicalhistory - patient status recorded at the time the patient registers. Determine overall health of the patient.
  * register - a tuple that records the registration of a patient at a specific clinic. Also records checkin and checkout times.
  * tscharts - support resource, used for authentication of users accessing the
