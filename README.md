@@ -56,8 +56,8 @@ names are documented in the next section.
  * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time. [API](../master/patient/README.txt)  [Unit Tests](../master/test/patient/patient.py)
  * medicalhistory - patient status recorded at the time the patient registers. Determine overall health of the patient. [API](../master/medicalhistory/README.txt)  [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
  * register - a tuple that records the registration of a patient at a specific clinic. Also records checkin and checkout times. [API](../master/register/README.txt)  [Unit Tests](../master/test/register/register.py)
- * tscharts - support resource, used for authentication of users accessing the
-database [API](../master/tscharts/README.txt)  [Unit Tests](../master/test/tscharts/tscharts.py)
+ * login - password based login of user accessing the database. Returns token for use in Authorization header in subsequent requests [API](../master/tscharts/README.txt)  [Unit Tests](../master/test/tscharts/tscharts.py)
+ * logout - logout user. [API](../master/tscharts/README.txt)  [Unit Tests](../master/test/tscharts/tscharts.py)
  * routingslip - the routing slip for a patient. This defines what stations a patient is scheduled to visit or has visited at a specific clinic [API](../master/routingslip/README.txt)  [Unit Tests](../master/test/routingslip/routingslip.py)
  * routingslipentry - an ordered routinglip/clinicstation/patient tuple.
  * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present.
