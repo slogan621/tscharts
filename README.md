@@ -59,8 +59,8 @@ names are documented in the next section.
  * login - password based login of user accessing the database. Returns token for use in Authorization header in subsequent requests [API](../master/tscharts/README.txt)  [Unit Tests](../master/test/tscharts/tscharts.py)
  * logout - logout user. [API](../master/tscharts/README.txt)  [Unit Tests](../master/test/tscharts/tscharts.py)
  * routingslip - the routing slip for a patient. This defines what stations a patient is scheduled to visit or has visited at a specific clinic [API](../master/routingslip/README.txt)  [Unit Tests](../master/test/routingslip/routingslip.py)
- * routingslipentry - an ordered routinglip/clinicstation/patient tuple.
- * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present.
+ * routingslipentry - an ordered routinglip/clinicstation/patient tuple. [API](../master/routingslip/README.txt)  [Unit Tests](../master/test/routingslip/routingslip.py)
+ * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present. [API](../master/routingslip/README.txt)  [Unit Tests](../master/test/routingslip/routingslip.py)
  * statechange - tracks the activity of patients and clinicstations for a specific clinic. Patients check "in" and "out" of clinicstations.  [API](../master/statechange/README.txt)  [Unit Tests](../master/test/statechange/statechange.py)
  * returntoclinic - used to record that a patient needs to return to a future clinic and visit a specific station at that future clinic. [API](../master/returntoclinic/README.txt)  [Unit Tests](../master/test/returntoclinic/returntoclinic.py)
 
