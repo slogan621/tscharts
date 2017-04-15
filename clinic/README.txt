@@ -2,13 +2,13 @@ Clinic service
 
 clinic
    get 
-/tscharts/clinic/id
+/tscharts/v1/clinic/id/
    returns clinic with given ID
-/tscharts/clinic
+/tscharts/v1/clinic/
    returns array of clinic ids
    post
-/tscharts/clinic 
+/tscharts/v1/clinic/
    {location:location, start:date, end:date}
    returns clinic id 
    delete
-/tscharts/clinic/id
+/tscharts/v1/clinic/id/

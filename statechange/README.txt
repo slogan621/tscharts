@@ -2,9 +2,9 @@ StateChange service
 
 statechange
    get 
-/tscharts/statechange/id
+/tscharts/v1/statechange/id/
    returns statechange object with given ID
-/tscharts/statechange
+/tscharts/v1/statechange/
    optional search terms: 
    {patient:id, clinicstation:id, clinic:id}
    legal combination of search terms:
@@ -14,11 +14,11 @@ statechange
    clinic - activity at a specific clinic, all stations, all patients
    returns array of statechange objects
    post
-/tscharts/statechange 
+/tscharts/v1/statechange/
    {patient:id, clinicstation:id, state:["in" | "out"]}
    returns statechange id 
    put
-/tscharts/statechange/id
+/tscharts/v1/statechange/id/
    {state:["in" | "out"]}
    delete // normally applications should not delete statechange objects
-/tscharts/statechange/id
+/tscharts/v1/statechange/id/
