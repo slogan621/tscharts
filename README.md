@@ -34,7 +34,7 @@ The current API version is v1.
 
 URLs are structured as follows:
 
-/tscharts/v1/<resource>/[resource_id/]
+/tscharts/v1/\<resourcei\>/[resource_id/]
 
 In the above, component is the name of a resource. It is used in the URL as
 in the following example:
