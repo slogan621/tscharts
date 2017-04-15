@@ -36,14 +36,15 @@ URLs are structured as follows:
 
 /tscharts/v1/\<resourcei\>/[resource_id/]
 
-In the above, component is the name of a resource. It is used in the URL as
+In the above, \<resource\> is the name of a resource. It is used in the URL as
 in the following example:
 
 ```
 /tscharts/v1/clinicstation/17/
 ```
 
-refers to the station and clinic pair with resource ID 17.
+refers to the station and clinic pair with resource ID 17. Valid resource
+names are documented in the next section.
 
 ## Registration and Routing API Resource Names
 
