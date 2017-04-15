@@ -102,7 +102,7 @@ def main(rgv=[sys.argv[0]]):
     global host
     host = "127.0.0.1"
     global port
-    port = 80
+    port = 8000
     global username
     username = None
     global password
