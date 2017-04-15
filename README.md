@@ -53,44 +53,44 @@ names are documented in the next section.
 The following are registation and routing resources. They roughly are ordered in the expected use as a patient enters and leaves the clinic.
 
  * login - password based login of user accessing the database. Returns token for use in Authorization header in subsequent requests.
- ** [API](../master/tscharts/README.txt)  
- ** [Unit Tests](../master/test/tscharts/tscharts.py)
+    * [API](../master/tscharts/README.txt)  
+    * [Unit Tests](../master/test/tscharts/tscharts.py)
  * logout - logout user. 
- ** [API](../master/tscharts/README.txt)  
- ** [Unit Tests](../master/test/tscharts/tscharts.py)
+    * [API](../master/tscharts/README.txt)  
+    * [Unit Tests](../master/test/tscharts/tscharts.py)
  * station - represents a class of station that care is given, e.g., a dental chair, ENT, Speech, Audiology, etc.. This resource is mostly static, created before any clinics are created. 
- ** [API](../master/station/README.txt)  
- ** [Unit Tests](../master/test/station/station.py)
+    * [API](../master/station/README.txt)  
+    * [Unit Tests](../master/test/station/station.py)
  * clinic - represents an instance of one of our clinics held at a specific location over a specific range of dates.  This resource is created offline before the clinic begins.
- ** [API](../master/clinic/README.txt)  
- ** [Unit Tests](../master/test/clinic/clinic.py)
+    * [API](../master/clinic/README.txt)  
+    * [Unit Tests](../master/test/clinic/clinic.py)
  * clinicstation - a tuple consisting of a clinic and a station. Each clinic instance will have a number of clinicstations.  Each will be created before the clinic.
- ** [API](../master/clinicstation/README.txt)  
- ** [Unit Tests](../master/test/clinicstation/clinicstation.py)
+    * [API](../master/clinicstation/README.txt)  
+    * [Unit Tests](../master/test/clinicstation/clinicstation.py)
  * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time. 
- ** [API](../master/patient/README.txt)  
- ** [Unit Tests](../master/test/patient/patient.py)
+    * [API](../master/patient/README.txt)  
+    * [Unit Tests](../master/test/patient/patient.py)
  * medicalhistory - patient status recorded at the time the patient registers. Determine overall health of the patient. 
- ** [API](../master/medicalhistory/README.txt)  
- ** [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
+    * [API](../master/medicalhistory/README.txt)  
+    * [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
  * register - a tuple that records the registration of a patient at a specific clinic. Also records checkin and checkout times. 
- ** [API](../master/register/README.txt)  
- ** [Unit Tests](../master/test/register/register.py)
+    * [API](../master/register/README.txt)  
+    * [Unit Tests](../master/test/register/register.py)
  * routingslip - the routing slip for a patient. This defines what stations a patient is scheduled to visit or has visited at a specific clinic 
- ** [API](../master/routingslip/README.txt)  
- ** [Unit Tests](../master/test/routingslip/routingslip.py)
+    * [API](../master/routingslip/README.txt)  
+    * [Unit Tests](../master/test/routingslip/routingslip.py)
  * routingslipentry - an ordered routinglip/clinicstation/patient tuple. 
- ** [API](../master/routingslip/README.txt)  
- ** [Unit Tests](../master/test/routingslip/routingslip.py)
+    * [API](../master/routingslip/README.txt)  
+    * [Unit Tests](../master/test/routingslip/routingslip.py)
  * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present. 
- ** [API](../master/routingslip/README.txt)  
- ** [Unit Tests](../master/test/routingslip/routingslip.py)
+    * [API](../master/routingslip/README.txt)  
+    * [Unit Tests](../master/test/routingslip/routingslip.py)
  * statechange - tracks the activity of patients and clinicstations for a specific clinic. Patients check "in" and "out" of clinicstations.  
- ** [API](../master/statechange/README.txt)  
- ** [Unit Tests](../master/test/statechange/statechange.py)
+    * [API](../master/statechange/README.txt)  
+    * [Unit Tests](../master/test/statechange/statechange.py)
  * returntoclinic - used to record that a patient needs to return to a future clinic and visit a specific station at that future clinic. 
- ** [API](../master/returntoclinic/README.txt)  
- ** [Unit Tests](../master/test/returntoclinic/returntoclinic.py)
+    * [API](../master/returntoclinic/README.txt)  
+    * [Unit Tests](../master/test/returntoclinic/returntoclinic.py)
 
 Payload (when provided) must be in JSON.
 
