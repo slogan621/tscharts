@@ -71,7 +71,7 @@ class TestTSStation(unittest.TestCase):
         x = GetStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
-        self.assertEqual(ret[1][0]["name"], "ENT")
+        self.assertEqual(ret[1]["name"], "ENT")
 
     def testDeleteStation(self):
         x = CreateStation(host, port, token, "Speech")
@@ -98,10 +98,9 @@ class TestTSStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
-        self.assertTrue(len(ret) == 1)
-        self.assertTrue("id" in ret[0])
-        self.assertTrue("name" in ret[0])
-        self.assertEqual(ret[0]["name"], "DENTAL")
+        self.assertTrue("id" in ret)
+        self.assertTrue("name" in ret)
+        self.assertEqual(ret["name"], "DENTAL")
     
     def testGetAllStations(self):
         ids = []

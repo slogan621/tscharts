@@ -34,7 +34,7 @@ class StationView(APIView):
         station = None
         if station_id:
             try:
-                station = Station.objects.filter(id = station_id)
+                station = Station.objects.get(id = station_id)
             except:
                 station = None
         else:
@@ -46,12 +46,18 @@ class StationView(APIView):
         if not station:
             raise NotFound
         else:
-            ret = []
-            for x in station:
+            if station_id:
                 m = {}
-                m["id"] = x.id  
-                m["name"] = x.name
-                ret.append(m)
+                m["id"] = station.id  
+                m["name"] = station.name
+                ret = m
+            else:
+                ret = []
+                for x in station:
+                    m = {}
+                    m["id"] = x.id  
+                    m["name"] = x.name
+                    ret.append(m)
             return Response(ret)
 
     def post(self, request, format=None):
