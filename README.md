@@ -123,7 +123,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
-[{"active":true,"clinic":1553,"station":653,"id":16,"level":1}]
+{"active":true,"clinic":1553,"station":653,"id":16,"level":1}
 ```
 
 # License
