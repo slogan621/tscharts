@@ -39,7 +39,7 @@ class ClinicStationView(APIView):
 
         if clinic_station_id:
             try:
-                clinic_station = ClinicStation.objects.filter(id = clinic_station_id)
+                clinic_station = ClinicStation.objects.get(id = clinic_station_id)
             except:
                 clinic_station = None
         else:
@@ -69,15 +69,24 @@ class ClinicStationView(APIView):
         if not clinic_station:
             raise NotFound
         else:
-            ret = []
-            for x in clinic_station:
+            if clinic_station_id:
                 m = {}
-                m["id"] = x.id  
-                m["clinic"] = x.clinic_id
-                m["station"] = x.station_id
-                m["active"] = x.active
-                m["level"] = x.level
-                ret.append(m)
+                m["id"] = clinic_station.id  
+                m["clinic"] = clinic_station.clinic_id
+                m["station"] = clinic_station.station_id
+                m["active"] = clinic_station.active
+                m["level"] = clinic_station.level
+                ret = m
+            else: 
+                ret = []
+                for x in clinic_station:
+                    m = {}
+                    m["id"] = x.id  
+                    m["clinic"] = x.clinic_id
+                    m["station"] = x.station_id
+                    m["active"] = x.active
+                    m["level"] = x.level
+                    ret.append(m)
             return Response(ret)
 
     def post(self, request, format=None):
