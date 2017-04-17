@@ -35,7 +35,7 @@ class ClinicView(APIView):
         clinic = None
         if clinic_id:
             try:
-                clinic = Clinic.objects.filter(id = clinic_id)
+                clinic = Clinic.objects.get(id = clinic_id)
             except:
                 clinic = None
         else:
@@ -47,15 +47,21 @@ class ClinicView(APIView):
         if not clinic:
             raise NotFound
         else:
-            ret = []
-            for x in clinic:
-                m = {}
-                m["id"] = x.id  
-                m["start"] = x.start.strftime("%m/%d/%Y")
-                m["end"] = x.end.strftime("%m/%d/%Y")  
-                m["location"] = x.location
-                    
-                ret.append(m)
+            if clinic_id:
+                ret = {}
+                ret["id"] = clinic.id  
+                ret["start"] = clinic.start.strftime("%m/%d/%Y")
+                ret["end"] = clinic.end.strftime("%m/%d/%Y")  
+                ret["location"] = clinic.location
+            else:
+                ret = []
+                for x in clinic:
+                    m = {}
+                    m["id"] = x.id  
+                    m["start"] = x.start.strftime("%m/%d/%Y")
+                    m["end"] = x.end.strftime("%m/%d/%Y")  
+                    m["location"] = x.location
+                    ret.append(m)
             return Response(ret)
 
     def post(self, request, format=None):

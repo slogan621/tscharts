@@ -97,14 +97,13 @@ class TestTSClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
-        self.assertTrue(len(ret) == 1)
-        self.assertTrue("id" in ret[0])
-        self.assertTrue("location" in ret[0])
-        self.assertTrue("start" in ret[0])
-        self.assertTrue("end" in ret[0])
-        self.assertEqual(ret[0]["location"], "Ensenada")
-        self.assertEqual(ret[0]["start"], "02/05/2016")
-        self.assertEqual(ret[0]["end"], "02/06/2016")
+        self.assertTrue("id" in ret)
+        self.assertTrue("location" in ret)
+        self.assertTrue("start" in ret)
+        self.assertTrue("end" in ret)
+        self.assertEqual(ret["location"], "Ensenada")
+        self.assertEqual(ret["start"], "02/05/2016")
+        self.assertEqual(ret["end"], "02/06/2016")
     
     def testGetAllClinics(self):
         ids = []

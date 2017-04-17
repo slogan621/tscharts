@@ -63,7 +63,7 @@ the generally expected order of use as a patient enters and leaves the clinic.
     * [API](../master/station/README.txt)  
     * [Unit Tests](../master/test/station/station.py)
  * clinic - represents an instance of one of our clinics held at a specific location over a specific range of dates.  This resource is created offline before the clinic begins.
-    * [API](../master/clinic/README.txt)  
+    * [API](../master/clinic/README.md)  
     * [Unit Tests](../master/test/clinic/clinic.py)
  * clinicstation - a tuple consisting of a clinic and a station. Each clinic instance will have a number of clinicstations.  This defines what stations were 
 active at the clinic. Each clinicstation is created before the clinic.
