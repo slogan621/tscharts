@@ -70,7 +70,6 @@ INSTALLED_APPS = [
     'statechange',
     'station.apps.StationConfig',
     'tscharts',
-    'xrays',
 ]
 
 MIDDLEWARE_CLASSES = [
