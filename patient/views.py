@@ -35,7 +35,7 @@ class PatientView(APIView):
         patient = None
         if patient_id:
             try:
-                patient = Patient.objects.filter(id = patient_id)
+                patient = Patient.objects.get(id = patient_id)
             except:
                 patient = None
         else:
@@ -47,19 +47,31 @@ class PatientView(APIView):
         if not patient:
             raise NotFound
         else:
-            ret = []
-            for x in patient:
-                m = {}
-                m["paternal_last"] = x.paternal_last  
-                m["maternal_last"] = x.maternal_last  
-                m["first"] = x.first  
-                m["middle"] = x.middle  
-                m["suffix"] = x.suffix  
-                m["prefix"] = x.prefix  
-                m["dob"] = x.dob.strftime("%m/%d/%Y")
-                m["gender"] = x.gender  
-                m["id"] = x.id
-                ret.append(m)
+            if patient_id:
+                ret = {}
+                ret["paternal_last"] = patient.paternal_last  
+                ret["maternal_last"] = patient.maternal_last  
+                ret["first"] = patient.first  
+                ret["middle"] = patient.middle  
+                ret["suffix"] = patient.suffix  
+                ret["prefix"] = patient.prefix  
+                ret["dob"] = patient.dob.strftime("%m/%d/%Y")
+                ret["gender"] = patient.gender  
+                ret["id"] = patient.id
+            else:
+                ret = []
+                for x in patient:
+                    m = {}
+                    m["paternal_last"] = x.paternal_last  
+                    m["maternal_last"] = x.maternal_last  
+                    m["first"] = x.first  
+                    m["middle"] = x.middle  
+                    m["suffix"] = x.suffix  
+                    m["prefix"] = x.prefix  
+                    m["dob"] = x.dob.strftime("%m/%d/%Y")
+                    m["gender"] = x.gender  
+                    m["id"] = x.id
+                    ret.append(m)
             return Response(ret)
 
     def put(self, request, format=None):
