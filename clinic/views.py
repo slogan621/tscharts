@@ -54,18 +54,6 @@ class ClinicView(APIView):
                 m["start"] = x.start.strftime("%m/%d/%Y")
                 m["end"] = x.end.strftime("%m/%d/%Y")  
                 m["location"] = x.location
-                m["stations"] = [] 
-                try:
-                    stations = Station.objects.filter(clinic = x.id)
-                except:
-                    stations = [] 
-                for y in stations:
-                    t = {}
-                    t["id"] = y.id
-                    t["clinic"] = y.clinic
-                    t["name"] = y.name
-                    t["active"] = y.active
-                    m["stations"].append(t)
                     
                 ret.append(m)
             return Response(ret)
