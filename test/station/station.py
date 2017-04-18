@@ -90,7 +90,7 @@ class TestTSStation(unittest.TestCase):
         self.assertEqual(ret[0], 404)  # not found
 
     def testGetStation(self):
-        x = CreateStation(host, port, token, "DENTAL")
+        x = CreateStation(host, port, token, "Dental")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -100,7 +100,7 @@ class TestTSStation(unittest.TestCase):
         ret = ret[1]
         self.assertTrue("id" in ret)
         self.assertTrue("name" in ret)
-        self.assertEqual(ret["name"], "DENTAL")
+        self.assertEqual(ret["name"], "Dental")
     
     def testGetAllStations(self):
         ids = []
