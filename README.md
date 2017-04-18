@@ -54,10 +54,10 @@ The following describes the registation and routing APIs. They are ordered in
 the generally expected order of use as a patient enters and leaves the clinic.
 
  * login - password-based login of user accessing the database. Returns token for use in Authorization header in subsequent requests.
-    * [API](../master/tscharts/README.txt)  
+    * [API](../master/tscharts/README.md)  
     * [Unit Tests](../master/test/tscharts/tscharts.py)
  * logout - logout user. 
-    * [API](../master/tscharts/README.txt)  
+    * [API](../master/tscharts/README.md)  
     * [Unit Tests](../master/test/tscharts/tscharts.py)
  * station - represents a class of station where care is given, e.g., a dental chair, ENT, Speech, Audiology, etc.. This resource is mostly static, created before any clinics are created. 
     * [API](../master/station/README.md)  
