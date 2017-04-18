@@ -24,7 +24,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ "token" : string, "id" " integer }`
+    **Content:** `{ "token" : string, "id" : integer }`
  
 * **Error Response:**
 
