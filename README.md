@@ -72,6 +72,9 @@ active at the clinic. Each clinicstation is created before the clinic.
  * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time. 
     * [API](../master/patient/README.txt)  
     * [Unit Tests](../master/test/patient/patient.py)
+ * image - image storage for a patient/clinic/station group. Used for x-rays, headshots, and surgery images. Images stored in base64. 
+    * [API](../master/image/README.txt)  
+    * [Unit Tests](../master/test/image/image.py)
  * medicalhistory - patient status recorded at the time the patient registers. Records the overall health of the patient. 
     * [API](../master/medicalhistory/README.txt)  
     * [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
