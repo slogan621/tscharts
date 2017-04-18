@@ -84,7 +84,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-DELETE /tscharts/v1/station/104/ HTTP/1.1
+GET /tscharts/v1/station/ HTTP/1.1
 Host: 127.0.0.1:8000
 Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
@@ -103,7 +103,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{}
+[{"id":99,"name":"ENT"},{"id":95,"name":"Dental"},{"id":96,"name":"Ortho"},{"id":97,"name":"Screening"},{"id":100,"name":"test1"},{"id":101,"name":"test2"},{"id":102,"name":"test3"}]
 ```
   
 **Create Station**

@@ -60,7 +60,7 @@ the generally expected order of use as a patient enters and leaves the clinic.
     * [API](../master/tscharts/README.txt)  
     * [Unit Tests](../master/test/tscharts/tscharts.py)
  * station - represents a class of station where care is given, e.g., a dental chair, ENT, Speech, Audiology, etc.. This resource is mostly static, created before any clinics are created. 
-    * [API](../master/station/README.txt)  
+    * [API](../master/station/README.md)  
     * [Unit Tests](../master/test/station/station.py)
  * clinic - represents an instance of one of our clinics held at a specific location over a specific range of dates.  This resource is created offline before the clinic begins.
     * [API](../master/clinic/README.md)  
