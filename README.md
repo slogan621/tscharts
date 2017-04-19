@@ -67,7 +67,7 @@ the generally expected order of use as a patient enters and leaves the clinic.
     * [Unit Tests](../master/test/clinic/clinic.py)
  * clinicstation - a tuple consisting of a clinic and a station. Each clinic instance will have a number of clinicstations.  This defines what stations were 
 active at the clinic. Each clinicstation is created before the clinic.
-    * [API](../master/clinicstation/README.txt)  
+    * [API](../master/clinicstation/README.md)  
     * [Unit Tests](../master/test/clinicstation/clinicstation.py)
  * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time. 
     * [API](../master/patient/README.txt)  
