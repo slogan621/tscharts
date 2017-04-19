@@ -1,4 +1,4 @@
-**Get ClinicStation**
+**Get Clinic Station**
 ----
   Returns json data about a single clinicstation resource. 
 
@@ -29,7 +29,7 @@
 
 * **Example:**
 
-  ```
+```
 GET /tscharts/v1/clinicstation/122/ HTTP/1.1
 Host: 127.0.0.1:8000
 Accept-Encoding: gzip, deflate, compress
@@ -51,7 +51,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 {"active":false,"clinic":268,"station":108,"id":122,"level":1}
   ```
   
-**Get Multiple ClinicStations**
+**Get Multiple Clinic Stations**
 ----
   Returns data about all matching clinicstation resources.
 
@@ -291,3 +291,4 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 {}
 ```
+
