@@ -29,25 +29,25 @@
 
 * **Example:**
 
-  ```
-  GET /tscharts/v1/clinic/262/ HTTP/1.1
-  Host: 127.0.0.1:8000
-  Content-Length: 2
-  Accept-Encoding: gzip, deflate, compress
-  Accept: */*
-  User-Agent: python-requests/2.2.1 CPython/2.7.6   Linux/4.2.0-27-generic
-  Content-Type: application/json
-  Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+```
+GET /tscharts/v1/clinic/262/ HTTP/1.1
+Host: 127.0.0.1:8000
+Content-Length: 2
+Accept-Encoding: gzip, deflate, compress
+Accept: */*
+User-Agent: python-requests/2.2.1 CPython/2.7.6   Linux/4.2.0-27-generic
+Content-Type: application/json
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
-  {}HTTP/1.0 200 OK
-  Date: Mon, 17 Apr 2017 22:36:21 GMT
-  Server: WSGIServer/0.1 Python/2.7.6
-  Vary: AcceptX-Frame-Options: SAMEORIGIN
-  Content-Type: application/json
-  Allow: GET, POST, DELETE, HEAD, OPTIONS
+{}HTTP/1.0 200 OK
+Date: Mon, 17 Apr 2017 22:36:21 GMT
+Server: WSGIServer/0.1 Python/2.7.6
+Vary: AcceptX-Frame-Options: SAMEORIGIN
+Content-Type: application/json
+Allow: GET, POST, DELETE, HEAD, OPTIONS
 
-  {"start":"02/05/2016","end":"02/06/2016","id":262,"location":"Ensenada"}
-  ```
+{"start":"02/05/2016","end":"02/06/2016","id":262,"location":"Ensenada"}
+```
   
 **Get Multiple Clinic**
 ----
