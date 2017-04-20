@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"active":false,"clinic":268,"station":108,"id":122,"level":1}`
+    **Content:** `{"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}`
  
 * **Error Response:**
 
@@ -81,7 +81,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{{"active":false,"clinic":270,"station":105,"id":130,"level":1}}, ...]`
+    **Content:** `[{"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
  
 * **Error Response:**
 
