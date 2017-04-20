@@ -73,7 +73,7 @@ active at the clinic. Each clinicstation is created before the clinic.
     * [API](../master/patient/README.txt)  
     * [Unit Tests](../master/test/patient/patient.py)
  * image - image storage for a patient/clinic/station group. Used for x-rays, headshots, and surgery images. Images stored in base64. 
-    * [API](../master/image/README.txt)  
+    * [API](../master/image/README.md)  
     * [Unit Tests](../master/test/image/image.py)
  * medicalhistory - patient status recorded at the time the patient registers. Records the overall health of the patient. 
     * [API](../master/medicalhistory/README.txt)  
