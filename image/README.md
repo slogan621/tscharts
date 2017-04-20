@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"active":false,"clinic":268,"station":108,"id":122,"level":1}`
+    **Content:** `{"patient":id,"data":"base64","clinic":id,"station":id,"type":"Headshot|Xray|Surgery","id":id}`
  
 * **Error Response:**
 
@@ -53,7 +53,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
   
 **Get Multiple Images**
 ----
-  Returns data about all matching image resources.
+  Returns a vector of image ids matching supplied search parameters.
 
 * **URL**
 
@@ -83,7 +83,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{{"active":false,"clinic":270,"station":105,"id":130,"level":1}}, ...]`
+    **Content:** `[id, ...]`
  
 * **Error Response:**
 
