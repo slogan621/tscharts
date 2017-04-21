@@ -79,7 +79,7 @@ active at the clinic. Each clinicstation is created before the clinic.
     * [API](../master/medicalhistory/README.txt)  
     * [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
  * register - a tuple that records the registration of a patient at a specific clinic. Also records the checkin and checkout times of the patient. 
-    * [API](../master/register/README.txt)  
+    * [API](../master/register/README.md)  
     * [Unit Tests](../master/test/register/register.py)
  * routingslip - the routing slip for a patient. This defines what stations a patient is scheduled to visit or has visited at a specific clinic.
     * [API](../master/routingslip/README.txt)  
