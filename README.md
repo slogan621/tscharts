@@ -91,7 +91,7 @@ active at the clinic. Each clinicstation is created before the clinic.
     * [API](../master/routingslip/README.txt)  
     * [Unit Tests](../master/test/routingslip/routingslip.py)
  * statechange - tracks the activity of patients and clinicstations for a specific clinic. Patients check "in" and "out" of clinicstations. Used to determine rputing of the patient. 
-    * [API](../master/statechange/README.txt)  
+    * [API](../master/statechange/README.md)  
     * [Unit Tests](../master/test/statechange/statechange.py)
  * returntoclinic - used to record that a patient needs to return to a future clinic and visit a specific station at that future clinic. Used to prefill the routing slip of the patient at a subsequent visit. 
     * [API](../master/returntoclinic/README.txt)  
@@ -99,7 +99,7 @@ active at the clinic. Each clinicstation is created before the clinic.
 
 Payload (when provided) must be in JSON.
 
-Generally, we use the following HTTP response code to indicate the status
+Generally, we use the following HTTP response codes to indicate the status
 of a request:
 
  * 200 OK
