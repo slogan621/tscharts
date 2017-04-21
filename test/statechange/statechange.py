@@ -68,18 +68,6 @@ class GetStateChange(ServiceAPI):
     def clearPayload(self):
         self._payload = {}
         self.setPayload(self._payload)
-    
-class UpdateStateChange(ServiceAPI):
-    def __init__(self, host, port, token, id, state):
-        super(UpdateStateChange, self).__init__()
-        
-        self.setHttpMethod("PUT")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        payload = {"state": state}
-        self.setPayload(payload)
-        self.setURL("tscharts/v1/statechange/{}/".format(id))
 
 class DeleteStateChange(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -475,116 +463,6 @@ class TestTSStateChange(unittest.TestCase):
             y = GetStateChange(host, port, token, x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteStation(host, port, token, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinic(host, port, token, clinicid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeletePatient(host, port, token, patientid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-    def testUpdateStateChange(self):
-
-        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        self.assertTrue("id" in ret[1])
-        clinicid = int(ret[1]["id"])
-
-        x = CreateStation(host, port, token, "ENT")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        stationid = int(ret[1]["id"])
-
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
-        data = {}
-        data["paternal_last"] = "abcd1234"
-        data["maternal_last"] = "yyyyyy"
-        data["first"] = "zzzzzzz"
-        data["middle"] = ""
-        data["suffix"] = "Jr."
-        data["prefix"] = ""
-        data["dob"] = "04/01/1962"
-        data["gender"] = "f"
-
-        x = CreatePatient(host, port, token, data)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        patientid = int(ret[1]["id"])
-
-        x = CreateStateChange(host, port, token)
-        x.setClinicStation(clinicstationid)
-        x.setPatient(patientid)
-        x.setState("in")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        statechangeid = int(ret[1]["id"])
-
-        x = GetStateChange(host, port, token, statechangeid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        self.assertTrue("id" in ret[1])
-        self.assertTrue(int(ret[1]["id"]) == statechangeid)
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
-        self.assertTrue(int(ret[1]["patient"] == patientid))
-        self.assertTrue("time" in ret[1]);
-        self.assertTrue("state" in ret[1]);
-        self.assertTrue(ret[1]["state"] == "in");
-
-        x = UpdateStateChange(host, port, token, statechangeid, "out")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = GetStateChange(host, port, token, statechangeid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        self.assertTrue("id" in ret[1])
-        self.assertTrue(int(ret[1]["id"]) == statechangeid)
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
-        self.assertTrue(int(ret[1]["patient"] == patientid))
-        self.assertTrue("time" in ret[1]);
-        self.assertTrue("state" in ret[1]);
-        self.assertTrue(ret[1]["state"] == "out");
-
-        x = UpdateStateChange(host, port, token, statechangeid, "abc")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        x = UpdateStateChange(host, port, token, statechangeid, "123")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        x = UpdateStateChange(host, port, token, statechangeid, "")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        x = GetStateChange(host, port, token, statechangeid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        self.assertTrue("id" in ret[1])
-        self.assertTrue(int(ret[1]["id"]) == statechangeid)
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
-        self.assertTrue(int(ret[1]["patient"] == patientid))
-        self.assertTrue("time" in ret[1]);
-        self.assertTrue("state" in ret[1]);
-        self.assertTrue(ret[1]["state"] == "out");
-
-        x = DeleteStateChange(host, port, token, statechangeid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)

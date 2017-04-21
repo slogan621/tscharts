@@ -246,50 +246,6 @@ class StateChangeView(APIView):
         else:
             return Response({'id': state_change.id})
 
-    def put(self, request, state_change_id=None, format=None):
-        badRequest = False
-        implError = False
-        notFound = False
-
-        data = json.loads(request.body)
-        try:
-            state = data["state"]
-            if not state in ["in", "out"]:
-                badRequest = True
-            else:
-                if state == "in":
-                    state = "i"
-                else:
-                    state = "o"
-        except:
-            badRequest = True
-
-        if not badRequest:
-            state_change = None
-
-            try:
-                state_change = StateChange.objects.get(id=state_change_id)
-            except:
-                pass
-
-            if not state_change:
-                notFound = True 
-            else:
-                try:
-                    state_change.state=state
-                    state_change.save()
-                except:
-                    implError = True
-                    implMsg = sys.exc_info()[0] 
-        if badRequest:
-            return HttpResponseBadRequest()
-        if notFound:
-            return HttpResponseNotFound()
-        if implError:
-            return HttpResponseServerError(implMsg) 
-        else:
-            return Response({})
-        
     def delete(self, request, state_change_id=None, format=None):
         state_change = None
 
