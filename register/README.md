@@ -212,7 +212,6 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ id : 12 }`
  
 * **Error Response:**
 
