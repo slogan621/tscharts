@@ -204,7 +204,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    One of the following is required. If both are missing, a bad request is returned.
 
-   `order` integer - the order of this item in the set of routing slip entries for the specified routingslip
+   `order` integer - the order of this item in the set of routing slip entries for the specified routingslip<br/>
    `state` string, one of "Scheduled" | "Checked In" | "Checked Out" | "Removed" <br/>
 
 * **Success Response:**
