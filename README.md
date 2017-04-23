@@ -88,7 +88,7 @@ active at the clinic. Each clinicstation is created before the clinic.
     * [API](../master/routingslip/routingslipentry.md)  
     * [Unit Tests](../master/test/routingslip/routingslip.py)
  * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present.  Records the comment and who made it. Multiple comments can be made by multiple people against a given routingslip.
-    * [API](../master/routingslip/README.txt)  
+    * [API](../master/routingslip/routingslipcomment.md)  
     * [Unit Tests](../master/test/routingslip/routingslip.py)
  * statechange - tracks the activity of patients and clinicstations for a specific clinic. Patients check "in" and "out" of clinicstations. Used to determine rputing of the patient. 
     * [API](../master/statechange/README.md)  
