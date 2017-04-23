@@ -1,6 +1,6 @@
 **Get Routing Slip Entry Resource**
 ----
-  Returns json data about a single routing slip resource. 
+  Returns json data about a single routing slip entry resource. 
 
 * **URL**
 
@@ -53,8 +53,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 **Get Multiple Routing Slip Entry Resources**
 ----
-  Returns all matching routingslipentry resources. 
-  None: return format based on search parameters. See below for details.
+  Returns all matching routing slip entry resources. 
+  Note: return format is based on search parameters. See below for details.
 
 * **URL**
 
