@@ -27,7 +27,7 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `birth_complications` true | false<br/>
    `hivaids` true | false<br/>
    `hepititis` true | false<br/>
-   `health` "Good" | "Poor"
+   `health` "Good" | "Poor"<br/>
    `siblings_cleft` true | false<br/>
    `anemia` true | false<br/>
    `hemophilia` true | false<br/>
