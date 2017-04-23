@@ -94,7 +94,7 @@ active at the clinic. Each clinicstation is created before the clinic.
     * [API](../master/statechange/README.md)  
     * [Unit Tests](../master/test/statechange/statechange.py)
  * returntoclinic - used to record that a patient needs to return to a future clinic and visit a specific station at that future clinic. Used to prefill the routing slip of the patient at a subsequent visit. 
-    * [API](../master/returntoclinic/README.txt)  
+    * [API](../master/returntoclinic/README.md)  
     * [Unit Tests](../master/test/returntoclinic/returntoclinic.py)
 
 Payload (when provided) must be in JSON.
