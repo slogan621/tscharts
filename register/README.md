@@ -82,7 +82,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    by clinic. To find out how many patients have been checked out of a clinic,
    specify both clinic and state = "Checked Out".
 
-   `patient` clinic id<br />
+   `patient` patient id<br />
    `clinic` clinic id<br />
    `state` "Checked In" | "Checked Out", case sensitive<br />
 
