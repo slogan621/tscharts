@@ -3,7 +3,6 @@
 In the following, content returned by GET (both forms), and accepted as
 request data for both PUT and POST will be identify by the string "MEDICAL_HISTORY_DATA, which consists of the following:
 
-   `id` medicalhistory ID<br />
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
    `tuberculosis` true | false<br/>
@@ -24,7 +23,7 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `congenitalheartdefect` true | false<br/>
    `pregnancy_smoke` true | false<br/>
    `troublehearing` true | false<br/>
-   `troubleeating` true | false<br/> i
+   `troubleeating` true | false<br/> 
    `birth_complications` true | false<br/>
    `hivaids` true | false<br/>
    `hepititis` true | false<br/>
@@ -32,7 +31,6 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `siblings_cleft` true | false<br/>
    `anemia` true | false<br/>
    `hemophilia` true | false<br/>
-   `time` UTC date time string<br/> 
 
 ----
   Returns json data about a single medicalhistory resource. 
@@ -58,11 +56,7 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
   * **Code:** 200 <br />
     **Content:** 
 
-   `id` medicalhistory ID<br />
-   `clinic` clinic resource id<br />
-   `patient` patient resource id<br />
-   `time` UTC date time string<br/> 
-   `MEDICAL_HISTORY_DATA`
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, `MEDICAL_HISTORY_DATA`}
  
 * **Error Response:**
 
@@ -127,11 +121,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
   * **Code:** 200 <br />
     **Content:** 
-   `id` medicalhistory ID<br />
-   `clinic` clinic resource id<br />
-   `patient` patient resource id<br />
-   `time` UTC date time string<br/> 
-   `MEDICAL_HISTORY_DATA`
+   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, `MEDICAL_HISTORY_DATA`}, ...]
  
 * **Error Response:**
 
