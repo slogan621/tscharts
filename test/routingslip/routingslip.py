@@ -1433,7 +1433,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         for i in results:
             self.assertTrue(i in routingslipentryids)
 
-        # search on clinicstation, returns array
+        # search on clinicstation, returns single item 
    
         for i in clinicstationids: 
             x = GetRoutingSlipEntry(host, port, token)
@@ -1442,7 +1442,10 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             results = ret[1]
-            self.assertTrue(len(results) == 1)
+            self.assertTrue("routingslip" in results)
+            self.assertTrue(results["routingslip"] == routingslipid)
+            self.assertTrue("clinicstation" in results)
+            self.assertTrue(results["clinicstation"] == i)
 
         # same thing, but don't pass routingslip
    

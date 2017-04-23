@@ -84,8 +84,8 @@ active at the clinic. Each clinicstation is created before the clinic.
  * routingslip - the routing slip for a patient. This defines what stations a patient is scheduled to visit or has visited at a specific clinic.
     * [API](../master/routingslip/routingslip.md)  
     * [Unit Tests](../master/test/routingslip/routingslip.py)
- * routingslipentry - an ordered routinglip/clinicstation tuple. Unique for a given routingslip.  
-    * [API](../master/routingslip/README.txt)  
+ * routingslipentry - an ordered routingslip/clinicstation tuple. Unique for a given routingslip.  
+    * [API](../master/routingslip/routingslipentry.md)  
     * [Unit Tests](../master/test/routingslip/routingslip.py)
  * routingslipcomment - a comment made by a user on a specific routingslip, typically to document why a routingslipentry is present.  Records the comment and who made it. Multiple comments can be made by multiple people against a given routingslip.
     * [API](../master/routingslip/README.txt)  

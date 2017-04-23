@@ -362,7 +362,7 @@ class RoutingSlipEntryView(APIView):
 
     def get(self, request, routing_slip_entry_id=None, format=None):
         routing_slip_entry = None
-        badParam = False
+        badRequest = False
         notFound = False
         aRoutingSlip = None
         aClinicStation = None
@@ -398,7 +398,10 @@ class RoutingSlipEntryView(APIView):
             except:
                 pass
 
-            if not notFound and not badParam:
+            if notFound == False and not aRoutingSlip and not aClinicStation:
+                badRequest = True
+
+            if not notFound and not badRequest:
                 if aRoutingSlip and not aClinicStation:
                     try:
                         routing_slip_entry = RoutingSlipEntry.objects.filter(routingslip=aRoutingSlip)
@@ -411,15 +414,17 @@ class RoutingSlipEntryView(APIView):
                         routing_slip_entry = None
                 else:
                     try:
-                        routing_slip_entry = RoutingSlipEntry.objects.filter(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                        routing_slip_entry = RoutingSlipEntry.objects.get(clinicstation=aClinicStation, routingslip=aRoutingSlip)
                     except:
                         routing_slip_entry = None
-        if badParam:
+        if badRequest:
             return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
         if routing_slip_entry:
             if routing_slip_entry_id:
+                ret = self.serialize(routing_slip_entry)
+            elif aClinicStation and aRoutingSlip:
                 ret = self.serialize(routing_slip_entry)
             else:
                 ret = []
