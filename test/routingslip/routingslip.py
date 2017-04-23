@@ -735,19 +735,22 @@ class TestTSRoutingSlip(unittest.TestCase):
             pid = int(i["patient"])
             self.assertTrue(pid in patients)
 
-        # search on patient, returns a single patient
+        # search on patient, returns a single patient in an array
 
         x = GetRoutingSlip(host, port, token)
         x.setPatient(patients[17])
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        self.assertTrue("id" in ret[1])
-        self.assertTrue(int(ret[1]["clinic"] == clinicid))
-        pid = int(ret[1]["patient"])
+        self.assertTrue(len(ret[1]) == 1) 
+        ret = ret[1][0]
+        self.assertTrue("id" in ret)
+        self.assertTrue("clinic" in ret)
+        self.assertTrue(int(ret["clinic"] == clinicid))
+        pid = int(ret["patient"])
         self.assertTrue(pid in patients)
         self.assertTrue(pid == patients[17])
 
-        # search on patient and clinic, returns a single patient
+        # search on patient and clinic, returns a single routing slip
 
         x = GetRoutingSlip(host, port, token)
         x.setPatient(patients[50])
@@ -1411,6 +1414,15 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
 
         # search on routingslip, returns array
 
+        x = GetRoutingSlip(host, port, token)
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]["routing"]), len(stations))
+
+        # search on routingslip, returns array
+
         x = GetRoutingSlipEntry(host, port, token)
         x.setRoutingslip(routingslipid)
         ret = x.send(timeout=30)
@@ -1684,6 +1696,15 @@ class TestTSRoutingSlipComment(unittest.TestCase):
             self.assertEqual(ret[0], 200)
             routingslipcomments.append(int(ret[1]["id"]))
         
+        # search on routingslip, returns array
+
+        x = GetRoutingSlip(host, port, token)
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]["comments"]), 100)
+
         x = GetRoutingSlipComment(host, port, token)
         x.setRoutingSlip(routingslipid)
         ret = x.send(timeout=30)

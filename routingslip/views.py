@@ -74,9 +74,7 @@ class RoutingSlipView(APIView):
                 if entries and len(entries):
                     entries = entries.order_by("order")
                     for x in entries:
-                        y = {}
-                        y["id"] = x.id
-                        m["routing"].append(y)
+                        m["routing"].append(x.id)
             except:
                 error = True
 
@@ -87,9 +85,7 @@ class RoutingSlipView(APIView):
                 if entries and len(entries):
                     entries = entries.order_by('-updatetime')
                     for x in entries:
-                        y = {}
-                        y["id"] = x.id
-                        m["comments"].append(y)
+                        m["comments"].append(x.id)
             except:
                 error = True
 
@@ -100,7 +96,7 @@ class RoutingSlipView(APIView):
 
     def get(self, request, routing_slip_id=None, format=None):
         routing_slip = None
-        badParam = False
+        badRequest = False
         notFound = False
         aClinic = None
         aPatient = None
@@ -123,7 +119,7 @@ class RoutingSlipView(APIView):
             except:
                 pass
 
-            if not notFound and not badParam:
+            if not notFound: 
                 try:
                     patientid = data["patient"]
                     try:
@@ -133,19 +129,22 @@ class RoutingSlipView(APIView):
                 except:
                     pass
 
-            if aPatient or aClinic:
-                try:
-                    if aPatient and aClinic:
-                        routing_slip = RoutingSlip.objects.filter(patient=aPatient, clinic=aClinic)
-                    elif aPatient:
-                        routing_slip = RoutingSlip.objects.filter(patient=aPatient)
-                    elif aClinic:
-                        routing_slip = RoutingSlip.objects.filter(clinic=aClinic)
-                except:
-                    notFound = True
-                    routing_slip = None
+            if not notFound:
+                if aPatient or aClinic:
+                    try:
+                        if aPatient and aClinic:
+                            routing_slip = RoutingSlip.objects.get(patient=aPatient, clinic=aClinic)
+                        elif aPatient:
+                            routing_slip = RoutingSlip.objects.filter(patient=aPatient)
+                        elif aClinic:
+                            routing_slip = RoutingSlip.objects.filter(clinic=aClinic)
+                    except:
+                        notFound = True
+                        routing_slip = None
+                else:
+                    badRequest = True
 
-        if badParam:
+        if badRequest:
             return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
@@ -153,11 +152,11 @@ class RoutingSlipView(APIView):
             if routing_slip_id:
                 # one based on ID
                 ret = self.serialize(routing_slip)
-            elif aPatient:
-                # one for patient [,clinic] pair
-                ret = self.serialize(routing_slip[0])
+            elif aPatient and aClinic:
+                # one for patient, clinic pair
+                ret = self.serialize(routing_slip)
             else:
-                # array for all patients in clinic
+                # array
                 ret = []
                 for x in routing_slip:
                     m = self.serialize(x);
@@ -266,11 +265,7 @@ class RoutingSlipView(APIView):
             routing_slip = None
 
             try:
-                routing_slip = RoutingSlip.objects.filter(id=routing_slip_id)
-                if not routing_slip or len(routing_slip) == 0:
-                    routing_slip = None
-                else:
-                    routing_slip = routing_slip[0]
+                routing_slip = RoutingSlip.objects.get(id=routing_slip_id)
             except:
                 pass
 
