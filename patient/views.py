@@ -124,11 +124,7 @@ class PatientView(APIView):
             # see if the patient already exists
 
             try:
-                patient = Patient.objects.filter(id=id)
-                if not patient or len(patient) == 0:
-                    patient = None
-                else:
-                    patient = patient[0]
+                patient = Patient.objects.get(id=id)
             except:
                 pass
 
@@ -249,12 +245,7 @@ class PatientView(APIView):
         # see if the patient exists
 
         try:
-            patient = Patient.objects.filter(id=patient_id)
-            if not patient or len(patient) == 0:
-                patient = None
-            else:
-                patient = patient[0]
-
+            patient = Patient.objects.get(id=patient_id)
         except:
             patient = None
 
