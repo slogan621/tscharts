@@ -87,6 +87,7 @@ class ReturnToClinicView(APIView):
             ret["clinic"] = x.clinic.id  
             ret["station"] = x.station.id  
             ret["patient"] = x.patient.id  
+            ret["comment"] = x.comment  
             ret["interval"] = x.interval  
             ret["month"] = (x.clinic.start + timedelta(x.interval * 365/12)).month
             ret["year"] = (x.clinic.start + timedelta(x.interval * 365/12)).year
@@ -103,17 +104,23 @@ class ReturnToClinicView(APIView):
         badRequest = False
         implError = False
         notFound = False
+        interval = None
+        comment = None
 
         data = json.loads(request.body)
         try:
             interval = data["interval"]
         except:
+            pass
+        try:
+            comment = data["comment"]
+        except:
+            pass
+
+        if interval == None and comment == None:
             badRequest = True
 
-        if interval == None:
-            badRequest = True
-
-        if not isinstance(interval, numbers.Number):
+        if not interval == None and not isinstance(interval, numbers.Number):
             badRequest = True
 
         if not badRequest:
@@ -130,7 +137,10 @@ class ReturnToClinicView(APIView):
                 notFound = True 
             else:
                 try:
-                    returntoclinic.interval=interval
+                    if interval != None:
+                        returntoclinic.interval=interval
+                    if comment != None:
+                        returntoclinic.comment=comment
                     returntoclinic.save()
                 except:
                     implError = True
@@ -168,6 +178,10 @@ class ReturnToClinicView(APIView):
             badRequest = True
         try:
             interval = data["interval"]
+        except:
+            badRequest = True
+        try:
+            comment = data["comment"]
         except:
             badRequest = True
 
@@ -212,6 +226,7 @@ class ReturnToClinicView(APIView):
                     returntoclinic = returntoclinic[0]
                     if returntoclinic:
                         returntoclinic.interval = interval
+                        returntoclinic.comment = comment
                         returntoclinic.save()
             except:
                 implMsg = "ReturnToClinic.objects.filter {} {}".format(sys.exc_info()[0], data)
@@ -222,6 +237,7 @@ class ReturnToClinicView(APIView):
                     returntoclinic = ReturnToClinic(clinic=aClinic,
                                       patient=aPatient,
                                       station=aStation,
+                                      comment=comment,
                                       interval=interval)
                     if returntoclinic:
                         returntoclinic.save()

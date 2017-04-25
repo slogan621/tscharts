@@ -28,3 +28,4 @@ class ReturnToClinic(models.Model):
     patient = models.ForeignKey(Patient)
     station = models.ForeignKey(Station)
     interval = models.IntegerField()
+    comment = models.TextField()

@@ -14,7 +14,7 @@ from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.station.station import CreateStation, DeleteStation
 
 class CreateReturnToClinic(ServiceAPI):
-    def __init__(self, host, port, token, clinic, station, patient, interval):
+    def __init__(self, host, port, token, clinic, station, patient, interval, comment=""):
         super(CreateReturnToClinic, self).__init__()
         
         self.setHttpMethod("POST")
@@ -22,7 +22,7 @@ class CreateReturnToClinic(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"patient": patient, "clinic": clinic, "station": station, "interval": interval}
+        payload = {"patient": patient, "clinic": clinic, "station": station, "interval": interval, "comment": comment}
         self.setPayload(payload)
         self.setURL("tscharts/v1/returntoclinic/")
     
@@ -54,16 +54,24 @@ class GetReturnToClinic(ServiceAPI):
         self.setPayload(self._payload)
 
 class UpdateReturnToClinic(ServiceAPI):
-    def __init__(self, host, port, token, id, interval):
+    def __init__(self, host, port, token, id):
         super(UpdateReturnToClinic, self).__init__()
         
         self.setHttpMethod("PUT")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        payload = {"interval": interval}
-        self.setPayload(payload)
+        self._payload = {}
+        self.setPayload(self._payload)
         self.setURL("tscharts/v1/returntoclinic/{}/".format(id))
+
+    def setInterval(self, interval):
+        self._payload["interval"] = interval
+        self.setPayload(self._payload)
+
+    def setComment(self, comment):
+        self._payload["comment"] = comment
+        self.setPayload(self._payload)
 
 class DeleteReturnToClinic(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -333,8 +341,12 @@ class TestTSReturnToClinic(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         self.assertTrue("interval" in ret[1])
         self.assertTrue(ret[1]["interval"] == 3)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "")
 
-        x = UpdateReturnToClinic(host, port, token, id, 6)
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setInterval(6)
+        x.setComment("A test comment")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -352,8 +364,11 @@ class TestTSReturnToClinic(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         self.assertTrue("interval" in ret[1])
         self.assertTrue(ret[1]["interval"] == 6)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "A test comment")
 
-        x = UpdateReturnToClinic(host, port, token, id, 3)
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setInterval(3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -371,8 +386,11 @@ class TestTSReturnToClinic(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         self.assertTrue("interval" in ret[1])
         self.assertTrue(ret[1]["interval"] == 3)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "A test comment")
 
-        x = UpdateReturnToClinic(host, port, token, id, 12)
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setComment("Yet another comment")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -388,20 +406,77 @@ class TestTSReturnToClinic(unittest.TestCase):
         self.assertTrue("patient" in ret[1])
         patientId = int(ret[1]["patient"])
         self.assertTrue(patientId == patientid)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "Yet another comment")
         self.assertTrue("interval" in ret[1])
-        self.assertTrue(ret[1]["interval"] == 12)
+        self.assertTrue(ret[1]["interval"] == 3)
 
-        x = UpdateReturnToClinic(host, port, token, id, None)
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setInterval(None)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = UpdateReturnToClinic(host, port, token, id, "")
+        x = GetReturnToClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("station" in ret[1])
+        stationId = int(ret[1]["station"])
+        self.assertTrue(stationId == stationid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "Yet another comment")
+        self.assertTrue("interval" in ret[1])
+        self.assertTrue(ret[1]["interval"] == 3)
+
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setInterval("")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = UpdateReturnToClinic(host, port, token, id, "Hello")
+        x = GetReturnToClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("station" in ret[1])
+        stationId = int(ret[1]["station"])
+        self.assertTrue(stationId == stationid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "Yet another comment")
+        self.assertTrue("interval" in ret[1])
+        self.assertTrue(ret[1]["interval"] == 3)
+
+
+        x = UpdateReturnToClinic(host, port, token, id)
+        x.setInterval("Hello")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
+
+        x = GetReturnToClinic(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("station" in ret[1])
+        stationId = int(ret[1]["station"])
+        self.assertTrue(stationId == stationid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        self.assertTrue("comment" in ret[1])
+        self.assertTrue(ret[1]["comment"] == "Yet another comment")
+        self.assertTrue("interval" in ret[1])
+        self.assertTrue(ret[1]["interval"] == 3)
 
         x = DeleteReturnToClinic(host, port, token, id)
         ret = x.send(timeout=30)

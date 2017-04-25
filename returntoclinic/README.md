@@ -24,7 +24,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"patient":id,"interval":number of months,"month":month number [1-12] of expected return,"clinic":id,"station":id,"year":year number of expected return,"id":id}`
+    **Content:** `{"patient":id,"interval":number of months,"month":month number [1-12] of expected return,"comment":string,"clinic":id,"station":id,"year":year number of expected return,"id":id}`
  
 * **Error Response:**
 
@@ -33,17 +33,17 @@
 * **Example:**
 
 ```
-GET /tscharts/v1/returntoclinic/61/ HTTP/1.1
+GET /tscharts/v1/returntoclinic/59/ HTTP/1.1
 Host: 127.0.0.1:8000
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
 HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 03:34:22 GMT
+Date: Tue, 25 Apr 2017 02:18:08 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -51,7 +51,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"patient":24,"interval":3,"month":5,"clinic":22,"station":15,"year":2016,"id":61}
+{"comment":"A test comment","patient":405,"interval":6,"month":8,"clinic":340,"station":203,"year":2016,"id":59}
 ```
   
 **Get Multiple Return To Clinic Resources**
@@ -143,6 +143,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
    `station` station resource id<br />
+   `comment` string<br />
    `interval` number of months from date of `clinic` that `patient` is being asked to return to visit the specified `station`<br />
 
    **Optional:**
@@ -165,16 +166,16 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 ```
 POST /tscharts/v1/returntoclinic/ HTTP/1.1
 Host: 127.0.0.1:8000
-Content-Length: 59
+Content-Length: 77
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"clinic": 22, "station": 15, "patient": 24, "interval": 3}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 03:34:22 GMT
+{"comment": "", "clinic": 337, "station": 196, "patient": 402, "interval": 3}HTTP/1.0 200 OK
+Date: Tue, 25 Apr 2017 02:18:06 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -182,7 +183,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"id":61}
+{"id":52}
 ```
 
 **Update a Return To Clinic Resource**
@@ -205,7 +206,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Required:**
 
+   One or more of the following is required:
+
    `interval` number of months 
+   `comment` text comment
 
 * **Success Response:**
 
@@ -220,18 +224,18 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-PUT /tscharts/v1/returntoclinic/68/ HTTP/1.1
+PUT /tscharts/v1/returntoclinic/59/ HTTP/1.1
 Host: 127.0.0.1:8000
-Content-Length: 15
+Content-Length: 44
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"interval": 6}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 03:34:25 GMT
+{"comment": "A test comment", "interval": 6}HTTP/1.0 200 OK
+Date: Tue, 25 Apr 2017 02:18:08 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
