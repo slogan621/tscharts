@@ -26,6 +26,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
 import json
+import sys
 
 class ClinicStationView(APIView):
 
@@ -76,6 +77,8 @@ class ClinicStationView(APIView):
                 m["station"] = clinic_station.station_id
                 m["active"] = clinic_station.active
                 m["level"] = clinic_station.level
+                m["awaytime"] = clinic_station.awaytime
+                m["willreturn"] = clinic_station.willreturn
                 ret = m
             else: 
                 ret = []
@@ -86,6 +89,8 @@ class ClinicStationView(APIView):
                     m["station"] = x.station_id
                     m["active"] = x.active
                     m["level"] = x.level
+                    m["awaytime"] = x.awaytime
+                    m["willreturn"] = x.willreturn
                     ret.append(m)
             return Response(ret)
 
@@ -175,6 +180,7 @@ class ClinicStationView(APIView):
         notFound = False
         active = None
         level = None
+        awaytime = None
 
         data = json.loads(request.body)
 
@@ -182,8 +188,10 @@ class ClinicStationView(APIView):
             active = data["active"]
         if "level" in data:
             level = data["level"]
+        if "awaytime" in data:
+            awaytime = data["awaytime"]
 
-        if level == None and active == None:
+        if level == None and active == None and awaytime == None:
             badRequest = True
 
         if not badRequest:
@@ -200,11 +208,24 @@ class ClinicStationView(APIView):
                 notFound = True 
             else:
                 try:
+                    print "begin put"
+                    if not (awaytime == None):
+                        print "1"
+                        clinic_station.awaytime = awaytime
                     if not (active == None):
+                        print "2"
                         clinic_station.active=active
+                        print "3"
+                        if active == False:
+                            print "4"
+                            clinic_station.willreturn = datetime.now() + timedelta(minutes=clinic_station.awaytime)
+                            print "5"
                     if not (level == None):
+                        print "6"
                         clinic_station.level=level
+                        print "7"
                     clinic_station.save()
+                    print "8"
                 except:
                     implError = True
                     implMsg = sys.exc_info()[0] 

@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}`
+    **Content:** `{"active":[true|false],"clinic":id,"awaytime":integer,"willreturn":UTC time string,"station":id,"id":id,"level":integer}`
  
 * **Error Response:**
 
@@ -30,7 +30,7 @@
 * **Example:**
 
 ```
-GET /tscharts/v1/clinicstation/122/ HTTP/1.1
+GET /tscharts/v1/clinicstation/21/ HTTP/1.1
 Host: 127.0.0.1:8000
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
@@ -40,7 +40,7 @@ Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
 HTTP/1.0 200 OK
-Date: Tue, 18 Apr 2017 20:17:14 GMT
+Date: Wed, 26 Apr 2017 05:29:15 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -48,8 +48,8 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"active":false,"clinic":268,"station":108,"id":122,"level":1}
-  ```
+{"level":1,"awaytime":30,"clinic":360,"station":227,"active":false,"willreturn":"2017-04-26T05:29:15Z","id":21}
+```
   
 **Get Multiple Clinic Stations**
 ----
@@ -81,7 +81,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
+    **Content:** `[{"awaytime":integer,"willreturn":UTC time string,"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
  
 * **Error Response:**
 
@@ -102,8 +102,8 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"active": false, "clinic": 270}HTTP/1.0 200 OK
-Date: Tue, 18 Apr 2017 20:17:15 GMT
+{"active": false, "clinic": 362}HTTP/1.0 200 OK
+Date: Wed, 26 Apr 2017 05:29:16 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -111,7 +111,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-[{"active":false,"clinic":270,"station":105,"id":130,"level":1},{"active":false,"clinic":270,"station":97,"id":129,"level":1},{"active":false,"clinic":270,"station":96,"id":128,"level":1},{"active":false,"clinic":270,"station":95,"id":127,"level":1},{"active":false,"clinic":270,"station":110,"id":126,"level":1}]
+[{"level":1,"awaytime":30,"clinic":362,"station":229,"active":false,"willreturn":"2017-04-26T05:29:16Z","id":25},{"level":1,"awaytime":30,"clinic":362,"station":207,"active":false,"willreturn":"2017-04-26T05:29:16Z","id":26},{"level":1,"awaytime":30,"clinic":362,"station":208,"active":false,"willreturn":"2017-04-26T05:29:16Z","id":27},{"level":1,"awaytime":30,"clinic":362,"station":209,"active":false,"willreturn":"2017-04-26T05:29:16Z","id":28},{"level":1,"awaytime":30,"clinic":362,"station":210,"active":false,"willreturn":"2017-04-26T05:29:16Z","id":29}]
 ```
   
 **Create Clinic Station**
@@ -141,6 +141,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
    `active` true if station is active at creation, else false (default)<br />
    `level` priority level. Default is 1.<br />
+   `awaytime` length of time from when `active` set to False until return. Default is 30 minutes.<br />
 
 * **Success Response:**
 
@@ -166,8 +167,8 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"active": false, "clinic": 268, "station": 108}HTTP/1.0 200 OK
-Date: Tue, 18 Apr 2017 20:17:14 GMT
+{"active": false, "clinic": 360, "station": 227}HTTP/1.0 200 OK
+Date: Wed, 26 Apr 2017 05:29:15 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -175,7 +176,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"id":122}
+{"id":21}
 ```
 
 **Update Clinic Station**
@@ -200,8 +201,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    One of the following is required. Both can be specified.
  
-   `active` true if station is active at creation, else false<br />
+   `active` true if station is active, else false<br />
    `level` priority level. Default is 1.<br />
+   `awaytime` whenever `active` is set to false, `awaytime` is used to calculate the UTC time at which the station is expected to reopen. By default, awaytime is 30 minutes. In GET requests, the time that was calculated is returned as "willreturn" in the JSON payload.<br />
 
 * **Success Response:**
 
@@ -216,9 +218,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-PUT /tscharts/v1/clinicstation/131/ HTTP/1.1
+PUT /tscharts/v1/clinicstation/30/ HTTP/1.1
 Host: 127.0.0.1:8000
-Content-Length: 17
+Content-Length: 33
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -226,8 +228,8 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"active": false}HTTP/1.0 200 OK
-Date: Tue, 18 Apr 2017 20:17:15 GMT
+{"active": false, "awaytime": 15}HTTP/1.0 200 OK
+Date: Wed, 26 Apr 2017 05:29:17 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN

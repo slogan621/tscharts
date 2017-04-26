@@ -44,3 +44,5 @@ class ClinicStation(models.Model):
     clinic = models.ForeignKey(Clinic)
     active = models.BooleanField(default=False)
     level = models.IntegerField(default=1)
+    awaytime = models.IntegerField(default=30)
+    willreturn = models.DateTimeField(auto_now_add=True)

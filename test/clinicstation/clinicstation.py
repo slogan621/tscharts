@@ -55,6 +55,10 @@ class UpdateClinicStation(ServiceAPI):
         self._payload["level"] = level
         self.setPayload(self._payload)
 
+    def setAwayTime(self, minutes):
+        self._payload["awaytime"] = minutes
+        self.setPayload(self._payload)
+
 class GetAllClinicStations(ServiceAPI):
     def __init__(self, host, port, token, clinicid, active):
         super(GetAllClinicStations, self).__init__()
@@ -258,6 +262,7 @@ class TestTSClinicStation(unittest.TestCase):
 
         x = UpdateClinicStation(host, port, token, clinicstationid)
         x.setActive(False)
+        x.setAwayTime(15)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -266,6 +271,9 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("active" in ret[1])
         self.assertTrue(ret[1]["active"] == False)
+        self.assertTrue("awaytime" in ret[1])
+        self.assertTrue(ret[1]["awaytime"] == 15)
+        self.assertTrue("willreturn" in ret[1])
 
         x = UpdateClinicStation(host, port, token, clinicstationid)
         x.setActive(True)
@@ -292,6 +300,7 @@ class TestTSClinicStation(unittest.TestCase):
 
         x = UpdateClinicStation(host, port, token, clinicstationid)
         x.setLevel(0)
+        x.setAwayTime(23)
         x.setActive(False)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -302,6 +311,9 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue("level" in ret[1])
         self.assertTrue(int(ret[1]["level"]) == 0)
         self.assertTrue(ret[1]["active"] == False)
+        self.assertTrue("awaytime" in ret[1])
+        self.assertTrue(ret[1]["awaytime"] == 23)
+        self.assertTrue("willreturn" in ret[1])
 
         x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
