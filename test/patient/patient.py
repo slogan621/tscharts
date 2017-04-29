@@ -31,9 +31,8 @@ class UpdatePatient(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload["id"] = id
         self.setPayload(payload)
-        self.setURL("tscharts/v1/patient/")
+        self.setURL("tscharts/v1/patient/{}/".format(id))
 
 class GetPatient(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -43,6 +42,8 @@ class GetPatient(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
+        self._payload = {}
+        self.setPayload(self._payload)
         self.setURL("tscharts/v1/patient/{}/".format(id))
 
 class GetAllPatients(ServiceAPI):
@@ -54,6 +55,18 @@ class GetAllPatients(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
         self.setURL("tscharts/v1/patient/")
+
+    def setLastName(self, val):
+        self._payload["paternal_last"] = val
+        self.setPayload(self._payload) 
+
+    def setFirstName(self, val):
+        self._payload["first"] = val
+        self.setPayload(self._payload) 
+
+    def setDob(self, val):
+        self._payload["dob"] = val
+        self.setPayload(self._payload) 
 
 class DeletePatient(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -85,7 +98,18 @@ class TestTSPatient(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -109,7 +133,18 @@ class TestTSPatient(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "m"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -140,7 +175,18 @@ class TestTSPatient(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "m"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -167,7 +213,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["suffix"] == "Jr.")
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
-        self.assertTrue(ret["gender"] == "m")
+        self.assertTrue(ret["gender"] == "Male")
     
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
@@ -183,7 +229,18 @@ class TestTSPatient(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "m"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -209,7 +266,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["suffix"] == "Jr.")
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
-        self.assertTrue(ret["gender"] == "m")
+        self.assertTrue(ret["gender"] == "Male")
    
         data["paternal_last"] = "abcdefg" 
         id = int(ret["id"])
@@ -236,8 +293,169 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["suffix"] == "Jr.")
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
-        self.assertTrue(ret["gender"] == "m")
+        self.assertTrue(ret["gender"] == "Male")
     
+        data["paternal_last"] = "xxyyzz" 
+        data["gender"] = "Female" 
+        id = int(ret["id"])
+        x = UpdatePatient(host, port, token, id, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        x = GetPatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue("paternal_last" in ret)
+        self.assertTrue("maternal_last" in ret)
+        self.assertTrue("first" in ret)
+        self.assertTrue("middle" in ret)
+        self.assertTrue("suffix" in ret)
+        self.assertTrue("prefix" in ret)
+        self.assertTrue("dob" in ret)
+        self.assertTrue("gender" in ret)
+
+        self.assertTrue(ret["paternal_last"] == "xxyyzz")
+        self.assertTrue(ret["maternal_last"] == "yyyyyy")
+        self.assertTrue(ret["first"] == "zzzzzzz")
+        self.assertTrue(ret["middle"] == "")
+        self.assertTrue(ret["suffix"] == "Jr.")
+        self.assertTrue(ret["prefix"] == "")
+        self.assertTrue(ret["dob"] == "04/01/1962")
+        self.assertTrue(ret["gender"] == "Female")
+    
+        x = DeletePatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testSearchPatient(self):
+        ids = []
+
+        data = {}
+        data["paternal_last"] = "test1"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test1id = ret[1]["id"]
+
+        data["paternal_last"] = "test2"
+        data["first"] = "yyyyyyy"
+        data["dob"] = "04/01/1962"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test2id = ret[1]["id"]
+
+        data["paternal_last"] = "test3"
+        data["first"] = "yyyyyyy"
+        data["dob"] = "04/02/1962"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test3id = ret[1]["id"]
+
+        data["paternal_last"] = "test4"
+        data["first"] = "xxxxxxx"
+        data["dob"] = "04/02/1962"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test4id = ret[1]["id"]
+
+        data["paternal_last"] = "test5"
+        data["first"] = "qqqqqqq"
+        data["dob"] = "04/03/1962"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test5id = ret[1]["id"]
+
+        data["paternal_last"] = "test6"
+        data["first"] = "qqqqqqq"
+        data["dob"] = "04/03/1962"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test6id = ret[1]["id"]
+
+        x = GetAllPatients(host, port, token)
+        x.setLastName("test5")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(ret[0], test5id)
+
+        x = GetAllPatients(host, port, token)
+        x.setDob("04/03/1962")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 2)
+        self.assertTrue(test5id in ret)
+        self.assertTrue(test6id in ret)
+
+        x = GetAllPatients(host, port, token)
+        x.setFirstName("x")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test4id in ret)
+
+        x = GetAllPatients(host, port, token)
+        x.setLastName("st1")
+        x.setFirstName("z")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test1id in ret)
+
+        x = GetAllPatients(host, port, token)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        patients = ret[1]
+        for x in patients:
+            ids.remove(x)
+            x = DeletePatient(host, port, token, x)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        if len(ids):
+            self.assertTrue("failed to remove items {}".format(ids) == None)
+
     def testGetAllPatients(self):
         ids = []
 
@@ -249,7 +467,18 @@ class TestTSPatient(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "m"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -273,8 +502,10 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patients = ret[1]
         for x in patients:
-            if x["id"] in ids:
-                ids.remove(x["id"])
+            ids.remove(x)
+            x = DeletePatient(host, port, token, x)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
 
         if len(ids):
             self.assertTrue("failed to remove items {}".format(ids) == None)

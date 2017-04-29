@@ -31,119 +31,212 @@ class PatientView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def toState(self, statecode):
+        ret = None
+        for x in Patient.STATE_CHOICES:
+            if x[0] == statecode:
+                ret = x[1]
+        return ret 
+
+    def serialize(self, entry):
+        m = {}
+
+        m["id"] = entry.id
+        m["paternal_last"] = entry.paternal_last
+        m["maternal_last"] = entry.maternal_last
+        m["first"] = entry.first
+        m["middle"] = entry.middle
+        m["suffix"] = entry.suffix
+        m["prefix"] = entry.prefix
+        m["dob"] = entry.dob.strftime("%m/%d/%Y")
+        if entry.gender == "f":
+            m["gender"] = "Female"
+        else:
+            m["gender"] = "Male"
+        m["street1"] = entry.street1
+        m["street2"] = entry.street2
+        m["city"] = entry.city
+        m["colonia"] = entry.colonia
+        m["state"] = self.toState(entry.state)
+        m["phone1"] = entry.phone1
+        m["phone2"] = entry.phone2
+        m["email"] = entry.email
+        m["emergencyfullname"] = entry.emergencyfullname
+        m["emergencyphone"] = entry.emergencyphone
+        m["emergencyemail"] = entry.emergencyemail
+
+        return m
+
     def get(self, request, patient_id=None, format=None):
+
+        badRequest = False
+        notFound = False
         patient = None
+        
         if patient_id:
             try:
                 patient = Patient.objects.get(id = patient_id)
             except:
                 patient = None
         else:
+            # look for optional arguments for searching
+            kwargs = {}
+            data = json.loads(request.body)
             try:
-                patient = Patient.objects.all()
+                paternal_last = data["paternal_last"] 
+                kwargs["paternal_last__contains"] = paternal_last
             except:
-                patient = None
+                pass # no paternal_last
+            try:
+                maternal_last = data["maternal_last"] 
+                kwargs["maternal_last__contains"] = maternal_last
+            except:
+                pass # no maternal_last
+            try:
+                first = data["first"] 
+                kwargs["first__contains"] = first
+            except:
+                pass # no first
+            try:
+                dob = data["dob"] 
+                kwargs["dob"] = datetime.strptime(data["dob"], "%m/%d/%Y")
+            except:
+                pass # no dob
+            try:
+                gender = data["gender"] 
+                if gender == "Male":
+                    kwargs["gender"] = "m"
+                elif gender == "Female":
+                    kwargs["gender"] = "f"
+                else:
+                    badRequest = True
+            except:
+                pass # no gender
 
-        if not patient:
-            raise NotFound
+            if not badRequest:
+                try:
+                    patient = Patient.objects.filter(**kwargs)
+                except:
+                    patient = None
+
+        if not patient and not badRequest:
+            notFound = True
         else:
             if patient_id:
-                ret = {}
-                ret["paternal_last"] = patient.paternal_last  
-                ret["maternal_last"] = patient.maternal_last  
-                ret["first"] = patient.first  
-                ret["middle"] = patient.middle  
-                ret["suffix"] = patient.suffix  
-                ret["prefix"] = patient.prefix  
-                ret["dob"] = patient.dob.strftime("%m/%d/%Y")
-                ret["gender"] = patient.gender  
-                ret["id"] = patient.id
-            else:
+                ret = self.serialize(patient)
+            else: 
                 ret = []
                 for x in patient:
-                    m = {}
-                    m["paternal_last"] = x.paternal_last  
-                    m["maternal_last"] = x.maternal_last  
-                    m["first"] = x.first  
-                    m["middle"] = x.middle  
-                    m["suffix"] = x.suffix  
-                    m["prefix"] = x.prefix  
-                    m["dob"] = x.dob.strftime("%m/%d/%Y")
-                    m["gender"] = x.gender  
-                    m["id"] = x.id
-                    ret.append(m)
+                    ret.append(x.id)
+        if badRequest:
+            return HttpResponseBadRequest()
+        elif notFound:
+            return HttpResponseNotFound()
+        else:
             return Response(ret)
 
-    def put(self, request, format=None):
+    def validateState(self, state):
+        valid = False
+        ret = None
+
+        for val in Patient.STATE_CHOICES:
+            if val[1] == state:
+                valid = True
+                ret = val[0]
+                break
+        return valid, ret 
+
+    def validatePutArgs(self, data, patient):
+        valid = True
+
+        if "paternal_last" in data: 
+            patient.paternal_last = data["paternal_last"]
+        if "maternal_last" in data:
+            patient.maternal_last = data["maternal_last"]
+        if "first" in data:
+            patient.first = data["first"]
+        if "middle" in data:
+            patient.middle = data["middle"]
+        if "suffix" in data:
+            patient.suffix = data["suffix"]
+        if "prefix" in data:
+            patient.prefix = data["prefix"]
+        if "dob" in data:
+            dob = data["dob"]
+            try: 
+                dob = datetime.strptime(dob, "%m/%d/%Y")
+                patient.dob = dob
+            except:
+                valid = False
+        if "gender" in data:
+            gender = data["gender"]
+            if gender != 'Female' and gender != 'Male':
+                valid = False
+            else:
+                if gender == "Female":
+                    gender = "f"
+                else:
+                    gender = "m"
+                patient.gender = gender
+
+        if "street1" in data:
+            patient.street1 = data["street1"]
+        if "street2" in data:
+            patient.street2 = data["street2"]
+        if "city" in data:
+            patient.city = data["city"]
+        if "colonia" in data:
+            patient.colonia = data["colonia"]
+        if "state" in data:
+            validtmp, state = self.validateState(data["state"])
+            if validtmp == True:
+                patient.state = state
+            else:
+                valid = False
+        if "phone1" in data:
+            patient.phone1 = data["phone1"]
+        if "phone2" in data:
+            patient.phone2 = data["phone2"]
+        if "email" in data:
+            patient.email = data["email"]
+        if "emergencyfullname" in data:
+            patient.emergencyfullname = data["emergencyfullname"]
+        if "emergencyphone" in data:
+            patient.emergencyphone = data["emergencyphone"]
+        if "emergencyemail" in data:
+            patient.emergencyemail = data["emergencyemail"]
+
+        return valid, patient
+
+    def put(self, request, patient_id, format=None):
         badRequest = False
         implError = False
         notFound = False
 
-        data = json.loads(request.body)
-        try:
-            id = data["id"]
-        except:
-            badRequest = True
-        try:
-            paternal_last = data["paternal_last"]
-        except:
-            badRequest = True
-        try:
-            maternal_last = data["maternal_last"]
-        except:
-            badRequest = True
-        try:
-            first = data["first"]
-        except:
-            badRequest = True
-        try:
-            middle = data["middle"]
-        except:
-            badRequest = True
-        try:
-            suffix = data["suffix"]
-        except:
-            badRequest = True
-        try:
-            prefix = data["prefix"]
-        except:
-            badRequest = True
-        try:
-            dob = data["dob"]
-            dob = datetime.strptime(dob, "%m/%d/%Y")
-        except:
-            badRequest = True
-        try:
-            gender = data["gender"]
-        except:
+        if not patient_id:
             badRequest = True
 
         if not badRequest:
             patient = None
 
-            # see if the patient already exists
-
             try:
-                patient = Patient.objects.get(id=id)
+                patient = Patient.objects.get(id=patient_id)
             except:
                 pass
 
             if not patient:
-                notFound = True 
+                notFound = True
             else:
                 try:
-                    patient.paternal_last=paternal_last
-                    patient.maternal_last=maternal_last
-                    patient.first=first
-                    patient.middle=middle
-                    patient.suffix=suffix
-                    patient.prefix=prefix
-                    patient.dob=dob
-                    patient.gender=gender
-                    patient.save()
+                    data = json.loads(request.body)
+                    valid, patient = self.validatePutArgs(data, patient)
+                    if valid:
+                        patient.save()
+                    else:
+                        badRequest = True
                 except:
                     implError = True
-                    implMsg = sys.exc_info()[0] 
+                    implMsg = sys.exc_info()[0]
         if badRequest:
             return HttpResponseBadRequest()
         if notFound:
@@ -152,78 +245,89 @@ class PatientView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
+
+    def validatePostArgs(self, data):
+        valid = True
+        kwargs = data
+        keys = ["paternal_last",
+                "maternal_last",
+                "first",
+                "middle",
+                "suffix",
+                "prefix",
+                "dob",
+                "gender",
+                "street1",
+                "street2",
+                "city",
+                "colonia",
+                "state",
+                "phone1",
+                "phone2",
+                "email",
+                "emergencyfullname",
+                "emergencyphone",
+                "emergencyemail"]
+
+        for key, val in data.iteritems():
+            if not key in keys:
+                valid = False
+                break
+
+        for k in keys:
+            if not k in data:
+                valid = False
+                break
+
+        if valid:
+            try:
+                validtmp, state = self.validateState(data["state"])
+                if validtmp == True:
+                    kwargs["state"] = state
+                else:
+                    valid = False
+                try:
+                    kwargs["dob"] = datetime.strptime(data["dob"], '%m/%d/%Y')
+                except ValueError:
+                    valid = False
+                if data["gender"] in ["Male", "Female"]:
+                    kwargs["gender"] = data["gender"][0].lower()
+                else:
+                    valid = False;
+            except:
+                valid = False
+
+        return valid, kwargs
         
     def post(self, request, format=None):
         badRequest = False
         implError = False
 
         data = json.loads(request.body)
-        try:
-            paternal_last = data["paternal_last"]
-        except:
-            badRequest = True
-        try:
-            maternal_last = data["maternal_last"]
-        except:
-            badRequest = True
-        try:
-            first = data["first"]
-        except:
-            badRequest = True
-        try:
-            middle = data["middle"]
-        except:
-            badRequest = True
-        try:
-            suffix = data["suffix"]
-        except:
-            badRequest = True
-        try:
-            prefix = data["prefix"]
-        except:
-            badRequest = True
-        try:
-            dob = data["dob"]
-            dob = datetime.strptime(dob, "%m/%d/%Y")
-        except:
-            badRequest = True
-        try:
-            gender = data["gender"]
-        except:
+        valid, kwargs = self.validatePostArgs(data)
+
+        if not valid:
             badRequest = True
 
         if not badRequest:
             patient = None
 
-            # see if the patient already exists
+            # see if the patient already exists, using core subset of data
 
             try:
-                patient = Patient.objects.filter(paternal_last=paternal_last,
-                                                 maternal_last=maternal_last,
-                                                 first=first,
-                                                 middle=middle,
-                                                 suffix=suffix,
-                                                 prefix=prefix,
-                                                 dob=dob,
-                                                 gender=gender)
-                if not patient or len(patient) == 0:
-                    patient = None
-                else:
-                    patient = patient[0]
+                patient = Patient.objects.filter(paternal_last=kwargs["paternal_last"],
+                                                 first=kwargs["first"],
+                                                 dob=kwargs["dob"],
+                                                 gender=kwargs["gender"])
+                if patient and len(patient) > 0:
+                    badRequest = True;
             except:
                 implMsg = "Patient.objects.filter {} {}".format(sys.exc_info()[0], data)
                 implError = True
 
-            if not patient:
+            if not badRequest and not implError:
                 try:
-                    patient = Patient(paternal_last=paternal_last,
-                                      maternal_last=maternal_last,
-                                      first=first,
-                                      middle=middle,
-                                      suffix=suffix,
-                                      prefix=prefix,
-                                      dob=dob,
-                                      gender=gender)
+                    patient = Patient(**kwargs)
                     if patient:
                         patient.save()
                     else:

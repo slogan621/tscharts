@@ -260,7 +260,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -311,7 +322,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -362,7 +384,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -404,7 +437,18 @@ class TestTSRoutingSlip(unittest.TestCase):
             data["suffix"] = "Jr."
             data["prefix"] = ""
             data["dob"] = "04/01/1962"
-            data["gender"] = "f"
+            data["gender"] = "Female"
+            data["street1"] = "1234 First Ave"
+            data["street2"] = ""
+            data["city"] = "Ensenada"
+            data["colonia"] = ""
+            data["state"] = u"Baja California"
+            data["phone1"] = "1-111-111-1111"
+            data["phone2"] = ""
+            data["email"] = "patient@example.com"
+            data["emergencyfullname"] = "Maria Sanchez"
+            data["emergencyphone"] = "1-222-222-2222"
+            data["emergencyemail"] = "maria.sanchez@example.com"
 
             x = CreatePatient(host, port, token, data)
             ret = x.send(timeout=30)
@@ -430,12 +474,14 @@ class TestTSRoutingSlip(unittest.TestCase):
             self.assertTrue(int(ret[1]["clinic"] == clinicid))
             pid = int(ret[1]["patient"])
             self.assertTrue(pid in patients)
-            patients.remove(pid)
-
-        self.assertTrue(len(patients) == 0)
 
         for i in routingslips:
             x = DeleteRoutingSlip(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in patients:
+            x = DeletePatient(host, port, token, i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
@@ -461,7 +507,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -507,7 +564,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -608,7 +676,18 @@ class TestTSRoutingSlip(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -701,7 +780,18 @@ class TestTSRoutingSlip(unittest.TestCase):
             data["suffix"] = "Jr."
             data["prefix"] = ""
             data["dob"] = "04/01/1962"
-            data["gender"] = "f"
+            data["gender"] = "Female"
+            data["street1"] = "1234 First Ave"
+            data["street2"] = ""
+            data["city"] = "Ensenada"
+            data["colonia"] = ""
+            data["state"] = u"Baja California"
+            data["phone1"] = "1-111-111-1111"
+            data["phone2"] = ""
+            data["email"] = "patient@example.com"
+            data["emergencyfullname"] = "Maria Sanchez"
+            data["emergencyphone"] = "1-222-222-2222"
+            data["emergencyemail"] = "maria.sanchez@example.com"
 
             x = CreatePatient(host, port, token, data)
             ret = x.send(timeout=30)
@@ -793,12 +883,14 @@ class TestTSRoutingSlip(unittest.TestCase):
             self.assertTrue(int(ret[1]["clinic"] == clinicid))
             pid = int(ret[1]["patient"])
             self.assertTrue(pid in patients)
-            patients.remove(pid)
-
-        self.assertTrue(len(patients) == 0)
 
         for i in routingslips:
             x = DeleteRoutingSlip(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in patients:
+            x = DeletePatient(host, port, token, i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
@@ -831,7 +923,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -916,7 +1019,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -973,7 +1087,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1030,7 +1155,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1214,7 +1350,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1373,7 +1520,18 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1522,7 +1680,18 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1591,7 +1760,18 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1624,7 +1804,18 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1674,7 +1865,18 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -1762,7 +1964,18 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         data["suffix"] = "Jr."
         data["prefix"] = ""
         data["dob"] = "04/01/1962"
-        data["gender"] = "f"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
