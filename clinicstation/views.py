@@ -208,24 +208,15 @@ class ClinicStationView(APIView):
                 notFound = True 
             else:
                 try:
-                    print "begin put"
                     if not (awaytime == None):
-                        print "1"
                         clinic_station.awaytime = awaytime
                     if not (active == None):
-                        print "2"
                         clinic_station.active=active
-                        print "3"
                         if active == False:
-                            print "4"
                             clinic_station.willreturn = datetime.now() + timedelta(minutes=clinic_station.awaytime)
-                            print "5"
                     if not (level == None):
-                        print "6"
                         clinic_station.level=level
-                        print "7"
                     clinic_station.save()
-                    print "8"
                 except:
                     implError = True
                     implMsg = sys.exc_info()[0] 
