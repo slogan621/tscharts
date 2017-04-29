@@ -443,6 +443,21 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(test1id in ret)
 
         x = GetAllPatients(host, port, token)
+        x.setLastName("Flintstone")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = GetAllPatients(host, port, token)
+        x.setDob("1/1/1970")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = GetAllPatients(host, port, token)
+        x.setFirstName("Fred")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = GetAllPatients(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
