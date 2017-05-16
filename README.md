@@ -78,6 +78,9 @@ active at the clinic. Each clinicstation is created before the clinic.
  * medicalhistory - patient status recorded at the time the patient registers. Records the overall health of the patient. 
     * [API](../master/medicalhistory/README.md)  
     * [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
+ * mexicanstates - Used to get a list of Mexican state names as UTF-8 strings.
+    * [API](../master/mexicanstates/README.md)  
+    * [Unit Tests](../master/test/mexicanstates/mexicanstates.py)
  * register - a tuple that records the registration of a patient at a specific clinic. Also records the checkin and checkout times of the patient. 
     * [API](../master/register/README.md)  
     * [Unit Tests](../master/test/register/register.py)

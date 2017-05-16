@@ -49,6 +49,7 @@ urlpatterns = [
     url(r'^tscharts/v1/returntoclinic/', include('returntoclinic.urls', namespace='returntoclinic')),
     url(r'^tscharts/v1/routingslip/', include('routingslip.rsurls', namespace='routingslip')),
     url(r'^tscharts/v1/routingslipcomment/', include('routingslip.rscommenturls', namespace='routingslipcomment')),
+    url(r'^tscharts/v1/mexicanstates/', include('mexicanstates.urls', namespace='mexicanstates')),
     url(r'^tscharts/v1/routingslipentry/', include('routingslip.rsentryurls', namespace='routingslipentry')),
     url(r'^tscharts/v1/statechange/', include('statechange.urls', namespace='statechange')),
     url(r'^tscharts/v1/station/', include('station.urls', namespace='station')),
