@@ -140,10 +140,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Optional:**
  
-   `away` true if station is away at creation, else false (default)<br />
-   `active` true if station is active at creation, else false (default)<br />
+   `away` true if clinic station is away (i.e., station personnel are not present), else false (default is true)<br />
+   `active` true if clinic station is active (i.e., a patient is currently being seen), else false (default is false)<br />
    `level` priority level. Default is 1.<br />
-   `awaytime` length of time from when `away` set to true until the clinicstration will be available once again for patients (by setting `away` to false). Default is 30 minutes.<br />
+   `awaytime` length of time from when `away` is set to true until the clinic station is expected to become available once again for patients (by setting `away` to false). Default is 30 minutes.<br />
 
 * **Success Response:**
 
@@ -203,8 +203,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    One of the following is required. Both can be specified.
  
-   `away` true if station is away else false. See `awaytime`<br />
-   `active` true if station is servicing a patient, else false<br />
+   `away` true if station is away (no personnel) else false. See `awaytime`<br />
+   `active` true if station is actively servicing a patient, else false<br />
    `level` priority level. Default is 1.<br />
    `awaytime` whenever `away` is set to true, `awaytime` is used to calculate the UTC time at which the station is expected to reopen. By default, `awaytime` is 30 minutes. In GET requests, the expected return time is returned as a UTC time string as `willreturn` in the JSON payload.<br />
 
