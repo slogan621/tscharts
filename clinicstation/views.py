@@ -58,9 +58,17 @@ class ClinicStationView(APIView):
 
             if not badRequest:
                 if "active" in data:
-                    kwargs["active"] = data["active"]
+                    if not data["active"] in [True, False]:
+                        badRequest = True
+                    else:
+                        kwargs["active"] = data["active"]
                 if "level" in data:
                     kwargs["level"] = data["level"]
+                if "away" in data:
+                    if not data["away"] in [True, False]:
+                        badRequest = True
+                    else:
+                        kwargs["away"] = data["away"]
 
                 try:
                     clinic_station = ClinicStation.objects.filter(**kwargs)
@@ -77,6 +85,7 @@ class ClinicStationView(APIView):
                 m["station"] = clinic_station.station_id
                 m["active"] = clinic_station.active
                 m["level"] = clinic_station.level
+                m["away"] = clinic_station.away
                 m["awaytime"] = clinic_station.awaytime
                 m["willreturn"] = clinic_station.willreturn
                 ret = m
@@ -89,6 +98,7 @@ class ClinicStationView(APIView):
                     m["station"] = x.station_id
                     m["active"] = x.active
                     m["level"] = x.level
+                    m["away"] = x.away
                     m["awaytime"] = x.awaytime
                     m["willreturn"] = x.willreturn
                     ret.append(m)
@@ -118,8 +128,23 @@ class ClinicStationView(APIView):
             else:
                 kwargs["active"] = active
 
+        if "away" in data:
+            away = data["away"]
+            if not away == True and not away == False:
+                badRequest = True
+            else:
+                kwargs["away"] = away
+
         if "level" in data:
             kwargs["level"] = data["level"]
+
+        if "awaytime" in data:
+            awaytime = data["awaytime"]
+        else:
+            awaytime = 30
+
+        kwargs["awaytime"] = awaytime
+        kwargs["willreturn"] = datetime.now() + timedelta(minutes=awaytime)
 
         if not badRequest:
 
@@ -180,18 +205,25 @@ class ClinicStationView(APIView):
         notFound = False
         active = None
         level = None
+        away = None
         awaytime = None
 
         data = json.loads(request.body)
 
         if "active" in data:
             active = data["active"]
+            if not active == True and not active == False:
+                badRequest = True
+        if "away" in data:
+            away = data["away"]
+            if not away == True and not away == False:
+                badRequest = True
         if "level" in data:
             level = data["level"]
         if "awaytime" in data:
             awaytime = data["awaytime"]
 
-        if level == None and active == None and awaytime == None:
+        if level == None and away == None and active == None and awaytime == None:
             badRequest = True
 
         if not badRequest:
@@ -210,10 +242,12 @@ class ClinicStationView(APIView):
                 try:
                     if not (awaytime == None):
                         clinic_station.awaytime = awaytime
+                    if not (away == None):
+                        clinic_station.away = away
+                        if away == True:
+                            clinic_station.willreturn = datetime.now() + timedelta(minutes=clinic_station.awaytime)
                     if not (active == None):
                         clinic_station.active=active
-                        if active == False:
-                            clinic_station.willreturn = datetime.now() + timedelta(minutes=clinic_station.awaytime)
                     if not (level == None):
                         clinic_station.level=level
                     clinic_station.save()
