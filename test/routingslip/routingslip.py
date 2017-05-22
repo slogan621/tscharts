@@ -13,7 +13,6 @@ from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.patient.patient import CreatePatient, DeletePatient
 from test.station.station import CreateStation, DeleteStation
-from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation
 from test.clinic.clinic import CreateClinic, DeleteClinic
 
 class CreateRoutingSlip(ServiceAPI):
@@ -105,8 +104,8 @@ class CreateRoutingSlipEntry(ServiceAPI):
         self.setPayload(self._payload)
         self.setURL("tscharts/v1/routingslipentry/")
 
-    def setClinicStation(self, clinicstation):
-        self._payload["clinicstation"] = clinicstation
+    def setStation(self, station):
+        self._payload["station"] = station
         self.setPayload(self._payload)
     
     def setRoutingSlip(self, routingslip):
@@ -136,8 +135,8 @@ class GetRoutingSlipEntry(ServiceAPI):
         self._payload["routingslip"] = routingslip
         self.setPayload(self._payload)
     
-    def setClinicStation(self, clinicstation):
-        self._payload["clinicstation"] = clinicstation
+    def setStation(self, station):
+        self._payload["station"] = station
         self.setPayload(self._payload)
     
 class UpdateRoutingSlipEntry(ServiceAPI):
@@ -609,14 +608,6 @@ class TestTSRoutingSlip(unittest.TestCase):
 
         x = CreateRoutingSlip(host, port, token)
         x.setClinic(clinicid)
-        x.setPatient(patientid2)
-        x.setCategory("Unknown")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        ids.append(int(ret[1]["id"]))
-
-        x = CreateRoutingSlip(host, port, token)
-        x.setClinic(clinicid)
         x.setPatient(patientid3)
         x.setCategory("Dental")
         ret = x.send(timeout=30)
@@ -946,11 +937,6 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateRoutingSlip(host, port, token)
         x.setClinic(clinicid)
         x.setPatient(patientid)
@@ -961,7 +947,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
 
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid)
+        x.setStation(stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
@@ -971,20 +957,16 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 0))
-        self.assertTrue(ret[1]["state"] == "Scheduled")
+        self.assertTrue(ret[1]["state"] == "New")
 
         x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -1004,7 +986,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-    def testCreateRoutingSlipEntryBadClinicStation(self):
+    def testCreateRoutingSlipEntryBadStation(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -1052,7 +1034,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
 
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(9999)
+        x.setStation(9999)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
@@ -1110,20 +1092,11 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(9999)
-        x.setClinicStation(clinicstationid)
+        x.setStation(stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteStation(host, port, token, stationid)
         ret = x.send(timeout=30)
@@ -1186,14 +1159,9 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid)
+        x.setStation(stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
@@ -1203,20 +1171,16 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 0))
-        self.assertTrue(ret[1]["state"] == "Scheduled")
+        self.assertTrue(ret[1]["state"] == "New")
 
         x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -1235,49 +1199,34 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid1 = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid1)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid1 = int(ret[1]["id"])
-
         x = CreateStation(host, port, token, "Dental")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         stationid2 = int(ret[1]["id"])
-
-        x = CreateClinicStation(host, port, token, clinicid, stationid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid2 = int(ret[1]["id"])
 
         x = CreateStation(host, port, token, "Speech")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         stationid3 = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid3)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid3 = int(ret[1]["id"])
-
         ids = []
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid1)
+        x.setStation(stationid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ids.append(int(ret[1]["id"]))
 
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid2)
+        x.setStation(stationid2)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ids.append(int(ret[1]["id"]))
 
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid3)
+        x.setStation(stationid3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ids.append(int(ret[1]["id"]))
@@ -1298,18 +1247,6 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             y = GetRoutingSlipEntry(host, port, token, x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid1)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid3)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteStation(host, port, token, stationid1)
         ret = x.send(timeout=30)
@@ -1373,11 +1310,6 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateRoutingSlip(host, port, token)
         x.setClinic(clinicid)
         x.setPatient(patientid)
@@ -1388,7 +1320,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
 
         x = CreateRoutingSlipEntry(host, port, token)
         x.setRoutingSlip(routingslipid)
-        x.setClinicStation(clinicstationid)
+        x.setStation(stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
@@ -1398,20 +1330,20 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 0))
-        self.assertTrue(ret[1]["state"] == "Scheduled")
+        self.assertTrue(ret[1]["state"] == "New")
 
         x = UpdateRoutingSlipEntry(host, port, token, routingslipentryid)
         x.clearPayload()
         x.setState("Spaced Out")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)   # can't checkout a patient in Scheduled state
+        self.assertEqual(ret[0], 400)   
 
         x = UpdateRoutingSlipEntry(host, port, token, routingslipentryid)
         x.clearPayload()
@@ -1425,12 +1357,12 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 1))
         self.assertTrue(ret[1]["state"] == "Checked In")
 
@@ -1445,12 +1377,12 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 1))
         self.assertTrue(ret[1]["state"] == "Checked Out")
 
@@ -1465,12 +1397,12 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         self.assertTrue("routingslip" in ret[1])
-        self.assertTrue("clinicstation" in ret[1])
+        self.assertTrue("station" in ret[1])
         self.assertTrue("state" in ret[1])
         self.assertTrue("order" in ret[1])
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
-        self.assertTrue(int(ret[1]["clinicstation"] == clinicstationid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
         self.assertTrue(int(ret[1]["order"] == 15))
         self.assertTrue(ret[1]["state"] == "Checked Out")
 
@@ -1481,10 +1413,6 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -1547,7 +1475,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         routingslipid = int(ret[1]["id"])
 
         stationids = []
-        clinicstationids = []
+        stationids = []
         routingslipentryids = []
         stations = ["ENT", "Speech", "Dental", "Ortho", "Screening"]
         for i in stations:
@@ -1557,15 +1485,9 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             stationid = int(ret[1]["id"])
             stationids.append(stationid)
 
-            x = CreateClinicStation(host, port, token, clinicid, stationid)
-            ret = x.send(timeout=30)
-            self.assertEqual(ret[0], 200)
-            clinicstationid = int(ret[1]["id"])
-            clinicstationids.append(clinicstationid)
-
             x = CreateRoutingSlipEntry(host, port, token)
             x.setRoutingSlip(routingslipid)
-            x.setClinicStation(clinicstationid)
+            x.setStation(stationid)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             routingslipentryids.append(int(ret[1]["id"]))
@@ -1591,25 +1513,25 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         for i in results:
             self.assertTrue(i in routingslipentryids)
 
-        # search on clinicstation, returns single item 
+        # search on station, returns single item 
    
-        for i in clinicstationids: 
+        for i in stationids: 
             x = GetRoutingSlipEntry(host, port, token)
             x.setRoutingslip(routingslipid)
-            x.setClinicStation(i)
+            x.setStation(i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             results = ret[1]
             self.assertTrue("routingslip" in results)
             self.assertTrue(results["routingslip"] == routingslipid)
-            self.assertTrue("clinicstation" in results)
-            self.assertTrue(results["clinicstation"] == i)
+            self.assertTrue("station" in results)
+            self.assertTrue(results["station"] == i)
 
         # same thing, but don't pass routingslip
    
-        for i in clinicstationids: 
+        for i in stationids: 
             x = GetRoutingSlipEntry(host, port, token)
-            x.setClinicStation(i)
+            x.setStation(i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             results = ret[1]
@@ -1621,17 +1543,12 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         x = GetRoutingSlipEntry(host, port, token)
-        x.setClinicStation(9999)
+        x.setStation(9999)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
         for i in routingslipentryids:
             x = DeleteRoutingSlipEntry(host, port, token, i)
-            ret = x.send(timeout=30)
-            self.assertEqual(ret[0], 200)
-
-        for i in clinicstationids:
-            x = DeleteClinicStation(host, port, token, i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
@@ -1703,11 +1620,6 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         stationid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateRoutingSlip(host, port, token)
         x.setClinic(clinicid)
         x.setPatient(patientid)
@@ -1740,6 +1652,10 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
         x = DeleteRoutingSlip(host, port, token, routingslipid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteStation(host, port, token, stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 

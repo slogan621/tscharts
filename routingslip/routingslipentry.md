@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"order":integer [1-n],"state":"Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"clinicstation":id}`
+    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"station":id}`
 
 * **Error Response:**
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"order":1,"state":"Checked In","routingslip":32479,"id":811,"clinicstation":353}
+{"order":1,"state":"Checked In","routingslip":32479,"id":811,"station":353}
 ```
   
 **Get Multiple Routing Slip Entry Resources**
@@ -76,8 +76,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    on what is passed, either a routingslip object or an array of routingslip
    object ids is returned.
 
-   `routingslip` routingslip id. If specified with a clinicstation, a single routing slip entry is returned. Otherwise, all routing slip entries for the routing slip are returned in an array.<br />
-   `clinicstation` clinicstation id. If specified alone, routing slips entires for all patients are returned for the clinicstation. If specified with routingslip, then a single routing slip entry is returned. <br />
+   `routingslip` routingslip id. If specified with a station, a single routing slip entry is returned. Otherwise, all routing slip entries for the routing slip are returned in an array.<br />
+   `station` station id. If specified alone, routing slips entries for all patients are returned for the station. If specified with routingslip, then a single routing slip entry is returned. <br />
 
    **Optional:**
 
@@ -87,7 +87,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
   * **Code:** 200 <br />
     **Content (patient & clinic):** `[id, id, id, ...]`<br>
-    **Content:** `{"order":integer [1-n],"state":"Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"clinicstation":id}`
+    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"station":id}`
  
 * **Error Response:**
 
@@ -140,7 +140,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    **Required:**
  
    `routingslip` routingslip resource id<br/>
-   `clinicstation` clinicstation resource id<br/>
+   `station` station resource id<br/>
 
    **Optional:**
 
@@ -170,7 +170,7 @@ Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
 
-{"routingslip": 32475, "clinicstation": 342}HTTP/1.0 200 OK
+{"routingslip": 32475, "station": 342}HTTP/1.0 200 OK
 Date: Sun, 23 Apr 2017 21:15:18 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -205,7 +205,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    One of the following is required. If both are missing, a bad request is returned.
 
    `order` integer - the order of this item in the set of routing slip entries for the specified routingslip<br/>
-   `state` string, one of "Scheduled" | "Checked In" | "Checked Out" | "Removed" <br/>
+   `state` string, one of "New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" <br/>
 
 * **Success Response:**
 

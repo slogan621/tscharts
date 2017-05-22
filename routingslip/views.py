@@ -18,7 +18,6 @@ from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from clinicstation.models import *
 from station.models import *
 from clinic.models import *
 from routingslip.models import *
@@ -42,15 +41,13 @@ class RoutingSlipView(APIView):
                            'd': "Dental",
                            'r': "Returning Cleft",
                            'o': "Ortho",
-                           't': "Other",
-                           'u': "Unknown"} 
+                           't': "Other"}
 
         self.textToCats = {"New Cleft": 'n',
                            "Dental": 'd',
                            "Returning Cleft": 'r',
                            "Ortho": 'o',
-                           "Other": 't',
-                           "Unknown": 'u'} 
+                           "Other": 't'}
 
     def serialize(self, entry):
 
@@ -188,7 +185,7 @@ class RoutingSlipView(APIView):
         except:
             badParam = True
 
-        if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Unknown", "Other"]:
+        if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Other"]:
             badParam = True
         else:
             category = self.textToCats[category]
@@ -254,7 +251,7 @@ class RoutingSlipView(APIView):
         data = json.loads(request.body)
         try:
             category = data["category"]
-            if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Unknown", "Other"]:
+            if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Other"]:
                 badParam = True
             else:
                 category = self.textToCats[category]
@@ -340,8 +337,8 @@ class RoutingSlipEntryView(APIView):
 
     def __init__(self):
         super(RoutingSlipEntryView, self).__init__()
-        self.stateToText = {"s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed"}
-        self.textToState = {"Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r"}
+        self.stateToText = {"n": "New", "s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed"}
+        self.textToState = {"New": "n", "Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r"}
 
     def serialize(self, entry):
         error = False
@@ -350,7 +347,7 @@ class RoutingSlipEntryView(APIView):
             m = {}
             m["id"] = entry.id  
             m["routingslip"] = entry.routingslip_id  
-            m["clinicstation"] = entry.clinicstation_id
+            m["station"] = entry.station_id
             m["order"] = entry.order
             m["state"] = self.stateToText[entry.state]
         except:
@@ -365,7 +362,7 @@ class RoutingSlipEntryView(APIView):
         badRequest = False
         notFound = False
         aRoutingSlip = None
-        aClinicStation = None
+        aStation = None
 
         if routing_slip_entry_id:
             try:
@@ -387,34 +384,34 @@ class RoutingSlipEntryView(APIView):
             except:
                 pass
             try:
-                clinicstationid = int(data["clinicstation"])
+                stationid = int(data["station"])
                 try:
-                    aClinicStation = ClinicStation.objects.get(id=clinicstationid)
-                    if not aClinicStation:
+                    aStation = Station.objects.get(id=stationid)
+                    if not aStation:
                         notFound = True
                 except:
-                    aClinicStation = None
+                    aStation = None
                     notFound = True
             except:
                 pass
 
-            if notFound == False and not aRoutingSlip and not aClinicStation:
+            if notFound == False and not aRoutingSlip and not aStation:
                 badRequest = True
 
             if not notFound and not badRequest:
-                if aRoutingSlip and not aClinicStation:
+                if aRoutingSlip and not aStation:
                     try:
                         routing_slip_entry = RoutingSlipEntry.objects.filter(routingslip=aRoutingSlip)
                     except:
                         routing_slip_entry = None
-                elif aClinicStation and not aRoutingSlip:
+                elif aStation and not aRoutingSlip:
                     try:
-                        routing_slip_entry = RoutingSlipEntry.objects.filter(clinicstation=aClinicStation)
+                        routing_slip_entry = RoutingSlipEntry.objects.filter(station=aStation)
                     except:
                         routing_slip_entry = None
                 else:
                     try:
-                        routing_slip_entry = RoutingSlipEntry.objects.get(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                        routing_slip_entry = RoutingSlipEntry.objects.get(station=aStation, routingslip=aRoutingSlip)
                     except:
                         routing_slip_entry = None
         if badRequest:
@@ -424,7 +421,7 @@ class RoutingSlipEntryView(APIView):
         if routing_slip_entry:
             if routing_slip_entry_id:
                 ret = self.serialize(routing_slip_entry)
-            elif aClinicStation and aRoutingSlip:
+            elif aStation and aRoutingSlip:
                 ret = self.serialize(routing_slip_entry)
             else:
                 ret = []
@@ -446,13 +443,13 @@ class RoutingSlipEntryView(APIView):
             badParam = True
 
         try:
-            clinicstationid = int(data["clinicstation"])
+            stationid = int(data["station"])
         except:
             badParam = True
 
         if not badParam:
 
-            # get the routingslip and clinicstation instances
+            # get the routingslip and station instances
 
             try:
                 aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
@@ -460,11 +457,11 @@ class RoutingSlipEntryView(APIView):
                 aRoutingSlip = None
  
             try:
-                aClinicStation = ClinicStation.objects.get(id=clinicstationid)
+                aStation = Station.objects.get(id=stationid)
             except:
-                aClinicStation = None
+                aStation = None
 
-            if not aRoutingSlip or not aClinicStation:
+            if not aRoutingSlip or not aStation:
                 raise NotFound
 
         if not badParam:
@@ -474,7 +471,7 @@ class RoutingSlipEntryView(APIView):
             # see if the routing slip already exists
 
             try:
-                routing_slip_entry = RoutingSlipEntry.objects.filter(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                routing_slip_entry = RoutingSlipEntry.objects.filter(station=aStation, routingslip=aRoutingSlip)
                 if not routing_slip_entry or len(routing_slip_entry) == 0:
                     routing_slip_entry = None
                 else:
@@ -484,7 +481,7 @@ class RoutingSlipEntryView(APIView):
 
             if not routing_slip_entry:
                 try:
-                    routing_slip_entry = RoutingSlipEntry(clinicstation=aClinicStation, routingslip=aRoutingSlip)
+                    routing_slip_entry = RoutingSlipEntry(station=aStation, routingslip=aRoutingSlip)
                     if routing_slip_entry:
                         routing_slip_entry.save()
                     else:
@@ -510,13 +507,13 @@ class RoutingSlipEntryView(APIView):
 
         if ret:
             if old == "i":
-                if new == "s":
+                if new in ["s", "n", "r"]:
                     ret = False
             elif old == "o":
-                if new == "s" or new == "r":
+                if new in ["s", "r", "i", "n"]:
                     ret = False
             elif old == "r":
-                if new == "i" or new == "o":
+                if new in ["i", "o", "s"]:
                     ret = False
         return ret
 

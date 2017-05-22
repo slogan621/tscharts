@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from clinic.models import Clinic
 from patient.models import Patient
-from clinicstation.models import ClinicStation 
+from station.models import Station 
 
 '''
 Routing slip identifies the patient, the clinic, and category of patient.
@@ -25,8 +25,7 @@ class RoutingSlip(models.Model):
                         (DENTAL, "Dental"),
                         (RETCLEFT, "Returning Cleft"),
                         (ORTHO, "Ortho"),
-                        (OTHER, "Other"),
-                        (UNKNOWN, "Unknown"),)
+                        (OTHER, "Other"))
 
     category = models.CharField(
         max_length = 1,
@@ -49,21 +48,22 @@ a dentist). This classification is made by assigning the patient a
 category at registration. The category can also be changed during a
 stay, which will trigger in some way changes to the routing slip.
 
-When an item is added to the routing slip, its state is SCHEDULED. 
+When an item is added to the routing slip, its state is NEW. 
 Removal does not result in the record being deleted from the database, 
-rather it is just a state change to REMOVED state. Once a patient has 
-visited a station, the routing slip entry is marked VISITED.
+rather it is just a state change to REMOVED state.
 '''
  
 class RoutingSlipEntry(models.Model):
     routingslip = models.ForeignKey(RoutingSlip)
-    clinicstation = models.ForeignKey(ClinicStation)
+    station = models.ForeignKey(Station)
     order = models.IntegerField(default=0)   
-    SCHEDULED = 's'   # checkin to station is pending (or clinic ended)
+    NEW = 'n'           # newly created, needs to be placed in a queue
+    SCHEDULED = 's'     # is sitting in a queue
     CHECKEDIN = 'i'     # patient was checked in at the station
-    CHECKEDOUT = 'o'     # patient was checked in at the station
-    REMOVED = 'r'     # entry was removed by someone before seen by station
-    STATE_CHOICES = ((SCHEDULED, "Scheduled"), 
+    CHECKEDOUT = 'o'    # patient was checked in at the station
+    REMOVED = 'r'       # entry was removed by someone before seen by station
+    STATE_CHOICES = ((NEW, "New"), 
+                     (SCHEDULED, "Scheduled"), 
                      (CHECKEDIN, "Checked In"),
                      (CHECKEDOUT, "Checked Out"),
                      (REMOVED, "Removed"),)
@@ -71,7 +71,7 @@ class RoutingSlipEntry(models.Model):
     state = models.CharField(
         max_length = 1,
         choices = STATE_CHOICES,
-        default = SCHEDULED,
+        default = NEW,
     )
 
 class RoutingSlipComment(models.Model):
