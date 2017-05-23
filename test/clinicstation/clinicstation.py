@@ -13,7 +13,7 @@ from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.station.station import CreateStation, DeleteStation
 
 class CreateClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, clinic, station, active=False, away=True):
+    def __init__(self, host, port, token, clinic, station, active=False, away=True, name=""):
         super(CreateClinicStation, self).__init__()
         
         self.setHttpMethod("POST")
@@ -21,7 +21,7 @@ class CreateClinicStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"clinic": clinic, "away": away, "station": station, "active": active}
+        payload = {"clinic": clinic, "away": away, "station": station, "active": active, "name": name}
         self.setPayload(payload)
         self.setURL("tscharts/v1/clinicstation/")
     
@@ -53,6 +53,10 @@ class UpdateClinicStation(ServiceAPI):
 
     def setActive(self, active):
         self._payload["active"] = active
+        self.setPayload(self._payload)
+
+    def setName(self, name):
+        self._payload["name"] = name
         self.setPayload(self._payload)
 
     def setLevel(self, level):
@@ -109,7 +113,7 @@ class TestTSClinicStation(unittest.TestCase):
 
         # default active and away state 
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid)
+        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test1")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -126,6 +130,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue(ret[1]["active"] == False)
         self.assertTrue("away" in ret[1])
         self.assertTrue(ret[1]["away"] == True)
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "test1")
 
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
@@ -136,7 +142,7 @@ class TestTSClinicStation(unittest.TestCase):
 
         # explicit active state
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid, active=False)
+        x = CreateClinicStation(host, port, token, clinicid, stationid, active=False, name="test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -151,6 +157,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue(stationId == stationid)
         self.assertTrue("active" in ret[1])
         self.assertTrue(ret[1]["active"] == False)
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "test2")
 
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
@@ -174,6 +182,9 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue(stationId == stationid)
         self.assertTrue("active" in ret[1])
         self.assertTrue(ret[1]["active"] == True)
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "")
+
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -318,11 +329,14 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("active" in ret[1])
         self.assertTrue(ret[1]["active"] == True) 
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "") 
 
         x = UpdateClinicStation(host, port, token, clinicstationid)
         x.setActive(False)
         x.setAway(True)
         x.setAwayTime(15)
+        x.setName("Dental 1")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -335,6 +349,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue(ret[1]["active"] == False)
         self.assertTrue("awaytime" in ret[1])
         self.assertTrue(ret[1]["awaytime"] == 15)
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "Dental 1")
         self.assertTrue("willreturn" in ret[1])
 
         x = UpdateClinicStation(host, port, token, clinicstationid)

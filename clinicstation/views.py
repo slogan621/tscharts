@@ -81,6 +81,7 @@ class ClinicStationView(APIView):
             if clinic_station_id:
                 m = {}
                 m["id"] = clinic_station.id  
+                m["name"] = clinic_station.name
                 m["clinic"] = clinic_station.clinic_id
                 m["station"] = clinic_station.station_id
                 m["active"] = clinic_station.active
@@ -94,6 +95,7 @@ class ClinicStationView(APIView):
                 for x in clinic_station:
                     m = {}
                     m["id"] = x.id  
+                    m["name"] = x.name
                     m["clinic"] = x.clinic_id
                     m["station"] = x.station_id
                     m["active"] = x.active
@@ -118,6 +120,11 @@ class ClinicStationView(APIView):
 
         try:
             stationid = int(data["station"])
+        except:
+            badRequest = True
+
+        try:
+            kwargs["name"] = data["name"]
         except:
             badRequest = True
 
@@ -205,6 +212,7 @@ class ClinicStationView(APIView):
         notFound = False
         active = None
         level = None
+        name = None
         away = None
         awaytime = None
 
@@ -222,6 +230,8 @@ class ClinicStationView(APIView):
             level = data["level"]
         if "awaytime" in data:
             awaytime = data["awaytime"]
+        if "name" in data:
+            name = data["name"]
 
         if level == None and away == None and active == None and awaytime == None:
             badRequest = True
@@ -250,6 +260,8 @@ class ClinicStationView(APIView):
                         clinic_station.active=active
                     if not (level == None):
                         clinic_station.level=level
+                    if not (name == None):
+                        clinic_station.name=name
                     clinic_station.save()
                 except:
                     implError = True

@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer}`
+    **Content:** `{"name": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer}`
  
 * **Error Response:**
 
@@ -48,7 +48,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"level":1,"awaytime":30,"clinic":360,"station":227,"away":true,"active":false,"willreturn":"2017-04-26T05:29:15Z","id":21}
+{"name":"Dental 1","level":1,"awaytime":30,"clinic":360,"station":227,"away":true,"active":false,"willreturn":"2017-04-26T05:29:15Z","id":21}
 ```
   
 **Get Multiple Clinic Stations**
@@ -82,7 +82,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
+    **Content:** `[{"name":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
  
 * **Error Response:**
 
@@ -112,7 +112,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-[{"level":1,"awaytime":30,"clinic":362,"station":229,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":25},{"level":1,"awaytime":30,"clinic":362,"station":207,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":26},{"level":1,"awaytime":30,"clinic":362,"station":208,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":27},{"level":1,"awaytime":30,"clinic":362,"station":209,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":28},{"level":1,"awaytime":30,"clinic":362,"station":210,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":29}]
+[{"name":"Dental 1","level":1,"awaytime":30,"clinic":362,"station":229,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":25},{"name":"Dental 2","level":1,"awaytime":30,"clinic":362,"station":207,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":26},{"name":"Dental 3","level":1,"awaytime":30,"clinic":362,"station":208,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":27},{"name":"Dental 4","level":1,"awaytime":30,"clinic":362,"station":209,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":28},{"name":"Dental 5","level":1,"awaytime":30,"clinic":362,"station":210,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":29}]
 ```
   
 **Create Clinic Station**
@@ -137,6 +137,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
    `clinic` clinic resource id<br />
    `station` station resource id<br />
+   `name` name (e.g., "Dental 1"<br />
 
    **Optional:**
  
@@ -169,7 +170,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"active": false, "away":true, "clinic": 360, "station": 227}HTTP/1.0 200 OK
+{"name":"Dental 1", "active": false, "away":true, "clinic": 360, "station": 227}HTTP/1.0 200 OK
 Date: Wed, 26 Apr 2017 05:29:15 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -201,10 +202,11 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Required:**
 
-   One of the following is required. Both can be specified.
+   One or more of the following is required. 
  
    `away` true if station is away (no personnel) else false. See `awaytime`<br />
-   `active` true if station is actively servicing a patient, else false<br />
+   `active` true if clinic station is actively servicing a patient, else false<br />
+   `name` clinic station name.<br />
    `level` priority level. Default is 1.<br />
    `awaytime` whenever `away` is set to true, `awaytime` is used to calculate the UTC time at which the station is expected to reopen. By default, `awaytime` is 30 minutes. In GET requests, the expected return time is returned as a UTC time string as `willreturn` in the JSON payload.<br />
 

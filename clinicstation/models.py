@@ -40,6 +40,7 @@ she attends).
 ''' 
 
 class ClinicStation(models.Model):
+    name = models.CharField(max_length=64)
     station = models.ForeignKey(Station)
     clinic = models.ForeignKey(Clinic)
     active = models.BooleanField(default=False)
