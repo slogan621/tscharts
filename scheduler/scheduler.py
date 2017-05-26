@@ -90,6 +90,8 @@ class Scheduler():
                     end = datetime.strptime(x["end"], "%m/%d/%Y")
                     if today >= start and today <= end:
                         retval = x
+                        self._clinicid = x["id"]
+                        self._clinic = x
                         break
         return retval
 
@@ -140,16 +142,17 @@ class Scheduler():
         ret = x.send(timeout=30)
 
     def run(self):
-        if not self._clinicid:
-            return
 
         while True:
             time.sleep(30)
+            clinic = self.getClinic()
+            if not clinic:
+                continue
 
             # get all the routing slips for the clinic
 
             x = GetRoutingSlip(self._host, self._port, self._token)
-            x.setClinic(self._clinicid)
+            x.setClinic(clinic["id"])
             ret = x.send(timeout=30)
             if ret[0] == 200:
                 results = ret[1]
