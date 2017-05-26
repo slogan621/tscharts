@@ -26,14 +26,36 @@ class CreateClinicStation(ServiceAPI):
         self.setURL("tscharts/v1/clinicstation/")
     
 class GetClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, id):
+    def __init__(self, host, port, token, id=None):
         super(GetClinicStation, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/clinicstation/{}".format(id))
+        self._payload = {}
+        self.setPayload(self._payload)
+       
+        if id:
+            self.setURL("tscharts/v1/clinicstation/{}".format(id))
+        else:
+            self.setURL("tscharts/v1/clinicstation/")
+
+    def setAway(self, away):
+        self._payload["away"] = away
+        self.setPayload(self._payload)
+
+    def setActive(self, active):
+        self._payload["active"] = active
+        self.setPayload(self._payload)
+
+    def setClinic(self, clinic):
+        self._payload["clinic"] = clinic
+        self.setPayload(self._payload)
+
+    def setLevel(self, level):
+        self._payload["level"] = level
+        self.setPayload(self._payload)
 
 class UpdateClinicStation(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -43,8 +65,8 @@ class UpdateClinicStation(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        payload = {}
-        self.setPayload(payload)
+        self._payload = {}
+        self.setPayload(self._payload)
         self.setURL("tscharts/v1/clinicstation/{}/".format(id))
 
     def setAway(self, away):
@@ -66,18 +88,6 @@ class UpdateClinicStation(ServiceAPI):
     def setAwayTime(self, minutes):
         self._payload["awaytime"] = minutes
         self.setPayload(self._payload)
-
-class GetAllClinicStations(ServiceAPI):
-    def __init__(self, host, port, token, clinicid, active=False, away=False):
-        super(GetAllClinicStations, self).__init__()
-        
-        self.setHttpMethod("GET")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        payload = {"clinic": clinicid, "active": active}
-        self.setPayload(payload)
-        self.setURL("tscharts/v1/clinicstation/")
 
 class DeleteClinicStation(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -475,7 +485,8 @@ class TestTSClinicStation(unittest.TestCase):
         ids.append(ret[1]["id"])
         delids.append(ret[1]["id"])
 
-        x = GetAllClinicStations(host, port, token, clinicid, active=False)
+        x = GetClinicStation(host, port, token)
+        x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         stations = ret[1]
@@ -492,7 +503,8 @@ class TestTSClinicStation(unittest.TestCase):
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        x = GetAllClinicStations(host, port, token, clinicid, active=False)
+        x = GetClinicStation(host, port, token)
+        x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         stations = ret[1]
