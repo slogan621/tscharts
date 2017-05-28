@@ -22,7 +22,7 @@ from datetime import datetime
 
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
-from test.routingslip.routingslip import GetRoutingSlip, GetRoutingSlipEntry
+from test.routingslip.routingslip import GetRoutingSlip, GetRoutingSlipEntry, UpdateRoutingSlipEntry
 from test.clinic.clinic import GetClinic, GetAllClinics
 from test.clinicstation.clinicstation import GetClinicStation
 
@@ -95,8 +95,8 @@ class Scheduler():
                         break
         return retval
 
-    def getClinicStationForStation(stationid):
-        return self.stationToClinicStationMap[str(stationid)]
+    def getClinicStationForStation(self, stationid):
+        return self._stationToClinicStationMap[str(stationid)]
 
     def getClinicStations(self):
         retval = []
@@ -111,8 +111,9 @@ class Scheduler():
         return retval
 
     def addToQueue(self, entry):
-        clinicstation = getClinicStationForStation(entry["station"])
-        self._queues[str(clinicstation)].append(entry)
+        clinicstation = self.getClinicStationForStation(entry["station"])
+        if not entry in self._queues[str(clinicstation)]:
+            self._queues[str(clinicstation)].append(entry)
 
     def findQueueableEntry(self, routing):
         retval = None      # default: nothing to queue on this routing slip
