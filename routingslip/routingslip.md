@@ -23,7 +23,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other" | "Unknown","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}`
+    **Content:** `{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}`
 
 * **Error Response:**
 
@@ -86,8 +86,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content (patient & clinic):** `{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other" | "Unknown","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}`<br/>
-    **Content (patient | clinic):** `[{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other" | "Unknown","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}, ...]`
+    **Content (patient & clinic):** `{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}`<br/>
+    **Content (patient | clinic):** `[{"category":"New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other","patient":id,"comments":[id, id, id, ...],"clinic":id,"routing":[id, id, id,...],"id":id}, ...]`
  
 * **Error Response:**
 
@@ -164,7 +164,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
    `clinic` clinic resource id<br/>
    `patient` patient resource id<br/>
-   `category` string one of "New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other" | "Unknown"<br/>
+   `category` string one of "New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other"<br/>
 
    **Optional:**
 
@@ -226,7 +226,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Required:**
 
-   `category` string one of "New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other" | "Unknown"<br/>
+   `category` string one of "New Cleft" | "Dental" | "Returning Cleft" | "Ortho" | "Other"<br/>
 
 * **Success Response:**
 
