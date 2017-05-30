@@ -181,7 +181,8 @@ class ClinicStationView(APIView):
 
             try:
                 clinic_station = ClinicStation.objects.filter(clinic=aClinic,
-                                                              station=aStation)
+                                                              station=aStation,
+                                                              name=name)
                 if not clinic_station or len(clinic_station) == 0:
                     clinic_station = None
                 else:

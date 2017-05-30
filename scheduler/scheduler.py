@@ -14,7 +14,7 @@
 #limitations under the License.
 
 import daemon
-import getopt, sys, time
+import getopt, os, sys, time
 import json
 from datetime import datetime
 
@@ -29,9 +29,16 @@ from test.clinicstation.clinicstation import GetClinicStation
 class ClinicStationQueueEntry():
     def __init__(self):
         self._patientid = None
+        self._timein = datetime.utcnow()
+        self._elapsedtime = 0
+        self._timeout = 0
 
     def setPatient(self, id):
         self._patientid = id
+
+    def __str__(self):
+        self.elapsedtime = datetime.utcnow() - self._timein
+        return "id: {} iime in: {} elapsed time {}".format(self._patientid, self._timein.strftime("%H:%M:%S"), self._elapsedtime.strftime("%H:%M:%S"))
 
 class Scheduler():
     def __init__(self, host, port, username, password, clinicid=None):
@@ -43,7 +50,7 @@ class Scheduler():
         self._clinic = None
         self._clinicstations = []
         self._queues = {} 
-        self._stationToClinicStationMap = {}
+        self._stationToClinicStationMap = {} 
         fail = False
         try:
             login = Login(self._host, self._port, self._username, self._password)
@@ -59,15 +66,29 @@ class Scheduler():
             print("failed to login")
             sys.exit(2)
 
-        self._clinicstations = self.getClinicStations()
-        
-        for x in self._clinicstations:
-            self._queues[str(x["id"])] = [] 
-            self._stationToClinicStationMap[str(x["station"])]=x["id"]
-
     def __del__(self):
         logout = Logout(self._host, self._port)
         ret = logout.send(timeout=30)
+
+    def getClinicStationName(self, id):
+        ret = None
+        for x in self._clinicstations:
+            if x["id"] == id:
+                ret = x["name"]
+                break
+        return ret 
+
+    def updateClinicStations(self):
+        self._clinicstations = self.getClinicStations()
+        
+        for x in self._clinicstations:
+            idstring = str(x["id"])
+            if not idstring in self._queues:
+                self._queues[idstring] = [] 
+            if not str(x["station"]) in self._stationToClinicStationMap:
+                self._stationToClinicStationMap[str(x["station"])] = []
+            if not x["id"] in self._stationToClinicStationMap[str(x["station"])]:
+                self._stationToClinicStationMap[str(x["station"])].append(x["id"])
 
     def getClinic(self):
         retval = None
@@ -95,8 +116,33 @@ class Scheduler():
                         break
         return retval
 
-    def getClinicStationForStation(self, stationid):
+    def getClinicStationsForStation(self, stationid):
         return self._stationToClinicStationMap[str(stationid)]
+
+    def dumpQueues(self):
+        os.system("clear")
+        minQ = 9999
+        maxQ = -9999 
+        total = 0
+        numQueues = 0
+        print("\nClinic queue report UTC time {}\n".format(datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
+        for k, v in self._queues.iteritems():
+            print("***** Station {} *****".format(self.getClinicStationName(int(k))))
+            numQueues = numQueues + 1
+            if len(v):
+                print("{} patients waiting".format(len(v)))
+                total += len(v)
+                if len(v) < minQ:
+                    minQ = len(v)
+                if len(v) > maxQ:       
+                    maxQ = len(v)
+                for x in v:
+                    print("    {}".format(x))
+            else:
+                print("    No entries")
+        if numQueues > 0 and total > 0:
+            avg = total / numQueues
+            print("\nNumber of patients waiting {} smallest {} largest {} avg {}".format(total, minQ, maxQ, avg))
 
     def getClinicStations(self):
         retval = []
@@ -108,33 +154,90 @@ class Scheduler():
             ret = x.send(timeout=30)
             if ret[0] == 200:
                 retval = ret[1]
+                #print retval
         return retval
 
     def addToQueue(self, entry):
-        clinicstation = self.getClinicStationForStation(entry["station"])
-        if not entry in self._queues[str(clinicstation)]:
-            self._queues[str(clinicstation)].append(entry)
+        min = 9999      
+        index = None
+        clinicstations = self.getClinicStationsForStation(entry["station"])
+        for x in clinicstations:
+            tmp = len(self._queues[str(x)])
+            if tmp < min:
+                min = tmp
+                index = str(x) 
+        if not entry in self._queues[index]:
+            self._queues[index].append(entry)
 
-    def findQueueableEntry(self, routing):
-        retval = None      # default: nothing to queue on this routing slip
+    def sortQueueablesByPriority(self, queueables):
+        tmp = sorted(queueables, key=lambda k: k["order"])
+        ret = []
+
+        # create a list of the highest priority item
+        highest = -99999
+        for x in tmp:
+            if x["order"] >= highest:
+                ret.append(x)
+                highest = x["order"]
+            else:
+                break
+        return ret
+
+    def getSmallestLengthQueue(self, queueables):
+        ret = None
+        smallest = 9999
+
+        for x in queueables:
+            clinicstations = self.getClinicStationsForStation(x["station"])
+            for clinicstation in clinicstations:
+                tmp = len(self._queues[str(clinicstation)])
+                if tmp < smallest:
+                    ret = x
+                    smallest = tmp
+        return ret
+
+    def isWaiting(self, routing):
+        retval = False
+
         for x in routing:
             entry = GetRoutingSlipEntry(self._host, self._port, self._token, x)
             ret = entry.send(timeout=30)
             if ret[0] == 200:
                 state = ret[1]["state"] 
-                # if currently scheduled, then nothing to do for this patient
 
                 if state == "Scheduled":
-                    retval = None
+                    retval = True
                     break
 
-                if state == "New":
-                    # if this entry is the first or the hightest priority
-                    # seen so far, then select it
-                    if not retval:
-                        retval = ret[1]    # first seen for patient
-                    elif ret[1]["order"] > retval["order"]:
-                        retval = ret[1]    # highest priority
+        return retval
+
+    def findQueueableEntry(self, routing):
+        queueables = []
+        retval = None      # default: nothing to queue on this routing slip
+
+        if not self.isWaiting(routing):
+            for x in routing:
+                entry = GetRoutingSlipEntry(self._host, self._port, self._token, x)
+                ret = entry.send(timeout=30)
+                if ret[0] == 200:
+                    state = ret[1]["state"] 
+
+                    if state == "New":
+                        queueables.append(ret[1])
+
+        if len(queueables):
+
+            # found something to schedule, find highest priority with smallest queue size
+
+            if len(queueables) == 1:
+                retval = queueables[0]          # last station for this patient, choose it
+            else:       
+                # sort the queueables into stations in order of highest priority to lowest.
+
+                tmp = self.sortQueueablesByPriority(queueables)
+
+                retval = self.getSmallestLengthQueue(queueables) 
+                
         return retval
 
     def markScheduled(self, entry):
@@ -145,10 +248,12 @@ class Scheduler():
     def run(self):
 
         while True:
-            time.sleep(30)
             clinic = self.getClinic()
             if not clinic:
                 continue
+
+            self.updateClinicStations()
+            self.dumpQueues()
 
             # get all the routing slips for the clinic
 
@@ -169,7 +274,8 @@ class Scheduler():
                         # append the entry to the corresponding
                         # clinicstation queue
                         self.addToQueue(entry)
-
+                        break
+            time.sleep(5)
 def usage():
     print("scheduler [-c clinicid] [-h host] [-p port] [-u username] [-w password]")
 
