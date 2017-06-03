@@ -236,7 +236,7 @@ class Scheduler():
 
                 tmp = self.sortQueueablesByPriority(queueables)
 
-                retval = self.getSmallestLengthQueue(queueables) 
+                retval = self.getSmallestLengthQueue(tmp) 
                 
         return retval
 
