@@ -16,7 +16,7 @@
 import daemon
 import getopt, os, sys, time
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # unit tests provide a set of good utilities for accessing the web services.
 
@@ -36,9 +36,12 @@ class ClinicStationQueueEntry():
     def setPatient(self, id):
         self._patientid = id
 
+    def getElapsedTime(self):
+        return self._elapsedtime
+
     def __str__(self):
-        self.elapsedtime = datetime.utcnow() - self._timein
-        return "id: {} iime in: {} elapsed time {}".format(self._patientid, self._timein.strftime("%H:%M:%S"), self._elapsedtime.strftime("%H:%M:%S"))
+        self._elapsedtime = datetime.utcnow() - self._timein
+        return "id: {} time in: {} waiting time {}".format(self._patientid, self._timein.strftime("%H:%M:%S"), self._elapsedtime)
 
 class Scheduler():
     def __init__(self, host, port, username, password, clinicid=None):
@@ -123,13 +126,17 @@ class Scheduler():
         os.system("clear")
         minQ = 9999
         maxQ = -9999 
+        minWait = timedelta(days=999)
+        maxWait = timedelta(seconds=0)
         total = 0
         numQueues = 0
+        totalWait = timedelta(seconds=0)
         print("\nClinic queue report UTC time {}\n".format(datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
         for k, v in self._queues.iteritems():
             print("***** Station {} *****".format(self.getClinicStationName(int(k))))
-            numQueues = numQueues + 1
             if len(v):
+                localWait = timedelta(seconds=0)
+                numQueues = numQueues + 1
                 print("{} patients waiting".format(len(v)))
                 total += len(v)
                 if len(v) < minQ:
@@ -137,12 +144,21 @@ class Scheduler():
                 if len(v) > maxQ:       
                     maxQ = len(v)
                 for x in v:
-                    print("    {}".format(x))
+                    print("    {}".format(str(x["qent"])))
+                    wait = x["qent"].getElapsedTime()
+                    localWait += wait
+                    if wait < minWait:
+                        minWait = wait
+                    if wait > maxWait:
+                        maxWait = wait
+                    totalWait = totalWait + wait
+                print("avg wait: {}".format(localWait/len(v)))
             else:
                 print("    No entries")
         if numQueues > 0 and total > 0:
             avg = total / numQueues
-            print("\nNumber of patients waiting {} smallest {} largest {} avg {}".format(total, minQ, maxQ, avg))
+            avgWait = totalWait / total
+            print("\nNumber of patients waiting {} smallest Q {} largest Q {} avg Q {} smallest wait {} largest wait {} avg wait {}".format(total, minQ, maxQ, avg, minWait, maxWait, avgWait))
 
     def getClinicStations(self):
         retval = []
@@ -167,6 +183,9 @@ class Scheduler():
                 min = tmp
                 index = str(x) 
         if not entry in self._queues[index]:
+            qent = ClinicStationQueueEntry()
+            qent.setPatient(entry["id"])
+            entry["qent"] = qent
             self._queues[index].append(entry)
 
     def sortQueueablesByPriority(self, queueables):
