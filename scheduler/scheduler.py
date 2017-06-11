@@ -26,18 +26,50 @@ from test.routingslip.routingslip import GetRoutingSlip, GetRoutingSlipEntry, Up
 from test.clinic.clinic import GetClinic, GetAllClinics
 from test.clinicstation.clinicstation import GetClinicStation
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tscharts.settings")
+import django
+django.setup()
+
+from queue.models import QueueStatus, Queue, QueueEntry
+from clinic.models import Clinic
+from station.models import Station
+from clinicstation.models import ClinicStation 
+
 class ClinicStationQueueEntry():
     def __init__(self):
         self._patientid = None
         self._timein = datetime.utcnow()
         self._elapsedtime = 0
         self._timeout = 0
+        self._queueid = None
+        self._routingslipentryid = None
 
-    def setPatient(self, id):
-        self._patientid = id
+    def setQueue(self, id):
+        self._queueid = id
+
+    def setRoutingSlipEntry(self, id):
+        self._routingslipentryid = id
 
     def getElapsedTime(self):
         return self._elapsedtime
+
+    def update(self):
+        self._elapsedtime = datetime.utcnow() - self._timein
+        q = None
+        try:
+            q, c = QueueEntry.objects.get_or_create(queue=self._queueid,
+                                                    patient=self._patientid)
+        except:
+            print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            
+        if (q != None) :
+            q.timein = self._timein;
+            q.waittime = self._elapsedtime
+            q.routingslipentry = self._routingslipentryid
+            q.estwaittime = q.waittime  # XXX
+            q.save()
+        else:
+            print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
 
     def __str__(self):
         self._elapsedtime = datetime.utcnow() - self._timein
@@ -53,6 +85,7 @@ class Scheduler():
         self._clinic = None
         self._clinicstations = []
         self._queues = {} 
+        self._dbQueues = {}
         self._stationToClinicStationMap = {} 
         fail = False
         try:
@@ -81,12 +114,39 @@ class Scheduler():
                 break
         return ret 
 
+    def createQueue(self, clinicid, stationid, clinicstationid):
+        queue = None
+
+        try:
+            aClinic = Clinic.objects.get(id=clinicid)
+        except:
+            print("createQueue unable to get clinic {}".format(clinicid))
+        try:
+            aStation = Station.objects.get(id=stationid)
+        except:
+            print("createQueue unable to get station {}".format(stationid))
+        try:
+            aClinicStation = ClinicStation.objects.get(id=clinicstationid)
+        except:
+            print("createQueue unable to get clinicstation {}".format(clinicstationid))
+
+        try:
+            queue = Queue(clinic = aClinic,
+                          station = aStation,
+                          clinicstation = aClinicStation,
+                          avgservicetime = 0)
+            queue.save()
+        except:
+            print("createQueue unable to create queue")
+        return queue
+
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
         
         for x in self._clinicstations:
             idstring = str(x["id"])
             if not idstring in self._queues:
+                self._dbQueues[idstring] = self.createQueue(x["clinic"], x["station"], x["id"]) 
                 self._queues[idstring] = [] 
             if not str(x["station"]) in self._stationToClinicStationMap:
                 self._stationToClinicStationMap[str(x["station"])] = []
@@ -123,7 +183,7 @@ class Scheduler():
         return self._stationToClinicStationMap[str(stationid)]
 
     def dumpQueues(self):
-        os.system("clear")
+        #os.system("clear")
         minQ = 9999
         maxQ = -9999 
         minWait = timedelta(days=999)
@@ -184,7 +244,7 @@ class Scheduler():
                 index = str(x) 
         if not entry in self._queues[index]:
             qent = ClinicStationQueueEntry()
-            qent.setPatient(entry["id"])
+            qent.setRoutingSlipEntry(entry["id"])
             entry["qent"] = qent
             self._queues[index].append(entry)
 
