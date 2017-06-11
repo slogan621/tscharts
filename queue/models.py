@@ -22,6 +22,7 @@ from clinic.models import Clinic
 from station.models import Station
 from clinicstation.models import ClinicStation
 from routingslip.models import RoutingSlipEntry
+import datetime
 
 # data about all queues in clinic
 
@@ -31,9 +32,9 @@ class QueueStatus(models.Model):
     minq = models.IntegerField()
     maxq = models.IntegerField()
     avgq = models.IntegerField()
-    minwait = models.DateTimeField()
-    maxwait = models.DateTimeField()
-    avgwait = models.DateTimeField()
+    minwait = models.TimeField(default=datetime.time(0,0))
+    maxwait = models.TimeField(default=datetime.time(0,0))
+    avgwait = models.TimeField(default=datetime.time(0,0))
 
 # a specific queue 
 
@@ -49,6 +50,6 @@ class QueueEntry(models.Model):
     queue = models.ForeignKey(Queue)
     patient = models.ForeignKey(Patient)
     timein = models.DateTimeField()
-    waittime = models.DateTimeField() # timenow - timein
-    estwaittime = models.DateTimeField() # queue average service time * (number of patients ahead of this patient in the queue)
+    waittime = models.TimeField(default=datetime.time(0,0)) # timenow - timein
+    estwaittime = models.TimeField(default=datetime.time(0,0)) # queue average service time * (number of patients ahead of this patient in the queue)
     routingslipentry = models.ForeignKey(RoutingSlipEntry)

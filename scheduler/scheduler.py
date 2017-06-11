@@ -31,6 +31,8 @@ import django
 django.setup()
 
 from queue.models import QueueStatus, Queue, QueueEntry
+from routingslip.models import RoutingSlipEntry
+from patient.models import Patient
 from clinic.models import Clinic
 from station.models import Station
 from clinicstation.models import ClinicStation 
@@ -86,6 +88,7 @@ class Scheduler():
         self._clinicstations = []
         self._queues = {} 
         self._dbQueues = {}
+        self._dbQueueEntries = {}
         self._stationToClinicStationMap = {} 
         fail = False
         try:
@@ -114,21 +117,21 @@ class Scheduler():
                 break
         return ret 
 
-    def createQueue(self, clinicid, stationid, clinicstationid):
+    def createDbQueue(self, clinicid, stationid, clinicstationid):
         queue = None
 
         try:
             aClinic = Clinic.objects.get(id=clinicid)
         except:
-            print("createQueue unable to get clinic {}".format(clinicid))
+            print("createDbQueue unable to get clinic {}".format(clinicid))
         try:
             aStation = Station.objects.get(id=stationid)
         except:
-            print("createQueue unable to get station {}".format(stationid))
+            print("createDbQueue unable to get station {}".format(stationid))
         try:
             aClinicStation = ClinicStation.objects.get(id=clinicstationid)
         except:
-            print("createQueue unable to get clinicstation {}".format(clinicstationid))
+            print("createDbQueue unable to get clinicstation {}".format(clinicstationid))
 
         try:
             queue = Queue(clinic = aClinic,
@@ -137,8 +140,40 @@ class Scheduler():
                           avgservicetime = 0)
             queue.save()
         except:
-            print("createQueue unable to create queue")
+            print("createDbQueue unable to create queue")
         return queue
+
+    def createDbQueueEntry(self, queueid, patientid, routingslipentryid):
+        queueent = None
+
+        try:
+            aQueue = Queue.objects.get(id=queueid)
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("createDbQueueEntry unable to get queue {}".format(queueid))
+        try:
+            aPatient = Patient.objects.get(id=int(patientid))
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("createDbQueueEntry unable to get patient {}".format(patientid))
+        try:
+            aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("createDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+
+        try:
+            queueent = QueueEntry(queue = aQueue,
+                                  patient = aPatient,
+                                  timein = datetime.utcnow(),
+                                  #waittime = datetime.time(0,0),
+                                  #estwaittime = datetime.time(0,0),
+                                  routingslipentry = aRoutingSlipEntry)
+            queueent.save()
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("createDbQueueEntry unable to create queue entry")
+        return queueent
 
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
@@ -146,7 +181,7 @@ class Scheduler():
         for x in self._clinicstations:
             idstring = str(x["id"])
             if not idstring in self._queues:
-                self._dbQueues[idstring] = self.createQueue(x["clinic"], x["station"], x["id"]) 
+                self._dbQueues[idstring] = self.createDbQueue(x["clinic"], x["station"], x["id"]) 
                 self._queues[idstring] = [] 
             if not str(x["station"]) in self._stationToClinicStationMap:
                 self._stationToClinicStationMap[str(x["station"])] = []
@@ -183,7 +218,7 @@ class Scheduler():
         return self._stationToClinicStationMap[str(stationid)]
 
     def dumpQueues(self):
-        #os.system("clear")
+        os.system("clear")
         minQ = 9999
         maxQ = -9999 
         minWait = timedelta(days=999)
@@ -233,7 +268,7 @@ class Scheduler():
                 #print retval
         return retval
 
-    def addToQueue(self, entry):
+    def addToQueue(self, entry, patientid):
         min = 9999      
         index = None
         clinicstations = self.getClinicStationsForStation(entry["station"])
@@ -247,6 +282,13 @@ class Scheduler():
             qent.setRoutingSlipEntry(entry["id"])
             entry["qent"] = qent
             self._queues[index].append(entry)
+            dbQueue = self._dbQueues[index]
+            # create queue entry
+            dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
+                                                   patientid, 
+                                                   entry["id"])
+            if dbQueueEntry:
+                self._dbQueueEntries[index] = dbQueueEntry
 
     def sortQueueablesByPriority(self, queueables):
         tmp = sorted(queueables, key=lambda k: k["order"])
@@ -352,7 +394,7 @@ class Scheduler():
                         self.markScheduled(entry)
                         # append the entry to the corresponding
                         # clinicstation queue
-                        self.addToQueue(entry)
+                        self.addToQueue(entry, i["patient"])
                         break
             time.sleep(5)
 def usage():
