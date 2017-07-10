@@ -72,7 +72,6 @@ class TestTSQueue(unittest.TestCase):
     def testGetQueuesForClinic(self):
         x = GetQueue(host, port, token)
         x.setClinic(clinicid)
-        print clinicid
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 

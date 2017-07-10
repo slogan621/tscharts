@@ -88,23 +88,25 @@ class QueueView(APIView):
                     notFound = True
                 elif queueStatus and len(queueStatus) > 1:
                     internalError = True
+                else:
+                    queueStatus = queueStatus[0]
             except:
                 internalError = True
 
         if not notFound and not badRequest and not internalError:
-            ret["status"] = {"numwaiting": queueStatus["numWaiting"],
-                             "minq": queueStatus["minq"],
-                             "maxq": queueStatus["maxq"],
-                             "avgq": queueStatus["avgq"],
-                             "minwait": queueStatus["minwait"],
-                             "maxwait": queueStatus["maxwait"],
-                             "avgwait": queueStatus["avgwait"]}
+            ret["status"] = {"numwaiting": queueStatus.numwaiting,
+                             "minq": queueStatus.minq,
+                             "maxq": queueStatus.maxq,
+                             "avgq": queueStatus.avgq,
+                             "minwait": queueStatus.minwait,
+                             "maxwait": queueStatus.maxwait,
+                             "avgwait": queueStatus.avgwait}
             ret["queues"] = []
             for x in queues:
                 queueData = {}
                 aClinicStation = None
                 try:
-                    aClinicStation = ClinicStation.objects.get(id=x["clinicstation"])
+                    aClinicStation = ClinicStation.objects.get(id=x.clinicstation_id)
                 except:
                     aClinicStation = None
 
@@ -112,13 +114,13 @@ class QueueView(APIView):
                     internalError = True
                     break
 
-                queueData["name"] = aClinicStation["name"]
-                queueData["clinicstation"] = aClinicStation["id"]
-                queueData["avgservicetime"] = x["avgservicetime"]
+                queueData["name"] = aClinicStation.name
+                queueData["clinicstation"] = aClinicStation.id
+                queueData["avgservicetime"] = x.avgservicetime
                 queueData["entries"] = []
 
                 try:
-                    queueEntries = QueueEntries.objects.filter(queue=x)
+                    queueEntries = QueueEntry.objects.filter(queue=x.id)
                     if not queueEntries:
                         queueEntries = []
                 except:
@@ -129,11 +131,11 @@ class QueueView(APIView):
 
                 for y in queueEntries: 
                     entryData = {}
-                    entryData["patient"] = y["patient"]
-                    entryData["timein"] = y["timein"]
-                    entryData["waittime"] = y["waittime"]
-                    entryData["estwaittime"] = y["estwaittime"]
-                    entryData["routingslipentry"] = y["routingslipentry"]
+                    entryData["patient"] = y.patient_id
+                    entryData["timein"] = str(y.timein)
+                    entryData["waittime"] = str(y.waittime)
+                    entryData["estwaittime"] = str(y.estwaittime)
+                    entryData["routingslipentry"] = y.routingslipentry_id
                     
                     queueData["entries"].append(entryData)
                

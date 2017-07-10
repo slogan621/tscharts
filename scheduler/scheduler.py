@@ -52,6 +52,9 @@ class ClinicStationQueueEntry():
     def setRoutingSlipEntry(self, id):
         self._routingslipentryid = id
 
+    def setPatientId(self, id):
+        self._patientid = id
+
     def getElapsedTime(self):
         return self._elapsedtime
 
@@ -59,15 +62,13 @@ class ClinicStationQueueEntry():
         self._elapsedtime = datetime.utcnow() - self._timein
         q = None
         try:
-            q, c = QueueEntry.objects.get_or_create(queue=self._queueid,
-                                                    patient=self._patientid)
+            q = QueueEntry.objects.get(queue=self._queueid,
+                                       patient=self._patientid)
         except:
             print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
             
         if (q != None) :
-            q.timein = self._timein;
-            q.waittime = self._elapsedtime
-            q.routingslipentry = self._routingslipentryid
+            q.waittime = str(self._elapsedtime)
             q.estwaittime = q.waittime  # XXX
             q.save()
         else:
@@ -218,7 +219,7 @@ class Scheduler():
         return self._stationToClinicStationMap[str(stationid)]
 
     def dumpQueues(self):
-        os.system("clear")
+        #os.system("clear")
         minQ = 9999
         maxQ = -9999 
         minWait = timedelta(days=999)
@@ -253,6 +254,23 @@ class Scheduler():
         if numQueues > 0 and total > 0:
             avg = total / numQueues
             avgWait = totalWait / total
+            qs = QueueStatus()
+            qs.numwaiting = total
+            qs.minq = minQ
+            qs.maxq = maxQ
+            qs.avgq = avg
+            qs.minwait = str(minWait)
+            qs.maxwait = str(maxWait)
+            qs.avgwait = str(avgWait)
+            qs.clinic_id = self._clinicid
+            try:
+                qsold = QueueStatus.objects.filter()
+                if qsold:
+                    for x in qsold:
+                        x.delete()
+            except:
+                pass
+            qs.save()
             print("\nNumber of patients waiting {} smallest Q {} largest Q {} avg Q {} smallest wait {} largest wait {} avg wait {}".format(total, minQ, maxQ, avg, minWait, maxWait, avgWait))
 
     def getClinicStations(self):
@@ -280,6 +298,8 @@ class Scheduler():
         if not entry in self._queues[index]:
             qent = ClinicStationQueueEntry()
             qent.setRoutingSlipEntry(entry["id"])
+            qent.setPatientId(patientid)
+            qent.setQueue(index)
             entry["qent"] = qent
             self._queues[index].append(entry)
             dbQueue = self._dbQueues[index]
@@ -396,7 +416,13 @@ class Scheduler():
                         # clinicstation queue
                         self.addToQueue(entry, i["patient"])
                         break
+
+            for k, v in self._queues.iteritems():
+                for y in v:
+                    y["qent"].update()
+
             time.sleep(5)
+
 def usage():
     print("scheduler [-c clinicid] [-h host] [-p port] [-u username] [-w password]")
 
