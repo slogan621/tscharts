@@ -42,7 +42,7 @@ class Queue(models.Model):
     clinic = models.ForeignKey(Clinic) 
     station = models.ForeignKey(Station) 
     clinicstation = models.ForeignKey(ClinicStation) 
-    avgservicetime = models.IntegerField()
+    avgservicetime = models.TimeField(default=datetime.time(0,0))
 
 # a specific queue entry
 

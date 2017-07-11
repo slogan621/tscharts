@@ -16,7 +16,7 @@
 import daemon
 import getopt, os, sys, time
 import json
-from datetime import datetime, timedelta
+import datetime 
 
 # unit tests provide a set of good utilities for accessing the web services.
 
@@ -40,7 +40,7 @@ from clinicstation.models import ClinicStation
 class ClinicStationQueueEntry():
     def __init__(self):
         self._patientid = None
-        self._timein = datetime.utcnow()
+        self._timein = datetime.datetime.utcnow()
         self._elapsedtime = 0
         self._timeout = 0
         self._queueid = None
@@ -59,7 +59,7 @@ class ClinicStationQueueEntry():
         return self._elapsedtime
 
     def update(self):
-        self._elapsedtime = datetime.utcnow() - self._timein
+        self._elapsedtime = datetime.datetime.utcnow() - self._timein
         q = None
         try:
             q = QueueEntry.objects.get(queue=self._queueid,
@@ -75,7 +75,7 @@ class ClinicStationQueueEntry():
             print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
 
     def __str__(self):
-        self._elapsedtime = datetime.utcnow() - self._timein
+        self._elapsedtime = datetime.datetime.utcnow() - self._timein
         return "id: {} time in: {} waiting time {}".format(self._patientid, self._timein.strftime("%H:%M:%S"), self._elapsedtime)
 
 class Scheduler():
@@ -138,7 +138,7 @@ class Scheduler():
             queue = Queue(clinic = aClinic,
                           station = aStation,
                           clinicstation = aClinicStation,
-                          avgservicetime = 0)
+                          avgservicetime = datetime.time(0,0))
             queue.save()
         except:
             print("createDbQueue unable to create queue")
@@ -166,9 +166,7 @@ class Scheduler():
         try:
             queueent = QueueEntry(queue = aQueue,
                                   patient = aPatient,
-                                  timein = datetime.utcnow(),
-                                  #waittime = datetime.time(0,0),
-                                  #estwaittime = datetime.time(0,0),
+                                  timein = datetime.datetime.utcnow(),
                                   routingslipentry = aRoutingSlipEntry)
             queueent.save()
         except:
@@ -201,13 +199,13 @@ class Scheduler():
                 retval = ret[1]
 
         if not retval:
-            today = datetime.utcnow()
+            today = datetime.datetime.utcnow()
             x = GetAllClinics(self._host, self._port, self._token) 
             ret = x.send(timeout=30)
             if ret[0] == 200:
                 for x in ret[1]:
-                    start = datetime.strptime(x["start"], "%m/%d/%Y")
-                    end = datetime.strptime(x["end"], "%m/%d/%Y")
+                    start = datetime.datetime.strptime(x["start"], "%m/%d/%Y")
+                    end = datetime.datetime.strptime(x["end"], "%m/%d/%Y")
                     if today >= start and today <= end:
                         retval = x
                         self._clinicid = x["id"]
@@ -222,16 +220,16 @@ class Scheduler():
         #os.system("clear")
         minQ = 9999
         maxQ = -9999 
-        minWait = timedelta(days=999)
-        maxWait = timedelta(seconds=0)
+        minWait = datetime.timedelta(days=999)
+        maxWait = datetime.timedelta(seconds=0)
         total = 0
         numQueues = 0
-        totalWait = timedelta(seconds=0)
-        print("\nClinic queue report UTC time {}\n".format(datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
+        totalWait = datetime.timedelta(seconds=0)
+        print("\nClinic queue report UTC time {}\n".format(datetime.datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
         for k, v in self._queues.iteritems():
             print("***** Station {} *****".format(self.getClinicStationName(int(k))))
             if len(v):
-                localWait = timedelta(seconds=0)
+                localWait = datetime.timedelta(seconds=0)
                 numQueues = numQueues + 1
                 print("{} patients waiting".format(len(v)))
                 total += len(v)
