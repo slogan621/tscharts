@@ -190,7 +190,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'tscharts.log',
+            'filename': '/tmp/tscharts.log',
             'formatter': 'verbose'
         },
     },
