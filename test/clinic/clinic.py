@@ -24,6 +24,20 @@ class CreateClinic(ServiceAPI):
         self.setURL("tscharts/v1/clinic/")
     
 class GetClinic(ServiceAPI):
+    def makeURL(self):
+        url = None
+        if self._id:
+            if self._date != None:
+                url = "tscharts/v1/clinic/{}/?date={}".format(self._id,self._date)
+            else:
+                url = "tscharts/v1/clinic/{}/".format(self._id)
+        else:
+            if self._date != None:
+                url = "tscharts/v1/clinic/?date={}".format(self._date)
+            else:
+                url = "tscharts/v1/clinic/"
+        self.setURL(url)
+
     def __init__(self, host, port, token, id=None):
         super(GetClinic, self).__init__()
         
@@ -33,14 +47,13 @@ class GetClinic(ServiceAPI):
         self.setToken(token)
         self._payload = {}
         self.setPayload(self._payload) 
-        if id:
-            self.setURL("tscharts/v1/clinic/{}/".format(id))
-        else:
-            self.setURL("tscharts/v1/clinic/")
+        self._id = id
+        self._date = None
+        self.makeURL()
 
     def setDate(self, date):
-        self._payload["date"] = date
-        self.setPayload(self._payload)
+        self._date = date
+        self.makeURL()
 
 class GetAllClinics(ServiceAPI):
     def __init__(self, host, port, token):
@@ -177,10 +190,13 @@ class TestTSClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
+        # empty date same as get all
+
         x = GetClinic(host, port, token)
         x.setDate("")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1][0])
 
         x = GetClinic(host, port, token)
         x.setDate("sdfsfsf")

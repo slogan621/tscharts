@@ -54,16 +54,14 @@ class ClinicView(APIView):
             except:
                 notFound = True
         else:
-            kwargs = {}
-            data = json.loads(request.body)
-            if len(data) == 1:
+            date = request.GET.get('date', '')
+            if date:
                 try:
-                    date = data["date"]
                     date = datetime.strptime(date, "%m/%d/%Y")
                 except:
                     badRequest = True
-            elif len(data) > 1:
-                badRequest = True
+            else:
+                date = None
 
             if not badRequest:
                 try:

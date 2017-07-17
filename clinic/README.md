@@ -14,15 +14,15 @@
 
    None
 
+   **Optional:**
+
+   `date` date string mm/dd/YYYY - return the first clinic on this date, if found<br/>
+
 * **Data Params**
 
    **Required:**
 
    None
-
-   **Optional:**
-
-   `date` date string mm/dd/YYYY - return the first clinic on this date, if found<br/>
 
 * **Success Response:**
 
@@ -58,9 +58,9 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 ```
 
 ```
-GET /tscharts/v1/clinic/ HTTP/1.1
+GET /tscharts/v1/clinic/?date=02/05/2016 HTTP/1.1
 Host: localhost:8000
-Content-Length: 22
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -68,8 +68,8 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"date": "02/05/2016"}HTTP/1.0 200 OK
-Date: Mon, 17 Jul 2017 04:00:15 GMT
+{}HTTP/1.0 200 OK
+Date: Mon, 17 Jul 2017 17:39:15 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -77,7 +77,7 @@ Content-Type: application/json
 Allow: GET, POST, DELETE, HEAD, OPTIONS
 
 
-{"start":"02/05/2016","end":"02/06/2016","id":28,"location":"Ensenada"}
+{"start":"02/05/2016","end":"02/06/2016","id":119,"location":"Ensenada"}
 ```
   
 **Get Multiple Clinic**
