@@ -24,14 +24,23 @@ class CreateClinic(ServiceAPI):
         self.setURL("tscharts/v1/clinic/")
     
 class GetClinic(ServiceAPI):
-    def __init__(self, host, port, token, id):
+    def __init__(self, host, port, token, id=None):
         super(GetClinic, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/clinic/{}/".format(id))
+        self._payload = {}
+        self.setPayload(self._payload) 
+        if id:
+            self.setURL("tscharts/v1/clinic/{}/".format(id))
+        else:
+            self.setURL("tscharts/v1/clinic/")
+
+    def setDate(self, date):
+        self._payload["date"] = date
+        self.setPayload(self._payload)
 
 class GetAllClinics(ServiceAPI):
     def __init__(self, host, port, token):
@@ -93,7 +102,29 @@ class TestTSClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = GetClinic(host, port, token, int(ret[1]["id"]))
+        clinicid = int(ret[1]["id"])
+        x = GetClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue("id" in ret)
+        self.assertTrue("location" in ret)
+        self.assertTrue("start" in ret)
+        self.assertTrue("end" in ret)
+        self.assertEqual(ret["location"], "Ensenada")
+        self.assertEqual(ret["start"], "02/05/2016")
+        self.assertEqual(ret["end"], "02/06/2016")
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+    
+    def testGetClinicByDate(self):
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+        x = GetClinic(host, port, token, clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
@@ -105,6 +136,61 @@ class TestTSClinic(unittest.TestCase):
         self.assertEqual(ret["start"], "02/05/2016")
         self.assertEqual(ret["end"], "02/06/2016")
     
+        x = GetClinic(host, port, token)
+        x.setDate("02/05/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue("id" in ret)
+        self.assertTrue("location" in ret)
+        self.assertTrue("start" in ret)
+        self.assertTrue("end" in ret)
+        self.assertEqual(ret["location"], "Ensenada")
+        self.assertEqual(ret["start"], "02/05/2016")
+        self.assertEqual(ret["end"], "02/06/2016")
+    
+        x = GetClinic(host, port, token)
+        x.setDate("02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue("id" in ret)
+        self.assertTrue("location" in ret)
+        self.assertTrue("start" in ret)
+        self.assertTrue("end" in ret)
+        self.assertEqual(ret["location"], "Ensenada")
+        self.assertEqual(ret["start"], "02/05/2016")
+        self.assertEqual(ret["end"], "02/06/2016")
+    
+        x = GetClinic(host, port, token)
+        x.setDate("02/30/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetClinic(host, port, token)
+        x.setDate("02/20/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = GetClinic(host, port, token)
+        x.setDate("02/30")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetClinic(host, port, token)
+        x.setDate("")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetClinic(host, port, token)
+        x.setDate("sdfsfsf")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testGetAllClinics(self):
         ids = []
         x = CreateClinic(host, port, token, "test1", "02/05/2016", "02/06/2016")
@@ -126,12 +212,18 @@ class TestTSClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         clinics = ret[1]
+        delids = list(ids)
         for x in clinics:
             if x["id"] in ids:
                 ids.remove(x["id"])
 
         if len(ids):
             self.assertTrue("failed to remove items {}".format(ids) == None)
+
+        for id in delids:
+            x = DeleteClinic(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
 
 def usage():
     print("clinic [-h host] [-p port] [-u username] [-w password]") 

@@ -31,38 +31,77 @@ class ClinicView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, clinic_id=None, format=None):
-
         clinic = None
+        date = None
+        badRequest = False
+        implError = False
+        notFound = False
+
         if clinic_id:
             try:
-                clinic = Clinic.objects.get(id = clinic_id)
-            except:
-                clinic = None
-        else:
-            try:
-                clinic = Clinic.objects.all()
-            except:
-                clinic = None
-
-        if not clinic:
-            raise NotFound
-        else:
-            if clinic_id:
                 ret = {}
-                ret["id"] = clinic.id  
-                ret["start"] = clinic.start.strftime("%m/%d/%Y")
-                ret["end"] = clinic.end.strftime("%m/%d/%Y")  
-                ret["location"] = clinic.location
-            else:
+                clinic = Clinic.objects.get(id = clinic_id)
+                if clinic:
+                    try:
+                        ret["id"] = clinic.id  
+                        ret["start"] = clinic.start.strftime("%m/%d/%Y")
+                        ret["end"] = clinic.end.strftime("%m/%d/%Y")  
+                        ret["location"] = clinic.location
+                    except:
+                        implError = True
+                else:
+                    notFound = True
+            except:
+                notFound = True
+        else:
+            kwargs = {}
+            data = json.loads(request.body)
+            if len(data) == 1:
+                try:
+                    date = data["date"]
+                    date = datetime.strptime(date, "%m/%d/%Y")
+                except:
+                    badRequest = True
+            elif len(data) > 1:
+                badRequest = True
+
+            if not badRequest:
+                try:
+                    clinic = Clinic.objects.all()
+                except:
+                    implError = True
+
+                if not implError and (not clinic or len(clinic) == 0):
+                    notFound = True
+
+            if not notFound and not implError and not badRequest:
+                notFound = True
                 ret = []
                 for x in clinic:
-                    m = {}
-                    m["id"] = x.id  
-                    m["start"] = x.start.strftime("%m/%d/%Y")
-                    m["end"] = x.end.strftime("%m/%d/%Y")  
-                    m["location"] = x.location
-                    ret.append(m)
-            return Response(ret)
+                    if date:
+                        if date.date() >= x.start and date.date() <= x.end:
+                            ret = {}
+                            ret["id"] = x.id  
+                            ret["start"] = x.start.strftime("%m/%d/%Y")
+                            ret["end"] = x.end.strftime("%m/%d/%Y")  
+                            ret["location"] = x.location
+                            notFound = False
+                            break
+                    else:
+                        m = {}
+                        m["id"] = x.id  
+                        m["start"] = x.start.strftime("%m/%d/%Y")
+                        m["end"] = x.end.strftime("%m/%d/%Y")  
+                        m["location"] = x.location
+                        notFound = False
+                        ret.append(m)
+        if notFound:
+            return HttpResponseNotFound()
+        if badRequest:
+            return HttpResponseBadRequest()
+        if implError:
+            return HttpResponseServerError() 
+        return Response(ret)
 
     def post(self, request, format=None):
 
