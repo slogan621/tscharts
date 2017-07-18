@@ -12,10 +12,6 @@
   
 *  **URL Params**
 
-   None
-
-* **Data Params**
-
    **Required:**
  
    `clinic` clinic id<br />
@@ -23,6 +19,10 @@
    **Optional:**
  
    `station` station id<br />
+
+* **Data Params**
+
+   None
 
 * **Success Response:**
 
@@ -38,9 +38,9 @@
 * **Example:**
 
 ```
-GET /tscharts/v1/queue/ HTTP/1.1
-Host: localhost:8000
-Content-Length: 13
+GET /tscharts/v1/queue/?clinic=1 HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -48,14 +48,16 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"clinic": 1}HTTP/1.0 200 OK
-Date: Tue, 11 Jul 2017 00:04:50 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Tue, 18 Jul 2017 05:09:30 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
 
-{"status":{"avgwait":"00:00:57","maxwait":"00:01:49","maxq":2,"numwaiting":7,"minwait":"00:00:10","minq":1,"avgq":1},"queues":[{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:04:11","waittime":"00:00:37","estwaittime":"00:00:37","patient":5,"routingslipentry":11}],"name":"Dental1","clinicstation":1},{"averageservicetime:"00:00:00","entries":[],"name":"Dental2","clinicstation":2},{"averageservicetime:"00:00:00","entries":[],"name":"Dental3","clinicstation":3},{"averageservicetime:"00:00:00","entries":[],"name":"Dental4","clinicstation":4},{"averageservicetime:"00:00:00","entries":[],"name":"Dental5","clinicstation":5},{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:03:19","waittime":"00:01:29","estwaittime":"00:01:29","patient":2,"routingslipentry":3},{"timein":"2017-07-11 00:03:34","waittime":"00:01:14","estwaittime":"00:01:14","patient":3,"routingslipentry":6}],"name":"ENT","clinicstation":6},{"averageservicetime:"00:00:00","entries":[],"name":"Ortho1","clinicstation":7},{"averageservicetime:"00:00:00","entries":[],"name":"Ortho2","clinicstation":8},{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:03:55","waittime":"00:00:53","estwaittime":"00:00:53","patient":4,"routingslipentry":8}],"name":"X-Ray","clinicstation":9},{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:02:58","waittime":"00:01:50","estwaittime":"00:01:50","patient":1,"routingslipentry":1}],"name":"Surgery Screening","clinicstation":10},{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:04:16","waittime":"00:00:32","estwaittime":"00:00:32","patient":6,"routingslipentry":16}],"name":"Speech","clinicstation":11},{"averageservicetime:"00:00:00","entries":[{"timein":"2017-07-11 00:04:37","waittime":"00:00:11","estwaittime":"00:00:11","patient":7,"routingslipentry":19}],"name":"Audiology","clinicstation":12}]}
+825
+{"status":{"avgwait":"00:01:37","maxwait":"00:02:24","maxq":2,"numwaiting":8,"minwait":"00:00:31","minq":1,"avgq":1},"queues":[{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:08:05","waittime":"00:00:52","estwaittime":"00:00:52","patient":7,"routingslipentry":18}],"name":"Dental1","clinicstation":1},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:08:26","waittime":"00:00:31","estwaittime":"00:00:31","patient":9,"routingslipentry":28}],"name":"Dental2","clinicstation":2},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:08:58","waittime":"00:00:00","estwaittime":"00:00:00","patient":10,"routingslipentry":31}],"name":"Dental3","clinicstation":3},{"avgservicetime":"00:00:00","entries":[],"name":"Dental4","clinicstation":4},{"avgservicetime":"00:00:00","entries":[],"name":"Dental5","clinicstation":5},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:06:33","waittime":"00:02:24","estwaittime":"00:02:24","patient":1,"routingslipentry":1},{"timein":"2017-07-18 05:06:38","waittime":"00:02:19","estwaittime":"00:02:19","patient":2,"routingslipentry":5}],"name":"ENT","clinicstation":6},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:06:43","waittime":"00:02:14","estwaittime":"00:02:14","patient":3,"routingslipentry":6}],"name":"Ortho1","clinicstation":7},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:07:14","waittime":"00:01:43","estwaittime":"00:01:43","patient":5,"routingslipentry":13}],"name":"Ortho2","clinicstation":8},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:08:11","waittime":"00:00:47","estwaittime":"00:00:47","patient":8,"routingslipentry":25}],"name":"X-Ray","clinicstation":9},{"avgservicetime":"00:00:00","entries":[{"timein":"2017-07-18 05:06:48","waittime":"00:02:09","estwaittime":"00:02:09","patient":4,"routingslipentry":9}],"name":"Surgery Screening","clinicstation":10},{"avgservicetime":"00:00:00","entries":[],"name":"Speech","clinicstation":11},{"avgservicetime":"00:00:00","entries":[],"name":"Audiology","clinicstation":12}]}
 ```

@@ -48,26 +48,31 @@ class QueueView(APIView):
         internalError = False
         ret = {}
 
-        data = json.loads(request.body)
-        try:
-            clinicid = int(data["clinic"])
+        clinicid = request.GET.get('clinic', '')
+        stationid = request.GET.get('station', '')
+        if not clinicid == '':
             try:
-                aClinic = Clinic.objects.get(id=clinicid)
+                clinicid = int(clinicid)
+                try:
+                    aClinic = Clinic.objects.get(id=clinicid)
+                except:
+                    aClinic = None
+                    notFound = True
             except:
-                aClinic = None
-                notFound = True
-        except:
-            badRequest = True
+                badRequest = True
+        else:
+            badRequest = True # required arg
 
-        try:
-            stationid = int(data["station"])
+        if not stationid == '':
             try:
-                aStation = Station.objects.get(id=stationid)
+                stationid = int(stationid)
+                try:
+                    aStation = Station.objects.get(id=stationid)
+                except:
+                    aStation = None
+                    notFound = True
             except:
-                aStation = None
-                notFound = True
-        except:
-            pass
+                pass
 
         if not notFound and not badRequest:
             kwargs = {}

@@ -20,6 +20,20 @@ from test.clinic.clinic import GetAllClinics
 # basic positive testing along with negative testing of request args.
 
 class GetQueue(ServiceAPI):
+    def makeURL(self):
+        url = None
+        if self._clinic != None:
+            if self._station != None:
+                url = "tscharts/v1/queue/?clinic={}&station={}".format(self._clinic, self._station)
+            else:
+                url = "tscharts/v1/queue/?clinic={}".format(self._clinic)
+        else:
+            if self._station != None:
+                url = "tscharts/v1/queue/?station={}".format(self._station)
+            else:
+                url = "tscharts/v1/queue/"
+        self.setURL(url)
+
     def __init__(self, host, port, token):
         super(GetQueue, self).__init__()
         
@@ -27,21 +41,22 @@ class GetQueue(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/queue/")
+        self._clinic = None
+        self._station = None
+        self.makeURL()
 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
     
     def setStation(self, station):
-        self._payload["station"] = station
-        self.setPayload(self._payload)
+        self._station = station
+        self.makeURL()
 
     def clearPayload(self):
-        self._payload = {}
-        self.setPayload(self._payload)
+        self._station = None
+        self._clinic = None
+        self.makeURL()
     
 class TestTSQueue(unittest.TestCase):
 
