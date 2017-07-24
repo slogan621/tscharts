@@ -66,10 +66,6 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
-
-* **Data Params**
-
    **Required:**
 
    None 
@@ -82,6 +78,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `first` string<br/>
    `dob` date string mm/dd/YYYY<br/>
    `gender` "Female" | "Male"<br/>
+
+* **Data Params**
+
+   None
 
 * **Success Response:**
 
@@ -97,24 +97,30 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/patient/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 26
+GET /tscharts/v1/patient/?paternal_last=test5 HTTP/1.1
+Host: 192.168.0.110
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
-{"paternal_last": "test5"}HTTP/1.0 200 OK
-Date: Sat, 29 Apr 2017 20:36:22 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+
+{}HTTP/1.1 200 OK
+Date: Mon, 24 Jul 2017 03:51:58 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-[37]
+
+4
+[11]
+0
+
 ```
   
 **Create Patient**

@@ -81,37 +81,26 @@ class PatientView(APIView):
         else:
             # look for optional arguments for searching
             kwargs = {}
-            data = json.loads(request.body)
-            try:
-                paternal_last = data["paternal_last"] 
+            paternal_last = request.GET.get('paternal_last', '')
+            if not paternal_last == '':
                 kwargs["paternal_last__contains"] = paternal_last
-            except:
-                pass # no paternal_last
-            try:
-                maternal_last = data["maternal_last"] 
+            maternal_last = request.GET.get('maternal_last', '')
+            if not maternal_last == '':
                 kwargs["maternal_last__contains"] = maternal_last
-            except:
-                pass # no maternal_last
-            try:
-                first = data["first"] 
+            first = request.GET.get('first', '')
+            if not first == '':
                 kwargs["first__contains"] = first
-            except:
-                pass # no first
-            try:
-                dob = data["dob"] 
-                kwargs["dob"] = datetime.strptime(data["dob"], "%m/%d/%Y")
-            except:
-                pass # no dob
-            try:
-                gender = data["gender"] 
+            dob = request.GET.get('dob', '')
+            if not dob == '':
+                kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
+            gender = request.GET.get('gender', '')
+            if not gender == '':
                 if gender == "Male":
                     kwargs["gender"] = "m"
                 elif gender == "Female":
                     kwargs["gender"] = "f"
                 else:
                     badRequest = True
-            except:
-                pass # no gender
 
             if not badRequest:
                 try:

@@ -35,38 +35,67 @@ class UpdatePatient(ServiceAPI):
         self.setURL("tscharts/v1/patient/{}/".format(id))
 
 class GetPatient(ServiceAPI):
-    def __init__(self, host, port, token, id):
-        super(GetPatient, self).__init__()
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/patient/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/patient/".format(self._id)
         
-        self.setHttpMethod("GET")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/patient/{}/".format(id))
+        if not self._paternalLast == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "paternal_last={}".format(self._paternalLast)
+            hasQArgs = True 
+        
+        if not self._first == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "first={}".format(self._first)
+            hasQArgs = True 
+        
+        if not self._dob == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "dob={}".format(self._dob)
+            hasQArgs = True 
 
-class GetAllPatients(ServiceAPI):
+        self.setURL(base)
+
     def __init__(self, host, port, token):
-        super(GetAllPatients, self).__init__()
-        
+        super(GetPatient, self).__init__()
+      
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/patient/")
+        self._paternalLast = None
+        self._first = None
+        self._dob = None
+        self._id = None
+        self.makeURL();
 
-    def setLastName(self, val):
-        self._payload["paternal_last"] = val
-        self.setPayload(self._payload) 
+    def setId(self, id):
+        self._id = id;
+        self.makeURL()
+
+    def setPaternalLast(self, val):
+        self._paternalLast = val
+        self.makeURL()
 
     def setFirstName(self, val):
-        self._payload["first"] = val
-        self.setPayload(self._payload) 
+        self._first = val;
+        self.makeURL()
 
     def setDob(self, val):
-        self._payload["dob"] = val
-        self.setPayload(self._payload) 
+        self._dob = val;
+        self.makeURL()
 
 class DeletePatient(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -115,7 +144,8 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetPatient(host, port, token, id)
+        x = GetPatient(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
 
@@ -151,13 +181,15 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = int(ret[1]["id"])
-        x = GetPatient(host, port, token, id)
+        x = GetPatient(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetPatient(host, port, token, id)
+        x = GetPatient(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -192,7 +224,8 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = GetPatient(host, port, token, int(ret[1]["id"]))
+        x = GetPatient(host, port, token);
+        x.setId(int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
@@ -246,7 +279,8 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = GetPatient(host, port, token, int(ret[1]["id"]))
+        x = GetPatient(host, port, token)
+        x.setId(int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
@@ -273,7 +307,8 @@ class TestTSPatient(unittest.TestCase):
         x = UpdatePatient(host, port, token, id, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetPatient(host, port, token, id)
+        x = GetPatient(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
@@ -301,7 +336,8 @@ class TestTSPatient(unittest.TestCase):
         x = UpdatePatient(host, port, token, id, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetPatient(host, port, token, id)
+        x = GetPatient(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
@@ -408,15 +444,15 @@ class TestTSPatient(unittest.TestCase):
         ids.append(ret[1]["id"])
         test6id = ret[1]["id"]
 
-        x = GetAllPatients(host, port, token)
-        x.setLastName("test5")
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test5")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         self.assertTrue(len(ret) == 1)
         self.assertTrue(ret[0], test5id)
 
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         x.setDob("04/03/1962")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -425,7 +461,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(test5id in ret)
         self.assertTrue(test6id in ret)
 
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         x.setFirstName("x")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -433,8 +469,8 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(len(ret) == 1)
         self.assertTrue(test4id in ret)
 
-        x = GetAllPatients(host, port, token)
-        x.setLastName("st1")
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("st1")
         x.setFirstName("z")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -442,22 +478,22 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(len(ret) == 1)
         self.assertTrue(test1id in ret)
 
-        x = GetAllPatients(host, port, token)
-        x.setLastName("Flintstone")
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("Flintstone")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         x.setDob("1/1/1970")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         x.setFirstName("Fred")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -512,7 +548,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
-        x = GetAllPatients(host, port, token)
+        x = GetPatient(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         patients = ret[1]
