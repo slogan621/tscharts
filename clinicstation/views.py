@@ -36,6 +36,7 @@ class ClinicStationView(APIView):
     def get(self, request, clinic_station_id=None, format=None):
         clinic_station = None
         badRequest = False
+        notFound = False
         aClinic = None
 
         if clinic_station_id:
@@ -45,38 +46,48 @@ class ClinicStationView(APIView):
                 clinic_station = None
         else:
             kwargs = {}
-            data = json.loads(request.body)
-            try:
-                clinicid = int(data["clinic"])
+            clinicid = request.GET.get('clinic', '')
+            if clinicid == '':
+                badRequest = True
+            else:
                 try:
-                    aClinic = Clinic.objects.get(id=clinicid)
-                    kwargs["clinic"] = aClinic
+                    clinicid = int(clinicid)
+                    try:
+                        aClinic = Clinic.objects.get(id=clinicid)
+                        kwargs["clinic"] = aClinic
+                    except:
+                        notFound = True
                 except:
                     badRequest = True
-            except:
-                badRequest = True
 
-            if not badRequest:
-                if "active" in data:
-                    if not data["active"] in [True, False]:
+            if not badRequest and not notFound:
+                active = request.GET.get('active', '')
+                if active != '':
+                    if not active in [True, False]:
                         badRequest = True
                     else:
-                        kwargs["active"] = data["active"]
-                if "level" in data:
-                    kwargs["level"] = data["level"]
-                if "away" in data:
-                    if not data["away"] in [True, False]:
+                        kwargs["active"] = active
+                level = request.GET.get('level', '')
+                if level != '':
+                    kwargs["level"] = int(level)
+                away = request.GET.get('away', '')
+                if away != '':
+                    if not away in [True, False]:
                         badRequest = True
                     else:
-                        kwargs["away"] = data["away"]
+                        kwargs["away"] = away
 
+            if not badRequest and not notFound:
                 try:
                     clinic_station = ClinicStation.objects.filter(**kwargs)
                 except:
                     clinic_station = None
+                    notFound = True
 
-        if not clinic_station:
-            raise NotFound
+        if badRequest:
+            return HttpResponseBadRequest()
+        elif notFound or not clinic_station:
+            return HttpResponseNotFound()
         else:
             if clinic_station_id:
                 m = {}
@@ -89,6 +100,8 @@ class ClinicStationView(APIView):
                 m["away"] = clinic_station.away
                 m["awaytime"] = clinic_station.awaytime
                 m["willreturn"] = clinic_station.willreturn
+                m["activepatient"] = clinic_station.activepatient_id
+                m["nextpatient"] = clinic_station.nextpatient_id
                 ret = m
             else: 
                 ret = []
@@ -103,6 +116,8 @@ class ClinicStationView(APIView):
                     m["away"] = x.away
                     m["awaytime"] = x.awaytime
                     m["willreturn"] = x.willreturn
+                    m["activepatient"] = x.activepatient_id
+                    m["nextpatient"] = x.nextpatient_id
                     ret.append(m)
             return Response(ret)
 
@@ -144,6 +159,12 @@ class ClinicStationView(APIView):
 
         if "level" in data:
             kwargs["level"] = data["level"]
+
+        if "activepatient" in data:
+            kwargs["activepatient"] = data["activepatient"]
+
+        if "nextpatient" in data:
+            kwargs["nextpatient"] = data["nextpatient"]
 
         if "awaytime" in data:
             awaytime = data["awaytime"]
@@ -216,6 +237,10 @@ class ClinicStationView(APIView):
         name = None
         away = None
         awaytime = None
+        activepatient = None
+        nextpatient = None
+        hasActivePatient = False
+        hasNextPatient = False
 
         data = json.loads(request.body)
 
@@ -234,8 +259,16 @@ class ClinicStationView(APIView):
         if "name" in data:
             name = data["name"]
 
-        if level == None and away == None and active == None and awaytime == None:
-            badRequest = True
+        if "activepatient" in data:
+            activepatient = data["activepatient"]
+            hasActivePatient = True
+
+        if "nextpatient" in data:
+            nextpatient = data["nextpatient"]
+            hasNextPatient = True
+
+        if level == None and away == None and active == None and awaytime == None and hasActivePatient == False and hasNextPatient == False:
+            badRequest = True   # update but no data provided
 
         if not badRequest:
             clinic_station = None
@@ -249,7 +282,26 @@ class ClinicStationView(APIView):
 
             if not clinic_station:
                 notFound = True 
-            else:
+
+            if notFound == False and hasActivePatient and (not activepatient == None):
+                try:
+                    activepatient = Patient.objects.get(id=activepatient)
+                except:
+                    pass
+
+                if not activepatient:
+                    notFound = True 
+
+            if notFound == False and hasNextPatient and (not nextpatient == None):
+                try:
+                    nextpatient = Patient.objects.get(id=nextpatient)
+                except:
+                    pass
+
+                if not nextpatient:
+                    notFound = True 
+
+            if notFound == False:
                 try:
                     if not (awaytime == None):
                         clinic_station.awaytime = awaytime
@@ -263,6 +315,10 @@ class ClinicStationView(APIView):
                         clinic_station.level=level
                     if not (name == None):
                         clinic_station.name=name
+                    if hasActivePatient:
+                        clinic_station.activepatient_id = activepatient
+                    if hasNextPatient:
+                        clinic_station.nextpatient_id = nextpatient
                     clinic_station.save()
                 except:
                     implError = True

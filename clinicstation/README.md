@@ -21,17 +21,20 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"name": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer}`
+    **Content:** `{"name": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer,"nextpatient":[id | null], "activepatient": [id | null]}`
  
 * **Error Response:**
 
+  * **Code:** 400 BAD REQUEST
   * **Code:** 404 NOT FOUND
+  * **Code:** 500 INTERNAL ERROR
 
 * **Example:**
 
 ```
-GET /tscharts/v1/clinicstation/21/ HTTP/1.1
-Host: 127.0.0.1:8000
+GET /tscharts/v1/clinicstation/1/ HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -39,16 +42,19 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-HTTP/1.0 200 OK
-Date: Wed, 26 Apr 2017 05:29:15 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Sat, 29 Jul 2017 22:36:21 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
 
-{"name":"Dental 1","level":1,"awaytime":30,"clinic":360,"station":227,"away":true,"active":false,"willreturn":"2017-04-26T05:29:15Z","id":21}
+ac
+{"name":"test1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":1,"station":1,"active":false,"willreturn":"2017-07-29T22:36:21","id":1}
+0
 ```
   
 **Get Multiple Clinic Stations**
@@ -65,10 +71,6 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
-
-* **Data Params**
-
    **Required:**
  
    `clinic` clinic id<br />
@@ -77,12 +79,16 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
    `away` true or false<br />
    `active` true or false<br />
-   `level` integer level number<br />
+   `level` integer<br />
+
+* **Data Params**
+
+   None
 
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{"name":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer}, ...]`
+    **Content:** `[{"name":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer, "activepatient": [null | id], "nextpatient": [null | id]}, ...]`
  
 * **Error Response:**
 
@@ -93,9 +99,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/clinicstation/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 32
+GET /tscharts/v1/clinicstation/?clinic=3 HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -103,16 +109,19 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"active": false, "clinic": 362}HTTP/1.0 200 OK
-Date: Wed, 26 Apr 2017 05:29:16 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Sat, 29 Jul 2017 22:36:22 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
 
-[{"name":"Dental 1","level":1,"awaytime":30,"clinic":362,"station":229,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":25},{"name":"Dental 2","level":1,"awaytime":30,"clinic":362,"station":207,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":26},{"name":"Dental 3","level":1,"awaytime":30,"clinic":362,"station":208,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":27},{"name":"Dental 4","level":1,"awaytime":30,"clinic":362,"station":209,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":28},{"name":"Dental 5","level":1,"awaytime":30,"clinic":362,"station":210,"active":false,"away":true,"willreturn":"2017-04-26T05:29:16Z","id":29}]
+34b
+[{"name":"Dental 1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":3,"active":false,"willreturn":"2017-07-29T22:36:22","id":7},{"name":"Dental 2","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":4,"active":false,"willreturn":"2017-07-29T22:36:22","id":8},{"name":"Ortho 1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":5,"active":false,"willreturn":"2017-07-29T22:36:22","id":9},{"name":"Ortho 2","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":6,"active":false,"willreturn":"2017-07-29T22:36:22","id":10},{"name":"ENT","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":7,"active":false,"willreturn":"2017-07-29T22:36:22","id":11}]
+0
 ```
   
 **Create Clinic Station**
@@ -141,6 +150,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Optional:**
  
+   `activepatient` id of the currently active patient<br />
+   `nextpatient` id of the next patient in the queue<br />
    `away` true if clinic station is away (i.e., station personnel are not present), else false (default is true)<br />
    `active` true if clinic station is active (i.e., a patient is currently being seen), else false (default is false)<br />
    `level` priority level. Default is 1.<br />
@@ -205,6 +216,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    One or more of the following is required. 
  
    `away` true if station is away (no personnel) else false. See `awaytime`<br />
+   `activepatient` id of the currently active patient<br />
+   `nextpatient` id of the next patient in the queue<br />
    `active` true if clinic station is actively servicing a patient, else false<br />
    `name` clinic station name.<br />
    `level` priority level. Default is 1.<br />

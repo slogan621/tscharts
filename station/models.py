@@ -17,28 +17,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-# Create your models here.
-
-#  {location:location, start:date, end:date}
-
 '''
-A clinic has stations. There are two models:
-
-Station: simply a named location in the clinic. These records in
-the database define the universe of all possible stations that a
-clinic can be made up of.
-
-ClinicStation: defines a station for a particular clinic. The 
-station can be marked active or inactive. If inactive, then it
-can be added to a patient routing slip, but the scheduler will
-not route patients to an inactive station (this inactivity might
-apply for some part of the day (e.g., the provider is out to 
-lunch) or for the entire clinic (in this case, perhaps the station
-was deemed important for a patient in the current clinic routing
-slip, and since the patient did not get scheduked there, it becomes
-a part of the patients' routing slip for the next clinic he or 
-she attends).
-''' 
+See clinicstation.models.py for details.
+'''
 
 class Station(models.Model):
     name = models.CharField(max_length=30)

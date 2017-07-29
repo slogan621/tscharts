@@ -19,32 +19,45 @@ from django.db import models
 
 from clinic.models import Clinic
 from station.models import Station
+from patient.models import Patient
 
 '''
 A clinic has stations. There are two models: 
 
 Station: simply a named location in the clinic. These records in
 the database define the universe of all possible stations that a
-clinic can be made up of.
+clinic can be made up of. A station represents a class.
 
-ClinicStation: defines a station for a particular clinic. The 
-station can be marked active or inactive. If inactive, then it
-can be added to a patient routing slip, but the scheduler will
-not route patients to an inactive station (this inactivity might
-apply for some part of the day (e.g., the provider is out to 
-lunch) or for the entire clinic (in this case, perhaps the station
-was deemed important for a patient in the current clinic routing
-slip, and since the patient did not get scheduled there, it becomes
-a part of the patients' routing slip for the next clinic he or 
-she attends).
+ClinicStation: defines an actual station for a particular clinic. 
+The station can be marked active or inactive. If inactive, it is
+currently not seeing a patient, and the activepatient field 
+should be set to null (or None in Python). If active is True,
+then the activepatient field should contain the ID of the patient
+currently being seen. The station can "checkout" the activepatient
+and that will cause the activepatient field to be set to NULL, 
+and the active field to be set to False.
+
+The nextpatient field contains the ID of the next patient to be
+seen by a station. When the station is not active, this patient
+can be "checked in". When the patient is checked in, the station's
+active field is set to True, and the activepatient field will be
+assigned the nextpatient value. Then, nextpatient will be set to
+the id of the patient next in the queue for this station.
+
+away, awaytime, and willreturn are all used to indicate if the
+station is currently manned (or not, perhaps the doctor is at
+lunch).  
+
 ''' 
 
 class ClinicStation(models.Model):
     name = models.CharField(max_length=64)
     station = models.ForeignKey(Station)
     clinic = models.ForeignKey(Clinic)
-    active = models.BooleanField(default=False)
-    level = models.IntegerField(default=1)
-    away = models.BooleanField(default=True)
-    awaytime = models.IntegerField(default=30)
-    willreturn = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False) # set to True if a patient is being seen
+    level = models.IntegerField(default=1) # relative importance to scheduler
+    away = models.BooleanField(default=True)  # set to True when station is out to lunch
+    awaytime = models.IntegerField(default=30) # default minutes when station goes to away state before clinic is returned to (informational only) 
+    willreturn = models.DateTimeField(auto_now_add=True) # estimated time of returen, computed when away is set to True, using the awaytime value
+    activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient') # if active, patient of null
+    nextpatient = models.ForeignKey(Patient, null=True, related_name="activepatient") # next patient to be seen or null

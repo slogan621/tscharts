@@ -11,6 +11,7 @@ from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.station.station import CreateStation, DeleteStation
+from test.patient.patient import CreatePatient, GetPatient, DeletePatient
 
 class CreateClinicStation(ServiceAPI):
     def __init__(self, host, port, token, clinic, station, active=False, away=True, name=""):
@@ -26,6 +27,47 @@ class CreateClinicStation(ServiceAPI):
         self.setURL("tscharts/v1/clinicstation/")
     
 class GetClinicStation(ServiceAPI):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/clinicstation/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/clinicstation/"
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._active == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "active={}".format(self._active)
+            hasQArgs = True
+
+        if not self._level == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "level={}".format(self._level)
+            hasQArgs = True
+
+        if not self._away == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "away={}".format(self._away)
+            hasQArgs = True
+
+        self.setURL(base)
+
     def __init__(self, host, port, token, id=None):
         super(GetClinicStation, self).__init__()
         
@@ -33,29 +75,32 @@ class GetClinicStation(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-       
-        if id:
-            self.setURL("tscharts/v1/clinicstation/{}".format(id))
-        else:
-            self.setURL("tscharts/v1/clinicstation/")
+        self._id = None
+        self._away = None
+        self._active = None
+        self._level = None
+        self._clinic = None
+        self.makeURL();
+
+    def setId(self, id):
+        self._id = id;
+        self.makeURL()
 
     def setAway(self, away):
-        self._payload["away"] = away
-        self.setPayload(self._payload)
+        self._away = away
+        self.makeURL()
 
     def setActive(self, active):
-        self._payload["active"] = active
-        self.setPayload(self._payload)
+        self._active = active
+        self.makeURL()
 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
 
     def setLevel(self, level):
-        self._payload["level"] = level
-        self.setPayload(self._payload)
+        self._level = level
+        self.makeURL()
 
 class UpdateClinicStation(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -83,6 +128,14 @@ class UpdateClinicStation(ServiceAPI):
 
     def setLevel(self, level):
         self._payload["level"] = level
+        self.setPayload(self._payload)
+
+    def setActivePatient(self, patient):
+        self._payload["activepatient"] = patient
+        self.setPayload(self._payload)
+
+    def setNextPatient(self, patient):
+        self._payload["nextpatient"] = patient
         self.setPayload(self._payload)
 
     def setAwayTime(self, minutes):
@@ -127,7 +180,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -146,7 +200,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -156,7 +211,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("clinic" in ret[1])
@@ -173,7 +229,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -181,7 +238,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("clinic" in ret[1])
@@ -198,7 +256,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -208,7 +267,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("clinic" in ret[1])
@@ -223,7 +283,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -231,7 +292,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("clinic" in ret[1])
@@ -245,7 +307,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, id)
+        x = GetClinicStation(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -281,6 +344,165 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
+    def testNextAndActivePatient(self):
+        data = {}
+
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid = int(ret[1]["id"])
+        x = GetPatient(host, port, token)
+        x.setId(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        x = CreateStation(host, port, token, "ENT")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        stationid = int(ret[1]["id"])
+
+        x = CreateClinicStation(host, port, token, clinicid, stationid, active=True)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        clinicstationid = int(ret[1]["id"])
+
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("active" in ret[1])
+        self.assertTrue(ret[1]["active"] == True) 
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "") 
+        self.assertTrue(ret[1]["activepatient"] == None)
+        self.assertTrue(ret[1]["nextpatient"] == None)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setActive(False)
+        x.setAway(True)
+        x.setAwayTime(15)
+        x.setName("Dental 1")
+        x.setActivePatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("away" in ret[1])
+        self.assertTrue(ret[1]["away"] == True)
+        self.assertTrue("active" in ret[1])
+        self.assertTrue(ret[1]["active"] == False)
+        self.assertTrue("awaytime" in ret[1])
+        self.assertTrue(ret[1]["awaytime"] == 15)
+        self.assertTrue("name" in ret[1])
+        self.assertTrue(ret[1]["name"] == "Dental 1")
+        self.assertTrue("willreturn" in ret[1])
+        self.assertTrue(ret[1]["activepatient"] == patientid)
+        self.assertTrue(ret[1]["nextpatient"] == None)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setActive(True)
+        x.setAway(False)
+        x.setActivePatient(None)
+        x.setNextPatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("active" in ret[1])
+        self.assertTrue(ret[1]["active"] == True)
+        self.assertTrue(ret[1]["away"] == False)
+        self.assertTrue(ret[1]["activepatient"] == None)
+        self.assertTrue(ret[1]["nextpatient"] == patientid)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setLevel(15)
+        x.setActivePatient(None)
+        x.setNextPatient(None)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("level" in ret[1])
+        self.assertTrue(int(ret[1]["level"]) == 15)
+        self.assertTrue(ret[1]["active"] == True)
+        self.assertTrue(ret[1]["away"] == False)
+        self.assertTrue(ret[1]["activepatient"] == None)
+        self.assertTrue(ret[1]["nextpatient"] == None)
+
+        x = UpdateClinicStation(host, port, token, clinicstationid)
+        x.setLevel(0)
+        x.setAwayTime(23)
+        x.setActive(False)
+        x.setAway(True)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("level" in ret[1])
+        self.assertTrue(int(ret[1]["level"]) == 0)
+        self.assertTrue(ret[1]["active"] == False)
+        self.assertTrue("awaytime" in ret[1])
+        self.assertTrue(ret[1]["awaytime"] == 23)
+        self.assertTrue("willreturn" in ret[1])
+        self.assertTrue("away" in ret[1])
+        self.assertTrue(ret[1]["away"] == True)
+        self.assertTrue(ret[1]["activepatient"] == None)
+        self.assertTrue(ret[1]["nextpatient"] == None)
+
+        x = DeleteClinicStation(host, port, token, clinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteStation(host, port, token, stationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testDeleteClinicStation(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
@@ -301,7 +523,8 @@ class TestTSClinicStation(unittest.TestCase):
         x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -334,7 +557,8 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         clinicstationid = int(ret[1]["id"])
 
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("active" in ret[1])
@@ -350,7 +574,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("away" in ret[1])
@@ -369,7 +594,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("active" in ret[1])
@@ -381,7 +607,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("level" in ret[1])
@@ -397,7 +624,8 @@ class TestTSClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetClinicStation(host, port, token, clinicstationid)
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("level" in ret[1])
