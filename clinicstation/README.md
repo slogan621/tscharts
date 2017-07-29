@@ -146,7 +146,7 @@ Content-Type: application/json
  
    `clinic` clinic resource id<br />
    `station` station resource id<br />
-   `name` name (e.g., "Dental 1"<br />
+   `name` name (e.g., "Dental 1")<br />
 
    **Optional:**
  
