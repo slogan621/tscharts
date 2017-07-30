@@ -109,7 +109,19 @@ class MockClinic:
 
     def createClinicStation(self, clinicid, stationid, name):
         retval = None        
-        x = CreateClinicStation(self._host, self._port, self._token, clinicid, stationid, name=name)
+        state = randint(0, 1)
+        if state == 0:
+            away = False
+            state = randint(0, 1)
+            if state == 1:
+                active = True 
+            else:
+                active = False
+        else:
+            away = True
+            active = False
+        print("Creating clinicstation {} away {} active {}".format(name, away, active))
+        x = CreateClinicStation(self._host, self._port, self._token, clinicid, stationid, name=name, away=away, active=active)
         ret = x.send(timeout=30)
         if ret[0] != 200:
             print("failed to create clinicstation {}".format(name))
