@@ -27,7 +27,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"status":{"avgwait":"hh:mm:ss","maxwait":"hh:mm:ss","maxq":integer,"numwaiting":integer,"minwait":"hh:mm:ss","minq":integer,"avgq":integer},"queues":[{"avgservicetime":"hh:mm:ss","entries":[{"timein":"YYYY-MM-DD HH:MM:SS","waittime":"hh:mm:ss","estwaittime":"hh:mm:ss","patient":integer,"routingslipentry":integer}, ...],"name":string,"clinicstation":integer}, ...]}`
+    **Content:** `{"status":{"avgwait":"hh:mm:ss","maxwait":"hh:mm:ss","maxq":integer,"numwaiting":integer,"minwait":"hh:mm:ss","minq":integer,"avgq":integer},"queues":[{"avgservicetime":"hh:mm:ss","entries":[{"timein":"YYYY-MM-DD HH:MM:SS","waittime":"hh:mm:ss","estwaittime":"hh:mm:ss","patient":integer,"routingslipentry":integer}, ...],"name":string,"name_es":string,"clinicstation":integer}, ...]}`
  
 * **Error Response:**
 

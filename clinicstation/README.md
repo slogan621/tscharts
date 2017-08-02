@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"name": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer,"nextpatient":[id | null], "activepatient": [id | null]}`
+    **Content:** `{"name": string,"name_es": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer,"nextpatient":[id | null], "activepatient": [id | null]}`
  
 * **Error Response:**
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 
 ac
-{"name":"test1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":1,"station":1,"active":false,"willreturn":"2017-07-29T22:36:21","id":1}
+{"name":"test1","name_es":"test1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":1,"station":1,"active":false,"willreturn":"2017-07-29T22:36:21","id":1}
 0
 ```
   
@@ -88,7 +88,7 @@ ac
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{"name":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer, "activepatient": [null | id], "nextpatient": [null | id]}, ...]`
+    **Content:** `[{"name":string,"name_es":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer, "activepatient": [null | id], "nextpatient": [null | id]}, ...]`
  
 * **Error Response:**
 
@@ -147,6 +147,7 @@ Content-Type: application/json
    `clinic` clinic resource id<br />
    `station` station resource id<br />
    `name` name (e.g., "Dental 1")<br />
+   `name_es` name translated to Spanish<br />
 
    **Optional:**
  
@@ -181,7 +182,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"name":"Dental 1", "active": false, "away":true, "clinic": 360, "station": 227}HTTP/1.0 200 OK
+{"name":"Dental 1", "name_es":"Dental 1","active": false, "away":true, "clinic": 360, "station": 227}HTTP/1.0 200 OK
 Date: Wed, 26 Apr 2017 05:29:15 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -220,6 +221,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `nextpatient` id of the next patient in the queue<br />
    `active` true if clinic station is actively servicing a patient, else false<br />
    `name` clinic station name.<br />
+   `name_es` clinic station name in Spanish.<br />
    `level` priority level. Default is 1.<br />
    `awaytime` whenever `away` is set to true, `awaytime` is used to calculate the UTC time at which the station is expected to reopen. By default, `awaytime` is 30 minutes. In GET requests, the expected return time is returned as a UTC time string as `willreturn` in the JSON payload.<br />
 

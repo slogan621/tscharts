@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #(C) Copyright Syd Logan 2017
 #(C) Copyright Thousand Smiles Foundation 2017
 #
@@ -120,8 +121,8 @@ class MockClinic:
         else:
             away = True
             active = False
-        print("Creating clinicstation {} away {} active {}".format(name, away, active))
-        x = CreateClinicStation(self._host, self._port, self._token, clinicid, stationid, name=name, away=away, active=active)
+        print("Creating clinicstation {} away {} active {}".format(name[0], away, active))
+        x = CreateClinicStation(self._host, self._port, self._token, clinicid, stationid, name=name[0], name_es=name[1], away=away, active=active)
         ret = x.send(timeout=30)
         if ret[0] != 200:
             print("failed to create clinicstation {}".format(name))
@@ -191,7 +192,11 @@ class MockClinic:
             data["suffix"] = "Jr."
             data["prefix"] = ""
             data["dob"] = "04/01/1962"
-            data["gender"] = "Female"
+            female = randint(0, 1)
+            if female:
+                data["gender"] = "Female"
+            else:
+                data["gender"] = "Male"
             data["street1"] = "1234 First Ave"
             data["street2"] = ""
             data["city"] = "Ensenada"
@@ -218,23 +223,23 @@ class MockClinic:
         audiology = self.createStation("Audiology") 
 
         dentalStations = []
-        for x in ["Dental1", "Dental2", "Dental3", "Dental4", "Dental5"]:
+        for x in [("Dental1","Dental1"), ("Dental2","Dental2"), ("Dental3", "Dental3"), ("Dental4","Dental4"), ("Dental5","Dental5")]:
             print("Creating station {}".format(x))
             dentalStations.append(self.createClinicStation(clinic, dental, x))
-        entStation = self.createClinicStation(clinic, ent, "ENT") 
+        entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrinolaringología")) 
         print("Creating station {}".format("ENT"))
         orthoStations = []
-        for x in ["Ortho1", "Ortho2"]:
+        for x in [("Ortho1","Ortho1"), ("Ortho2","Ortho2")]:
             print("Creating station {}".format(x))
             orthoStations.append(self.createClinicStation(clinic, ortho, x))
         print("Creating station {}".format("X-Ray"))
-        xrayStation = self.createClinicStation(clinic, xray, "X-Ray") 
+        xrayStation = self.createClinicStation(clinic, xray, ("X-Ray","Radiografía")) 
         print("Creating station {}".format("Surgery Screening"))
-        surgeryStation = self.createClinicStation(clinic, surgery, "Surgery Screening") 
+        surgeryStation = self.createClinicStation(clinic, surgery, ("Surgery Screening","Examen de la cirugía")) 
         print("Creating station {}".format("Speech"))
-        speechStation = self.createClinicStation(clinic, speech, "Speech") 
+        speechStation = self.createClinicStation(clinic, speech, ("Speech","Logopeda")) 
         print("Creating station {}".format("Audiology"))
-        audiologyStation = self.createClinicStation(clinic, audiology, "Audiology") 
+        audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiólogo")) 
 
 def usage():
     print("mockclinic [-h host] [-p port] [-u username] [-w password]") 

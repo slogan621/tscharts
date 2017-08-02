@@ -14,7 +14,7 @@ from test.station.station import CreateStation, DeleteStation
 from test.patient.patient import CreatePatient, GetPatient, DeletePatient
 
 class CreateClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, clinic, station, active=False, away=True, name=""):
+    def __init__(self, host, port, token, clinic, station, active=False, away=True, name="", name_es=""):
         super(CreateClinicStation, self).__init__()
         
         self.setHttpMethod("POST")
@@ -22,7 +22,7 @@ class CreateClinicStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"clinic": clinic, "away": away, "station": station, "active": active, "name": name}
+        payload = {"clinic": clinic, "away": away, "station": station, "active": active, "name": name, "name_es": name_es}
         self.setPayload(payload)
         self.setURL("tscharts/v1/clinicstation/")
     
@@ -124,6 +124,10 @@ class UpdateClinicStation(ServiceAPI):
 
     def setName(self, name):
         self._payload["name"] = name
+        self.setPayload(self._payload)
+
+    def setNameES(self, name):
+        self._payload["name_es"] = name
         self.setPayload(self._payload)
 
     def setLevel(self, level):
@@ -399,7 +403,9 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue("active" in ret[1])
         self.assertTrue(ret[1]["active"] == True) 
         self.assertTrue("name" in ret[1])
+        self.assertTrue("name_es" in ret[1])
         self.assertTrue(ret[1]["name"] == "") 
+        self.assertTrue(ret[1]["name_es"] == "") 
         self.assertTrue(ret[1]["activepatient"] == None)
         self.assertTrue(ret[1]["nextpatient"] == None)
 
@@ -571,6 +577,7 @@ class TestTSClinicStation(unittest.TestCase):
         x.setAway(True)
         x.setAwayTime(15)
         x.setName("Dental 1")
+        x.setNameES("Dental Uno")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -586,6 +593,7 @@ class TestTSClinicStation(unittest.TestCase):
         self.assertTrue(ret[1]["awaytime"] == 15)
         self.assertTrue("name" in ret[1])
         self.assertTrue(ret[1]["name"] == "Dental 1")
+        self.assertTrue(ret[1]["name_es"] == "Dental Uno")
         self.assertTrue("willreturn" in ret[1])
 
         x = UpdateClinicStation(host, port, token, clinicstationid)

@@ -120,6 +120,7 @@ class QueueView(APIView):
                     break
 
                 queueData["name"] = aClinicStation.name
+                queueData["name_es"] = aClinicStation.name_es
                 queueData["clinicstation"] = aClinicStation.id
                 queueData["avgservicetime"] = x.avgservicetime
                 queueData["entries"] = []

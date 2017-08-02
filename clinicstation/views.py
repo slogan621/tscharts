@@ -93,6 +93,7 @@ class ClinicStationView(APIView):
                 m = {}
                 m["id"] = clinic_station.id  
                 m["name"] = clinic_station.name
+                m["name_es"] = clinic_station.name_es
                 m["clinic"] = clinic_station.clinic_id
                 m["station"] = clinic_station.station_id
                 m["active"] = clinic_station.active
@@ -109,6 +110,7 @@ class ClinicStationView(APIView):
                     m = {}
                     m["id"] = x.id  
                     m["name"] = x.name
+                    m["name_es"] = x.name_es
                     m["clinic"] = x.clinic_id
                     m["station"] = x.station_id
                     m["active"] = x.active
@@ -140,6 +142,11 @@ class ClinicStationView(APIView):
 
         try:
             kwargs["name"] = data["name"]
+        except:
+            badRequest = True
+
+        try:
+            kwargs["name_es"] = data["name_es"]
         except:
             badRequest = True
 
@@ -235,6 +242,7 @@ class ClinicStationView(APIView):
         active = None
         level = None
         name = None
+        name_es = None
         away = None
         awaytime = None
         activepatient = None
@@ -258,6 +266,8 @@ class ClinicStationView(APIView):
             awaytime = data["awaytime"]
         if "name" in data:
             name = data["name"]
+        if "name_es" in data:
+            name_es = data["name_es"]
 
         if "activepatient" in data:
             activepatient = data["activepatient"]
@@ -267,7 +277,7 @@ class ClinicStationView(APIView):
             nextpatient = data["nextpatient"]
             hasNextPatient = True
 
-        if level == None and away == None and active == None and awaytime == None and hasActivePatient == False and hasNextPatient == False:
+        if level == None and away == None and active == None and awaytime == None and name == None and name_es == None and hasActivePatient == False and hasNextPatient == False:
             badRequest = True   # update but no data provided
 
         if not badRequest:
@@ -315,6 +325,8 @@ class ClinicStationView(APIView):
                         clinic_station.level=level
                     if not (name == None):
                         clinic_station.name=name
+                    if not (name_es == None):
+                        clinic_station.name_es=name_es
                     if hasActivePatient:
                         clinic_station.activepatient_id = activepatient
                     if hasNextPatient:

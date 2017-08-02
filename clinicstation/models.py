@@ -61,3 +61,4 @@ class ClinicStation(models.Model):
     willreturn = models.DateTimeField(auto_now_add=True) # estimated time of returen, computed when away is set to True, using the awaytime value
     activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient') # if active, patient of null
     nextpatient = models.ForeignKey(Patient, null=True, related_name="activepatient") # next patient to be seen or null
+    name_es = models.CharField(max_length=64)
