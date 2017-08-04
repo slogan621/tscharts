@@ -18,7 +18,8 @@
 
    **Optional:**
  
-   `station` station id<br />
+   `station` station id - this is the class of the station, e.g., Dental<br />
+   `clinicstation` clinicstation id - this is the instance of the station, e.g., Dental1, Dental2, etc.<br />
 
 * **Data Params**
 

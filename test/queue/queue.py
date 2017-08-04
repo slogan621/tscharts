@@ -16,22 +16,34 @@ from test.clinic.clinic import GetAllClinics
 
 # there are no APIs for create, update, or delete. So, these tests must
 # be run with the scheduler operating in concert with the schedulter unit
-# test, assume that only one clinic is in the database, and will only perform  
-# basic positive testing along with negative testing of request args.
+# test, assume that at least one clinic is in the database, and will only 
+# perform basic positive testing along with negative testing of request args.
 
 class GetQueue(ServiceAPI):
     def makeURL(self):
-        url = None
+        url = "tscharts/v1/queue/"
+        hasArgs = False
         if self._clinic != None:
-            if self._station != None:
-                url = "tscharts/v1/queue/?clinic={}&station={}".format(self._clinic, self._station)
+            if not hasArgs:
+                url = url + "?"
             else:
-                url = "tscharts/v1/queue/?clinic={}".format(self._clinic)
-        else:
-            if self._station != None:
-                url = "tscharts/v1/queue/?station={}".format(self._station)
+                url = url + "&"
+            url = url + "clinic={}".format(self._clinic)
+            hasArgs = True
+        if self._station != None:
+            if not hasArgs:
+                url = url + "?"
             else:
-                url = "tscharts/v1/queue/"
+                url = url + "&"
+            url = url + "station={}".format(self._station)
+            hasArgs = True
+        if self._clinicstation != None:
+            if not hasArgs:
+                url = url + "?"
+            else:
+                url = url + "&"
+            url = url + "clinicstation={}".format(self._clinicstation)
+            hasArgs = True
         self.setURL(url)
 
     def __init__(self, host, port, token):
@@ -43,6 +55,7 @@ class GetQueue(ServiceAPI):
         self.setToken(token)
         self._clinic = None
         self._station = None
+        self._clinicstation = None
         self.makeURL()
 
     def setClinic(self, clinic):
@@ -53,9 +66,8 @@ class GetQueue(ServiceAPI):
         self._station = station
         self.makeURL()
 
-    def clearPayload(self):
-        self._station = None
-        self._clinic = None
+    def setClinicStation(self, clinicstation):
+        self._clinicstation = clinicstation
         self.makeURL()
     
 class TestTSQueue(unittest.TestCase):
@@ -123,11 +135,11 @@ class TestTSQueue(unittest.TestCase):
 
 
 def usage():
-    print("queue [-h host] [-p port] [-u username] [-w password]") 
+    print("queue [-h host] [-p port] [-u username] [-w password] [-c clinic] [-s station] [-z clinicstation]") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:c:s:")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:c:s:z:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -144,6 +156,8 @@ def main():
     clinicid = None
     global stationid
     stationid = None
+    global clinicstationid
+    clinicstationid = None
     for o, a in opts:
         if o == "-h":
             host = a
@@ -157,6 +171,8 @@ def main():
             username = a
         elif o == "-w":
             password = a
+        elif o == "-z":
+            clinicstatonid = a
         else:   
             assert False, "unhandled option"
     unittest.main(argv=[sys.argv[0]])

@@ -50,6 +50,7 @@ class QueueView(APIView):
 
         clinicid = request.GET.get('clinic', '')
         stationid = request.GET.get('station', '')
+        clinicstation = request.GET.get('clinicstation', '')
         if not clinicid == '':
             try:
                 clinicid = int(clinicid)
@@ -108,6 +109,9 @@ class QueueView(APIView):
                              "avgwait": queueStatus.avgwait}
             ret["queues"] = []
             for x in queues:
+                if not clinicstation == '' and int(clinicstation) != x.clinicstation_id:
+                    # clinicstation does not match
+                    continue
                 queueData = {}
                 aClinicStation = None
                 try:
