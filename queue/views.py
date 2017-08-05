@@ -130,7 +130,7 @@ class QueueView(APIView):
                 queueData["entries"] = []
 
                 try:
-                    queueEntries = QueueEntry.objects.filter(queue=x.id)
+                    queueEntries = QueueEntry.objects.filter(queue=x.id).order_by("timein")
                     if not queueEntries:
                         queueEntries = []
                 except:
@@ -141,6 +141,7 @@ class QueueView(APIView):
 
                 for y in queueEntries: 
                     entryData = {}
+                    entryData["id"] = y.id
                     entryData["patient"] = y.patient_id
                     entryData["timein"] = str(y.timein)
                     entryData["waittime"] = str(y.waittime)
@@ -158,3 +159,29 @@ class QueueView(APIView):
         if internalError:
             return HttpResponseServerError()
         return Response(ret)
+
+class QueueEntryView(APIView):
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def __init__(self):
+
+        super(QueueEntryView, self).__init__()
+
+    def delete(self, request, queueentry_id=None, format=None):
+        queueetry = None
+
+        # see if the patient exists
+
+        try:
+            queueentry = QueueEntry.objects.get(id=queueentry_id)
+        except:
+            queueentry = None
+
+        if not queueentry:
+            raise NotFound
+        else:
+            queueentry.delete()
+
+        return Response({})
