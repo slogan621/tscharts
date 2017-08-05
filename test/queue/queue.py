@@ -70,6 +70,25 @@ class GetQueue(ServiceAPI):
         self._clinicstation = clinicstation
         self.makeURL()
     
+class DeleteQueueEntry(ServiceAPI):
+    def makeURL(self):
+        url = "tscharts/v1/queueentry/{}/".format(self._queueentryid)
+        self.setURL(url)
+
+    def __init__(self, host, port, token):
+        super(DeleteQueueEntry, self).__init__()
+        
+        self.setHttpMethod("DELETE")
+        self.setHost(host)
+        self.setPort(port)
+        self.setToken(token)
+        self._queueentryid = None
+        self.makeURL()
+
+    def setQueueEntryId(self, queueentryid):
+        self._queueentryid = queueentryid
+        self.makeURL()
+    
 class TestTSQueue(unittest.TestCase):
 
     def setUp(self):

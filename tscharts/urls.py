@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^tscharts/v1/medicalhistory/', include('medicalhistory.urls', namespace='medicalhistory')),
     url(r'^tscharts/v1/patient/', include('patient.urls', namespace='patient')),
     url(r'^tscharts/v1/queue/', include('queue.urls', namespace='queue')),
+    url(r'^tscharts/v1/queueentry/', include('queue.queueentryurls', namespace='queueentry')),
     url(r'^tscharts/v1/register/', include('register.urls', namespace='register')),
     url(r'^tscharts/v1/returntoclinic/', include('returntoclinic.urls', namespace='returntoclinic')),
     url(r'^tscharts/v1/routingslip/', include('routingslip.rsurls', namespace='routingslip')),
