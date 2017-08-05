@@ -20,14 +20,85 @@ import json
 from datetime import datetime, timedelta
 from random import randint
 import time
+import threading
 
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.clinic.clinic import CreateClinic, DeleteClinic
+from test.queue.queue import GetQueue, DeleteQueueEntry
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
-from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation
+from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
+
+def checkinWorker(clinicstationid, mockclinic):
+    print("checkinWorker starting thread for clinic station {}".format(clinicstationid))
+    host = mockclinic._host
+    port = mockclinic._port
+    token = mockclinic._token
+    clinicid = mockclinic.getClinic()
+    while True:
+        time.sleep(randint(1, 30))
+        # get queue for this clincistation 
+        # if item in queue, checkin the patient, work for some
+        # random amount of time, then check out
+    
+        x = GetQueue(host, port, token)
+        x.setClinic(clinicid)
+        x.setClinicStation(clinicstationid)
+        ret = x.send(timeout=30)
+        if ret[0] == 200 and len(ret[1]["queues"]) > 0:
+            try:
+                entries = ret[1]["queues"][0]["entries"]
+                if len(entries):
+                    # something in the queue
+                    entry = entries[0]
+                    y = UpdateClinicStation(host, port, token, clinicstationid)
+                    y.setActive(True)
+                    y.setActivePatient(entry["patient"])
+                    ret = y.send(timeout=30)
+                    if ret[0] == 200:
+                        print("GetQueue: set clinicstation {} active patient to {}".format(clinicstationid, entry["patient"]))
+                        q = DeleteQueueEntry(host, port, token)
+                        q.setQueueEntryId(entry["id"])
+                        ret = q.send(timeout=30)
+                        if ret[0] == 200:
+                            print("GetQueue: deleted queueentry {}".format(entry["id"]))
+                            z = UpdateRoutingSlipEntry(host, port, token, entry["routingslipentry"])
+                            z.setState("Checked In")
+                            ret = z.send(timeout=30)
+                            if ret[0] == 200:
+                                print("GetQueue: clinicstation {} checked in patient {}".format(clinicstationid, entry["patient"]))
+                                # do some work
+                                t = randint(1, 600)
+                                print("GetQueue: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
+                                time.sleep(t)
+                                z.setState("Checked Out")
+                                ret = z.send(timeout=30)
+                                if ret[0] == 200:
+                                    print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
+                                    y.setActive(False)
+                                    ret = y.send(timeout=30)
+                                    if ret[0] == 200:
+                                        print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
+                                        pass
+                                    else:
+                                        print("GetQueue: failed to set clinicstation active to false {}".format(ret[0]))
+                                else:
+                                    print("GetQueue: failed to set state to 'Checked Out' {}".format(ret[0]))
+                            else:
+                                print("GetQueue: failed to set state to 'Checked In' {}".format(ret[0]))
+                        else:
+                            print("GetQueue: failed to delete queue entry {}  {}".format(entry["id"], ret[0]))
+                    else: 
+                        print("GetQueue: failed to set clinicstation active patient id {} : {}".format(entry["patient"], ret[0]))
+                else:
+                    print("GetQueue: no waiting entries for clinicstation {}".format(clinicstationid))
+            except Exception as e:
+                msg = sys.exc_info()[0]
+                print("GetQueue: exception {}: {}".format(ret[1], msg))
+        else:
+            print("GetQueue: failed to get queue entry for clinicstation {}: {}".format(clinicstationid, ret[0]))
 
 class MockClinic: 
     def __init__(self, host, port, username, password):
@@ -64,6 +135,23 @@ class MockClinic:
     def getPatients(self):
         return self._patientids
 
+    def simulateCheckins(self):
+        # create a thread for each station and then perform checkins, simulated
+        # service for some random duration, then checkouts while there are still
+        # patients waiting to be seen
+        threads = []
+        for x in self._clinicstationids:
+            t = threading.Thread(target=checkinWorker, args=(x,self,))
+            t.start()
+            threads.append(t)
+        return threads
+
+    def simulateAway(self, n):
+        # pick n stations randomly, make each wait a random time, then
+        # have that station go to away state a random time in range (0, 30)
+        # minutes 
+        pass
+
     def getClinic(self):
         return self._clinicid
 
@@ -79,6 +167,9 @@ class MockClinic:
         else:
             print("unable to get data for station {}".format(station))
         return retval
+        
+    def getQueue(self, clinicstationid):
+        pass
 
     def createClinic(self, location):
         # create clinic that is occurring today, since scheduler will only
@@ -110,6 +201,7 @@ class MockClinic:
 
     def createClinicStation(self, clinicid, stationid, name):
         retval = None        
+        '''
         state = randint(0, 1)
         if state == 0:
             away = False
@@ -121,6 +213,9 @@ class MockClinic:
         else:
             away = True
             active = False
+        '''
+        away = False
+        active = False
         print("Creating clinicstation {} away {} active {}".format(name[0], away, active))
         x = CreateClinicStation(self._host, self._port, self._token, clinicid, stationid, name=name[0], name_es=name[1], away=away, active=active)
         ret = x.send(timeout=30)
@@ -242,11 +337,11 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiólogo")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-c] [-a interval]") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "ch:p:u:w:a:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -255,8 +350,16 @@ def main():
     port = 8000
     username = None
     password = None
+    doCheckins = False
+    doAway = False
+    numAway = 0
     for o, a in opts:
-        if o == "-h":
+        if o == "-a":
+            doAway = True
+            numAway = int(a)
+        elif o == "-c":
+            doCheckins = True
+        elif o == "-h":
             host = a
         elif o == "-p":
             port = int(a)
@@ -274,6 +377,12 @@ def main():
         n = randint(50, 100)
         print("Registering {} patients for this clinic".format(n))
         mock.createAllPatients(n)
+        checkinThreads = None
+        awayThreads = None
+        if doCheckins:
+            checkinThreads = mock.simulateCheckins()
+        if doAway:
+            awayThreads = mock.simulateAway(numAway) 
         for x in mock.getPatients():
             time.sleep(randint(1, 30))
             cat = mock.getRandomCategory()
@@ -284,6 +393,10 @@ def main():
                     print("Adding station {} to routing slip".format(mock.getStationName(y)))
                     mock.createRoutingSlipEntry(routingslip, y)    
         mock.logout()
+    main_thread = threading.currentThread()
+    for t in threading.enumerate():
+        if t is not main_thread:
+            t.join()
 
 if __name__ == "__main__":
     main()

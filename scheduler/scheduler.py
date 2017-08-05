@@ -59,20 +59,23 @@ class ClinicStationQueueEntry():
         return self._elapsedtime
 
     def update(self):
+        ret = False
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
         q = None
         try:
             q = QueueEntry.objects.get(queue=self._queueid,
                                        patient=self._patientid)
         except:
-            print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            q = None
             
         if (q != None) :
             q.waittime = str(self._elapsedtime)
             q.estwaittime = q.waittime  # XXX
-            q.save()
+            q.save()            
+            ret = True
         else:
-            print("unable to get or create queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            print("unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+        return ret
 
     def __str__(self):
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
@@ -417,7 +420,9 @@ class Scheduler():
 
             for k, v in self._queues.iteritems():
                 for y in v:
-                    y["qent"].update()
+                    ret = y["qent"].update()
+                    if not ret:
+                        v.remove(y)
 
             time.sleep(5)
 
