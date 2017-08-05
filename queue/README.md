@@ -95,7 +95,7 @@ Content-Type: application/json
 * **Example:**
 
 ```
-DELETE /tscharts/v1/queue/122/ HTTP/1.1
+DELETE /tscharts/v1/queueentry/122/ HTTP/1.1
 Host: 127.0.0.1:8000
 Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
