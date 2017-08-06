@@ -156,6 +156,8 @@ class ClinicStationView(APIView):
                 badRequest = True
             else:
                 kwargs["active"] = active
+                if active == False:
+                    kwargs["activepatient"] = None
 
         if "away" in data:
             away = data["away"]

@@ -39,7 +39,7 @@ def checkinWorker(clinicstationid, mockclinic):
     clinicid = mockclinic.getClinic()
     while True:
         time.sleep(randint(1, 30))
-        # get queue for this clincistation 
+        # get queue for this clinicstation 
         # if item in queue, checkin the patient, work for some
         # random amount of time, then check out
     
@@ -49,21 +49,22 @@ def checkinWorker(clinicstationid, mockclinic):
         ret = x.send(timeout=30)
         if ret[0] == 200 and len(ret[1]["queues"]) > 0:
             try:
+                print("query queues for clinicstation {} got {}".format(clinicstationid, ret[1]))
                 entries = ret[1]["queues"][0]["entries"]
                 if len(entries):
                     # something in the queue
                     entry = entries[0]
-                    y = UpdateClinicStation(host, port, token, clinicstationid)
-                    y.setActive(True)
-                    y.setActivePatient(entry["patient"])
-                    ret = y.send(timeout=30)
+                    q = DeleteQueueEntry(host, port, token)
+                    q.setQueueEntryId(entry["id"])
+                    ret = q.send(timeout=30)
                     if ret[0] == 200:
-                        print("GetQueue: set clinicstation {} active patient to {}".format(clinicstationid, entry["patient"]))
-                        q = DeleteQueueEntry(host, port, token)
-                        q.setQueueEntryId(entry["id"])
-                        ret = q.send(timeout=30)
+                        print("GetQueue: deleted queueentry {}".format(entry["id"]))
+                        y = UpdateClinicStation(host, port, token, clinicstationid)
+                        y.setActive(True)
+                        y.setActivePatient(entry["patient"])
+                        ret = y.send(timeout=30)
                         if ret[0] == 200:
-                            print("GetQueue: deleted queueentry {}".format(entry["id"]))
+                            print("GetQueue: set clinicstation {} active patient to {}".format(clinicstationid, entry["patient"]))
                             z = UpdateRoutingSlipEntry(host, port, token, entry["routingslipentry"])
                             z.setState("Checked In")
                             ret = z.send(timeout=30)
@@ -78,10 +79,10 @@ def checkinWorker(clinicstationid, mockclinic):
                                 if ret[0] == 200:
                                     print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
                                     y.setActive(False)
+                                    #y.setActivePatient(None)
                                     ret = y.send(timeout=30)
                                     if ret[0] == 200:
                                         print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
-                                        pass
                                     else:
                                         print("GetQueue: failed to set clinicstation active to false {}".format(ret[0]))
                                 else:
@@ -89,9 +90,9 @@ def checkinWorker(clinicstationid, mockclinic):
                             else:
                                 print("GetQueue: failed to set state to 'Checked In' {}".format(ret[0]))
                         else:
-                            print("GetQueue: failed to delete queue entry {}  {}".format(entry["id"], ret[0]))
+                            print("GetQueue: failed to set clinicstation active patient id {} : {}".format(entry["patient"], ret[0]))
                     else: 
-                        print("GetQueue: failed to set clinicstation active patient id {} : {}".format(entry["patient"], ret[0]))
+                        print("GetQueue: failed to delete queue entry {}  {}".format(entry["id"], ret[0]))
                 else:
                     print("GetQueue: no waiting entries for clinicstation {}".format(clinicstationid))
             except Exception as e:

@@ -347,7 +347,7 @@ class Scheduler():
             if ret[0] == 200:
                 state = ret[1]["state"] 
 
-                if state == "Scheduled":
+                if state == "Scheduled" or state == "Checked In":
                     retval = True
                     break
 
@@ -364,7 +364,7 @@ class Scheduler():
                 if ret[0] == 200:
                     state = ret[1]["state"] 
 
-                    if state == "New":
+                    if state == "New" :
                         queueables.append(ret[1])
 
         if len(queueables):
