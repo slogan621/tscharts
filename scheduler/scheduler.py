@@ -45,15 +45,28 @@ class ClinicStationQueueEntry():
         self._timeout = 0
         self._queueid = None
         self._routingslipentryid = None
+        self._routingslip = None
 
     def setQueue(self, id):
         self._queueid = id
 
+    def setRoutingSlip(self, id):
+        self._routingslip = id
+
+    def getRoutingSlip(self):
+        return self._routingslip
+
     def setRoutingSlipEntry(self, id):
         self._routingslipentryid = id
 
+    def getRoutingSlipEntry(self):
+        return self._routingslipentryid
+
     def setPatientId(self, id):
         self._patientid = id
+
+    def getPatientId(self):
+        return self._patientid
 
     def getElapsedTime(self):
         return self._elapsedtime
@@ -94,6 +107,8 @@ class Scheduler():
         self._dbQueues = {}
         self._dbQueueEntries = {}
         self._stationToClinicStationMap = {} 
+        self._clinicStationToStationMap = {}
+        self._clinicStationActiveMap = {}
         fail = False
         try:
             login = Login(self._host, self._port, self._username, self._password)
@@ -177,6 +192,38 @@ class Scheduler():
             print("createDbQueueEntry unable to create queue entry")
         return queueent
 
+    def deleteDbQueueEntry(self, queueid, patientid, routingslipentryid):
+        queueent = None
+        ret = False
+
+        try:
+            aQueue = Queue.objects.get(id=queueid)
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("deleteDbQueueEntry unable to get queue {}".format(queueid))
+        try:
+            aPatient = Patient.objects.get(id=int(patientid))
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("deleteDbQueueEntry unable to get patient {}".format(patientid))
+        try:
+            aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("deleteDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+
+        try:
+            queueent = QueueEntry.objects.get(queue = aQueue,
+                                  patient = aPatient,
+                                  routingslipentry = aRoutingSlipEntry)
+            if queueent:
+                queueent.delete()
+                ret = True
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("deleteDbQueueEntry unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
+        return ret
+
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
         
@@ -189,6 +236,8 @@ class Scheduler():
                 self._stationToClinicStationMap[str(x["station"])] = []
             if not x["id"] in self._stationToClinicStationMap[str(x["station"])]:
                 self._stationToClinicStationMap[str(x["station"])].append(x["id"])
+            self._clinicStationToStationMap[str(x["id"])] = str(x["station"])
+            self._clinicStationActiveMap[str(x["id"])] = x["active"]
 
     def getClinic(self):
         retval = None
@@ -218,6 +267,59 @@ class Scheduler():
 
     def getClinicStationsForStation(self, stationid):
         return self._stationToClinicStationMap[str(stationid)]
+
+    def getEmptyQueues(self):
+        ret = []
+        for k, v in self._queues.iteritems():
+            active = self._clinicStationActiveMap[str(k)]
+            if active == False and not len(v):
+                ret.append(k)
+        return ret
+
+    def fillAnEmptyQueue(self):
+        empty = self.getEmptyQueues()
+        for x in empty:
+            station = self._clinicStationToStationMap[str(x)]
+            for k, v in self._queues.iteritems():
+                active = self._clinicStationActiveMap[str(k)]
+                if k == x:
+                    if len(v):
+                        break    # queue is no longer empty, go to next queue
+                    else:
+                        continue # queue is one we are trying to fill, skip
+                if len(v) == 1 and active == False:
+                    continue     # patient is probably being retrieved, don't move
+                '''
+                iterate the queue, looking for a patient that has the 
+                station of the empty queue in his or her routing slip. 
+                If found, move that patient to the queue that is empty.
+                ''' 
+                count = 0 
+                for item in v:
+                    if active == False:
+                        count = count + 1  # if not active, skip first in list
+                        continue
+                    qent = item["qent"] 
+                    r = GetRoutingSlip(self._host, self._port, self._token, id=qent.getRoutingSlip())
+                    ret = r.send(timeout=30)
+                    if ret[0] == 200:
+                        routing = ret[1]["routing"]
+                        patient = ret[1]["patient"]
+                        for y in routing:
+                            entry = GetRoutingSlipEntry(self._host, self._port, self._token, y)
+                            ret = entry.send(timeout=30)
+                            if ret[0] == 200:
+                                rse = ret[1]
+                                state = ret[1]["state"] 
+                                if str(ret[1]["station"]) == station and state == "New":
+                                    print ("************ moving a queue item ******************* item {} patient {}".format(item, patient))
+
+                                    dbQueue = self._dbQueues[k]
+                                    ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), qent.getRoutingSlipEntry())
+                                    if ret == True:
+                                        v.remove(item)
+                                        self.addToQueue(rse, qent.getPatientId())
+                                        return   # one and done
 
     def dumpQueues(self):
         #os.system("clear")
@@ -284,30 +386,32 @@ class Scheduler():
             ret = x.send(timeout=30)
             if ret[0] == 200:
                 retval = ret[1]
-                #print retval
         return retval
 
-    def addToQueue(self, entry, patientid):
+    def addToQueue(self, routingslipentry, patientid):
         min = 9999      
         index = None
-        clinicstations = self.getClinicStationsForStation(entry["station"])
+        clinicstations = self.getClinicStationsForStation(routingslipentry["station"])
         for x in clinicstations:
             tmp = len(self._queues[str(x)])
+            if self._clinicStationActiveMap[str(x)] == True:
+                tmp += 1
             if tmp < min:
                 min = tmp
                 index = str(x) 
-        if not entry in self._queues[index]:
+        if not routingslipentry in self._queues[index]:
             qent = ClinicStationQueueEntry()
-            qent.setRoutingSlipEntry(entry["id"])
+            qent.setRoutingSlip(routingslipentry["routingslip"])
+            qent.setRoutingSlipEntry(routingslipentry["id"])
             qent.setPatientId(patientid)
             qent.setQueue(index)
-            entry["qent"] = qent
-            self._queues[index].append(entry)
+            routingslipentry["qent"] = qent
+            self._queues[index].append(routingslipentry)
             dbQueue = self._dbQueues[index]
             # create queue entry
             dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
                                                    patientid, 
-                                                   entry["id"])
+                                                   routingslipentry["id"])
             if dbQueueEntry:
                 self._dbQueueEntries[index] = dbQueueEntry
 
@@ -395,7 +499,6 @@ class Scheduler():
                 continue
 
             self.updateClinicStations()
-            self.dumpQueues()
 
             # get all the routing slips for the clinic
 
@@ -424,6 +527,8 @@ class Scheduler():
                     if not ret:
                         v.remove(y)
 
+            self.dumpQueues()
+            self.fillAnEmptyQueue()
             time.sleep(5)
 
 def usage():
