@@ -44,12 +44,12 @@ def awayWorker(mc):
             y.setId(x)
             ret = y.send(timeout=30)
             if ret[0] == 200:
-                awaytime = ret[1]["awaytime"]
                 if ret[1]["active"] == False:
                     break
         y = UpdateClinicStation(mc._host, mc._port, mc._token, x)
         y.setActive(False)
-        y.setAwayTime(randint(1, 5))
+        awaytime = randint(1, 5)
+        y.setAwayTime(awaytime)
         y.setAway(True)
         ret = y.send(timeout=30)
         if ret[0] == 200:
