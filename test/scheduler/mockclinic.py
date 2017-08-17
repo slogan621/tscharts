@@ -28,8 +28,34 @@ from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.queue.queue import GetQueue, DeleteQueueEntry
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
-from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation
+from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
+import random
+
+def awayWorker(mc):
+    clinicstations = mc._clinicstationids 
+    random.shuffle(clinicstations)
+    for x in clinicstations:
+        time.sleep(randint(60, 300))
+        busy = True
+        while busy == True:
+            time.sleep(5)
+            y = GetClinicStation(mc._host, mc._port, mc._token)
+            y.setId(x)
+            ret = y.send(timeout=30)
+            if ret[0] == 200:
+                awaytime = ret[1]["awaytime"]
+                if ret[1]["active"] == False:
+                    break
+        y = UpdateClinicStation(mc._host, mc._port, mc._token, x)
+        y.setActive(False)
+        y.setAwayTime(randint(1, 5))
+        y.setAway(True)
+        ret = y.send(timeout=30)
+        if ret[0] == 200:
+            time.sleep(awaytime * 60)
+            y.setAway(False)
+            ret = y.send(timeout=30)
 
 def checkinWorker(clinicstationid, mockclinic):
     print("checkinWorker starting thread for clinic station {}".format(clinicstationid))
@@ -43,6 +69,13 @@ def checkinWorker(clinicstationid, mockclinic):
         # if item in queue, checkin the patient, work for some
         # random amount of time, then check out
     
+        x = GetClinicStation(host, port, token)
+        x.setId(clinicstationid)
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            if ret[1]["away"] == True:
+                continue
+
         x = GetQueue(host, port, token)
         x.setClinic(clinicid)
         x.setClinicStation(clinicstationid)
@@ -79,7 +112,6 @@ def checkinWorker(clinicstationid, mockclinic):
                                 if ret[0] == 200:
                                     print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
                                     y.setActive(False)
-                                    #y.setActivePatient(None)
                                     ret = y.send(timeout=30)
                                     if ret[0] == 200:
                                         print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
@@ -147,11 +179,9 @@ class MockClinic:
             threads.append(t)
         return threads
 
-    def simulateAway(self, n):
-        # pick n stations randomly, make each wait a random time, then
-        # have that station go to away state a random time in range (0, 30)
-        # minutes 
-        pass
+    def simulateAway(self):
+        t = threading.Thread(target=awayWorker, args=(self,))
+        t.start()
 
     def getClinic(self):
         return self._clinicid
@@ -342,7 +372,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "ch:p:u:w:a:")
+        opts, args = getopt.getopt(sys.argv[1:], "ach:p:u:w:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -357,7 +387,6 @@ def main():
     for o, a in opts:
         if o == "-a":
             doAway = True
-            numAway = int(a)
         elif o == "-c":
             doCheckins = True
         elif o == "-h":
@@ -383,7 +412,7 @@ def main():
         if doCheckins:
             checkinThreads = mock.simulateCheckins()
         if doAway:
-            awayThreads = mock.simulateAway(numAway) 
+            awayThreads = mock.simulateAway() 
         for x in mock.getPatients():
             time.sleep(randint(1, 30))
             cat = mock.getRandomCategory()
