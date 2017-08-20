@@ -63,11 +63,11 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
   `GET`
   
-*  **URL Params**
+*  **Data Params**
 
    None
 
-* **Data Params**
+* **URL Params**
 
    **Required:**
 
@@ -103,9 +103,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/statechange/ HTTP/1.1
+GET /tscharts/v1/statechange?patient=378&clinicstation=157 HTTP/1.1
 Host: 127.0.0.1:8000
-Content-Length: 38
+Content-Length: 0
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -113,7 +113,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"patient": 378, "clinicstation": 157}HTTP/1.0 200 OK
+HTTP/1.0 200 OK
 Date: Fri, 21 Apr 2017 23:22:19 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept

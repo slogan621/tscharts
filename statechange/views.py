@@ -25,7 +25,6 @@ from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 import sys
-
 import json
 
 class StateChangeView(APIView):
@@ -62,43 +61,45 @@ class StateChangeView(APIView):
                 state_change = None
         else:
             # look for optional arguments
-            data = json.loads(request.body)
             try:
-                patientid = int(data["patient"])
-                try:
-                    aPatient = Patient.objects.get(id=patientid)
-                    if not aPatient:
+                patientid = request.GET.get('patient', '')
+                if not patientid == '':
+                    try:
+                        aPatient = Patient.objects.get(id=patientid)
+                        if not aPatient:
+                            badRequest = True
+                        else:
+                            kwargs["patient"] = aPatient
+                    except:
                         badRequest = True
-                    else:
-                        kwargs["patient"] = aPatient
-                except:
-                    badRequest = True
             except:
                 pass # no patient ID
 
             try:
-                clinicid = int(data["clinic"])
-                try:
-                    aClinic = Clinic.objects.get(id=clinicid)
-                    if not aClinic:
+                clinicid = request.GET.get('clinic', '')
+                if not clinicid == '':
+                    try:
+                        aClinic = Clinic.objects.get(id=clinicid)
+                        if not aClinic:
+                            badRequest = True
+                        else:
+                            kwargs["clinic"] = aClinic
+                    except:
                         badRequest = True
-                    else:
-                        kwargs["clinic"] = aPatient
-                except:
-                    badRequest = True
             except:
                 pass # no clinic ID
 
             try:
-                clinicstationid = int(data["clinicstation"])
-                try:
-                    aClinicStation = ClinicStation.objects.get(id=clinicstationid)
-                    if not aClinicStation:
+                clinicstationid = request.GET.get('clinicstation', '')
+                if not clinicstationid == '':
+                    try:
+                        aClinicStation = ClinicStation.objects.get(id=clinicstationid)
+                        if not aClinicStation:
+                            badRequest = True
+                        else:
+                            kwargs["clinicstation"] = aClinicStation
+                    except:
                         badRequest = True
-                    else:
-                        kwargs["clinicstation"] = aClinicStation
-                except:
-                    badRequest = True
             except:
                 pass # no clinicstation ID
 

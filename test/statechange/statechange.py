@@ -39,6 +39,39 @@ class CreateStateChange(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetStateChange(ServiceAPI):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/statechange/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/statechange/".format(self._id)
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._clinicstation == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinicstation={}".format(self._clinicstation)
+            hasQArgs = True
+
+        self.setURL(base)
+
     def __init__(self, host, port, token, id=None):
         super(GetStateChange, self).__init__()
         
@@ -46,28 +79,30 @@ class GetStateChange(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if not id:
-            self.setURL("tscharts/v1/statechange/")
-        else:
-            self.setURL("tscharts/v1/statechange/{}".format(id))
+        self.clearArgs()
+        self.makeURL()
+
+    def clearArgs(self):
+        self._patient = None
+        self._clinic = None
+        self._clinicstation = None
+        self._id = None
 
     def setClinicStation(self, clinic_station):
-        self._payload["clinicstation"] = clinic_station
-        self.setPayload(self._payload)
+        self._clinicstation = clinic_station
+        self.makeURL()
     
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
     
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
 
-    def clearPayload(self):
-        self._payload = {}
-        self.setPayload(self._payload)
+    def setId(self, id):
+        self._id = id
+        self.makeURL()
 
 class DeleteStateChange(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -140,7 +175,8 @@ class TestTSStateChange(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         statechangeid = int(ret[1]["id"])
 
-        x = GetStateChange(host, port, token, statechangeid)
+        x = GetStateChange(host, port, token)
+        x.setId(statechangeid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -374,7 +410,8 @@ class TestTSStateChange(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         statechangeid = int(ret[1]["id"])
 
-        x = GetStateChange(host, port, token, statechangeid)
+        x = GetStateChange(host, port, token)
+        x.setId(statechangeid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -460,7 +497,8 @@ class TestTSStateChange(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         statechangeid = int(ret[1]["id"])
 
-        x = GetStateChange(host, port, token, statechangeid)
+        x = GetStateChange(host, port, token)
+        x.setId(statechangeid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -510,7 +548,8 @@ class TestTSStateChange(unittest.TestCase):
         ids.append(int(ret[1]["id"]))
 
         for x in ids:
-            y = GetStateChange(host, port, token, x)
+            y = GetStateChange(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -522,7 +561,8 @@ class TestTSStateChange(unittest.TestCase):
             self.assertEqual(ret[0], 200)
 
         for x in ids:
-            y = GetStateChange(host, port, token, x)
+            y = GetStateChange(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
 
@@ -594,7 +634,8 @@ class TestTSStateChange(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         statechangeid = int(ret[1]["id"])
 
-        x = GetStateChange(host, port, token, statechangeid)
+        x = GetStateChange(host, port, token)
+        x.setId(statechangeid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -622,7 +663,7 @@ class TestTSStateChange(unittest.TestCase):
         self.assertTrue("state" in ret);
         self.assertTrue(ret["state"] == "in");
 
-        x.clearPayload()
+        x.clearArgs()
         x.setClinicStation(clinicstationid)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
@@ -636,7 +677,7 @@ class TestTSStateChange(unittest.TestCase):
         self.assertTrue("state" in ret);
         self.assertTrue(ret["state"] == "in");
 
-        x.clearPayload()
+        x.clearArgs()
         x.setClinic(clinicid)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
@@ -650,7 +691,7 @@ class TestTSStateChange(unittest.TestCase):
         self.assertTrue("state" in ret);
         self.assertTrue(ret["state"] == "in");
 
-        x.clearPayload()
+        x.clearArgs()
         x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -663,7 +704,7 @@ class TestTSStateChange(unittest.TestCase):
         self.assertTrue("state" in ret);
         self.assertTrue(ret["state"] == "in");
 
-        x.clearPayload()
+        x.clearArgs()
         x.setClinicStation(clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
