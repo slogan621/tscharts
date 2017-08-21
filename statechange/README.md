@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"state":"in" | "out",""time":UTC time string, "patient":id, "clinicstation":id}`
+    **Content:** `{"state":"in" | "out","time":UTC time string, "patient":id, "clinicstation":id}`
  
 * **Error Response:**
 
