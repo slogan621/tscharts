@@ -28,6 +28,7 @@ from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.queue.queue import GetQueue, DeleteQueueEntry
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
+from test.statechange.statechange import CreateStateChange
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
 import random
@@ -103,22 +104,35 @@ def checkinWorker(clinicstationid, mockclinic):
                             ret = z.send(timeout=30)
                             if ret[0] == 200:
                                 print("GetQueue: clinicstation {} checked in patient {}".format(clinicstationid, entry["patient"]))
-                                # do some work
-                                t = randint(1, 600)
-                                print("GetQueue: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
-                                time.sleep(t)
-                                z.setState("Checked Out")
-                                ret = z.send(timeout=30)
+                                r = CreateStateChange(host, port, token)
+                                r.setClinicStation(clinicstationid)
+                                r.setPatient(entry["patient"])
+                                r.setState("in")
+                                ret = r.send(timeout=30)
                                 if ret[0] == 200:
-                                    print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
-                                    y.setActive(False)
-                                    ret = y.send(timeout=30)
+                                    # do some work
+                                    t = randint(1, 600)
+                                    print("GetQueue: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
+                                    time.sleep(t)
+                                    z.setState("Checked Out")
+                                    ret = z.send(timeout=30)
                                     if ret[0] == 200:
-                                        print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
+                                        print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
+                                        r.setState("out")
+                                        ret = r.send(timeout=30)
+                                        if ret[0] == 200:
+                                            y.setActive(False)
+                                            ret = y.send(timeout=30)
+                                            if ret[0] == 200:
+                                                print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
+                                            else:
+                                                print("GetQueue: failed to set clinicstation active to false {}".format(ret[0]))
+                                        else:
+                                            print("GetQueue: failed to create statechange record for state 'out' {}".format(ret[0]))
                                     else:
-                                        print("GetQueue: failed to set clinicstation active to false {}".format(ret[0]))
+                                        print("GetQueue: failed to set state to 'Checked Out' {}".format(ret[0]))
                                 else:
-                                    print("GetQueue: failed to set state to 'Checked Out' {}".format(ret[0]))
+                                    print("GetQueue: failed to create statechange record for state 'in' {}".format(ret[0]))
                             else:
                                 print("GetQueue: failed to set state to 'Checked In' {}".format(ret[0]))
                         else:
