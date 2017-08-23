@@ -72,6 +72,13 @@ class ClinicStationQueueEntry():
     def getElapsedTime(self):
         return self._elapsedtime
 
+    def getEstWaitTime(self, queueentryid):   
+        # use self._queueid to determine relative position of
+        # queueentry and the avgservice time, plus the time the
+        # current patient (if any) has been in service, and then
+        # compute an estimated time for this particular entry
+        return self._elapsedtime  # XXX
+
     def update(self):
         ret = False
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
@@ -83,8 +90,8 @@ class ClinicStationQueueEntry():
             q = None
             
         if (q != None) :
-            q.waittime = str(self._elapsedtime)
-            q.estwaittime = q.waittime  # XXX
+            q.waittime = str(self.getElapsedTime())
+            q.estwaittime = str(self.getEstWaitTime(q.id))
             q.save()            
             ret = True
         else:
@@ -477,6 +484,9 @@ class Scheduler():
         index = None
         clinicstations = self.getClinicStationsForStation(routingslipentry["station"])
         for x in clinicstations:
+            away = self._clinicStationAwayMap[str(x)]
+            if away == True:
+                continue
             tmp = len(self._queues[str(x)])
             if self._clinicStationActiveMap[str(x)] == True:
                 tmp += 1
@@ -520,6 +530,10 @@ class Scheduler():
         for x in queueables:
             clinicstations = self.getClinicStationsForStation(x["station"])
             for clinicstation in clinicstations:
+                # don't schedule into away queues
+                away = self._clinicStationAwayMap[str(clinicstation)]
+                if away == True:
+                    continue
                 tmp = len(self._queues[str(clinicstation)])
                 if tmp < smallest:
                     ret = x
@@ -551,7 +565,6 @@ class Scheduler():
                 ret = entry.send(timeout=30)
                 if ret[0] == 200:
                     state = ret[1]["state"] 
-
                     if state == "New" :
                         queueables.append(ret[1])
 
