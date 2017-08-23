@@ -110,6 +110,7 @@ class Scheduler():
         self._stationToClinicStationMap = {} 
         self._clinicStationToStationMap = {}
         self._clinicStationActiveMap = {}
+        self._clinicStationAwayMap = {}
         fail = False
         try:
             login = Login(self._host, self._port, self._username, self._password)
@@ -318,6 +319,7 @@ class Scheduler():
                 self._stationToClinicStationMap[str(x["station"])].append(x["id"])
             self._clinicStationToStationMap[str(x["id"])] = str(x["station"])
             self._clinicStationActiveMap[str(x["id"])] = x["active"]
+            self._clinicStationAwayMap[str(x["id"])] = x["away"]
 
     def getClinic(self):
         retval = None
@@ -352,7 +354,8 @@ class Scheduler():
         ret = []
         for k, v in self._queues.iteritems():
             active = self._clinicStationActiveMap[str(k)]
-            if active == False and not len(v):
+            away = self._clinicStationAwayMap[str(k)]
+            if away == False and active == False and not len(v):
                 ret.append(k)
         return ret
 
@@ -362,12 +365,13 @@ class Scheduler():
             station = self._clinicStationToStationMap[str(x)]
             for k, v in self._queues.iteritems():
                 active = self._clinicStationActiveMap[str(k)]
+                away = self._clinicStationAwayMap[str(k)]
                 if k == x:
                     if len(v):
                         break    # queue is no longer empty, go to next queue
                     else:
                         continue # queue is one we are trying to fill, skip
-                if len(v) == 1 and active == False:
+                if len(v) == 1 and active == False and away == False:
                     continue     # patient is probably being retrieved, don't move
                 '''
                 iterate the queue, looking for a patient that has the 
