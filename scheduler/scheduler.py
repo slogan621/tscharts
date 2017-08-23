@@ -30,6 +30,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tscharts.settings")
 import django
 django.setup()
 
+from statechange.models import StateChange
 from queue.models import QueueStatus, Queue, QueueEntry
 from routingslip.models import RoutingSlipEntry
 from patient.models import Patient
@@ -224,6 +225,85 @@ class Scheduler():
             print("deleteDbQueueEntry unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
         return ret
 
+    def getClinicStationAvgServiceTime(self, statechanges):
+        sumt = 0
+        count = 0
+        if len(statechanges) == 0:
+            return "00:00:00"
+        for x in statechanges:
+            if x.state == 'i':
+                t0 = x.time
+            else:
+                t1 = x.time
+                delta = t1 - t0
+                sumt += delta.total_seconds()
+                count = count + 1
+        if count == 0:
+            return "00:00:00"
+        hours = 0
+        minutes = 0
+        seconds = 0
+        avg_secs = int(sumt / count)
+
+        hours = avg_secs / 3600
+        minutes = (avg_secs - (hours * 3600)) / 60
+        seconds = avg_secs - ((hours * 3600) + (minutes * 60))    
+        strtime = "{}:{}:{}".format(hours, minutes, seconds)
+        ret = datetime.datetime.strptime(strtime, '%H:%M:%S').time()
+        return ret
+
+    def verifyStateChanges(self, statechanges):
+        ret = True
+
+        count = 0
+        for x in statechanges:          
+            if count % 2 == 0:
+                if not x.state == 'i':
+                    print("statechanges expected in 'i' but got '{}'".format(x.state))
+                    ret = False
+                    break
+            else:
+               if not x.state == 'o':
+                   print("statechanges expected out 'o' but got '{}'".format(x.state))
+                   ret = False
+                   break
+            count = count + 1
+        return ret
+
+    def updateQueueAvgServiceTime(self):
+        for x in self._clinicstations:
+            # get statechange sorted by date for this clinicstation. Order
+            # should be in, out pairs for each patient that has visited the
+            # clinic. Verify this, and sum the time deltas between arriving 
+            # and leaving. Finally, compute average of these time deltas.
+
+            try:
+                aClinicStation = ClinicStation.objects.get(id=x["id"])
+                if not aClinicStation:
+                    print("updateQueueAvgServiceTime not found clinicstation {}".format(x["id"]))
+                    
+            except:
+                print("updateQueueAvgServiceTime unable to get clinicstation {}".format(x["id"]))
+                continue
+            try:
+                statechanges = StateChange.objects.filter(clinicstation=aClinicStation).order_by("time")              
+            except:
+                print("updateQueueAvgServiceTime unable to get statechanges {}".format(x["id"]))
+                continue
+            if statechanges and len(statechanges):
+                if not self.verifyStateChanges(statechanges): 
+                    print("updateQueueAvgServiceTime statechanges for clinicstation {} are not valid".format(x))                        
+                    continue
+                avg = self.getClinicStationAvgServiceTime(statechanges)
+                try:
+                    aQueue = Queue.objects.filter(clinicstation=aClinicStation)
+                    if aQueue and len(aQueue) == 1:
+                        aQueue[0].avgservicetime = avg
+                        aQueue[0].save() 
+                except:
+                    print("exception: {}".format(sys.exc_info()[0]))
+                    print("updateQueueAvgServiceTime unable to get queue")
+
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
         
@@ -311,7 +391,7 @@ class Scheduler():
                             if ret[0] == 200:
                                 rse = ret[1]
                                 state = ret[1]["state"] 
-                                if str(ret[1]["station"]) == station and state == "New":
+                                if str(ret[1]["station"]) == station and (state == "New" or state == "Scheduled"):
                                     print ("************ moving a queue item ******************* item {} patient {}".format(item, patient))
 
                                     dbQueue = self._dbQueues[k]
@@ -529,6 +609,7 @@ class Scheduler():
 
             self.dumpQueues()
             self.fillAnEmptyQueue()
+            self.updateQueueAvgServiceTime()
             time.sleep(5)
 
 def usage():
