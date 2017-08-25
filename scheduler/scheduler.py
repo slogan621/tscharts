@@ -379,7 +379,7 @@ class Scheduler():
                     else:
                         continue # queue is one we are trying to fill, skip
                 if len(v) == 1 and active == False and away == False:
-                    continue     # patient is probably being retrieved, don't move
+                    continue     # patient is probably being retrieved, don't move from this queue
                 '''
                 iterate the queue, looking for a patient that has the 
                 station of the empty queue in his or her routing slip. 
@@ -402,18 +402,17 @@ class Scheduler():
                             if ret[0] == 200:
                                 rse = ret[1]
                                 state = ret[1]["state"] 
-                                if str(ret[1]["station"]) == station and (state == "New" or state == "Scheduled"):
-                                    print ("************ moving a queue item ******************* item {} patient {}".format(item, patient))
+                                if str(ret[1]["station"]) == station and (state == "Scheduled"):
+                                    print ("************ moving a queue item ******************* item {} patient {}".format(y, patient))
 
                                     dbQueue = self._dbQueues[k]
-                                    ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), qent.getRoutingSlipEntry())
+                                    ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rse["id"])
                                     if ret == True:
-                                        v.remove(item)
-                                        self.addToQueue(rse, qent.getPatientId())
-                                        return   # one and done
+                                        self.markNew(rse)
+                                        self._queues[k].remove(item)
 
     def dumpQueues(self):
-        #os.system("clear")
+        os.system("clear")
         minQ = 9999
         maxQ = -9999 
         minWait = datetime.timedelta(days=999)
@@ -480,6 +479,7 @@ class Scheduler():
         return retval
 
     def addToQueue(self, routingslipentry, patientid):
+        ret = False
         min = 9999      
         index = None
         clinicstations = self.getClinicStationsForStation(routingslipentry["station"])
@@ -493,21 +493,25 @@ class Scheduler():
             if tmp < min:
                 min = tmp
                 index = str(x) 
-        if not routingslipentry in self._queues[index]:
-            qent = ClinicStationQueueEntry()
-            qent.setRoutingSlip(routingslipentry["routingslip"])
-            qent.setRoutingSlipEntry(routingslipentry["id"])
-            qent.setPatientId(patientid)
-            qent.setQueue(index)
-            routingslipentry["qent"] = qent
-            self._queues[index].append(routingslipentry)
-            dbQueue = self._dbQueues[index]
-            # create queue entry
-            dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
-                                                   patientid, 
-                                                   routingslipentry["id"])
-            if dbQueueEntry:
-                self._dbQueueEntries[index] = dbQueueEntry
+        if index:
+            isInQueue = routingslipentry in self._queues[index]
+            if index and (not isInQueue):
+                qent = ClinicStationQueueEntry()
+                qent.setRoutingSlip(routingslipentry["routingslip"])
+                qent.setRoutingSlipEntry(routingslipentry["id"])
+                qent.setPatientId(patientid)
+                qent.setQueue(index)
+                routingslipentry["qent"] = qent
+                self._queues[index].append(routingslipentry)
+                dbQueue = self._dbQueues[index]
+                # create queue entry
+                dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
+                                                       patientid, 
+                                                       routingslipentry["id"])
+                if dbQueueEntry:
+                    self._dbQueueEntries[index] = dbQueueEntry
+                ret = True
+        return ret
 
     def sortQueueablesByPriority(self, queueables):
         tmp = sorted(queueables, key=lambda k: k["order"])
@@ -587,6 +591,15 @@ class Scheduler():
         x = UpdateRoutingSlipEntry(self._host, self._port, self._token, entry["id"])
         x.setState("Scheduled")
         ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("markScheduled failure for entry {}".format(entry["id"]))
+
+    def markNew(self, entry):
+        x = UpdateRoutingSlipEntry(self._host, self._port, self._token, entry["id"])
+        x.setState("New")
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("markNew failure for entry {}".format(entry["id"]))
 
     def run(self):
 
@@ -611,12 +624,14 @@ class Scheduler():
                     routing = i["routing"]
                     entry = self.findQueueableEntry(routing)
                     if entry:
-                        # update the routingslip entry state to "Scheduled"
-                        self.markScheduled(entry)
                         # append the entry to the corresponding
                         # clinicstation queue
-                        self.addToQueue(entry, i["patient"])
-                        break
+                        if self.addToQueue(entry, i["patient"]) == True:
+                            # update the routingslip entry state to "Scheduled"
+                            self.markScheduled(entry)
+                            break
+                        else:
+                            print("Unable to add item to queue");
 
             for k, v in self._queues.iteritems():
                 for y in v:
