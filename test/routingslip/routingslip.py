@@ -40,32 +40,59 @@ class CreateRoutingSlip(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetRoutingSlip(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/routingslip/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/routingslip/".format(self._id)
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetRoutingSlip, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if not id:
-            self.setURL("tscharts/v1/routingslip/")
-        else:
-            self.setURL("tscharts/v1/routingslip/{}".format(id))
+        self.clearArgs()
+        self.makeURL()
+
+    def clearArgs(self):
+        self._patient = None
+        self._clinic = None
+        self._clinicstation = None
+        self._id = None
 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
-    
-    def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
 
-    def clearPayload(self):
-        self._payload = {}
-        self.setPayload(self._payload)
-    
+    def setPatient(self, patient):
+        self._patient = patient
+        self.makeURL()
+
+    def setId(self, id):
+        self._id = id
+        self.makeURL()
+
 class UpdateRoutingSlip(ServiceAPI):
     def __init__(self, host, port, token, id, category):
         super(UpdateRoutingSlip, self).__init__()
@@ -117,27 +144,58 @@ class CreateRoutingSlipEntry(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetRoutingSlipEntry(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/routingslipentry/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/routingslipentry/".format(self._id)
+
+        if not self._routingslip == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "routingslip={}".format(self._routingslip)
+            hasQArgs = True
+
+        if not self._station == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "station={}".format(self._station)
+            hasQArgs = True
+
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetRoutingSlipEntry, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if not id:
-            self.setURL("tscharts/v1/routingslipentry/")
-        else:
-            self.setURL("tscharts/v1/routingslipentry/{}".format(id))
+        self.clearArgs()
+        self.makeURL()
+
+    def clearArgs(self):
+        self._routingslip = None
+        self._station = None
+        self._id = None
 
     def setRoutingslip(self, routingslip):
-        self._payload["routingslip"] = routingslip
-        self.setPayload(self._payload)
+        self._routingslip = routingslip
+        self.makeURL()
     
     def setStation(self, station):
-        self._payload["station"] = station
-        self.setPayload(self._payload)
+        self._station = station
+        self.makeURL()
+    
+    def setId(self, id):
+        self._id = id
+        self.makeURL()
     
 class UpdateRoutingSlipEntry(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -202,27 +260,44 @@ class CreateRoutingSlipComment(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetRoutingSlipComment(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/routingslipcomment/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/routingslipcomment/".format(self._id)
+
+        if not self._routingslip == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "routingslip={}".format(self._routingslip)
+            hasQArgs = True
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetRoutingSlipComment, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if not id:
-            self.setURL("tscharts/v1/routingslipcomment/")
-        else:
-            self.setURL("tscharts/v1/routingslipcomment/{}".format(id))
+        self.clearArgs()
+        self.makeURL()
+
+    def clearArgs(self):
+        self._routingslip = None
+        self._id = None
 
     def setRoutingSlip(self, routingslip):
-        self._payload["routingslip"] = routingslip
-        self.setPayload(self._payload)
+        self._routingslip = routingslip
+        self.makeURL()
     
-    def clearPayload(self):
-        self._payload = {}
-        self.setPayload(self._payload)
+    def setId(self, id):
+        self._id = id
+        self.makeURL()
     
 class DeleteRoutingSlipComment(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -285,7 +360,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipid = int(ret[1]["id"])
 
-        x = GetRoutingSlip(host, port, token, routingslipid)
+        x = GetRoutingSlip(host, port, token)
+        x.setId(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -465,7 +541,8 @@ class TestTSRoutingSlip(unittest.TestCase):
             routingslips.append(routingslipid)
 
         for i in routingslips:
-            x = GetRoutingSlip(host, port, token, i)
+            x = GetRoutingSlip(host, port, token)
+            x.setId(i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -532,7 +609,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipid = int(ret[1]["id"])
 
-        x = GetRoutingSlip(host, port, token, routingslipid)
+        x = GetRoutingSlip(host, port, token)
+        x.setId(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -615,7 +693,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         ids.append(int(ret[1]["id"]))
 
         for x in ids:
-            y = GetRoutingSlip(host, port, token, x)
+            y = GetRoutingSlip(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -627,7 +706,8 @@ class TestTSRoutingSlip(unittest.TestCase):
             self.assertEqual(ret[0], 200)
 
         for x in ids:
-            y = GetRoutingSlip(host, port, token, x)
+            y = GetRoutingSlip(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
 
@@ -693,7 +773,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipid = int(ret[1]["id"])
 
-        x = GetRoutingSlip(host, port, token, routingslipid)
+        x = GetRoutingSlip(host, port, token)
+        x.setId(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -707,7 +788,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRoutingSlip(host, port, token, routingslipid)
+        x = GetRoutingSlip(host, port, token)
+        x.setId(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -729,7 +811,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = GetRoutingSlip(host, port, token, routingslipid)
+        x = GetRoutingSlip(host, port, token)
+        x.setId(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -866,7 +949,8 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         for i in routingslips:
-            x = GetRoutingSlip(host, port, token, i)
+            x = GetRoutingSlip(host, port, token)
+            x.setId(i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -952,7 +1036,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1166,7 +1251,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1232,7 +1318,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         ids.append(int(ret[1]["id"]))
 
         for x in ids:
-            y = GetRoutingSlipEntry(host, port, token, x)
+            y = GetRoutingSlipEntry(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -1244,7 +1331,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             self.assertEqual(ret[0], 200)
 
         for x in ids:
-            y = GetRoutingSlipEntry(host, port, token, x)
+            y = GetRoutingSlipEntry(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
 
@@ -1325,7 +1413,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipentryid = int(ret[1]["id"])
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1352,7 +1441,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1372,7 +1462,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1392,7 +1483,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRoutingSlipEntry(host, port, token, routingslipentryid)
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1582,6 +1674,7 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         token = ret[1]["token"]
         userid = int(ret[1]["id"])
 
+
     def testCreateRoutingSlipComment(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
@@ -1636,7 +1729,8 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipcommentid = int(ret[1]["id"])
 
-        x = GetRoutingSlipComment(host, port, token, routingslipcommentid)
+        x = GetRoutingSlipComment(host, port, token)
+        x.setId(routingslipcommentid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1837,7 +1931,8 @@ class TestTSRoutingSlipComment(unittest.TestCase):
             self.assertTrue(i in routingslipcomments)
 
         for i in routingslipcomments:
-            x = GetRoutingSlipComment(host, port, token, i)
+            x = GetRoutingSlipComment(host, port, token)
+            x.setId(i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -1914,7 +2009,8 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         routingslipcommentid = int(ret[1]["id"])
 
-        x = GetRoutingSlipComment(host, port, token, routingslipcommentid)
+        x = GetRoutingSlipComment(host, port, token)
+        x.setId(routingslipcommentid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -1960,7 +2056,8 @@ class TestTSRoutingSlipComment(unittest.TestCase):
         ids.append(int(ret[1]["id"]))
 
         for x in ids:
-            y = GetRoutingSlipComment(host, port, token, x)
+            y = GetRoutingSlipComment(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
             self.assertTrue("id" in ret[1])
@@ -1972,7 +2069,8 @@ class TestTSRoutingSlipComment(unittest.TestCase):
             self.assertEqual(ret[0], 200)
 
         for x in ids:
-            y = GetRoutingSlipComment(host, port, token, x)
+            y = GetRoutingSlipComment(host, port, token)
+            y.setId(x)
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 404)
 

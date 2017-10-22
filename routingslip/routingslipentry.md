@@ -66,10 +66,6 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
-
-* **Data Params**
-
    **Required:**
 
    One or more of the following must be used to filter the results. Depending
@@ -79,10 +75,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `routingslip` routingslip id. If specified with a station, a single routing slip entry is returned. Otherwise, all routing slip entries for the routing slip are returned in an array.<br />
    `station` station id. If specified alone, routing slips entries for all patients are returned for the station. If specified with routingslip, then a single routing slip entry is returned. <br />
 
-   **Optional:**
+* **Data Params**
 
-    None
- 
+   None
+
 * **Success Response:**
 
   * **Code:** 200 <br />
@@ -98,26 +94,27 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Examples:**
 
 ```
-GET /tscharts/v1/routingslipentry/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 22
+GET /tscharts/v1/routingslipentry/?routingslip=853 HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
-
-{"routingslip": 32478}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 21:15:21 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Sun, 22 Oct 2017 05:38:29 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
-[810,809,806,807,808]
+10
+[43,42,39,40,41]
+0
 ```
   
 **Create a Routing Slip Entry Resource**

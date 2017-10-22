@@ -93,10 +93,10 @@ class RoutingSlipView(APIView):
 
     def get(self, request, routing_slip_id=None, format=None):
         routing_slip = None
-        badRequest = False
-        notFound = False
         aClinic = None
         aPatient = None
+        badRequest = False
+        notFound = False
 
         if routing_slip_id:
             try:
@@ -105,26 +105,30 @@ class RoutingSlipView(APIView):
                 notFound = True
                 routing_slip = None
         else:
-            data = json.loads(request.body)
+            # look for optional arguments
             try:
-                clinicid = int(data["clinic"])
-                try:
-                    aClinic = Clinic.objects.get(id=clinicid)
-                except:
-                    aClinic = None
-                    notFound = True
-            except:
-                pass
-
-            if not notFound: 
-                try:
-                    patientid = data["patient"]
+                clinicid = request.GET.get("clinic", '')
+                if not clinicid == '':
                     try:
-                        aPatient = Patient.objects.get(id=patientid)
+                        aClinic = Clinic.objects.get(id=clinicid)
+                        if not aClinic:
+                            notFound = True
                     except:
                         notFound = True
-                except:
-                    pass
+            except:
+                pass # no clinic ID
+
+            try:
+                patientid = request.GET.get('patient', '')
+                if not patientid == '':
+                    try:
+                        aPatient = Patient.objects.get(id=patientid)
+                        if not aPatient:
+                            notFound = True
+                    except:
+                        notFound = True
+            except:
+                pass # no patient ID
 
             if not notFound:
                 if aPatient or aClinic:
@@ -359,10 +363,10 @@ class RoutingSlipEntryView(APIView):
 
     def get(self, request, routing_slip_entry_id=None, format=None):
         routing_slip_entry = None
-        badRequest = False
-        notFound = False
         aRoutingSlip = None
         aStation = None
+        badRequest = False
+        notFound = False
 
         if routing_slip_entry_id:
             try:
@@ -371,27 +375,28 @@ class RoutingSlipEntryView(APIView):
                 routing_slip_entry = None
                 notFound = True
         else:
-            data = json.loads(request.body)
             try:
-                routingslipid = int(data["routingslip"])
-                try:
-                    aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
-                    if not aRoutingSlip:
+                routingslipid = request.GET.get("routingslip", '')
+                if not routingslipid == '':
+                    try:
+                        aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
+                        if not aRoutingSlip:
+                            notFound = True
+                    except:
+                        aRoutingSlip = None
                         notFound = True
-                except:
-                    aRoutingSlip = None
-                    notFound = True
             except:
                 pass
             try:
-                stationid = int(data["station"])
-                try:
-                    aStation = Station.objects.get(id=stationid)
-                    if not aStation:
+                stationid = request.GET.get("station", '')
+                if not stationid == '':
+                    try:
+                        aStation = Station.objects.get(id=stationid)
+                        if not aStation:
+                            notFound = True
+                    except:
+                        aStation = None
                         notFound = True
-                except:
-                    aStation = None
-                    notFound = True
             except:
                 pass
 
@@ -622,14 +627,16 @@ class RoutingSlipCommentView(APIView):
                 routing_slip_comment = None
                 notFound = True
         else:
-            data = json.loads(request.body)
+            # look for optional arguments
             try:
-                routingslipid = int(data["routingslip"])
-                try:
-                    aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
-                except:
-                    aRoutingSlip = None
-                    notFound = True
+                routingslipid = request.GET.get("routingslip", '')
+                if not routingslipid == '':
+                    try:
+                        aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
+                        if not aRoutingSlip:
+                            notFound = True
+                    except:
+                        notFound = True
             except:
                 badRequest = True
 
