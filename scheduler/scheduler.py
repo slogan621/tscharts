@@ -391,13 +391,15 @@ class Scheduler():
                         count = count + 1  # if not active, skip first in list
                         continue
                     qent = item["qent"] 
-                    r = GetRoutingSlip(self._host, self._port, self._token, id=qent.getRoutingSlip())
+                    r = GetRoutingSlip(self._host, self._port, self._token)
+		    x.setId(qent.getRoutingSlip())
                     ret = r.send(timeout=30)
                     if ret[0] == 200:
                         routing = ret[1]["routing"]
                         patient = ret[1]["patient"]
                         for y in routing:
-                            entry = GetRoutingSlipEntry(self._host, self._port, self._token, y)
+                            entry = GetRoutingSlipEntry(self._host, self._port, self._token)
+			    entry.setId(y)
                             ret = entry.send(timeout=30)
                             if ret[0] == 200:
                                 rse = ret[1]
@@ -548,7 +550,8 @@ class Scheduler():
         retval = False
 
         for x in routing:
-            entry = GetRoutingSlipEntry(self._host, self._port, self._token, x)
+            entry = GetRoutingSlipEntry(self._host, self._port, self._token)
+	    entry.setId(x)
             ret = entry.send(timeout=30)
             if ret[0] == 200:
                 state = ret[1]["state"] 
@@ -565,7 +568,8 @@ class Scheduler():
 
         if not self.isWaiting(routing):
             for x in routing:
-                entry = GetRoutingSlipEntry(self._host, self._port, self._token, x)
+                entry = GetRoutingSlipEntry(self._host, self._port, self._token)
+	    	entry.setId(x)
                 ret = entry.send(timeout=30)
                 if ret[0] == 200:
                     state = ret[1]["state"] 
