@@ -45,7 +45,7 @@ class GetRoutingSlip(ServiceAPI):
         if not self._id == None:
             base = "tscharts/v1/routingslip/{}/".format(self._id)
         else:
-            base = "tscharts/v1/routingslip/".format(self._id)
+            base = "tscharts/v1/routingslip/"
 
         if not self._patient == None:
             if not hasQArgs:
@@ -78,7 +78,6 @@ class GetRoutingSlip(ServiceAPI):
     def clearArgs(self):
         self._patient = None
         self._clinic = None
-        self._clinicstation = None
         self._id = None
 
     def setClinic(self, clinic):
@@ -150,7 +149,7 @@ class GetRoutingSlipEntry(ServiceAPI):
         if not self._id == None:
             base = "tscharts/v1/routingslipentry/{}/".format(self._id)
         else:
-            base = "tscharts/v1/routingslipentry/".format(self._id)
+            base = "tscharts/v1/routingslipentry/"
 
         if not self._routingslip == None:
             if not hasQArgs:
