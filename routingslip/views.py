@@ -97,10 +97,13 @@ class RoutingSlipView(APIView):
         aPatient = None
         badRequest = False
         notFound = False
+        ret = None
 
         if routing_slip_id:
             try:
                 routing_slip = RoutingSlip.objects.get(id = routing_slip_id)
+                if not routing_slip:
+                    notFound = True
             except:
                 notFound = True
                 routing_slip = None
@@ -165,9 +168,10 @@ class RoutingSlipView(APIView):
                         ret = None
                         break
                     ret.append(m)
-        if not ret:
-            return HttpResponseServerError()
-        return Response(ret)
+            if ret:
+                return Response(ret)
+            else:
+                return HttpResponseServerError() 
 
     def post(self, request, format=None):
         badParam = False
@@ -371,6 +375,8 @@ class RoutingSlipEntryView(APIView):
         if routing_slip_entry_id:
             try:
                 routing_slip_entry = RoutingSlipEntry.objects.get(id = routing_slip_entry_id)
+                if not routing_slip_entry:
+                    notFound = True
             except:
                 routing_slip_entry = None
                 notFound = True
