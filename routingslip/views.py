@@ -152,26 +152,31 @@ class RoutingSlipView(APIView):
             return HttpResponseBadRequest()
         if notFound:
             return HttpResponseNotFound()
-        if routing_slip: 
-            if routing_slip_id:
-                # one based on ID
-                ret = self.serialize(routing_slip)
-            elif aPatient and aClinic:
-                # one for patient, clinic pair
-                ret = self.serialize(routing_slip)
-            else:
-                # array
-                ret = []
-                for x in routing_slip:
-                    m = self.serialize(x);
-                    if m == None:
-                        ret = None
-                        break
-                    ret.append(m)
-            if ret:
-                return Response(ret)
+	try:
+            if routing_slip: 
+                if routing_slip_id:
+                    # one based on ID
+                    ret = self.serialize(routing_slip)
+                elif aPatient and aClinic:
+                    # one for patient, clinic pair
+                    ret = self.serialize(routing_slip)
+                else:
+                    # array
+                    ret = []
+                    for x in routing_slip:
+                        m = self.serialize(x);
+                        if m == None:
+                            ret = None
+                            break
+                        ret.append(m)
+                if ret:
+                    return Response(ret)
+                else:
+                    return HttpResponseServerError() 
             else:
                 return HttpResponseServerError() 
+        except:
+            return HttpResponseServerError()
 
     def post(self, request, format=None):
         badParam = False
@@ -442,6 +447,8 @@ class RoutingSlipEntryView(APIView):
                 return Response(ret)
             else:
                 return HttpResponseServerError() 
+        else:
+          return HttpResponseServerError()
 
     def post(self, request, format=None):
         badParam = False

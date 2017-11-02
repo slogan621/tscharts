@@ -40,7 +40,7 @@ class GetPatient(ServiceAPI):
         if not self._id == None:
             base = "tscharts/v1/patient/{}/".format(self._id)
         else:
-            base = "tscharts/v1/patient/".format(self._id)
+            base = "tscharts/v1/patient/"
         
         if not self._paternalLast == None:
             if not hasQArgs:

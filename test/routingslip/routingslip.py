@@ -265,7 +265,7 @@ class GetRoutingSlipComment(ServiceAPI):
         if not self._id == None:
             base = "tscharts/v1/routingslipcomment/{}/".format(self._id)
         else:
-            base = "tscharts/v1/routingslipcomment/".format(self._id)
+            base = "tscharts/v1/routingslipcomment/"
 
         if not self._routingslip == None:
             if not hasQArgs:

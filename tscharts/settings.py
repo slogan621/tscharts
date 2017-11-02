@@ -41,7 +41,7 @@ SECRET_KEY = 'rzu40a5v2wc#39&x-959)abrps2w+vb#kq8^m&s=-i%sl2ja0a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [u'54.193.67.202', "localhost", "ec2-54-193-67-202.us-west-1.compute.amazonaws.com"]
 
 REGISTRATION_OPEN = True                # If True, users can register
 ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
@@ -122,6 +122,7 @@ DATABASES = {
         'PORT': '',
         'OPTIONS': {
            "init_command": "SET storage_engine=MyISAM",
+           'sql_mode': 'traditional',
         }
     }
 }

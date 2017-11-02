@@ -575,6 +575,8 @@ class Scheduler():
                     state = ret[1]["state"] 
                     if state == "New" :
                         queueables.append(ret[1])
+                else:
+                    print("findQueueableEntry failure in GetRoutingSlipEntry".format(ret[0]))
 
         if len(queueables):
 
@@ -637,6 +639,8 @@ class Scheduler():
                         else:
                             print("Unable to add item to queue");
 
+            else:
+                print("GetRoutingSlip failed"); 
             for k, v in self._queues.iteritems():
                 for y in v:
                     ret = y["qent"].update()

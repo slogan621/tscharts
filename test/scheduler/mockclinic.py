@@ -418,7 +418,7 @@ def main():
     if mock.login():
         mock.createClinicResources()
         clinic = mock.getClinic()
-        n = randint(50, 100)
+        n = randint(90, 100)
         print("Registering {} patients for this clinic".format(n))
         mock.createAllPatients(n)
         checkinThreads = None
