@@ -88,30 +88,31 @@ class MedicalHistoryView(APIView):
                 medical_history = None
         else:
             # look for optional arguments
-            data = json.loads(request.body)
             try:
-                patientid = int(data["patient"])
-                try:
-                    aPatient = Patient.objects.get(id=patientid)
-                    if not aPatient:
+                patientid = request.GET.get('patient', '')
+                if patientid != '':
+                    try:
+                        aPatient = Patient.objects.get(id=patientid)
+                        if not aPatient:
+                            badRequest = True
+                        else:
+                            kwargs["patient"] = aPatient
+                    except:
                         badRequest = True
-                    else:
-                        kwargs["patient"] = aPatient
-                except:
-                    badRequest = True
             except:
                 pass # no patient ID
 
             try:
-                clinicid = int(data["clinic"])
-                try:
-                    aClinic = Clinic.objects.get(id=clinicid)
-                    if not aClinic:
+                clinicid = request.GET.get('clinic', '')
+                if clinicid != '':
+                    try:
+                        aClinic = Clinic.objects.get(id=clinicid)
+                        if not aClinic:
+                            badRequest = True
+                        else:
+                            kwargs["clinic"] = aClinic
+                    except:
                         badRequest = True
-                    else:
-                        kwargs["clinic"] = aClinic
-                except:
-                    badRequest = True
             except:
                 pass # no clinic ID
 

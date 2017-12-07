@@ -31,27 +31,54 @@ class CreateMedicalHistory(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetMedicalHistory(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/medicalhistory/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/medicalhistory/"
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetMedicalHistory, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if id:
-            self.setURL("tscharts/v1/medicalhistory/{}".format(id))
-        else:
-            self.setURL("tscharts/v1/medicalhistory/")
-    
+        self._clinic = None
+        self._patient = None
+        self._id = None
+        self.makeURL()
+   
+    def setId(self, id):
+        self._id = id;
+        self.makeURL()
+ 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
 
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
 
 class UpdateMedicalHistory(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -79,26 +106,6 @@ class DeleteMedicalHistory(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
         self.setURL("tscharts/v1/medicalhistory/{}/".format(id))
-
-class GetAllMedicalHistories(ServiceAPI):
-    def __init__(self, host, port, token):
-        super(GetAllMedicalHistories, self).__init__()
-        
-        self.setHttpMethod("GET")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/medicalhistory/")
-
-    def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
-
-    def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
 
 class TestTSMedicalHistory(unittest.TestCase):
 
@@ -179,7 +186,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -247,7 +255,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -422,7 +431,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -436,7 +446,7 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         x = DeleteMedicalHistory(host, port, token, "")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 400)
 
         x = DeleteMedicalHistory(host, port, token, "Hello")
         ret = x.send(timeout=30)
@@ -518,7 +528,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
 
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -535,7 +546,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -582,7 +594,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetMedicalHistory(host, port, token, id)
+        x = GetMedicalHistory(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -885,42 +898,42 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setClinic(clinicid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 3)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setClinic(clinicid2)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 3)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setClinic(clinicid3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 3)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setPatient(patientid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 3)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setPatient(patientid2)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 3)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setPatient(patientid3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -932,7 +945,7 @@ class TestTSMedicalHistory(unittest.TestCase):
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        x = GetAllMedicalHistories(host, port, token)
+        x = GetMedicalHistory(host, port, token)
         x.setClinic(clinicid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)

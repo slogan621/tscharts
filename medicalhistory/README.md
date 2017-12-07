@@ -100,22 +100,16 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
+   **Required:**
+
+   One or more of the following are used to filter the results. 
+
+   `patient` patient id<br />
+   `clinic` clinic id<br />
 
 * **Data Params**
 
-   **Required:**
-
    None
- 
-
-   **Optional:**
- 
-   One or more of the following are used to filter the results. At least
-   one of the following must be specified for a bad request error is returned.
-
-   `patient` clinic id<br />
-   `clinic` clinic id<br />
 
 * **Success Response:**
 
@@ -132,26 +126,27 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/medicalhistory/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 14
+GET /tscharts/v1/medicalhistory/?clinic=15 HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
-
-{"clinic": 14}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 01:19:20 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Thu, 07 Dec 2017 03:20:43 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
-[{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":14,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":17,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":18,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-04-23T01:19:20Z"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":14,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":16,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":17,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-04-23T01:19:20Z"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":14,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":15,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":16,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-04-23T01:19:20Z"}]
+6e8
+[{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":27,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":15,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":28,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":16,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pain":false,"pregnancy_complications":false,"id":29,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","health":"Good","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":17,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"}]
+0
 ```
   
 **Create a Medical History**
