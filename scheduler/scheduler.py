@@ -392,7 +392,7 @@ class Scheduler():
                         continue
                     qent = item["qent"] 
                     r = GetRoutingSlip(self._host, self._port, self._token)
-		    x.setId(qent.getRoutingSlip())
+		    r.setId(qent.getRoutingSlip())
                     ret = r.send(timeout=30)
                     if ret[0] == 200:
                         routing = ret[1]["routing"]
@@ -414,7 +414,7 @@ class Scheduler():
                                         self._queues[k].remove(item)
 
     def dumpQueues(self):
-        os.system("clear")
+        #os.system("clear")
         minQ = 9999
         maxQ = -9999 
         minWait = datetime.timedelta(days=999)
