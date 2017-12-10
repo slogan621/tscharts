@@ -28,6 +28,7 @@ from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.queue.queue import GetQueue, DeleteQueueEntry
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
+from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
 from test.statechange.statechange import CreateStateChange
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
@@ -322,7 +323,50 @@ class MockClinic:
     def getRandomCategory(self):
         return self._categories[randint(0, len(self._categories)) - 1]    
 
-    def createAllPatients(self, count):
+    def randomBoolean(self):   
+        ret = True
+        x = randint(0, 1)
+        if x == 0:
+            ret = False
+        return ret;
+
+    def createMedicalHistory(self, clinicid, patientid):    
+        x = CreateMedicalHistory(self._host, self._port, self._token, patient=patientid, clinic=clinicid)
+
+        data = {}
+        data["pain"] = self.randomBoolean()
+        data["health"] = "Good"
+        data["recentcold"] = self.randomBoolean()
+        data["hivaids"] = self.randomBoolean()
+        data["anemia"] = self.randomBoolean()
+        data["athsma"] = self.randomBoolean()
+        data["cancer"] = self.randomBoolean()
+        data["congenitalheartdefect"] = self.randomBoolean()
+        data["diabetes"] = self.randomBoolean()
+        data["epilepsy"] = self.randomBoolean()
+        data["hemophilia"] = self.randomBoolean()
+        data["hepititis"] = self.randomBoolean()
+        data["tuberculosis"] = self.randomBoolean()
+        data["troublespeaking"] = self.randomBoolean()
+        data["troublehearing"] = self.randomBoolean()
+        data["troubleeating"] = self.randomBoolean()
+        data["pregnancy_duration"] = randint(6, 9)
+        data["pregnancy_smoke"] = self.randomBoolean()
+        data["birth_complications"] = self.randomBoolean()
+        data["pregnancy_complications"] = self.randomBoolean()
+        data["mother_alcohol"] = self.randomBoolean()
+        data["relative_cleft"] = self.randomBoolean()
+        data["parents_cleft"] = self.randomBoolean()
+        data["siblings_cleft"] = self.randomBoolean()
+        data["meds"] = ""
+        data["allergymeds"] = ""
+
+        x.setMedicalHistory(data)
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("Unable to set medical history clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
+
+    def createAllPatients(self, clinic, count):
         for i in xrange(0, count):
             data = {}
             data["paternal_last"] = "{}abcd1234".format(i)
@@ -348,7 +392,8 @@ class MockClinic:
             data["emergencyfullname"] = "Maria Sanchez"
             data["emergencyphone"] = "1-222-222-2222"
             data["emergencyemail"] = "maria.sanchez@example.com"
-            self.createPatient(data)
+            id = self.createPatient(data)
+            self.createMedicalHistory(clinic, id)
 
     def createClinicResources(self):
         print("Creating clinic")
@@ -420,7 +465,7 @@ def main():
         clinic = mock.getClinic()
         n = randint(90, 100)
         print("Registering {} patients for this clinic".format(n))
-        mock.createAllPatients(n)
+        mock.createAllPatients(clinic, n)
         checkinThreads = None
         awayThreads = None
         if doCheckins:
