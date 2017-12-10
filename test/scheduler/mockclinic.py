@@ -334,8 +334,6 @@ class MockClinic:
         x = CreateMedicalHistory(self._host, self._port, self._token, patient=patientid, clinic=clinicid)
 
         data = {}
-        data["pain"] = self.randomBoolean()
-        data["health"] = "Good"
         data["recentcold"] = self.randomBoolean()
         data["hivaids"] = self.randomBoolean()
         data["anemia"] = self.randomBoolean()
