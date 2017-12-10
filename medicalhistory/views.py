@@ -39,7 +39,6 @@ class MedicalHistoryView(APIView):
         m["clinic"] = entry.clinic_id
         m["patient"] = entry.patient_id
         m["time"] = entry.time
-        m["pain"] = entry.pain
         m["recentcold"] = entry.recentcold  
         m["hivaids"] = entry.hivaids 
         m["anemia"] = entry.anemia  
@@ -163,9 +162,6 @@ class MedicalHistoryView(APIView):
         kwargs = data
 
         try:
-            val = data["pain"] 
-            if not (val == True or val == False):
-                valid = False
             val = data["recentcold"] 
             if not (val == True or val == False):
                 valid = False
@@ -243,12 +239,6 @@ class MedicalHistoryView(APIView):
         valid = True
 
         try:
-            if "pain" in data:
-                val = data["pain"] 
-                if not (val == True or val == False):
-                    valid = False
-                else:
-                    medical_history.pain = val
             if "recentcold" in data:
                 val = data["recentcold"] 
                 if not (val == True or val == False):

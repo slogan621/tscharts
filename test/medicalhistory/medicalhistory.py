@@ -154,7 +154,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
        
         data = {}
-        data["pain"] = False
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -222,7 +221,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("meds" in data)
         self.assertTrue("allergymeds" in data)
 
-        self.assertTrue(data["pain"] == False)
         self.assertTrue(data["recentcold"] == False)
         self.assertTrue(data["hivaids"] == False)
         self.assertTrue(data["anemia"] == False)
@@ -278,7 +276,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         # invalid data, boolean arg
 
         data = {}
-        data["pain"] = False
         data["recentcold"] = 9999    # this should cause a failure
         data["hivaids"] = False
         data["anemia"] = False
@@ -313,7 +310,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         #invalid data, pregnancy duration
 
         data = {}
-        data["pain"] = False
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -389,7 +385,6 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
-        data["pain"] = False
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -490,7 +485,6 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
-        data["pain"] = False
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -796,7 +790,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         delids = []
 
         data = {}
-        data["pain"] = False
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False

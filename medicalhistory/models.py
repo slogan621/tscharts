@@ -24,7 +24,6 @@ class MedicalHistory(models.Model):
     clinic = models.ForeignKey(Clinic)
     patient = models.ForeignKey(Patient)
     time = models.DateTimeField(auto_now=True)
-    pain = models.BooleanField(default = False)
     recentcold = models.BooleanField(default = False)
     hivaids = models.BooleanField(default = False)
     anemia = models.BooleanField(default = False)
