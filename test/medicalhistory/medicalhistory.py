@@ -155,7 +155,6 @@ class TestTSMedicalHistory(unittest.TestCase):
        
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -198,7 +197,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         data = ret[1]
 
-        self.assertTrue("health" in data)
         self.assertTrue("recentcold" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
@@ -225,7 +223,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("allergymeds" in data)
 
         self.assertTrue(data["pain"] == False)
-        self.assertTrue(data["health"] == "Good")
         self.assertTrue(data["recentcold"] == False)
         self.assertTrue(data["hivaids"] == False)
         self.assertTrue(data["anemia"] == False)
@@ -282,7 +279,6 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = 9999    # this should cause a failure
         data["hivaids"] = False
         data["anemia"] = False
@@ -318,7 +314,6 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -395,7 +390,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -497,7 +491,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False
@@ -540,7 +533,7 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         data = {}
-        data["health"] = "Poor"
+        data["siblings_cleft"] = True
         x = UpdateMedicalHistory(host, port, token, id)
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)
@@ -558,7 +551,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         data = ret[1]
-        self.assertTrue("health" in data)
         self.assertTrue("recentcold" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
@@ -583,7 +575,7 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("siblings_cleft" in data)
         self.assertTrue("meds" in data)
         self.assertTrue("allergymeds" in data)
-        self.assertTrue(data["health"] == "Poor")
+        self.assertTrue(data["siblings_cleft"] == True)
 
         data = {}
         data["hepititis"] = True 
@@ -606,7 +598,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         data = ret[1]
-        self.assertTrue("health" in data)
         self.assertTrue("recentcold" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
@@ -631,7 +622,6 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("siblings_cleft" in data)
         self.assertTrue("meds" in data)
         self.assertTrue("allergymeds" in data)
-        self.assertTrue(data["health"] == "Poor")
         self.assertTrue(data["hepititis"] == True)
         self.assertTrue(data["pregnancy_duration"] == 8)
         self.assertTrue(data["parents_cleft"] == True) 
@@ -673,8 +663,7 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         data = {}
-        data["hepititis"] = True
-        data["health"] = ""
+        data["hepititis"] = "Poor"
         data["parents_cleft"] = True 
         x = UpdateMedicalHistory(host, port, token, id)
         x.setMedicalHistory(data)
@@ -682,17 +671,7 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         data = {}
-        data["hepititis"] = True
-        data["health"] = None
-        data["parents_cleft"] = True 
-        x = UpdateMedicalHistory(host, port, token, id)
-        x.setMedicalHistory(data)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        data = {}
-        data["hepititis"] = True
-        data["health"] = "Satisfactory"
+        data["hepititis"] = None
         data["parents_cleft"] = True 
         x = UpdateMedicalHistory(host, port, token, id)
         x.setMedicalHistory(data)
@@ -818,7 +797,6 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         data = {}
         data["pain"] = False
-        data["health"] = "Good"
         data["recentcold"] = False
         data["hivaids"] = False
         data["anemia"] = False

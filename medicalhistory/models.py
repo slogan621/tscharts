@@ -25,14 +25,6 @@ class MedicalHistory(models.Model):
     patient = models.ForeignKey(Patient)
     time = models.DateTimeField(auto_now=True)
     pain = models.BooleanField(default = False)
-    GOOD = 'g'
-    POOR = 'p'
-    HEALTH_CHOICES = ((GOOD, "Good"), (POOR, "Poor"))
-    health = models.CharField(
-        max_length = 1,
-        choices = HEALTH_CHOICES,
-        default = GOOD,
-    )
     recentcold = models.BooleanField(default = False)
     hivaids = models.BooleanField(default = False)
     anemia = models.BooleanField(default = False)

@@ -39,11 +39,6 @@ class MedicalHistoryView(APIView):
         m["clinic"] = entry.clinic_id
         m["patient"] = entry.patient_id
         m["time"] = entry.time
-        if entry.health == 'g':
-            m["health"] = "Good"
-        else:
-            m["health"] = "Poor"
-    
         m["pain"] = entry.pain
         m["recentcold"] = entry.recentcold  
         m["hivaids"] = entry.hivaids 
@@ -168,13 +163,6 @@ class MedicalHistoryView(APIView):
         kwargs = data
 
         try:
-            if not (data["health"] == "Good" or data["health"] == "Poor"):
-                valid = False
-            else:
-                if data["health"] == "Good":
-                    kwargs["health"] = 'g'
-                else:
-                    kwargs["health"] = 'p'
             val = data["pain"] 
             if not (val == True or val == False):
                 valid = False
@@ -255,14 +243,6 @@ class MedicalHistoryView(APIView):
         valid = True
 
         try:
-            if "health" in data:
-                if not (data["health"] == "Good" or data["health"] == "Poor"):
-                    valid = False
-                else:
-                    if data["health"] == "Good":
-                        medical_history.health = 'g'
-                    else:
-                        medical_history.health = 'p'
             if "pain" in data:
                 val = data["pain"] 
                 if not (val == True or val == False):
