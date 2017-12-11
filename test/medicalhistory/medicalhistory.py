@@ -184,6 +184,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
  
@@ -232,6 +235,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("first_sit" in data)
         self.assertTrue("first_walk" in data)
         self.assertTrue("first_words" in data)
+        self.assertTrue("birth_weight" in data)
+        self.assertTrue("weight" in data)
+        self.assertTrue("height" in data)
 
         self.assertTrue(data["cold_cough_fever"] == False)
         self.assertTrue(data["hivaids"] == False)
@@ -263,6 +269,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["first_sit"] == 7)
         self.assertTrue(data["first_walk"] == 13)
         self.assertTrue(data["first_words"] == 11)
+        self.assertTrue(data["birth_weight"] == 3)
+        self.assertTrue(data["height"] == 61)
+        self.assertTrue(data["weight"] == 9)
 
         x = DeleteMedicalHistory(host, port, token, id)
         ret = x.send(timeout=30)
@@ -324,6 +333,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
 
@@ -364,6 +376,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
 
@@ -445,6 +460,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
 
@@ -551,6 +569,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)
@@ -618,6 +639,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["first_sit"] == 7)
         self.assertTrue(data["first_walk"] == 13)
         self.assertTrue(data["first_words"] == 11)
+        self.assertTrue(data["birth_weight"] == 3)
+        self.assertTrue(data["height"] == 61)
+        self.assertTrue(data["weight"] == 9)
 
         data = {}
         data["hepititis"] = True 
@@ -673,6 +697,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["first_sit"] == 7)
         self.assertTrue(data["first_walk"] == 13)
         self.assertTrue(data["first_words"] == 11)
+        self.assertTrue(data["birth_weight"] == 3)
+        self.assertTrue(data["height"] == 61)
+        self.assertTrue(data["weight"] == 9)
 
         data = {}
         data["hepititis"] = "Hello" 
@@ -874,6 +901,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["first_sit"] = 7
         data["first_walk"] = 13
         data["first_words"] = 11 
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x = CreateMedicalHistory(host, port, token, patient=patientid1, clinic=clinicid1)
         x.setMedicalHistory(data)

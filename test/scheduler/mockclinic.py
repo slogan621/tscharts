@@ -364,6 +364,9 @@ class MockClinic:
         data["first_sit"] = randint(6, 9)
         data["first_walk"] = randint(9, 14)
         data["first_words"] = randint(11, 15)
+        data["birth_weight"] = 3
+        data["height"] = 61
+        data["weight"] = 9
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)

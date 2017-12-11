@@ -33,6 +33,9 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `first_sit` true | false<br/>
    `first_walk` true | false<br/>
    `first_words` true | false<br/>
+   `birth_weight` integer</br>
+   `height` integer</br>
+   `weight` integer</br>
 
 ----
   Returns json data about a single medicalhistory resource. 

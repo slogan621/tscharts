@@ -69,6 +69,9 @@ class MedicalHistoryView(APIView):
         m["first_sit"] = entry.first_sit  
         m["first_walk"] = entry.first_walk  
         m["first_words"] = entry.first_words  
+        m["birth_weight"] = entry.birth_weight 
+        m["height"] = entry.height  
+        m["weight"] = entry.weight  
 
         return m
 
@@ -262,6 +265,21 @@ class MedicalHistoryView(APIView):
             val = data["siblings_cleft"] 
             if not (val == True or val == False):
                 valid = False
+            val = int(data["birth_weight"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["birth_weight"] = val
+            val = int(data["height"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["height"] = val
+            val = int(data["weight"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["weight"] = val
         except:
             valid = False
 
@@ -452,6 +470,24 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.first_words = val
+            if "birth_weight" in data:
+                val = int(data["birth_weight"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.birth_weight = val
+            if "height" in data:
+                val = int(data["height"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.height = val
+            if "weight" in data:
+                val = int(data["weight"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.weight = val
         except:
             valid = False
 
