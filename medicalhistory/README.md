@@ -8,7 +8,7 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `tuberculosis` true | false<br/>
    `pregnancy_duration` integer</br>
    `epilepsy` true | false<br/>
-   `recentcold` true | false<br/>
+   `cold_cough_fever` true | false<br/>
    `pregnancy_complications` true | false<br/>
    `allergymeds` string <br/>
    `cancer` true | false<br/>
@@ -28,7 +28,11 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
    `hepititis` true | false<br/>
    `siblings_cleft` true | false<br/>
    `anemia` true | false<br/>
-   `hemophilia` true | false<br/>
+   `bleeding_problems` true | false<br/>
+   `first_crawl` true | false<br/>
+   `first_sit` true | false<br/>
+   `first_walk` true | false<br/>
+   `first_words` true | false<br/>
 
 ----
   Returns json data about a single medicalhistory resource. 
@@ -63,25 +67,28 @@ request data for both PUT and POST will be identify by the string "MEDICAL_HISTO
 * **Example:**
 
 ```
-GET /tscharts/v1/medicalhistory/13/ HTTP/1.1
-Host: 127.0.0.1:8000
+GET /tscharts/v1/medicalhistory/12/ HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 01:19:19 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 01:02:24 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
-{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":12,"recentcold":false,"pregnancy_complications":false,"id":13,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":14,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-04-23T01:19:19Z"}
+2c5
+{"first_walk":13,"hepititis":true,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":6,"pregnancy_complications":false,"pregnancy_duration":8,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":12,"meds":"","parents_cleft":true,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":6,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":true,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"}
+0
 ```
   
 **Get Multiple Medical Histories**
@@ -124,7 +131,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/medicalhistory/?clinic=15 HTTP/1.1
+GET /tscharts/v1/medicalhistory/?clinic=3 HTTP/1.1
 Host: localhost
 Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
@@ -133,8 +140,9 @@ User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
+
 {}HTTP/1.1 200 OK
-Date: Thu, 07 Dec 2017 03:20:43 GMT
+Date: Mon, 11 Dec 2017 01:02:24 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -142,8 +150,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-6e8
-[{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pregnancy_complications":false,"id":27,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":15,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pregnancy_complications":false,"id":28,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":16,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"},{"hepititis":false,"cancer":false,"epilepsy":false,"clinic":15,"recentcold":false,"pregnancy_complications":false,"id":29,"allergymeds":"","pregnancy_duration":9,"relative_cleft":false,"meds":"","athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":17,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"parents_cleft":false,"siblings_cleft":false,"diabetes":false,"hemophilia":false,"time":"2017-12-07T03:20:43"}]
+
+859
+[{"first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":3,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":3,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"},{"first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":4,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":4,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"},{"first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":5,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":5,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"}]
 0
 ```
   
@@ -190,25 +199,28 @@ Content-Type: application/json
 
 ```
 POST /tscharts/v1/medicalhistory/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 606
+Host: localhost
+Content-Length: 738
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"tuberculosis": false, "pregnancy_duration": 9, "epilepsy": false, "clinic": 12, "recentcold": false,"pregnancy_complications": false, "allergymeds": "", "cancer": false, "relative_cleft": false, "meds": "", "parents_cleft": false, "athsma": false, "mother_alcohol": false, "troublespeaking": false, "diabetes": false, "congenitalheartdefect": false, "pregnancy_smoke": false, "troublehearing": false, "patient": 14, "troubleeating": false, "birth_complications": false, "hivaids": false, "hepititis": false, "siblings_cleft": false, "anemia": false, "hemophilia": false}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 01:19:19 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{"first_walk": 13, "tuberculosis": false, "pregnancy_duration": 9, "troublehearing": false, "epilepsy": false, "clinic": 2, "pregnancy_complications": false, "congenitalheartdefect_planforcare": false, "allergymeds": "", "bleeding_problems": false, "first_sit": 7, "relative_cleft": false, "meds": "", "parents_cleft": false, "athsma": false, "siblings_cleft": false, "mother_alcohol": false, "troublespeaking": false, "diabetes": false, "congenitalheartdefect": false, "pregnancy_smoke": false, "first_crawl": 8, "patient": 2, "troubleeating": false, "birth_complications": false, "hivaids": false, "hepititis": false, "cancer": false, "anemia": false, "cold_cough_fever": false, "congenitalheartdefect_workup": false, "first_words": 11}HTTP/1.1 200 OK
+Date: Mon, 11 Dec 2017 01:02:23 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
 
-{"id":13}
+8
+{"id":2}
+0
 ```
 
 **Update a Medical History**

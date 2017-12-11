@@ -334,15 +334,17 @@ class MockClinic:
         x = CreateMedicalHistory(self._host, self._port, self._token, patient=patientid, clinic=clinicid)
 
         data = {}
-        data["recentcold"] = self.randomBoolean()
+        data["cold_cough_fever"] = self.randomBoolean()
         data["hivaids"] = self.randomBoolean()
         data["anemia"] = self.randomBoolean()
         data["athsma"] = self.randomBoolean()
         data["cancer"] = self.randomBoolean()
         data["congenitalheartdefect"] = self.randomBoolean()
+        data["congenitalheartdefect_workup"] = self.randomBoolean()
+        data["congenitalheartdefect_planforcare"] = self.randomBoolean()
         data["diabetes"] = self.randomBoolean()
         data["epilepsy"] = self.randomBoolean()
-        data["hemophilia"] = self.randomBoolean()
+        data["bleeding_problems"] = self.randomBoolean()
         data["hepititis"] = self.randomBoolean()
         data["tuberculosis"] = self.randomBoolean()
         data["troublespeaking"] = self.randomBoolean()
@@ -358,6 +360,10 @@ class MockClinic:
         data["siblings_cleft"] = self.randomBoolean()
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = randint(6, 9)
+        data["first_sit"] = randint(6, 9)
+        data["first_walk"] = randint(9, 14)
+        data["first_words"] = randint(11, 15)
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)

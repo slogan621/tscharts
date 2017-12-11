@@ -154,15 +154,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
        
         data = {}
-        data["recentcold"] = False
+        data["cold_cough_fever"] = False
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -178,6 +180,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x.setMedicalHistory(data)
  
@@ -196,15 +202,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         data = ret[1]
 
-        self.assertTrue("recentcold" in data)
+        self.assertTrue("cold_cough_fever" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
         self.assertTrue("athsma" in data)
         self.assertTrue("cancer" in data)
         self.assertTrue("congenitalheartdefect" in data)
+        self.assertTrue("congenitalheartdefect_workup" in data)
+        self.assertTrue("congenitalheartdefect_planforcare" in data)
         self.assertTrue("diabetes" in data)
         self.assertTrue("epilepsy" in data)
-        self.assertTrue("hemophilia" in data)
+        self.assertTrue("bleeding_problems" in data)
         self.assertTrue("hepititis" in data)
         self.assertTrue("tuberculosis" in data)
         self.assertTrue("troublespeaking" in data)
@@ -220,16 +228,22 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("siblings_cleft" in data)
         self.assertTrue("meds" in data)
         self.assertTrue("allergymeds" in data)
+        self.assertTrue("first_crawl" in data)
+        self.assertTrue("first_sit" in data)
+        self.assertTrue("first_walk" in data)
+        self.assertTrue("first_words" in data)
 
-        self.assertTrue(data["recentcold"] == False)
+        self.assertTrue(data["cold_cough_fever"] == False)
         self.assertTrue(data["hivaids"] == False)
         self.assertTrue(data["anemia"] == False)
         self.assertTrue(data["athsma"] == False)
         self.assertTrue(data["cancer"] == False)
         self.assertTrue(data["congenitalheartdefect"] == False)
+        self.assertTrue(data["congenitalheartdefect_workup"] == False)
+        self.assertTrue(data["congenitalheartdefect_planforcare"] == False)
         self.assertTrue(data["diabetes"] == False)
         self.assertTrue(data["epilepsy"] == False)
-        self.assertTrue(data["hemophilia"] == False)
+        self.assertTrue(data["bleeding_problems"] == False)
         self.assertTrue(data["hepititis"] == False)
         self.assertTrue(data["tuberculosis"] == False)
         self.assertTrue(data["troublespeaking"] == False)
@@ -245,6 +259,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["siblings_cleft"] == False)
         self.assertTrue(data["meds"] == "")
         self.assertTrue(data["allergymeds"] == "")
+        self.assertTrue(data["first_crawl"] == 8)
+        self.assertTrue(data["first_sit"] == 7)
+        self.assertTrue(data["first_walk"] == 13)
+        self.assertTrue(data["first_words"] == 11)
 
         x = DeleteMedicalHistory(host, port, token, id)
         ret = x.send(timeout=30)
@@ -276,15 +294,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         # invalid data, boolean arg
 
         data = {}
-        data["recentcold"] = 9999    # this should cause a failure
+        data["cold_cough_fever"] = 9999    # this should cause a failure
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -300,6 +320,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x.setMedicalHistory(data)
 
@@ -310,15 +334,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         #invalid data, pregnancy duration
 
         data = {}
-        data["recentcold"] = False
+        data["cold_cough_fever"] = False
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -334,6 +360,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x.setMedicalHistory(data)
 
@@ -385,15 +415,17 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
-        data["recentcold"] = False
+        data["cold_cough_fever"] = False
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -409,6 +441,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x.setMedicalHistory(data)
 
@@ -485,15 +521,17 @@ class TestTSMedicalHistory(unittest.TestCase):
 
         x = CreateMedicalHistory(host, port, token, patient=patientid, clinic=clinicid)
         data = {}
-        data["recentcold"] = False
+        data["cold_cough_fever"] = False
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -509,6 +547,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)
@@ -545,15 +587,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         data = ret[1]
-        self.assertTrue("recentcold" in data)
+        self.assertTrue("cold_cough_fever" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
         self.assertTrue("athsma" in data)
         self.assertTrue("cancer" in data)
         self.assertTrue("congenitalheartdefect" in data)
+        self.assertTrue("congenitalheartdefect_workup" in data)
+        self.assertTrue("congenitalheartdefect_planforcare" in data)
         self.assertTrue("diabetes" in data)
         self.assertTrue("epilepsy" in data)
-        self.assertTrue("hemophilia" in data)
+        self.assertTrue("bleeding_problems" in data)
         self.assertTrue("hepititis" in data)
         self.assertTrue("tuberculosis" in data)
         self.assertTrue("troublespeaking" in data)
@@ -570,6 +614,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("meds" in data)
         self.assertTrue("allergymeds" in data)
         self.assertTrue(data["siblings_cleft"] == True)
+        self.assertTrue(data["first_crawl"] == 8)
+        self.assertTrue(data["first_sit"] == 7)
+        self.assertTrue(data["first_walk"] == 13)
+        self.assertTrue(data["first_words"] == 11)
 
         data = {}
         data["hepititis"] = True 
@@ -592,15 +640,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         data = ret[1]
-        self.assertTrue("recentcold" in data)
+        self.assertTrue("cold_cough_fever" in data)
         self.assertTrue("hivaids" in data)
         self.assertTrue("anemia" in data)
         self.assertTrue("athsma" in data)
         self.assertTrue("cancer" in data)
         self.assertTrue("congenitalheartdefect" in data)
+        self.assertTrue("congenitalheartdefect_workup" in data)
+        self.assertTrue("congenitalheartdefect_planforcare" in data)
         self.assertTrue("diabetes" in data)
         self.assertTrue("epilepsy" in data)
-        self.assertTrue("hemophilia" in data)
+        self.assertTrue("bleeding_problems" in data)
         self.assertTrue("hepititis" in data)
         self.assertTrue("tuberculosis" in data)
         self.assertTrue("troublespeaking" in data)
@@ -619,6 +669,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["hepititis"] == True)
         self.assertTrue(data["pregnancy_duration"] == 8)
         self.assertTrue(data["parents_cleft"] == True) 
+        self.assertTrue(data["first_crawl"] == 8)
+        self.assertTrue(data["first_sit"] == 7)
+        self.assertTrue(data["first_walk"] == 13)
+        self.assertTrue(data["first_words"] == 11)
 
         data = {}
         data["hepititis"] = "Hello" 
@@ -790,15 +844,17 @@ class TestTSMedicalHistory(unittest.TestCase):
         delids = []
 
         data = {}
-        data["recentcold"] = False
+        data["cold_cough_fever"] = False
         data["hivaids"] = False
         data["anemia"] = False
         data["athsma"] = False
         data["cancer"] = False
         data["congenitalheartdefect"] = False
+        data["congenitalheartdefect_workup"] = False
+        data["congenitalheartdefect_planforcare"] = False
         data["diabetes"] = False
         data["epilepsy"] = False
-        data["hemophilia"] = False
+        data["bleeding_problems"] = False
         data["hepititis"] = False
         data["tuberculosis"] = False
         data["troublespeaking"] = False
@@ -814,6 +870,10 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["siblings_cleft"] = False
         data["meds"] = ""
         data["allergymeds"] = ""
+        data["first_crawl"] = 8
+        data["first_sit"] = 7
+        data["first_walk"] = 13
+        data["first_words"] = 11 
 
         x = CreateMedicalHistory(host, port, token, patient=patientid1, clinic=clinicid1)
         x.setMedicalHistory(data)

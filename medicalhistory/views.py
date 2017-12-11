@@ -39,15 +39,17 @@ class MedicalHistoryView(APIView):
         m["clinic"] = entry.clinic_id
         m["patient"] = entry.patient_id
         m["time"] = entry.time
-        m["recentcold"] = entry.recentcold  
+        m["cold_cough_fever"] = entry.cold_cough_fever  
         m["hivaids"] = entry.hivaids 
         m["anemia"] = entry.anemia  
         m["athsma"] = entry.athsma 
         m["cancer"] = entry.cancer  
         m["congenitalheartdefect"] = entry.congenitalheartdefect 
+        m["congenitalheartdefect_workup"] = entry.congenitalheartdefect_workup
+        m["congenitalheartdefect_planforcare"] = entry.congenitalheartdefect_planforcare 
         m["diabetes"] = entry.diabetes 
         m["epilepsy"] = entry.epilepsy  
-        m["hemophilia"] = entry.hemophilia  
+        m["bleeding_problems"] = entry.bleeding_problems  
         m["hepititis"] = entry.hepititis  
         m["tuberculosis"] = entry.tuberculosis  
         m["troublespeaking"] = entry.troublespeaking  
@@ -63,6 +65,10 @@ class MedicalHistoryView(APIView):
         m["siblings_cleft"] = entry.siblings_cleft  
         m["meds"] = entry.meds  
         m["allergymeds"] = entry.allergymeds  
+        m["first_crawl"] = entry.first_crawl  
+        m["first_sit"] = entry.first_sit  
+        m["first_walk"] = entry.first_walk  
+        m["first_words"] = entry.first_words  
 
         return m
 
@@ -162,7 +168,7 @@ class MedicalHistoryView(APIView):
         kwargs = data
 
         try:
-            val = data["recentcold"] 
+            val = data["cold_cough_fever"] 
             if not (val == True or val == False):
                 valid = False
             val = data["hivaids"] 
@@ -180,13 +186,19 @@ class MedicalHistoryView(APIView):
             val = data["congenitalheartdefect"] 
             if not (val == True or val == False):
                 valid = False
+            val = data["congenitalheartdefect_workup"] 
+            if not (val == True or val == False):
+                valid = False
+            val = data["congenitalheartdefect_planforcare"] 
+            if not (val == True or val == False):
+                valid = False
             val = data["diabetes"] 
             if not (val == True or val == False):
                 valid = False
             val = data["epilepsy"] 
             if not (val == True or val == False):
                 valid = False
-            val = data["hemophilia"] 
+            val = data["bleeding_problems"] 
             if not (val == True or val == False):
                 valid = False
             val = data["hepititis"] 
@@ -209,6 +221,26 @@ class MedicalHistoryView(APIView):
                 valid = False
             else:
                 kwargs["pregnancy_duration"] = val
+            val = int(data["first_crawl"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["first_crawl"] = val
+            val = int(data["first_sit"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["first_sit"] = val
+            val = int(data["first_walk"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["first_walk"] = val
+            val = int(data["first_words"])
+            if val < 0:
+                valid = False
+            else:
+                kwargs["first_words"] = val
             val = data["pregnancy_smoke"] 
             if not (val == True or val == False):
                 valid = False
@@ -239,12 +271,12 @@ class MedicalHistoryView(APIView):
         valid = True
 
         try:
-            if "recentcold" in data:
-                val = data["recentcold"] 
+            if "cold_cough_fever" in data:
+                val = data["cold_cough_fever"] 
                 if not (val == True or val == False):
                     valid = False
                 else:
-                    medical_history.recentcold = val
+                    medical_history.cold_cough_fever = val
             if "hivaids" in data:
                 val = data["hivaids"] 
                 if not (val == True or val == False):
@@ -275,6 +307,18 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.congenitalheartdefect = val
+            if "congenitalheartdefect_workup" in data:
+                val = data["congenitalheartdefect_workup"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.congenitalheartdefect_workup = val
+            if "congenitalheartdefect_planforcare" in data:
+                val = data["congenitalheartdefect_planforcare"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.congenitalheartdefect_planforcare = val
             if "diabetes" in data:
                 val = data["diabetes"] 
                 if not (val == True or val == False):
@@ -287,12 +331,12 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.epilepsy = val
-            if "hemophilia" in data:
-                val = data["hemophilia"] 
+            if "bleeding_problems" in data:
+                val = data["bleeding_problems"] 
                 if not (val == True or val == False):
                     valid = False
                 else:
-                    medical_history.hemophilia = val
+                    medical_history.bleeding_problems = val
             if "hepititis" in data:
                 val = data["hepititis"] 
                 if not (val == True or val == False):
@@ -384,6 +428,30 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.meds = val
+            if "first_crawl" in data:
+                val = int(data["first_crawl"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.first_crawl = val
+            if "first_sit" in data:
+                val = int(data["first_sit"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.first_sit = val
+            if "first_walk" in data:
+                val = int(data["first_walk"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.first_walk = val
+            if "first_words" in data:
+                val = int(data["first_words"])
+                if (val < 0):
+                    valid = False
+                else:
+                    medical_history.first_words = val
         except:
             valid = False
 
