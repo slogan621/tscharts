@@ -156,6 +156,8 @@ class MedicalHistoryView(APIView):
         elif not badRequest:
             if medical_history_id:
                 ret = self.serialize(medical_history)
+            elif case1 and len(medical_history) == 1:
+                ret = self.serialize(medical_history[0])
             else:
                 ret = []
                 for x in medical_history:

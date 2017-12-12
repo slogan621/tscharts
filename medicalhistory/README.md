@@ -115,6 +115,10 @@ Content-Type: application/json
    `patient` patient id<br />
    `clinic` clinic id<br />
 
+   If both patient and clinic are specified, and the result of the query 
+   is a single object (which should be the case), then it is returned as
+   a JSON object. Otherwise, the result is returned as a JSON array.
+
 * **Data Params**
 
    None
