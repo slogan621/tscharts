@@ -55,5 +55,8 @@ class MedicalHistory(models.Model):
     first_words = models.IntegerField(default=12)
     first_walk = models.IntegerField(default=12)
     birth_weight = models.IntegerField(default=0)
+    birth_weight_metric = models.BooleanField(default=True)
     height = models.IntegerField(default=0)
+    height_metric = models.BooleanField(default=True)
     weight = models.IntegerField(default=0)
+    weight_metric = models.BooleanField(default=True)

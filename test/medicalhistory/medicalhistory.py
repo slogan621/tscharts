@@ -187,6 +187,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x.setMedicalHistory(data)
  
@@ -417,6 +420,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x.setMedicalHistory(data)
 
@@ -460,6 +466,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x.setMedicalHistory(data)
 
@@ -544,6 +553,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x.setMedicalHistory(data)
 
@@ -653,6 +665,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)
@@ -985,6 +1000,9 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight"] = 3
         data["height"] = 61
         data["weight"] = 9
+        data["birth_weight_metric"] = True
+        data["height_metric"] = True
+        data["weight_metric"] = True
 
         x = CreateMedicalHistory(host, port, token, patient=patientid1, clinic=clinicid1)
         x.setMedicalHistory(data)

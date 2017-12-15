@@ -70,8 +70,11 @@ class MedicalHistoryView(APIView):
         m["first_walk"] = entry.first_walk  
         m["first_words"] = entry.first_words  
         m["birth_weight"] = entry.birth_weight 
+        m["birth_weight_metric"] = entry.birth_weight_metric 
         m["height"] = entry.height  
+        m["height_metric"] = entry.height_metric  
         m["weight"] = entry.weight  
+        m["weight_metric"] = entry.weight_metric  
 
         return m
 
@@ -272,16 +275,25 @@ class MedicalHistoryView(APIView):
                 valid = False
             else:
                 kwargs["birth_weight"] = val
+            val = data["birth_weight_metric"]
+            if not (val == True or val == False):
+                valid = False
             val = int(data["height"])
             if val < 0:
                 valid = False
             else:
                 kwargs["height"] = val
+            val = data["height_metric"]
+            if not (val == True or val == False):
+                valid = False
             val = int(data["weight"])
             if val < 0:
                 valid = False
             else:
                 kwargs["weight"] = val
+            val = data["weight_metric"]
+            if not (val == True or val == False):
+                valid = False
         except:
             valid = False
 
@@ -422,7 +434,7 @@ class MedicalHistoryView(APIView):
                 if not (val == True or val == False):
                     valid = False
                 else:
-                    medical_history.foo = relative_cleft
+                    medical_history.relative_cleft = relative_cleft
             if "parents_cleft" in data:
                 val = data["parents_cleft"] 
                 if not (val == True or val == False):
@@ -478,18 +490,36 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.birth_weight = val
+            if "birth_weight_metric" in data:
+                val = data["birth_weight_metric"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.birth_weight_metric = val
             if "height" in data:
                 val = int(data["height"])
                 if (val < 0):
                     valid = False
                 else:
                     medical_history.height = val
+            if "height_metric" in data:
+                val = data["height_metric"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.height_metric = val
             if "weight" in data:
                 val = int(data["weight"])
                 if (val < 0):
                     valid = False
                 else:
                     medical_history.weight = val
+            if "weight_metric" in data:
+                val = data["weight_metric"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.weight_metric = val
         except:
             valid = False
 
