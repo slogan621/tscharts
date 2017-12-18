@@ -434,7 +434,7 @@ class MedicalHistoryView(APIView):
                 if not (val == True or val == False):
                     valid = False
                 else:
-                    medical_history.relative_cleft = relative_cleft
+                    medical_history.relative_cleft = val
             if "parents_cleft" in data:
                 val = data["parents_cleft"] 
                 if not (val == True or val == False):
@@ -459,7 +459,8 @@ class MedicalHistoryView(APIView):
                 if not isinstance(val, basestring):
                     valid = False
                 else:
-                    medical_history.meds = val
+                    medical_history.allergymeds = val
+
             if "first_crawl" in data:
                 val = int(data["first_crawl"])
                 if (val < 0):
