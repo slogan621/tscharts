@@ -42,6 +42,7 @@ class MedicationsView(APIView):
                     ret = medication.id
                 except:
                     medication = None
+                    badRequest = True
 
         if not patient and not badRequest:
             notFound = True
@@ -64,12 +65,13 @@ class MedicationsView(APIView):
         data = json.loads(request.body)
 
         try:
-            med = Medications.objects.filter(medication = data["medication"])
-            if med and len(med)>0:
+            medication = Medications.objects.filter(name = data["medication"])
+            if medication and len(medication)>0:
                 badRequest = True
         except:
             implMsg = "Medication.objects.filter {} {}".format(sys.exc_info()[0], data)
             implError = True
+
         if not badRequest and not implError:
             try:
                 medication = Medications(**data)
@@ -86,4 +88,17 @@ class MedicationsView(APIView):
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
-            return Response({'medication':medication.medication})
+            return Response({'id':medication.id})
+
+    def delete(self, request, medication_id = None, format = None):
+        medication = None
+
+        try:
+            medication = Medications.objects.get(id=medication_id)
+        except:
+            medication = None
+        if not medication:
+            raise NotFound
+        else:
+            medication.delete()
+        return Response({})
