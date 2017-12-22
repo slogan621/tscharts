@@ -23,49 +23,53 @@ class MedicationsView(APIView):
  
 
     def get(self, request, medication_id=None, format=None):
+    
         badRequest = False
         notFound = False
         medication = None
+       #If there is a medication id
         if medication_id:
             try:
                 medication = Medications.objects.get(id = medication_id)
+                ret = medication.name
             except:
                 medication = None
         else:
-            kwargs = {}
             med = request.GET.get('medication','')
-            if not med == '':
-                kwargs["medication__contains"] = med
-        if not badRequest:
-            try:
-                medication = Medications.objects.filter(**kwargs)
-            except:
-                medication = None
-        if not medication and not badRequest:
+            if not med == '' and not badRequest:
+                try:
+                    medication = Medications.objects.filter(name = med)
+                    ret = medication.id
+                except:
+                    medication = None
+
+        if not patient and not badRequest:
             notFound = True
         else:
             ret = []
-            for x in medication:
-                ret.append(x.medication)
+            for x in Medications.objects.all():
+                ret.append(x.name)
+
         if badRequest:
             return HttpResponseBadRequest()
         elif notFound:
             return HttpResponseNotFound()
         else:
-            return Response(ret)
+            return Response(ret) #get returns the whole list  filter(name = medication) 3 ways
     
     def post(self, request, format = None):
         badRequest = False
         implError = False
 
         data = json.loads(request.body)
+
         try:
             med = Medications.objects.filter(medication = data["medication"])
-            if not med:
+            if med and len(med)>0:
                 badRequest = True
         except:
-                implMsg = "Medication.objects.filter {} {}".format(sys.exc_info()[0], data)
-                implError = True
+            implMsg = "Medication.objects.filter {} {}".format(sys.exc_info()[0], data)
+            implError = True
         if not badRequest and not implError:
             try:
                 medication = Medications(**data)
