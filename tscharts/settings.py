@@ -41,7 +41,7 @@ SECRET_KEY = 'rzu40a5v2wc#39&x-959)abrps2w+vb#kq8^m&s=-i%sl2ja0a'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["54.193.67.202"]
 
 REGISTRATION_OPEN = True                # If True, users can register
 ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     'statechange',
     'station.apps.StationConfig',
     'tscharts',
+    'medications',
 ]
 
 MIDDLEWARE_CLASSES = [
