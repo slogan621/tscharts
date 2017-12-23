@@ -55,4 +55,5 @@ urlpatterns = [
     url(r'^tscharts/v1/routingslipentry/', include('routingslip.rsentryurls', namespace='routingslipentry')),
     url(r'^tscharts/v1/statechange/', include('statechange.urls', namespace='statechange')),
     url(r'^tscharts/v1/station/', include('station.urls', namespace='station')),
+    url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
 ]
