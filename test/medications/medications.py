@@ -27,7 +27,7 @@ class GetMedications(ServiceAPI):
         if not self._id == None:
             base = "tscharts/v1/medications/{}/".format(self._id)
         else:
-            vase = "tscharts/vi/medications/"
+            base = "tscharts/v1/medications/"
     
         if not self._name == None:
             if not hasQArgs:
@@ -67,7 +67,7 @@ class DeleteMedications(ServiceAPI):
         self.setToken(token)
         self.setURL("tscharts/v1/medications/{}/".format(id))
 
-class TestTSPatient(unittest.TestCase):
+class TestTSMedications(unittest.TestCase):
 
     def setUp(self):
         login = Login(host, port, username, password)
@@ -134,14 +134,32 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         id = int(ret["id"])
-        self.assertTrue("name" in ret)
-
         self.assertTrue(ret["name"] == "Advil")
         
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
+        data = {}
+        data["name"] = "CICLOPIROX"
+
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        id = ret[1]["id"]
+        x = GetMedications(host, port, token);
+        x.setName("CICLOPIROX")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual(ret[1][0], id)
+        
+
+        x = DeleteMedications(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        
 def usage():
     print("medications [-h host] [-p port] [-u username] [-w password]") 
 
