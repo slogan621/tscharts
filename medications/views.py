@@ -20,10 +20,13 @@ import sys
 class MedicationsView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
- 
+    def serialize(self, entry):
+        m = {}
+        m["id"] = entry.id
+        m["name"] = entry.name
+        return m
 
-    def get(self, request, medication_id=None, format=None):
-    
+    def get(self, request, medication_id=None, format=None):   
         badRequest = False
         notFound = False
         medication = None
@@ -31,21 +34,21 @@ class MedicationsView(APIView):
         if medication_id:
             try:
                 medication = Medications.objects.get(id = medication_id)
-                ret = medication.name
+                ret = self.serialize(medication)
             except:
                 medication = None
-        else:
+                notFound = True
+        elif request:
+            kwargs = {}
             med = request.GET.get('medication','')
             if not med == '' and not badRequest:
+                kwargs["name"] = med
                 try:
-                    medication = Medications.objects.filter(name = med)
+                    medication = Medications.objects.filter(**kwargs)
                     ret = medication.id
                 except:
                     medication = None
                     badRequest = True
-
-        if not patient and not badRequest:
-            notFound = True
         else:
             ret = []
             for x in Medications.objects.all():
@@ -65,12 +68,9 @@ class MedicationsView(APIView):
         data = json.loads(request.body)
 
         try:
-            medication = Medications.objects.filter(name = data["medication"])
-            if medication and len(medication)>0:
-                badRequest = True
+            medication = Medications.objects.get(name = data["name"])
         except:
-            implMsg = "Medication.objects.filter {} {}".format(sys.exc_info()[0], data)
-            implError = True
+            badRequest = False
 
         if not badRequest and not implError:
             try:
@@ -92,7 +92,6 @@ class MedicationsView(APIView):
 
     def delete(self, request, medication_id = None, format = None):
         medication = None
-
         try:
             medication = Medications.objects.get(id=medication_id)
         except:
