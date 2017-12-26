@@ -38,28 +38,26 @@ class MedicationsView(APIView):
             except:
                 medication = None
                 notFound = True
-        elif request:
-            kwargs = {}
-            med = request.GET.get('medication','')
+        else:
+            med = request.GET.get('name','')
             if not med == '' and not badRequest:
-                kwargs["name"] = med
                 try:
-                    medication = Medications.objects.filter(**kwargs)
-                    ret = medication.id
+                    medication = Medications.objects.get(name = med)
+                    ret = self.serialize(medication)
                 except:
                     medication = None
-                    badRequest = True
-        else:
-            ret = []
-            for x in Medications.objects.all():
-                ret.append(x.name)
+                    notFound = True
+            else:
+                ret = []
+                for x in Medications.objects.all():
+                    ret.append(x.name)
 
         if badRequest:
             return HttpResponseBadRequest()
         elif notFound:
             return HttpResponseNotFound()
         else:
-            return Response(ret) #get returns the whole list  filter(name = medication) 3 ways
+            return Response(ret)
     
     def post(self, request, format = None):
         badRequest = False
@@ -67,10 +65,8 @@ class MedicationsView(APIView):
 
         data = json.loads(request.body)
 
-        try:
-            medication = Medications.objects.get(name = data["name"])
-        except:
-            badRequest = False
+        if Medications.objects.all().filter(name = data['name']).exists():
+            badRequest = True
 
         if not badRequest and not implError:
             try:
@@ -93,7 +89,7 @@ class MedicationsView(APIView):
     def delete(self, request, medication_id = None, format = None):
         medication = None
         try:
-            medication = Medications.objects.get(id=medication_id)
+            medication = Medications.objects.get(id = medication_id)
         except:
             medication = None
         if not medication:
