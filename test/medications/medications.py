@@ -34,7 +34,7 @@ class GetMedications(ServiceAPI):
                 base += "?"
             else:
                 base += "&"
-            base += "medication={}".format(self._name)
+            base += "name={}".format(self._name)
             hasQArgs = True
         self.setURL(base)
 
@@ -60,7 +60,6 @@ class GetMedications(ServiceAPI):
 class DeleteMedications(ServiceAPI):
     def __init__(self, host, port, token, id):
         super(DeleteMedications, self).__init__()
-        
         self.setHttpMethod("DELETE")
         self.setHost(host)
         self.setPort(port)
@@ -81,20 +80,31 @@ class TestTSMedications(unittest.TestCase):
         data = {}
 
         data["name"] = "Advil"
-        
+
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+   
+ 
         id = int(ret[1]["id"])
         x = GetMedications(host, port, token)
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400) #bad request test uniqueness
 
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)  
-
+        self.assertEqual(ret[0], 200)
+          
+        x = GetMedications(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 404) # not found        
+      
     def testDeleteMedications(self):
         data = {}
         data["name"] = "Advil"
@@ -111,6 +121,7 @@ class TestTSMedications(unittest.TestCase):
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+
         x = GetMedications(host, port, token)
         x.setId(id)
         ret = x.send(timeout=30)
@@ -128,7 +139,8 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
-        x = GetMedications(host, port, token);
+
+        x = GetMedications(host, port, token); #test get a medication by its id
         x.setId(int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -139,6 +151,7 @@ class TestTSMedications(unittest.TestCase):
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+       
 
         data = {}
         data["name"] = "CICLOPIROX"
@@ -148,18 +161,50 @@ class TestTSMedications(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = ret[1]["id"]
-        x = GetMedications(host, port, token);
+   
+           
+
+        x = GetMedications(host, port, token) #test get a medication by its name
         x.setName("CICLOPIROX")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        self.assertEqual(ret[1][0], id)
+        self.assertTrue(ret[1]["name"] == "CICLOPIROX")
         
+        x = GetMedications(host, port, token)
+        x.setName("aaaa")
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 404)  #not found      
 
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-
+           
+        name_list = ['b','bc','bbc']
+        id_list = []        
+        for x in name_list:
+            data = {}
+            data["name"] = x
+            x = CreateMedications(host, port, token, data)
+            ret = x.send(timeout = 30)
+            id_list.append(ret[1]["id"])
+            self.assertEqual(ret[0], 200)
         
+        x = GetMedications(host, port, token)   #test get a list of medications
+        ret = x.send(timeout = 30)    
+        for name in ret[1]:
+            self.assertTrue(name in name_list)
+       
+        for id in id_list:    
+            x = DeleteMedications(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for id in id_list:
+            x = GetMedications(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 404)  #not found
+
 def usage():
     print("medications [-h host] [-p port] [-u username] [-w password]") 
 
