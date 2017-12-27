@@ -38,8 +38,12 @@ class MedicationsView(APIView):
             except:
                 medication = None
                 notFound = True
-        else:
-            med = request.GET.get('name','')
+        else: #If there is no medication id
+            try:
+                med = request.GET.get('name','')
+            except:
+                badRequest = True
+
             if not med == '' and not badRequest:
                 try:
                     medication = Medications.objects.get(name = med)
@@ -64,9 +68,21 @@ class MedicationsView(APIView):
         implError = False
 
         data = json.loads(request.body)
-
-        if Medications.objects.all().filter(name = data['name']).exists():
+        
+        try:
+            name = data['name']
+            if len(name) == 0:
+                badRequest = True
+        except:
             badRequest = True
+
+        if not badRequest:
+            try:
+                if Medications.objects.all().filter(name = data['name']).exists():
+                    badRequest = True
+            except:
+                implMsg = "Medications.objects.all().filter {} {}".format(sys.exc_info()[0], data)
+                implError = True
 
         if not badRequest and not implError:
             try:
@@ -79,6 +95,7 @@ class MedicationsView(APIView):
             except:
                 implMsg = "Medication create {} {}".format(sys.exc_info()[0], data)
                 implError = True
+
         if badRequest:
             return HttpResponseBadRequest()
         if implError:
