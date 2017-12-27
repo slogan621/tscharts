@@ -104,7 +104,30 @@ class TestTSMedications(unittest.TestCase):
         x.setId(id)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404) # not found        
-      
+        
+        data = {}
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400) #bad request
+
+        data["names"] = "Advil"
+
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400) #bad request
+
+        data = {}
+        data["name"] = ""
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400) 
+        
+        data = {}
+        data["name"] = 123
+        x = CreateMedications(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+     
     def testDeleteMedications(self):
         data = {}
         data["name"] = "Advil"
@@ -152,6 +175,10 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
        
+        x = GetMedications(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 404)
 
         data = {}
         data["name"] = "CICLOPIROX"
@@ -179,7 +206,7 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
            
-        name_list = ['b','bc','bbc']
+        name_list = ['b','bc','bbc','a','ad','adb']
         id_list = []        
         for x in name_list:
             data = {}
@@ -193,7 +220,9 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout = 30)    
         for name in ret[1]:
             self.assertTrue(name in name_list)
-       
+            name_list.remove(name)
+        self.assertEqual(name_list, [])
+ 
         for id in id_list:    
             x = DeleteMedications(host, port, token, id)
             ret = x.send(timeout=30)
