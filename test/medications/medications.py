@@ -79,7 +79,7 @@ class TestTSMedications(unittest.TestCase):
     def testCreateMedications(self):
         data = {}
 
-        data["name"] = "Advil"
+        data["name"] = "AAAAA"
 
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout = 30)
@@ -110,7 +110,7 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request
 
-        data["names"] = "Advil"
+        data["names"] = "AAAAA"
 
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout = 30)
@@ -130,7 +130,7 @@ class TestTSMedications(unittest.TestCase):
      
     def testDeleteMedications(self):
         data = {}
-        data["name"] = "Advil"
+        data["name"] = "AAAAA"
 
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout=30)
@@ -156,7 +156,7 @@ class TestTSMedications(unittest.TestCase):
 
     def testGetMedications(self):
         data = {}
-        data["name"] = "Advil"
+        data["name"] = "AAAAA"
          
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout=30)
@@ -169,7 +169,7 @@ class TestTSMedications(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         id = int(ret["id"])
-        self.assertTrue(ret["name"] == "Advil")
+        self.assertTrue(ret["name"] == "AAAAA")
         
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
@@ -181,7 +181,7 @@ class TestTSMedications(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         data = {}
-        data["name"] = "CICLOPIROX"
+        data["name"] = "CCCCCC"
 
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout=30)
@@ -192,10 +192,10 @@ class TestTSMedications(unittest.TestCase):
            
 
         x = GetMedications(host, port, token) #test get a medication by its name
-        x.setName("CICLOPIROX")
+        x.setName("CCCCCC")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        self.assertTrue(ret[1]["name"] == "CICLOPIROX")
+        self.assertTrue(ret[1]["name"] == "CCCCCC")
         
         x = GetMedications(host, port, token)
         x.setName("aaaa")
@@ -206,29 +206,30 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
            
-        name_list = ['b','bc','bbc','a','ad','adb']
-        id_list = []        
-        for x in name_list:
+        namelist = ['b','bbc','ad','ac','aac']
+        copynamelist = ['b','bbc','ad','ac','aac']
+        idlist = []        
+        for x in namelist:
             data = {}
             data["name"] = x
             x = CreateMedications(host, port, token, data)
             ret = x.send(timeout = 30)
-            id_list.append(ret[1]["id"])
+            idlist.append(ret[1]["id"])
             self.assertEqual(ret[0], 200)
         
         x = GetMedications(host, port, token)   #test get a list of medications
         ret = x.send(timeout = 30)    
-        for name in ret[1]:
-            self.assertTrue(name in name_list)
-            name_list.remove(name)
-        self.assertEqual(name_list, [])
+        for name in namelist:
+            self.assertTrue(name in ret[1])
+            copynamelist.remove(name)
+        self.assertEqual(copynamelist, [])
  
-        for id in id_list:    
+        for id in idlist:    
             x = DeleteMedications(host, port, token, id)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        for id in id_list:
+        for id in idlist:
             x = GetMedications(host, port, token)
             x.setId(id)
             ret = x.send(timeout=30)
