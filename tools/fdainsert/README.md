@@ -9,8 +9,8 @@
 
 * **Setup:**
 
-  Open the terminal window, go to the tscharts file directory and use the command "typeset -x PYTHONPATH=`pwd`" to setup Python path.
-  For example: ~/tscharts$ typeset -x PYTHONPATH=`pwd` 
+  Open the terminal window, go to the tscharts file directory and use the command "typeset -x PYTHONPATH=\`pwd\`" to setup Python path.
+  For example: ~/tscharts$ typeset -x PYTHONPATH=\`pwd\` 
 
   Copy the Products.txt file downloaded from FDA website to the fdainsert directory under tools directory.
 
