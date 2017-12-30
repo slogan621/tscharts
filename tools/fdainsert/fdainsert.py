@@ -14,7 +14,12 @@ class UpdateMedicationsList():
 
     def readDrugFromFile(self, filename):
         ret = set()
-        file = open(filename, "r")
+        try:
+            file = open(filename, "r")
+        except:
+            print("ERROR: File doesn't exist")
+            sys.exit()
+
         for x in file:
             drug = (x.split('\t'))[5].upper().rstrip()
             ret.add(drug)
@@ -72,19 +77,21 @@ def main():
             filename = a
         else:   
             assert False, "unhandled option"
-
+   
     x = UpdateMedicationsList()
     druginfile = x.readDrugFromFile(filename)
-    print("Current fda file({}) contains {} drugs.".format(filename, len(druginfile)))
-    print("Updating drug list...")
+    print("Current FDA file({}) contains {} drugs.".format(filename, len(druginfile)))
+    print("Updating drug list...\n")
     newdrug =  x.createMedications()
     druglist = x.getMedications()
 
     if len(newdrug) == 0:
-        print("No added new drugs")
+        print("No added new drugs\n")
     else:
-        print("There are {} added new drugs:{}.".format(len(newdrug), ",".join(str(x) for x in newdrug)))
-
+        print("There are {} added new drugs:".format(len(newdrug)))
+        for x in newdrug:
+            print(x)
+ 
     print("Current drug list contains {} drugs.".format(len(druglist)))
 
 if __name__ == "__main__":

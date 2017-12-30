@@ -97,13 +97,19 @@
   ```
   Current fda file(fdaproducts12:26:2017.txt) contains 7007 drugs.
   Updating drug list...
+
   No new added drugs.
+
   Current drug list contains 7014 drugs.
   ```
   * **New Drugs Inserted**
   ```
   Current fda file(fdaproducts12:26:2017.txt) contains 7007 drugs.
   Updating drug list...
-  There are 3 added new drugs: ADVIL, LIQUAEMIN SODIUM, HISTAMINE.
+
+  There are 3 added new drugs: 
+  ADVIL 
+  LIQUAEMIN SODIUM 
+  HISTAMINE
   Current drug list contains 7014 drugs. 
   ```

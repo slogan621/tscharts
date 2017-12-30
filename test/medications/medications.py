@@ -91,7 +91,9 @@ class TestTSMedications(unittest.TestCase):
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        
+        ret = ret[1]
+        self.assertEqual(ret['name'], "AAAAA")
+
         x = CreateMedications(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request test uniqueness
@@ -141,6 +143,11 @@ class TestTSMedications(unittest.TestCase):
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
+
+        ret = ret[1]
+        self.assertEqual(ret["name"], "AAAAA")
+        self.assertEqual(ret["id"], id)
+
         x = DeleteMedications(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
