@@ -81,8 +81,8 @@
    ["b","bc","bbc"]
    ```
    For information about medications APIs, please check the followings:
-   * [API](../master/medications/README.md)
-   * [Unit Tests](../master/test/medications/medications.py)
+   * [API](https://github.com/slogan621/tscharts/blob/master/medications/README.md)
+   * [Unit Tests](https://github.com/slogan621/tscharts/blob/master/test/medications/medications.py)
 
 * **Success Output Examples:**
 
