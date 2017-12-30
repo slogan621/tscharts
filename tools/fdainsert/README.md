@@ -7,10 +7,20 @@
   Go to the website https://www.fda.gov/Drugs/InformationOnDrugs/ucm079750.htm and download the last updated Drugs@FDA zip file. 
   Unzip the zip file. The Products.txt file contains all the FDA certified drugnames. 
 
-* **Login:**
+* **Setup:**
 
-  python fdainsert.py -u <username> -w <password> -h <host> -p <port> -f <filename>
-  Filename is the name of the FDA data file downloaded from the FDA website that contains the certified drugnames.
+  Open the terminal window, go to the tscharts file directory and use the command "typeset -x PYTHONPATH=pwd" to setup Python path.
+  For example: ~/tscharts$ typeset -x PYTHONPATH=pwd 
+
+  Copy the Products.txt file downloaded from FDA website to the fdainsert directory under tools directory.
+
+* **Login:**
+  
+  Go to the /tscharts/tools/fdainsert directory and use following command to login and run the program: python fdainsert.py -u 'username' -w 'password' -h 'host' -p 'port' -f 'filename'
+
+  Filename is the name of the FDA data file stored under the fdainsert directory.
+
+  For example: ~/tscharts/tools/fdainsert$ python fdainsert.py -u myname -w mypassword -h 53.193.98.902 -p 80 -f Products.txt
   
 *  **APIs**
    
@@ -90,7 +100,7 @@
   No new added drugs.
   Current drug list contains 7014 drugs.
   ```
-  * **New Drugs exist**
+  * **New Drugs Inserted**
   ```
   Current fda file(fdaproducts12:26:2017.txt) contains 7007 drugs.
   Updating drug list...
