@@ -75,6 +75,7 @@ INSTALLED_APPS = [
     'station.apps.StationConfig',
     'tscharts',
     'medications',
+    'surgerytype',
 ]
 
 MIDDLEWARE_CLASSES = [

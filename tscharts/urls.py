@@ -56,4 +56,5 @@ urlpatterns = [
     url(r'^tscharts/v1/statechange/', include('statechange.urls', namespace='statechange')),
     url(r'^tscharts/v1/station/', include('station.urls', namespace='station')),
     url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
+    url(r'^tscharts/v1/surgerytype/', include('surgerytype.urls', namespace='surgerytype')),
 ]
