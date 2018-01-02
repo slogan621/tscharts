@@ -170,7 +170,7 @@ class TestTSSurgerytype(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
 
-        x = GetSurgerytype(host, port, token); #test get a medication by its id
+        x = GetSurgerytype(host, port, token); #test get a surgerytype by its id
         x.setId(int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -198,7 +198,7 @@ class TestTSSurgerytype(unittest.TestCase):
    
            
 
-        x = GetSurgerytype(host, port, token) #test get a medication by its name
+        x = GetSurgerytype(host, port, token) #test get a surgerytype by its name
         x.setName("CCCCCC")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -224,7 +224,7 @@ class TestTSSurgerytype(unittest.TestCase):
             idlist.append(ret[1]["id"])
             self.assertEqual(ret[0], 200)
         
-        x = GetSurgerytype(host, port, token)   #test get a list of medications
+        x = GetSurgerytype(host, port, token)   #test get a list of surgerytypes
         ret = x.send(timeout = 30)    
         for name in namelist:
             self.assertTrue(name in ret[1])

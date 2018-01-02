@@ -108,6 +108,7 @@ active at the clinic. Each clinicstation is created before the clinic.
  * surgerytype - used to add, delete and get surgerytypes from the database. Used to update and retrieve the entire list of surgerytypes from the database.
     * [API](../master/surgerytype/README.md)
     * [Unit Tests](../master/test/surgerytype/surgerytype.py)
+
 Payload (when provided) must be in JSON.
 
 Generally, we use the following HTTP response codes to indicate the status
