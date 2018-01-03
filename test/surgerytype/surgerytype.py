@@ -1,5 +1,5 @@
 '''
-Unit tests for surgerytype application. Assumes django server is up
+Unit tests for surgery type application. Assumes django server is up
 and running on the specified host and port
 '''
 import unittest
@@ -9,9 +9,9 @@ import json
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 
-class CreateSurgerytype(ServiceAPI):
+class CreateSurgeryType(ServiceAPI):
     def __init__(self, host, port, token, payload):
-        super(CreateSurgerytype, self).__init__()
+        super(CreateSurgeryType, self).__init__()
 
         self.setHttpMethod("POST")
         self.setHost(host)
@@ -21,7 +21,7 @@ class CreateSurgerytype(ServiceAPI):
         self.setPayload(payload)
         self.setURL("tscharts/v1/surgerytype/")
 
-class GetSurgerytype(ServiceAPI):
+class GetSurgeryType(ServiceAPI):
     def makeURL(self):
         hasQArgs = False
         if not self._id == None:
@@ -39,7 +39,7 @@ class GetSurgerytype(ServiceAPI):
         self.setURL(base)
 
     def __init__(self, host, port, token):
-        super(GetSurgerytype, self).__init__()
+        super(GetSurgeryType, self).__init__()
       
         self.setHttpMethod("GET")
         self.setHost(host)
@@ -57,16 +57,16 @@ class GetSurgerytype(ServiceAPI):
         self._name = val
         self.makeURL()
 
-class DeleteSurgerytype(ServiceAPI):
+class DeleteSurgeryType(ServiceAPI):
     def __init__(self, host, port, token, id):
-        super(DeleteSurgerytype, self).__init__()
+        super(DeleteSurgeryType, self).__init__()
         self.setHttpMethod("DELETE")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
         self.setURL("tscharts/v1/surgerytype/{}/".format(id))
 
-class TestTSSurgerytype(unittest.TestCase):
+class TestTSSurgeryType(unittest.TestCase):
 
     def setUp(self):
         login = Login(host, port, username, password)
@@ -76,70 +76,70 @@ class TestTSSurgerytype(unittest.TestCase):
         global token
         token = ret[1]["token"]
     
-    def testCreateSurgerytype(self):
+    def testCreateSurgeryType(self):
         data = {}
 
         data["name"] = "AAAAA"
 
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
    
  
         id = int(ret[1]["id"])
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         self.assertEqual(ret['name'], "AAAAA")
 
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request test uniqueness
 
-        x = DeleteSurgerytype(host, port, token, id)
+        x = DeleteSurgeryType(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
           
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setId(id)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404) # not found        
         
         data = {}
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request
 
         data["names"] = "AAAAA"
 
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request
 
         data = {}
         data["name"] = ""
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) 
         
         data = {}
         data["name"] = 123
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
      
-    def testDeleteSurgerytype(self):
+    def testDeleteSurgeryType(self):
         data = {}
         data["name"] = "AAAAA"
 
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = int(ret[1]["id"])
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
@@ -148,29 +148,29 @@ class TestTSSurgerytype(unittest.TestCase):
         self.assertEqual(ret["name"], "AAAAA")
         self.assertEqual(ret["id"], id)
 
-        x = DeleteSurgerytype(host, port, token, id)
+        x = DeleteSurgeryType(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
-        x = DeleteSurgerytype(host, port, token, id)
+        x = DeleteSurgeryType(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404) # not found
 
-    def testGetSurgerytype(self):
+    def testGetSurgeryType(self):
         data = {}
         data["name"] = "AAAAA"
          
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
 
-        x = GetSurgerytype(host, port, token); #test get a surgerytype by its id
+        x = GetSurgeryType(host, port, token); #test get a surgerytype by its id
         x.setId(int(ret[1]["id"]))
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -178,11 +178,11 @@ class TestTSSurgerytype(unittest.TestCase):
         id = int(ret["id"])
         self.assertTrue(ret["name"] == "AAAAA")
         
-        x = DeleteSurgerytype(host, port, token, id)
+        x = DeleteSurgeryType(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
        
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setId(id)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404)
@@ -190,7 +190,7 @@ class TestTSSurgerytype(unittest.TestCase):
         data = {}
         data["name"] = "CCCCCC"
 
-        x = CreateSurgerytype(host, port, token, data)
+        x = CreateSurgeryType(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
@@ -198,18 +198,18 @@ class TestTSSurgerytype(unittest.TestCase):
    
            
 
-        x = GetSurgerytype(host, port, token) #test get a surgerytype by its name
+        x = GetSurgeryType(host, port, token) #test get a surgerytype by its name
         x.setName("CCCCCC")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue(ret[1]["name"] == "CCCCCC")
         
-        x = GetSurgerytype(host, port, token)
+        x = GetSurgeryType(host, port, token)
         x.setName("aaaa")
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404)  #not found      
 
-        x = DeleteSurgerytype(host, port, token, id)
+        x = DeleteSurgeryType(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
            
@@ -219,12 +219,12 @@ class TestTSSurgerytype(unittest.TestCase):
         for x in namelist:
             data = {}
             data["name"] = x
-            x = CreateSurgerytype(host, port, token, data)
+            x = CreateSurgeryType(host, port, token, data)
             ret = x.send(timeout = 30)
             idlist.append(ret[1]["id"])
             self.assertEqual(ret[0], 200)
         
-        x = GetSurgerytype(host, port, token)   #test get a list of surgerytypes
+        x = GetSurgeryType(host, port, token)   #test get a list of surgerytypes
         ret = x.send(timeout = 30)    
         for name in namelist:
             self.assertTrue(name in ret[1])
@@ -232,12 +232,12 @@ class TestTSSurgerytype(unittest.TestCase):
         self.assertEqual(copynamelist, [])
  
         for id in idlist:    
-            x = DeleteSurgerytype(host, port, token, id)
+            x = DeleteSurgeryType(host, port, token, id)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
         for id in idlist:
-            x = GetSurgerytype(host, port, token)
+            x = GetSurgeryType(host, port, token)
             x.setId(id)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 404)  #not found

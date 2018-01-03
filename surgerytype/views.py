@@ -17,7 +17,7 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 import json
 import sys
 
-class SurgerytypeView(APIView):
+class SurgeryTypeView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
@@ -27,16 +27,16 @@ class SurgerytypeView(APIView):
         m["name"] = entry.name
         return m
 
-    def get(self, request, surgerytype_id=None, format=None):   
+    def get(self, request, surgery_type_id=None, format=None):   
         badRequest = False
         notFound = False
-        surgerytype = None
-        if surgerytype_id:
+        surgery_type = None
+        if surgery_type_id:
             try:
-                surgerytype = Surgerytype.objects.get(id = surgerytype_id)
-                ret = self.serialize(surgerytype)
+                surgery_type = SurgeryType.objects.get(id = surgery_type_id)
+                ret = self.serialize(surgery_type)
             except:
-                surgerytype = None
+                surgery_type = None
                 notFound = True
         else: 
             try:
@@ -46,14 +46,14 @@ class SurgerytypeView(APIView):
 
             if not sur == '' and not badRequest:
                 try:
-                    surgerytype = Surgerytype.objects.get(name = sur)
-                    ret = self.serialize(surgerytype)
+                    surgery_type = SurgeryType.objects.get(name = sur)
+                    ret = self.serialize(surgery_type)
                 except:
-                    surgerytype = None
+                    surgery_type = None
                     notFound = True
             else:
                 ret = []
-                for x in Surgerytype.objects.all():
+                for x in SurgeryType.objects.all():
                     ret.append(x.name)
 
         if badRequest:
@@ -78,22 +78,22 @@ class SurgerytypeView(APIView):
 
         if not badRequest:
             try:
-                if Surgerytype.objects.all().filter(name = data['name']).exists():
+                if SurgeryType.objects.all().filter(name = data['name']).exists():
                     badRequest = True
             except:
-                implMsg = "Surgerytype.objects.all().filter {} {}".format(sys.exc_info()[0], data)
+                implMsg = "SurgeryType.objects.all().filter {} {}".format(sys.exc_info()[0], data)
                 implError = True
 
         if not badRequest and not implError:
             try:
-                surgerytype = Surgerytype(**data)
-                if surgerytype:
-                    surgerytype.save()
+                surgery_type = SurgeryType(**data)
+                if surgery_type:
+                    surgery_type.save()
                 else:
-                    implMsg = "Unable to create surgerytype"
+                    implMsg = "Unable to create surgery_type"
                     implError = True
             except:
-                implMsg = "Surgerytype create {} {}".format(sys.exc_info()[0], data)
+                implMsg = "SurgeryType create {} {}".format(sys.exc_info()[0], data)
                 implError = True
 
         if badRequest:
@@ -101,16 +101,16 @@ class SurgerytypeView(APIView):
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
-            return Response({'id':surgerytype.id})
+            return Response({'id':surgery_type.id})
 
-    def delete(self, request, surgerytype_id = None, format = None):
-        surgerytype = None
+    def delete(self, request, surgery_type_id = None, format = None):
+        surgery_type = None
         try:
-            surgerytype = Surgerytype.objects.get(id = surgerytype_id)
+            surgery_type = SurgeryType.objects.get(id = surgery_type_id)
         except:
-            surgerytype = None
-        if not surgerytype:
+            surgery_type = None
+        if not surgery_type:
             raise NotFound
         else:
-            surgerytype.delete()
+            surgery_type.delete()
         return Response({})
