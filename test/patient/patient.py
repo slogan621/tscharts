@@ -462,6 +462,16 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(test6id in ret)
 
         x = GetPatient(host, port, token)
+        x.setDob("04/1962")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetPatient(host, port, token)
+        x.setDob("05/1962")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetPatient(host, port, token)
         x.setFirstName("x")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)

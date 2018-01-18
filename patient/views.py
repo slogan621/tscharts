@@ -92,7 +92,15 @@ class PatientView(APIView):
                 kwargs["first__contains"] = first
             dob = request.GET.get('dob', '')
             if not dob == '':
-                kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
+                x = dob.split("/")
+                if len(x) == 3:
+                    try:
+                        kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
+                    except:
+                        badRequest = True
+                else:
+                    badRequest = True
+                    
             gender = request.GET.get('gender', '')
             if not gender == '':
                 if gender == "Male":
@@ -110,7 +118,7 @@ class PatientView(APIView):
 
         if not patient and not badRequest:
             notFound = True
-        else:
+        elif patient:
             if patient_id:
                 ret = self.serialize(patient)
             else: 
