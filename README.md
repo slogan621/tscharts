@@ -72,6 +72,9 @@ active at the clinic. Each clinicstation is created before the clinic.
  * patient - name, age, gender, and demographic information of a specific patient that has registered at one of our clinics. This information is gathered at registration time. 
     * [API](../master/patient/README.md)  
     * [Unit Tests](../master/test/patient/patient.py)
+ * category - list of categories, one of which is assigned to the patient each time he or she is registered at a clinic. Used to determine what care is provided to the patient at the clinic.
+    * [API](../master/category/README.md)  
+    * [Unit Tests](../master/test/category/category.py)
  * image - image storage for a patient/clinic/station group. Used for x-rays, headshots, and surgery images. Images stored in base64. 
     * [API](../master/image/README.md)  
     * [Unit Tests](../master/test/image/image.py)
@@ -105,7 +108,7 @@ active at the clinic. Each clinicstation is created before the clinic.
  * medications - used to add, delete and get medication names from the database. Used to update and retrieve the entire list of medications from the database.
     * [API](../master/medications/README.md)
     * [Unit Tests](../master/test/medications/medications.py)
- * surgerytype - used to add, delete and get surgerytypes from the database. Used to update and retrieve the entire list of surgerytypes from the database.
+ * surgerytype - used to add, delete and get surgery types from the database. Used to update and retrieve the entire list of surgery types from the database.
     * [API](../master/surgerytype/README.md)
     * [Unit Tests](../master/test/surgerytype/surgerytype.py)
 
