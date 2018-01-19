@@ -1,4 +1,4 @@
-**Get Surgery Yype by ID**
+**Get Surgery Type by ID**
 ----
   Returns json data about a single surgery type resource. 
 
@@ -249,7 +249,7 @@ Content-Type: application/json
 ```
 
 
-**Delete a Surgery type**
+**Delete a Surgery Type**
 ----
   Delete a surgery type instance. Use is not recommended except for unit test applications.
 
