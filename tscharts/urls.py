@@ -57,4 +57,5 @@ urlpatterns = [
     url(r'^tscharts/v1/station/', include('station.urls', namespace='station')),
     url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
     url(r'^tscharts/v1/surgerytype/', include('surgerytype.urls', namespace='surgerytype')),
+    url(r'^tscharts/v1/category/', include('category.urls', namespace='category')),
 ]
