@@ -1,6 +1,6 @@
-**Get Surgerytype by ID**
+**Get Surgery Yype by ID**
 ----
-  Returns json data about a single surgerytype resource. 
+  Returns json data about a single surgery type resource. 
 
 * **URL**
 
@@ -54,9 +54,9 @@ Content-Type: application/json
 {"id":20,"name":"ANTHROSCOPY"}
 ```
   
-**Get Multiple Surgerytypes**
+**Get Multiple Surgery Types**
 ----
-  Returns the entire list of surgerytypes.
+  Returns the entire list of surgery types.
 
 * **URL**
 
@@ -120,9 +120,9 @@ Content-Type: application/json
 
 ```
 
-**Get Surgerytype by Name**
+**Get Surgery type by Name**
 ----
-  Returns json data about a single surgerytype resource. 
+  Returns json data about a single surgery type resource. 
 
 * **URL**
 
@@ -136,7 +136,7 @@ Content-Type: application/json
 
    **Required:**
 
-   None 
+   `name` string
 
    **Optional:**
 
@@ -185,9 +185,9 @@ Content-Type: application/json
 
 ```
   
-**Create Surgerytype**
+**Create a Surgery Type**
 ----
-  Create a surgerytype instance.
+  Create a surgery type instance.
 
 * **URL**
 
@@ -205,7 +205,7 @@ Content-Type: application/json
 
    **Required:**
  
-   `name` string<br/>
+   `name` string
 
    **Optional:**
 
@@ -220,7 +220,7 @@ Content-Type: application/json
 
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 500 SERVER ERROR
-  `Entering a surgerytype that has already existed in the system returns BAD REQUEST error response.
+  `Entering a surgery type that already exists in the system returns a BAD REQUEST error response.
 * **Example:**
 
 ```
@@ -249,9 +249,9 @@ Content-Type: application/json
 ```
 
 
-**Delete Surgerytype**
+**Delete a Surgery type**
 ----
-  Delete a surgerytype instance. Use is not recommended except for unit test applications.
+  Delete a surgery type instance. Use is not recommended except for unit test applications.
 
 * **URL**
 
