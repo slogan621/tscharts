@@ -26,6 +26,7 @@ from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.queue.queue import GetQueue, DeleteQueueEntry
+from test.category.category import CreateCategory
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
@@ -217,6 +218,15 @@ class MockClinic:
     def getQueue(self, clinicstationid):
         pass
 
+    def createCategories(self):
+        for x in self._categories:
+            data = {}
+            data["name"] = x
+            r = CreateCategory(self._host, self._port, self._token, data)
+            ret = r.send(timeout=30)
+            if ret[0] != 200:
+                print("failed to create category {}".format(x))
+
     def createClinic(self, location):
         # create clinic that is occurring today, since scheduler will only
         # process a clinic that is currently active.
@@ -406,6 +416,8 @@ class MockClinic:
             self.createMedicalHistory(clinic, id)
 
     def createClinicResources(self):
+        print("Creating patient categories")
+        self.createCategories()
         print("Creating clinic")
         clinic = self.createClinic("Ensenada")
         print("Creating stations")
