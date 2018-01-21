@@ -40,13 +40,13 @@ class CategoryView(APIView):
                 notFound = True
         else: 
             try:
-                sur = request.GET.get('name','')
+                cat = request.GET.get('name','')
             except:
                 badRequest = True
 
-            if not sur == '' and not badRequest:
+            if not cat == '' and not badRequest:
                 try:
-                    category = Category.objects.get(name = sur)
+                    category = Category.objects.get(name = cat)
                     ret = self.serialize(category)
                 except:
                     category = None
@@ -54,7 +54,7 @@ class CategoryView(APIView):
             else:
                 ret = []
                 for x in Category.objects.all():
-                    ret.append(x.name)
+                    ret.append(self.serialize(x))
 
         if badRequest:
             return HttpResponseBadRequest()
