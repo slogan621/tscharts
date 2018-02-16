@@ -21,12 +21,14 @@ from datetime import datetime, timedelta
 from random import randint
 import time
 import threading
+import base64
 
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.queue.queue import GetQueue, DeleteQueueEntry
 from test.category.category import CreateCategory
+from test.image.image import CreateImage
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
@@ -340,6 +342,29 @@ class MockClinic:
             ret = False
         return ret;
 
+    def addPhoto(self, clinicid, genderStr, patientid):
+        # figure out what image to use
+
+        imageid = patientid % 10
+        if genderStr == "Female":
+            image = "images/girlfront-{}.jpg".format(imageid);
+        else:
+            image = "images/boyfront-{}.jpg".format(imageid);
+
+        # load it, and base64 encode it
+
+        with open(image, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+
+        x = CreateImage(self._host, self._port, self._token)
+        x.setPatient(patientid)
+        x.setClinic(clinicid)
+        x.setType("Headshot")
+        x.setData(encoded_string)  
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("Unable to create patient headshot photo clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
+
     def createMedicalHistory(self, clinicid, patientid):    
         x = CreateMedicalHistory(self._host, self._port, self._token, patient=patientid, clinic=clinicid)
 
@@ -414,6 +439,7 @@ class MockClinic:
             data["emergencyemail"] = "maria.sanchez@example.com"
             id = self.createPatient(data)
             self.createMedicalHistory(clinic, id)
+            self.addPhoto(clinic, data["gender"], id)
 
     def createClinicResources(self):
         print("Creating patient categories")
