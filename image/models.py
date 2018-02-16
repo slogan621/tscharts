@@ -22,8 +22,8 @@ from station.models import Station
 from patient.models import Patient
 
 class Image(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    station = models.ForeignKey(Station)
+    clinic = models.ForeignKey(Clinic, null=True)
+    station = models.ForeignKey(Station, null=True)
     patient = models.ForeignKey(Patient)
     XRAY = 'x'
     HEADSHOT = 'h'

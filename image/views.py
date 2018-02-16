@@ -200,6 +200,9 @@ class ImageView(APIView):
     def post(self, request, format=None):
         badRequest = False
         implError = False
+        clinicid = None
+        stationid = None
+        patientid = None
 
         kwargs = {}
 
@@ -207,12 +210,12 @@ class ImageView(APIView):
         try:
             clinicid = int(data["clinic"])
         except:
-            badRequest = True
+            pass
 
         try:
             stationid = int(data["station"])
         except:
-            badRequest = True
+            pass
 
         try:
             patientid = int(data["patient"])
@@ -237,27 +240,25 @@ class ImageView(APIView):
 
             # get the patient, station and clinic instances
 
-            try:
-                aStation = Station.objects.get(id=stationid)
-            except:
-                aStation = None
- 
-            try:
-                aClinic = Clinic.objects.get(id=clinicid)
-            except:
-                aClinic = None
+            if stationid != None:
+                try:
+                    aStation = Station.objects.get(id=stationid)
+                    kwargs["station"] = aStation   
+                except:
+                    raise NotFound
+
+            if clinicid != None: 
+                try:
+                    aClinic = Clinic.objects.get(id=clinicid)
+                    kwargs["clinic"] = aClinic   
+                except:
+                    raise NotFound
 
             try:
                 aPatient = Patient.objects.get(id=patientid)
-            except:
-                aPatient = None
-
-            if not aStation or not aClinic or not aPatient:
-                raise NotFound
-            else:
-                kwargs["station"] = aStation   
-                kwargs["clinic"] = aClinic   
                 kwargs["patient"] = aPatient   
+            except:
+                raise NotFound
 
         if not badRequest:
             kwargs["path"] = path = str(self.getUUID())
