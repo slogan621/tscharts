@@ -75,6 +75,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
    `clinic` clinic id<br />
    `station` station id<br />
    `patient` patient id<br />
+   `sort` ["true" | "false"] -- sort by image timestamp<br /> 
 
 * **Data Params**
 

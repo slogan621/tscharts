@@ -115,6 +115,7 @@ class ImageView(APIView):
         aClinic = None
         aStation = None
         aPatient = None
+        sort = False
 
         if image_id:
             try:
@@ -124,6 +125,15 @@ class ImageView(APIView):
                 notFound = True
         else:
             kwargs = {}
+
+            sortarg = request.GET.get('sort', '')
+            if not sortarg == '':
+                if sortarg == "true":
+                    sort = True
+                elif sortarg == "false":
+                    sort = False
+                else:
+                    badRequest = True 
 
             patientid = request.GET.get('patient', '')
             if not patientid == '':
@@ -183,7 +193,10 @@ class ImageView(APIView):
                         badRequest = True
                 if not badRequest:
                     try:
-                        image = Image.objects.filter(**kwargs)
+                        if sort == True:
+                            image = Image.objects.filter(**kwargs).order_by('-timestamp')
+                        else:
+                            image = Image.objects.filter(**kwargs)
                     except:
                         image = None
                     if not image:

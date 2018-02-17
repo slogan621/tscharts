@@ -60,6 +60,7 @@ class GetImage(ServiceAPI):
         self._patient = None
         self._type = None
         self._id = None
+        self._sort = None
         self.makeURL();
 
     def makeURL(self):
@@ -101,6 +102,14 @@ class GetImage(ServiceAPI):
             base += "type={}".format(self._type)
             hasQArgs = True
 
+        if not self._sort == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "sort={}".format(self._sort)
+            hasQArgs = True
+
         self.setURL(base)
 
     def setId(self, id):
@@ -121,6 +130,10 @@ class GetImage(ServiceAPI):
     
     def setType(self, imagetype):
         self._type = imagetype
+        self.makeURL()
+    
+    def setSort(self, sort):
+        self._sort = sort
         self.makeURL()
     
 class DeleteImage(ServiceAPI):
@@ -544,23 +557,71 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
+        x = GetImage(host, port, token)
+        x.setClinic(clinics[0])
+        x.setStation(stations[0])
+        x.setPatient(patients[0])
+        x.setSort("yadda")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetImage(host, port, token)
+        x.setClinic(clinics[0])
+        x.setStation(stations[0])
+        x.setPatient(patients[0])
+        x.setSort("False")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetImage(host, port, token)
+        x.setClinic(clinics[0])
+        x.setStation(stations[0])
+        x.setPatient(patients[0])
+        x.setSort("True")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = GetImage(host, port, token)
+        x.setClinic(clinics[0])
+        x.setStation(stations[0])
+        x.setPatient(patients[0])
+        x.setSort("false")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetImage(host, port, token)
+        x.setClinic(clinics[0])
+        x.setStation(stations[0])
+        x.setPatient(patients[0])
+        x.setSort("true")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        sort = "true"
         for c in clinics:
             for s in stations:
                 for p in patients:
+                    if sort =="true":
+                        sort = "false"
+                    else:
+                        sort = "true"
                     # query by type
                     x = GetImage(host, port, token)
                     x.setPatient(p)
+                    x.setSort(sort)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     # query by clinic
                     x = GetImage(host, port, token)
                     x.setClinic(c)
+                    x.setSort(sort)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / nclinics)
                     # query by clinic and type
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
@@ -568,6 +629,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertTrue(len(ret[1]) == len(images) / nclinics)
                     # query by station
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setStation(s)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
@@ -580,6 +642,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertEqual(ret[0], 200)
                     # query by clinic and station
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setStation(s)
                     ret = x.send(timeout=30)
@@ -587,6 +650,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * nstations))
                     # query by clinic, station and type
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setType("Headshot")
@@ -594,6 +658,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertEqual(ret[0], 200)
                     # query by clinic and patient
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setPatient(p)
                     ret = x.send(timeout=30)
@@ -601,6 +666,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * npatients))
                     # query by clinic, patient and type
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setPatient(p)
                     x.setType("Headshot")
@@ -608,6 +674,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertEqual(ret[0], 200)
                     # query by clinic, station, and patient
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setPatient(p)
@@ -616,6 +683,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * nstations * npatients))
                     # query by clinic, station, patient and type
                     x = GetImage(host, port, token)
+                    x.setSort(sort)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setPatient(p)
