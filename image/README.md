@@ -65,10 +65,6 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
-
-* **Data Params**
-
    **Required:**
 
    None 
@@ -79,6 +75,10 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
    `clinic` clinic id<br />
    `station` station id<br />
    `patient` patient id<br />
+
+* **Data Params**
+
+   None
 
 * **Success Response:**
 
@@ -94,9 +94,9 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/image/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 36
+GET /tscharts/v1/image/?station=3 HTTP/1.1
+Host: localhost
+Content-Length: 2
 Accept-Encoding: gzip, deflate, compress
 Accept: */*
 User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
@@ -104,16 +104,19 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"station": 119, "type": "Headshot"}HTTP/1.0 200 OK
-Date: Wed, 19 Apr 2017 01:53:12 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Sat, 17 Feb 2018 00:24:36 GMT
+Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, DELETE, HEAD, OPTIONS
+Transfer-Encoding: chunked
+Content-Type: application/json
 
 
-[109,108,107,106,105,89,88,87,86,85,69,68,67,66,65]
+29
+[5,6,7,8,9,25,26,27,28,29,45,46,47,48,49]
+0
 ```
   
 **Create Image**

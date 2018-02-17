@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2018
+#(C) Copyright Thousand Smiles Foundation 2017-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -121,57 +121,75 @@ class ImageView(APIView):
                 image = Image.objects.get(id=image_id)
             except:
                 image = None
+                notFound = True
         else:
             kwargs = {}
-            data = json.loads(request.body)
 
-            if "clinic" in data:
+            patientid = request.GET.get('patient', '')
+            if not patientid == '':
+                patientid = int(patientid)
+            else:
+                patientid = None
+
+            clinicid = request.GET.get('clinic', '')
+            if not clinicid == '':
+                clinicid = int(clinicid)
+            else:
+                clinicid = None
+
+            stationid = request.GET.get('station', '')
+            if not stationid == '':
+                stationid = int(stationid)
+            else:
+                stationid = None
+
+            if clinicid:
                 try:
-                    clinicid = int(data["clinic"])
-                    try:
-                        aClinic = Clinic.objects.get(id=clinicid)
+                    aClinic = Clinic.objects.get(id=clinicid)
+                    if aClinic == None:
+                        notFound = True
+                    else:
                         kwargs["clinic"] = aClinic
-                    except:
-                        notFound = True
                 except:
-                    badRequest = True
-            if "station" in data:
+                    notFound = True
+
+            if stationid:
                 try:
-                    stationid = int(data["station"])
-                    try:
-                        aStation = Station.objects.get(id=stationid)
+                    aStation = Station.objects.get(id=stationid)
+                    if aStation == None:
+                        notFound = True
+                    else:
                         kwargs["station"] = aStation
-                    except:
-                        notFound = True
                 except:
-                    badRequest = True
+                    notFound = True
 
-            if "patient" in data:
+            if patientid:
                 try:
-                    patientid = int(data["patient"])
-                    try:
-                        aPatient = Patient.objects.get(id=patientid)
-                        kwargs["patient"] = aPatient
-                    except:
+                    aPatient = Patient.objects.get(id=patientid)
+                    if aPatient == None:
                         notFound = True
+                    else:
+                        kwargs["patient"] = aPatient
                 except:
-                    badRequest = True
+                    notFound = True
 
-            if not badRequest:
-                if "type" in data:
-                    aType = self.stringToType(data["type"])
+            if not badRequest and not notFound:
+                typeid = request.GET.get('type', '')
+                if typeid != '':
+                    aType = self.stringToType(typeid)
                     if aType:
                         kwargs["imagetype"] = aType
                     else:
                         badRequest = True
-                try:
-                    image = Image.objects.filter(**kwargs)
-                except:
-                    image = None
+                if not badRequest:
+                    try:
+                        image = Image.objects.filter(**kwargs)
+                    except:
+                        image = None
+                    if not image:
+                        notFound = True
 
-        if not image:
-            notFound = True
-        elif not badRequest:
+        if image and (not notFound) and (not badRequest):
             if image_id:
                 ret = {}
                 ret["id"] = image.id
@@ -207,19 +225,24 @@ class ImageView(APIView):
         kwargs = {}
 
         data = json.loads(request.body)
-        try:
-            clinicid = int(data["clinic"])
-        except:
-            pass
+        if "clinic" in data:
+            try:
+                clinicid = int(data["clinic"])
+            except:
+                badRequest = True
 
-        try:
-            stationid = int(data["station"])
-        except:
-            pass
+        if "station" in data:
+            try:
+                stationid = int(data["station"])
+            except:
+                badRequest = True
 
-        try:
-            patientid = int(data["patient"])
-        except:
+        if "patient" in data:
+            try:
+                patientid = int(data["patient"])
+            except:
+                badRequest = True
+        else:
             badRequest = True
 
         try:
@@ -243,6 +266,8 @@ class ImageView(APIView):
             if stationid != None:
                 try:
                     aStation = Station.objects.get(id=stationid)
+                    if aStation == None:
+                        raise NotFound
                     kwargs["station"] = aStation   
                 except:
                     raise NotFound
@@ -250,12 +275,16 @@ class ImageView(APIView):
             if clinicid != None: 
                 try:
                     aClinic = Clinic.objects.get(id=clinicid)
+                    if aClinic == None:
+                        raise NotFound
                     kwargs["clinic"] = aClinic   
                 except:
                     raise NotFound
 
             try:
                 aPatient = Patient.objects.get(id=patientid)
+                if aPatient == None:
+                    raise NotFound
                 kwargs["patient"] = aPatient   
             except:
                 raise NotFound

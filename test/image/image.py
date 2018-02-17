@@ -47,43 +47,82 @@ class CreateImage(ServiceAPI):
         self.setPayload(self._payload)
     
 class GetImage(ServiceAPI):
-    def __init__(self, host, port, token, id):
+    def __init__(self, host, port, token):
         super(GetImage, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self.setURL("tscharts/v1/image/{}".format(id))
 
-class GetAllImages(ServiceAPI):
-    def __init__(self, host, port, token):
-        super(GetAllImages, self).__init__()
-        
-        self.setHttpMethod("GET")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/image/")
+        self._clinic = None
+        self._station = None
+        self._patient = None
+        self._type = None
+        self._id = None
+        self.makeURL();
+
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/image/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/image/"
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._station == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "station={}".format(self._station)
+            hasQArgs = True
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        if not self._type == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "type={}".format(self._type)
+            hasQArgs = True
+
+        self.setURL(base)
+
+    def setId(self, id):
+        self._id = id;
+        self.makeURL()
 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
-    
+        self._clinic = clinic
+        self.makeURL()
+
     def setStation(self, station):
-        self._payload["station"] = station
-        self.setPayload(self._payload)
+        self._station = station
+        self.makeURL()
     
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
     
     def setType(self, imagetype):
-        self._payload["type"] = imagetype
-        self.setPayload(self._payload)
-
+        self._type = imagetype
+        self.makeURL()
+    
 class DeleteImage(ServiceAPI):
     def __init__(self, host, port, token, id):
         super(DeleteImage, self).__init__()
@@ -151,7 +190,8 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetImage(host, port, token, id)
+        x = GetImage(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -171,7 +211,8 @@ class TestTSImage(unittest.TestCase):
         x = DeleteImage(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetImage(host, port, token, id)
+        x = GetImage(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -259,7 +300,7 @@ class TestTSImage(unittest.TestCase):
         x.setType("Headshot")
         x.setData("ABCDEFG")    # doesn't matter if it is actual image data 
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 200)
 
         # missing station
 
@@ -269,7 +310,7 @@ class TestTSImage(unittest.TestCase):
         x.setType("Headshot")
         x.setData("ABCDEFG")    # doesn't matter if it is actual image data 
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 200)
 
         # Wrong type
 
@@ -351,7 +392,8 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetImage(host, port, token, id)
+        x = GetImage(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -371,7 +413,8 @@ class TestTSImage(unittest.TestCase):
         x = DeleteImage(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetImage(host, port, token, id)
+        x = GetImage(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -381,7 +424,7 @@ class TestTSImage(unittest.TestCase):
 
         x = DeleteImage(host, port, token, "")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 400)
 
         x = DeleteImage(host, port, token, 9999)
         ret = x.send(timeout=30)
@@ -469,7 +512,7 @@ class TestTSImage(unittest.TestCase):
                         images.append(int(ret[1]["id"]))
 
         # query by invalid search terms
-        x = GetAllImages(host, port, token)
+        x = GetImage(host, port, token)
         x.setClinic(9999)
         x.setStation(stations[0])
         x.setPatient(patients[0])
@@ -477,7 +520,7 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllImages(host, port, token)
+        x = GetImage(host, port, token)
         x.setClinic(clinics[0])
         x.setStation(9999)
         x.setPatient(patients[0])
@@ -485,7 +528,7 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllImages(host, port, token)
+        x = GetImage(host, port, token)
         x.setClinic(clinics[0])
         x.setStation(stations[0])
         x.setPatient(9999)
@@ -493,7 +536,7 @@ class TestTSImage(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        x = GetAllImages(host, port, token)
+        x = GetImage(host, port, token)
         x.setClinic(clinics[0])
         x.setStation(stations[0])
         x.setPatient(patients[0])
@@ -505,65 +548,66 @@ class TestTSImage(unittest.TestCase):
             for s in stations:
                 for p in patients:
                     # query by type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
+                    x.setPatient(p)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     # query by clinic
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / nclinics)
                     # query by clinic and type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / nclinics)
                     # query by station
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setStation(s)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == (len(images) / nstations))
                     # query by station and type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setStation(s)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     # query by clinic and station
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setStation(s)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * nstations))
                     # query by clinic, station and type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     # query by clinic and patient
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setPatient(p)
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * npatients))
                     # query by clinic, patient and type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setPatient(p)
                     x.setType("Headshot")
                     ret = x.send(timeout=30)
                     self.assertEqual(ret[0], 200)
                     # query by clinic, station, and patient
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setPatient(p)
@@ -571,7 +615,7 @@ class TestTSImage(unittest.TestCase):
                     self.assertEqual(ret[0], 200)
                     self.assertTrue(len(ret[1]) == len(images) / (nclinics * nstations * npatients))
                     # query by clinic, station, patient and type
-                    x = GetAllImages(host, port, token)
+                    x = GetImage(host, port, token)
                     x.setClinic(c)
                     x.setStation(s)
                     x.setPatient(p)
