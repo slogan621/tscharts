@@ -116,6 +116,7 @@ class ImageView(APIView):
         aStation = None
         aPatient = None
         sort = False
+        newest = False
 
         if image_id:
             try:
@@ -134,6 +135,18 @@ class ImageView(APIView):
                     sort = False
                 else:
                     badRequest = True 
+
+            newest = request.GET.get('newest', '')
+            if not newest == '':
+                if newest == "true":
+                    newest = True
+                elif newest == "false":
+                    newest = False
+                else:
+                    badRequest = True 
+
+            if newest == True:
+                sort = True             # force sort order
 
             patientid = request.GET.get('patient', '')
             if not patientid == '':
@@ -201,10 +214,14 @@ class ImageView(APIView):
                         image = None
                     if not image:
                         notFound = True
+                    elif len(image) == 0:
+                        notFound == True
 
         if image and (not notFound) and (not badRequest):
-            if image_id:
+            if image_id or (newest == True):
                 ret = {}
+                if newest == True:
+                    image = image[0]
                 ret["id"] = image.id
                 ret["patient"] = image.patient_id
                 ret["clinic"] = image.clinic_id
@@ -215,7 +232,7 @@ class ImageView(APIView):
                     implError = True
                 else:
                     ret["data"] = data[0]
-            else:        
+            else:
                 ret = []
                 for x in image:
                     ret.append(x.id)

@@ -67,15 +67,15 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 
    **Required:**
 
-   None 
+   `patient` patient id<br />
 
    **Optional:**
  
    `type` case-sensitive string, one of  "Headshot", "Surgery", or "Xray"<br />
    `clinic` clinic id<br />
    `station` station id<br />
-   `patient` patient id<br />
    `sort` ["true" | "false"] -- sort by image timestamp<br /> 
+   `newest` ["true" | "false"] -- return most recent image<br /> 
 
 * **Data Params**
 

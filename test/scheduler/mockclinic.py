@@ -345,6 +345,10 @@ class MockClinic:
     def addPhoto(self, clinicid, genderStr, patientid):
         # figure out what image to use
 
+        ret = self.randomBoolean()
+        if ret == False: 
+            return
+
         imageid = patientid % 10
         if genderStr == "Female":
             image = "images/girlfront-{}.jpg".format(imageid);
