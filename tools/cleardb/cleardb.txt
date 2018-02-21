@@ -1,0 +1,15 @@
+use tscharts;
+truncate queue_queue; 
+truncate routingslip_routingslip; 
+truncate routingslip_routingslipentry; 
+truncate clinicstation_clinicstation; 
+truncate clinic_clinic; 
+truncate register_register; 
+truncate patient_patient; 
+truncate queue_queueentry; 
+truncate queue_queuestatus; 
+truncate station_station; 
+truncate statechange_statechange; 
+truncate medicalhistory_medicalhistory; 
+truncate category_category;
+truncate image_image;
