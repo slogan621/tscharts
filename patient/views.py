@@ -164,7 +164,11 @@ class PatientView(APIView):
                 dob = datetime.strptime(dob, "%m/%d/%Y")
                 patient.dob = dob
             except:
-                valid = False
+                try: 
+                    dob = datetime.strptime(dob, "%m-%d-%Y")
+                    patient.dob = dob
+                except:
+                    valid = False
         if "gender" in data:
             gender = data["gender"]
             if gender != 'Female' and gender != 'Male':
@@ -286,7 +290,10 @@ class PatientView(APIView):
                 try:
                     kwargs["dob"] = datetime.strptime(data["dob"], '%m/%d/%Y')
                 except ValueError:
-                    valid = False
+                    try:
+                        kwargs["dob"] = datetime.strptime(data["dob"], '%m-%d-%Y')
+                    except ValueError:
+                        valid = False
                 if data["gender"] in ["Male", "Female"]:
                     kwargs["gender"] = data["gender"][0].lower()
                 else:
