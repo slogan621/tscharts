@@ -35,4 +35,4 @@ class Image(models.Model):
         choices = IMAGETYPE_CHOICES
     )
     path = models.TextField(default = "")
-    timestamp = models.DateField(auto_now=True)
+    timestamp = models.DateTimeField(auto_now=True)
