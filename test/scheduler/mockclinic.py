@@ -31,6 +31,7 @@ from test.category.category import CreateCategory
 from test.image.image import CreateImage
 from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
+from test.returntoclinic.returntoclinic import CreateReturnToClinic
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
 from test.statechange.statechange import CreateStateChange
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
@@ -219,6 +220,12 @@ class MockClinic:
         
     def getQueue(self, clinicstationid):
         pass
+
+    def createReturnToClinic(self, patientid, clinicid, stationid, interval):
+        x = CreateReturnToClinic(self._host, self._port, self._token, patient=patientid, clinic=clinicid, station=stationid, interval=interval)
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("failed to create return to clinic {}".format(x))
 
     def createCategories(self):
         for x in self._categories:
@@ -479,11 +486,11 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiólogo")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-c] [-a interval]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-q] [-r] [-c] [-a interval]") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "ach:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "qrach:p:u:w:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -493,13 +500,19 @@ def main():
     username = None
     password = None
     doCheckins = False
+    doRegister = False
     doAway = False
+    doReturnToClinic = False
     numAway = 0
     for o, a in opts:
         if o == "-a":
             doAway = True
         elif o == "-c":
             doCheckins = True
+        elif o == "-r":
+            doRegister = True
+        elif o == "-q":
+            doReturnToClinic = True
         elif o == "-h":
             host = a
         elif o == "-p":
@@ -524,15 +537,23 @@ def main():
             checkinThreads = mock.simulateCheckins()
         if doAway:
             awayThreads = mock.simulateAway() 
-        for x in mock.getPatients():
-            time.sleep(randint(1, 30))
-            cat = mock.getRandomCategory()
-            routingslip = mock.createRoutingSlip(x, clinic, cat)
-            print("\n\nCreating routingslip for {} patient {} at UTC time {}".format(cat, x, datetime.utcnow().strftime("%H:%M:%S")))
-            for y in mock.getStations():
-                if randint(0, 1) == 1:
-                    print("Adding station {} to routing slip".format(mock.getStationName(y)))
-                    mock.createRoutingSlipEntry(routingslip, y)    
+        if doReturnToClinic:
+            stations = mock.getStations()
+            intervals = [3, 6, 9, 12]
+            for x in mock.getPatients():
+                interval = intervals[randint(0, len(intervals) - 1)]
+                stationid = stations[randint(0, len(stations) - 1)]
+                mock.createReturnToClinic( x, clinic, stationid, interval)
+        if doRegister:
+            for x in mock.getPatients():
+                time.sleep(randint(1, 30))
+                cat = mock.getRandomCategory()
+                routingslip = mock.createRoutingSlip(x, clinic, cat)
+                print("\n\nCreating routingslip for {} patient {} at UTC time {}".format(cat, x, datetime.utcnow().strftime("%H:%M:%S")))
+                for y in mock.getStations():
+                    if randint(0, 1) == 1:
+                        print("Adding station {} to routing slip".format(mock.getStationName(y)))
+                        mock.createRoutingSlipEntry(routingslip, y)    
         mock.logout()
     main_thread = threading.currentThread()
     for t in threading.enumerate():
