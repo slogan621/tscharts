@@ -13,3 +13,4 @@ truncate statechange_statechange;
 truncate medicalhistory_medicalhistory; 
 truncate category_category;
 truncate image_image;
+truncate returntoclinic_returntoclinic;
