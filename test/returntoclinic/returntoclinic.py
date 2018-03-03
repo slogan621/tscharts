@@ -27,31 +27,66 @@ class CreateReturnToClinic(ServiceAPI):
         self.setURL("tscharts/v1/returntoclinic/")
     
 class GetReturnToClinic(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/returntoclinic/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/returntoclinic/"
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        if not self._station == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "station={}".format(self._station)
+            hasQArgs = True
+
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetReturnToClinic, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if id:
-            self.setURL("tscharts/v1/returntoclinic/{}".format(id))
-        else:
-            self.setURL("tscharts/v1/returntoclinic/")
+        self._patient = None
+        self._clinic = None
+        self._station = None
+        self._id = None
+
+    def setId(self, id):
+        self._id = id;
+        self.makeURL()
     
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
 
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
 
     def setStation(self, station):
-        self._payload["station"] = station
-        self.setPayload(self._payload)
+        self._station = station
+        self.makeURL()
 
 class UpdateReturnToClinic(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -82,30 +117,6 @@ class DeleteReturnToClinic(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
         self.setURL("tscharts/v1/returntoclinic/{}/".format(id))
-
-class GetAllReturnToClinics(ServiceAPI):
-    def __init__(self, host, port, token):
-        super(GetAllReturnToClinics, self).__init__()
-        
-        self.setHttpMethod("GET")
-        self.setHost(host)
-        self.setPort(port)
-        self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/returntoclinic/")
-
-    def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
-
-    def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
-
-    def setStation(self, station):
-        self._payload["station"] = station
-        self.setPayload(self._payload)
 
 class TestTSReturnToClinic(unittest.TestCase):
 
@@ -160,7 +171,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -178,7 +190,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         x = DeleteReturnToClinic(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -265,7 +278,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -284,7 +298,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -360,7 +375,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -383,7 +399,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -405,7 +422,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -427,7 +445,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -449,7 +468,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -471,7 +491,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -494,7 +515,8 @@ class TestTSReturnToClinic(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        x = GetReturnToClinic(host, port, token, id)
+        x = GetReturnToClinic(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -619,42 +641,42 @@ class TestTSReturnToClinic(unittest.TestCase):
         ids.append(ret[1]["id"])
         delids.append(ret[1]["id"])
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(entstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 1)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(dentalstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 1)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(orthostationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 1)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(speechstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 1)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 5)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -673,49 +695,49 @@ class TestTSReturnToClinic(unittest.TestCase):
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(entstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(speechstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(dentalstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(orthostationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setStation(screeningstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
 
-        x = GetAllReturnToClinics(host, port, token)
+        x = GetReturnToClinic(host, port, token)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)

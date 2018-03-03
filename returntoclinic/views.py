@@ -41,36 +41,40 @@ class ReturnToClinicView(APIView):
             except:
                 returntoclinic = None
         else:
-
-            data = json.loads(request.body)
-
             kwargs = {}
             try:
-                clinicid = int(data["clinic"])
-                try:
-                    aClinic = Clinic.objects.get(id=clinicid)
-                    kwargs["clinic"] = aClinic
-                except:
-                    notFound = True
+                clinicid = request.GET.get('clinic', '')
+                if clinicid != '':
+                    clinicid = int(clinicid)
+                    try:
+                        aClinic = Clinic.objects.get(id=clinicid)
+                        kwargs["clinic"] = aClinic
+                    except:
+                        notFound = True
             except:
                 pass
 
             try:
-                patientid = int(data["patient"])
-                try:
-                    aPatient = Patient.objects.get(id=patientid)
-                    kwargs["patient"] = aPatient
-                except:
-                    notFound = True
+                patientid = request.GET.get('patient', '')
+                if patientid != '':
+                    patientid = int(patientid)
+                    try:
+                        aPatient = Patient.objects.get(id=patientid)
+                        kwargs["patient"] = aPatient
+                    except:
+                        notFound = True
             except:
                 pass
+
             try:
-                stationid = int(data["station"])
-                try:
-                    aStation = Station.objects.get(id=stationid)
-                    kwargs["station"] = aStation
-                except:
-                    notFound = True
+                stationid = request.GET.get('station', '')
+                if stationid != '':
+                    stationid = int(stationid)
+                    try:
+                        aStation = Station.objects.get(id=stationid)
+                        kwargs["station"] = aStation
+                    except:
+                        notFound = True
             except:
                 pass
 
