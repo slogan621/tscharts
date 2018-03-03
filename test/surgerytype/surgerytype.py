@@ -226,9 +226,9 @@ class TestTSSurgeryType(unittest.TestCase):
         
         x = GetSurgeryType(host, port, token)   #test get a list of surgerytypes
         ret = x.send(timeout = 30)    
-        for name in namelist:
-            self.assertTrue(name in ret[1])
-            copynamelist.remove(name)
+        for name in ret[1]:
+            self.assertTrue(name["name"] in namelist)
+            copynamelist.remove(name["name"])
         self.assertEqual(copynamelist, [])
  
         for id in idlist:    

@@ -54,7 +54,7 @@ class SurgeryTypeView(APIView):
             else:
                 ret = []
                 for x in SurgeryType.objects.all():
-                    ret.append(x.name)
+                    ret.append(self.serialize(x))
 
         if badRequest:
             return HttpResponseBadRequest()

@@ -195,8 +195,6 @@ class TestTSMedications(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         id = ret[1]["id"]
-   
-           
 
         x = GetMedications(host, port, token) #test get a medication by its name
         x.setName("CCCCCC")
@@ -213,9 +211,9 @@ class TestTSMedications(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
            
-        namelist = ['b','bbc','ad','ac','aac']
-        copynamelist = ['b','bbc','ad','ac','aac']
-        idlist = []        
+        namelist = ['CCCCC','AAAAA','BBBBB']
+        copynamelist = ['CCCCC','AAAAA','BBBBB']
+        idlist = []    
         for x in namelist:
             data = {}
             data["name"] = x

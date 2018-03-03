@@ -83,7 +83,7 @@ Content-Type: application/json
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[name1, name2, name3, ...]`
+    **Content:** `[{"id":id1,"name":name1}, ...]`
  
 * **Error Response:**
 
@@ -116,7 +116,7 @@ Connection: Keep-Alive
 Content-Type: application/json
 
 
-["ARTHROSCOPY","CIRCUMCISION","CAESAREAN"]
+[{"id":1,"name":"ARTHROSCOPY"},{"id":2,"name":"CIRCUMCISION"},{"id":3,"name":"CAESAREAN"]
 
 ```
 

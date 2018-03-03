@@ -80,7 +80,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[name1, name2, name3, ...]`
+    **Content:** `[{"id" : id1, "name": name1}, ...]`
  
 * **Error Response:**
 

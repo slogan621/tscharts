@@ -13,4 +13,6 @@ truncate statechange_statechange;
 truncate medicalhistory_medicalhistory; 
 truncate category_category;
 truncate image_image;
+truncate surgerytype_surgerytype;
+truncate surgeryhistory_surgeryhistory;
 truncate returntoclinic_returntoclinic;
