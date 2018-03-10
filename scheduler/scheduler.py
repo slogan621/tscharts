@@ -161,14 +161,26 @@ class Scheduler():
         except:
             print("createDbQueue unable to get clinicstation {}".format(clinicstationid))
 
+        create = False
         try:
-            queue = Queue(clinic = aClinic,
-                          station = aStation,
-                          clinicstation = aClinicStation,
-                          avgservicetime = datetime.time(0,0))
-            queue.save()
+            queue = Queue.objects.filter(clinic=aClinic, station=aStation,
+                                         clinicstation=aClinicStation);
+            if queue and len(queue) > 0:
+                queue = queue[0]
+            else:
+                create = True
         except:
-            print("createDbQueue unable to create queue")
+            create = True
+
+        if create == True:
+            try:
+                queue = Queue(clinic = aClinic,
+                              station = aStation,
+                              clinicstation = aClinicStation,
+                              avgservicetime = datetime.time(0,0))
+                queue.save()
+            except:
+                print("createDbQueue unable to create queue")
         return queue
 
     def createDbQueueEntry(self, queueid, patientid, routingslipentryid):
@@ -449,24 +461,30 @@ class Scheduler():
         if numQueues > 0 and total > 0:
             avg = total / numQueues
             avgWait = totalWait / total
-            qs = QueueStatus()
-            qs.numwaiting = total
-            qs.minq = minQ
-            qs.maxq = maxQ
-            qs.avgq = avg
-            qs.minwait = str(minWait)
-            qs.maxwait = str(maxWait)
-            qs.avgwait = str(avgWait)
-            qs.clinic_id = self._clinicid
-            try:
-                qsold = QueueStatus.objects.filter()
-                if qsold:
-                    for x in qsold:
-                        x.delete()
-            except:
-                pass
-            qs.save()
-            print("\nNumber of patients waiting {} smallest Q {} largest Q {} avg Q {} smallest wait {} largest wait {} avg wait {}".format(total, minQ, maxQ, avg, minWait, maxWait, avgWait))
+        else:
+            avg = 0
+            avgWait = "00:00"
+            minWait = "00:00"
+            maxWait = "00:00"
+
+        qs = QueueStatus()
+        qs.numwaiting = total
+        qs.minq = minQ
+        qs.maxq = maxQ
+        qs.avgq = avg
+        qs.minwait = str(minWait)
+        qs.maxwait = str(maxWait)
+        qs.avgwait = str(avgWait)
+        qs.clinic_id = self._clinicid
+        try:
+            qsold = QueueStatus.objects.filter()
+            if qsold:
+                for x in qsold:
+                    x.delete()
+        except:
+            pass
+        qs.save()
+        print("\nNumber of patients waiting {} smallest Q {} largest Q {} avg Q {} smallest wait {} largest wait {} avg wait {}".format(total, minQ, maxQ, avg, minWait, maxWait, avgWait))
 
     def getClinicStations(self):
         retval = []
