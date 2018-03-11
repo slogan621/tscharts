@@ -83,13 +83,13 @@ class PatientView(APIView):
             kwargs = {}
             paternal_last = request.GET.get('paternal_last', '')
             if not paternal_last == '':
-                kwargs["paternal_last__contains"] = paternal_last
+                kwargs["paternal_last__icontains"] = paternal_last
             maternal_last = request.GET.get('maternal_last', '')
             if not maternal_last == '':
-                kwargs["maternal_last__contains"] = maternal_last
+                kwargs["maternal_last__icontains"] = maternal_last
             first = request.GET.get('first', '')
             if not first == '':
-                kwargs["first__contains"] = first
+                kwargs["first__icontains"] = first
             dob = request.GET.get('dob', '')
             if not dob == '':
                 x = dob.split("/")
