@@ -21,6 +21,7 @@ from rest_framework.permissions import IsAuthenticated
 from patient.models import *
 from datetime import *
 from django.core import serializers
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
 import json
@@ -81,40 +82,47 @@ class PatientView(APIView):
         else:
             # look for optional arguments for searching
             kwargs = {}
-            paternal_last = request.GET.get('paternal_last', '')
-            if not paternal_last == '':
-                kwargs["paternal_last__icontains"] = paternal_last
-            maternal_last = request.GET.get('maternal_last', '')
-            if not maternal_last == '':
-                kwargs["maternal_last__icontains"] = maternal_last
-            first = request.GET.get('first', '')
-            if not first == '':
-                kwargs["first__icontains"] = first
-            dob = request.GET.get('dob', '')
-            if not dob == '':
-                x = dob.split("/")
-                if len(x) == 3:
-                    try:
-                        kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
-                    except:
-                        badRequest = True
-                else:
-                    badRequest = True
-                    
-            gender = request.GET.get('gender', '')
-            if not gender == '':
-                if gender == "Male":
-                    kwargs["gender"] = "m"
-                elif gender == "Female":
-                    kwargs["gender"] = "f"
-                else:
-                    badRequest = True
-
-            if not badRequest:
+            name = request.GET.get('name', '')
+            if not name == '':
                 try:
-                    patient = Patient.objects.filter(**kwargs)
+                    patient = Patient.objects.filter(Q(paternal_last__icontains=name) | Q(maternal_last__icontains=name) | Q(first__icontains=name) | Q(middle__icontains=name))
                 except:
                     patient = None
+            else:
+                paternal_last = request.GET.get('paternal_last', '')
+                if not paternal_last == '':
+                    kwargs["paternal_last__icontains"] = paternal_last
+                maternal_last = request.GET.get('maternal_last', '')
+                if not maternal_last == '':
+                    kwargs["maternal_last__icontains"] = maternal_last
+                first = request.GET.get('first', '')
+                if not first == '':
+                    kwargs["first__icontains"] = first
+                dob = request.GET.get('dob', '')
+                if not dob == '':
+                    x = dob.split("/")
+                    if len(x) == 3:
+                        try:
+                            kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
+                        except:
+                            badRequest = True
+                    else:
+                        badRequest = True
+                    
+                gender = request.GET.get('gender', '')
+                if not gender == '':
+                    if gender == "Male":
+                        kwargs["gender"] = "m"
+                    elif gender == "Female":
+                        kwargs["gender"] = "f"
+                    else:
+                        badRequest = True
+
+                if not badRequest:
+                    try:
+                        patient = Patient.objects.filter(**kwargs)
+                    except:
+                        patient = None
 
         if not patient and not badRequest:
             notFound = True

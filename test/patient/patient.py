@@ -42,6 +42,14 @@ class GetPatient(ServiceAPI):
         else:
             base = "tscharts/v1/patient/"
         
+        if not self._name == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "name={}".format(self._name)
+            hasQArgs = True 
+        
         if not self._paternalLast == None:
             if not hasQArgs:
                 base += "?"
@@ -77,6 +85,7 @@ class GetPatient(ServiceAPI):
         self.setToken(token)
         self._paternalLast = None
         self._first = None
+        self._name = None
         self._dob = None
         self._id = None
         self.makeURL();
@@ -91,6 +100,10 @@ class GetPatient(ServiceAPI):
 
     def setFirstName(self, val):
         self._first = val;
+        self.makeURL()
+
+    def setName(self, val):
+        self._name = val;
         self.makeURL()
 
     def setDob(self, val):

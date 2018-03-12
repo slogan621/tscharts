@@ -75,9 +75,17 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    One or more of the following can be specified to filter the search results.
  
    `paternal_last` string<br/>
+   `maternal_last` string<br/>
    `first` string<br/>
    `dob` date string mm/dd/YYYY<br/>
    `gender` "Female" | "Male"<br/>
+   `name` string<br/>
+
+   If name is specified, all other search terms are ignored, and name is
+   used to search for a match against each of paternal_last, maternal_last, 
+   and first. If any one (or more) match, that patient is returned.
+
+   Note that all name searches are case insensitive.
 
 * **Data Params**
 
