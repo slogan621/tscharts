@@ -422,7 +422,7 @@ class MockClinic:
         if ret[0] != 200:
             print("Unable to set medical history clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
 
-    def createAllPatients(self, clinic, count):
+    def createAllPatients(self, clinic, count, doImages):
         for i in xrange(0, count):
             data = {}
             data["paternal_last"] = "{}abcd1234".format(i)
@@ -450,7 +450,8 @@ class MockClinic:
             data["emergencyemail"] = "maria.sanchez@example.com"
             id = self.createPatient(data)
             self.createMedicalHistory(clinic, id)
-            self.addPhoto(clinic, data["gender"], id)
+            if doImages:
+                self.addPhoto(clinic, data["gender"], id)
 
     def createClinicResources(self):
         print("Creating patient categories")
@@ -490,7 +491,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qrach:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "qraih:p:u:w:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -502,11 +503,14 @@ def main():
     doCheckins = False
     doRegister = False
     doAway = False
+    doImages = False
     doReturnToClinic = False
     numAway = 0
     for o, a in opts:
         if o == "-a":
             doAway = True
+        if o == "-i":
+            doImages = True
         elif o == "-c":
             doCheckins = True
         elif o == "-r":
@@ -530,7 +534,7 @@ def main():
         clinic = mock.getClinic()
         n = randint(90, 100)
         print("Registering {} patients for this clinic".format(n))
-        mock.createAllPatients(clinic, n)
+        mock.createAllPatients(clinic, n, doImages)
         checkinThreads = None
         awayThreads = None
         if doCheckins:
