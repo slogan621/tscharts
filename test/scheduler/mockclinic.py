@@ -491,7 +491,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qraih:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "qrcaih:p:u:w:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
