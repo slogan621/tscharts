@@ -471,20 +471,20 @@ class MockClinic:
         for x in [("Dental1","Dental1"), ("Dental2","Dental2"), ("Dental3", "Dental3"), ("Dental4","Dental4"), ("Dental5","Dental5")]:
             print("Creating station {}".format(x))
             dentalStations.append(self.createClinicStation(clinic, dental, x))
-        entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrinolaringología")) 
+        entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrinolaringólogo")) 
         print("Creating station {}".format("ENT"))
         orthoStations = []
         for x in [("Ortho1","Ortho1"), ("Ortho2","Ortho2")]:
             print("Creating station {}".format(x))
             orthoStations.append(self.createClinicStation(clinic, ortho, x))
         print("Creating station {}".format("X-Ray"))
-        xrayStation = self.createClinicStation(clinic, xray, ("X-Ray","Radiografía")) 
+        xrayStation = self.createClinicStation(clinic, xray, ("X-Ray","Rayos X")) 
         print("Creating station {}".format("Surgery Screening"))
-        surgeryStation = self.createClinicStation(clinic, surgery, ("Surgery Screening","Examen de la cirugía")) 
+        surgeryStation = self.createClinicStation(clinic, surgery, ("Surgery Screening","Cribado de cirugía")) 
         print("Creating station {}".format("Speech"))
-        speechStation = self.createClinicStation(clinic, speech, ("Speech","Logopeda")) 
+        speechStation = self.createClinicStation(clinic, speech, ("Speech","El Habla")) 
         print("Creating station {}".format("Audiology"))
-        audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiólogo")) 
+        audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
     print("mockclinic [-h host] [-p port] [-u username] [-w password] [-q] [-r] [-c] [-a interval]") 
