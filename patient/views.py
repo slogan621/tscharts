@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2018
+#(C) Copyright Thousand Smiles Foundation 2016-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -65,6 +65,7 @@ class PatientView(APIView):
         m["emergencyfullname"] = entry.emergencyfullname
         m["emergencyphone"] = entry.emergencyphone
         m["emergencyemail"] = entry.emergencyemail
+        m["curp"] = entry.curp
 
         return m
 
@@ -108,6 +109,10 @@ class PatientView(APIView):
                             badRequest = True
                     else:
                         badRequest = True
+
+                curp = request.GET.get('curp', '')
+                if not curp == '':
+                    kwargs["curp"] = curp
                     
                 gender = request.GET.get('gender', '')
                 if not gender == '':
@@ -154,6 +159,8 @@ class PatientView(APIView):
     def validatePutArgs(self, data, patient):
         valid = True
 
+        if "curp" in data: 
+            patient.curp = data["curp"]
         if "paternal_last" in data: 
             patient.paternal_last = data["paternal_last"]
         if "maternal_last" in data:
@@ -276,7 +283,8 @@ class PatientView(APIView):
                 "email",
                 "emergencyfullname",
                 "emergencyphone",
-                "emergencyemail"]
+                "emergencyemail",
+                "curp"]
 
         for key, val in data.iteritems():
             if not key in keys:

@@ -273,7 +273,7 @@ class TestTSRegistration(unittest.TestCase):
 
         x = DeleteRegistration(host, port, token, "")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 400)
 
         x = DeleteRegistration(host, port, token, "Hello")
         ret = x.send(timeout=30)

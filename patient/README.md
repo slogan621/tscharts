@@ -21,9 +21,9 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"city":string,"colonia":string,"suffix":string,"dob":"mm/dd/YYYY,"gender":"Female"|"Male","maternal_last":string,"phone1":string,"state":URF-8 Mexican state name,"email":string,"middle":string,"prefix":string,"emergencyphone":string,"emergencyfullname":string,"emergencyemail":string,"street1":string,"street2":string,"paternal_last":string,"phone2":string,"id":integer,"first":string}
+    **Content:** `{"city":string,"colonia":string,"suffix":string,"dob":"mm/dd/YYYY,"gender":"Female"|"Male","maternal_last":string,"phone1":string,"state":URF-8 Mexican state name,"email":string,"middle":string,"prefix":string,"emergencyphone":string,"emergencyfullname":string,"emergencyemail":string,"street1":string,"street2":string,"paternal_last":string,"phone2":string,"id":integer,"curp":string,"first":string}
 
-    Note that unspecified values are represented by the emptry string "". Also note that no validation was performed on phone number or e-mail address formats at the time the data was stored by the database.
+    Note that unspecified values are represented by the empty string "". Also note that no validation was performed on phone number or e-mail address formats at the time the data was stored by the database.
  
 * **Error Response:**
 
@@ -49,7 +49,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
-{"city":"Ensenada","colonia":"","suffix":"Jr.","dob":"04/01/1962","gender":"Female","maternal_last":"yyyyyy","phone1":"1-111-111-1111","state":"Baja California","email":"patient@example.com","middle":"","prefix":"","emergencyphone":"1-222-222-2222","emergencyfullname":"Maria Sanchez","emergencyemail":"maria.sanchez@example.com","street1":"1234 First Ave","street2":"","paternal_last":"abcd1234","phone2":"","id":27,"first":"zzzzzzz"}
+{"city":"Ensenada","colonia":"","suffix":"Jr.","dob":"04/01/1962","gender":"Female","maternal_last":"yyyyyy","phone1":"1-111-111-1111","state":"Baja California","email":"patient@example.com","middle":"","prefix":"","emergencyphone":"1-222-222-2222","emergencyfullname":"Maria Sanchez","emergencyemail":"maria.sanchez@example.com","street1":"1234 First Ave","street2":"","paternal_last":"abcd1234","phone2":"","id":27,"curp":"abcdefg","first":"zzzzzzz"}
 ```
   
 **Get Multiple Patients**
@@ -80,10 +80,13 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `dob` date string mm/dd/YYYY<br/>
    `gender` "Female" | "Male"<br/>
    `name` string<br/>
+   `curp` string<br/>
 
    If name is specified, all other search terms are ignored, and name is
    used to search for a match against each of paternal_last, maternal_last, 
-   and first. If any one (or more) match, that patient is returned.
+   and first. If any one (or more) match, that patient is returned. curp 
+   corresponds to CURP, a national ID assigned to each person in Mexico and a 
+   required part of their medical records
 
    Note that all name searches are case insensitive.
 
@@ -172,6 +175,7 @@ Content-Type: application/json
    `emergencyfullname` string<br/>
    `emergencyphone` string<br/>
    `emergencyemail` string<br/>
+   `curp` string<br/>
 
    **Optional:**
 
@@ -199,7 +203,7 @@ User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
-{"city": "Ensenada", "colonia": "", "suffix": "Jr.", "dob": "04/01/1962", "gender": "Female", "maternal_last": "yyyyyy", "phone1": "1-111-111-1111", "state": "Baja California", "email": "patient@example.com", "middle": "", "prefix": "", "emergencyphone": "1-222-222-2222", "emergencyfullname": "Maria Sanchez", "emergencyemail": "maria.sanchez@example.com", "street1": "1234 First Ave", "paternal_last": "abcd1234", "phone2": "", "street2": "", "first": "zzzzzzz"}HTTP/1.0 200 OK
+{"city": "Ensenada", "colonia": "", "suffix": "Jr.", "dob": "04/01/1962", "gender": "Female", "maternal_last": "yyyyyy", "phone1": "1-111-111-1111", "state": "Baja California", "email": "patient@example.com", "middle": "", "prefix": "", "emergencyphone": "1-222-222-2222", "emergencyfullname": "Maria Sanchez", "emergencyemail": "maria.sanchez@example.com", "street1": "1234 First Ave", "paternal_last": "abcd1234", "phone2": "", "street2": "", "first": "zzzzzzz", "curp": "45ju4"}HTTP/1.0 200 OK
 Date: Sat, 29 Apr 2017 20:36:20 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -251,6 +255,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `emergencyfullname` string<br/>
    `emergencyphone` string<br/>
    `emergencyemail` string<br/>
+   `curp` string<br/>
 
 * **Success Response:**
 
@@ -275,7 +280,7 @@ User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
 Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
-{"city": "Ensenada", "colonia": "", "suffix": "Jr.", "dob": "04/01/1962", "gender": "Male", "maternal_last": "yyyyyy", "phone1": "1-111-111-1111", "state": "Baja California", "email": "patient@example.com", "middle": "", "prefix": "", "emergencyphone": "1-222-222-2222", "emergencyfullname": "Maria Sanchez", "emergencyemail": "maria.sanchez@example.com", "street1": "1234 First Ave", "paternal_last": "abcdefg", "phone2": "", "street2": "", "first": "zzzzzzz"}HTTP/1.0 200 OK
+{"city": "Ensenada", "colonia": "", "suffix": "Jr.", "dob": "04/01/1962", "gender": "Male", "maternal_last": "yyyyyy", "phone1": "1-111-111-1111", "state": "Baja California", "email": "patient@example.com", "middle": "", "prefix": "", "emergencyphone": "1-222-222-2222", "emergencyfullname": "Maria Sanchez", "emergencyemail": "maria.sanchez@example.com", "street1": "1234 First Ave", "paternal_last": "abcdefg", "phone2": "", "street2": "", "first": "zzzzzzz", "curp": "1234"}HTTP/1.0 200 OK
 Date: Sat, 29 Apr 2017 20:36:22 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept

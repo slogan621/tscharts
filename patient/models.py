@@ -76,3 +76,4 @@ class Patient(models.Model):
     emergencyfullname = models.CharField(max_length=64)
     emergencyphone = models.CharField(max_length=20)
     emergencyemail = models.EmailField()
+    curp = models.CharField(max_length=128, default="") # Mexican CURP (national ID)

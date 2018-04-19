@@ -19,6 +19,13 @@ class CreatePatient(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
+        # default CURP is ""
+
+        if not "curp" in payload:
+            payload["curp"] = ""
+
+        print(payload)
+
         self.setPayload(payload)
         self.setURL("tscharts/v1/patient/")
 
@@ -48,6 +55,14 @@ class GetPatient(ServiceAPI):
             else:
                 base += "&"
             base += "name={}".format(self._name)
+            hasQArgs = True 
+        
+        if not self._curp == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "curp={}".format(self._curp)
             hasQArgs = True 
         
         if not self._paternalLast == None:
@@ -88,10 +103,15 @@ class GetPatient(ServiceAPI):
         self._name = None
         self._dob = None
         self._id = None
+        self._curp = None
         self.makeURL();
 
     def setId(self, id):
         self._id = id;
+        self.makeURL()
+
+    def setCurp(self, curp):
+        self._curp = curp;
         self.makeURL()
 
     def setPaternalLast(self, val):
@@ -152,6 +172,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "1234"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -188,6 +209,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "5678"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -232,6 +254,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "abcd"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -251,6 +274,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue("prefix" in ret)
         self.assertTrue("dob" in ret)
         self.assertTrue("gender" in ret)
+        self.assertTrue("curp" in ret)
 
         self.assertTrue(ret["paternal_last"] == "abcd1234")
         self.assertTrue(ret["maternal_last"] == "yyyyyy")
@@ -260,6 +284,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
+        self.assertTrue(ret["curp"] == "abcd")
     
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
@@ -287,6 +312,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "1234"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -305,6 +331,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue("prefix" in ret)
         self.assertTrue("dob" in ret)
         self.assertTrue("gender" in ret)
+        self.assertTrue("curp" in ret)
 
         self.assertTrue(ret["paternal_last"] == "abcd1234")
         self.assertTrue(ret["maternal_last"] == "yyyyyy")
@@ -314,6 +341,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
+        self.assertTrue(ret["curp"] == "1234")
    
         data["paternal_last"] = "abcdefg" 
         id = int(ret["id"])
@@ -333,6 +361,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue("prefix" in ret)
         self.assertTrue("dob" in ret)
         self.assertTrue("gender" in ret)
+        self.assertTrue("curp" in ret)
 
         self.assertTrue(ret["paternal_last"] == "abcdefg")
         self.assertTrue(ret["maternal_last"] == "yyyyyy")
@@ -342,9 +371,11 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
+        self.assertTrue(ret["curp"] == "1234")
     
         data["paternal_last"] = "xxyyzz" 
         data["gender"] = "Female" 
+        data["curp"] = "z1u2" 
         id = int(ret["id"])
         x = UpdatePatient(host, port, token, id, data)
         ret = x.send(timeout=30)
@@ -362,6 +393,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue("prefix" in ret)
         self.assertTrue("dob" in ret)
         self.assertTrue("gender" in ret)
+        self.assertTrue("curp" in ret)
 
         self.assertTrue(ret["paternal_last"] == "xxyyzz")
         self.assertTrue(ret["maternal_last"] == "yyyyyy")
@@ -371,6 +403,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["prefix"] == "")
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Female")
+        self.assertTrue(ret["curp"] == "z1u2")
     
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
@@ -399,6 +432,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "1111"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -410,6 +444,7 @@ class TestTSPatient(unittest.TestCase):
         data["paternal_last"] = "test2"
         data["first"] = "yyyyyyy"
         data["dob"] = "04/01/1962"
+        data["curp"] = "2222"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -420,6 +455,7 @@ class TestTSPatient(unittest.TestCase):
         data["paternal_last"] = "test3"
         data["first"] = "yyyyyyy"
         data["dob"] = "04/02/1962"
+        data["curp"] = "3333"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -430,6 +466,7 @@ class TestTSPatient(unittest.TestCase):
         data["paternal_last"] = "test4"
         data["first"] = "xxxxxxx"
         data["dob"] = "04/02/1962"
+        data["curp"] = "4444"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -440,6 +477,7 @@ class TestTSPatient(unittest.TestCase):
         data["paternal_last"] = "test5"
         data["first"] = "qqqqqqq"
         data["dob"] = "04/03/1962"
+        data["curp"] = "5555"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -450,6 +488,7 @@ class TestTSPatient(unittest.TestCase):
         data["paternal_last"] = "test6"
         data["first"] = "qqqqqqq"
         data["dob"] = "04/03/1962"
+        data["curp"] = "6666"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -464,6 +503,59 @@ class TestTSPatient(unittest.TestCase):
         ret = ret[1]
         self.assertTrue(len(ret) == 1)
         self.assertTrue(ret[0], test5id)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("1111")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test1id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("2222")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test2id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("3333")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test3id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("4444")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test4id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("5555")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test5id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("6666")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertTrue(len(ret) == 1)
+        self.assertTrue(test6id in ret)
+
+        x = GetPatient(host, port, token)
+        x.setCurp("7777")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
 
         x = GetPatient(host, port, token)
         x.setDob("04/03/1962")
@@ -553,6 +645,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyfullname"] = "Maria Sanchez"
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "11-22-33-44"
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -560,12 +653,14 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
         data["paternal_last"] = "test2"
+        data["curp"] = "22-33-44-55"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         ids.append(ret[1]["id"])
         data["paternal_last"] = "test3"
+        data["curp"] = "33-44-55-66"
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
