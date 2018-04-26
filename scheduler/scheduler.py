@@ -17,6 +17,7 @@ import daemon
 import getopt, os, sys, time
 import json
 import datetime 
+import pickle
 
 # unit tests provide a set of good utilities for accessing the web services.
 
@@ -628,6 +629,7 @@ class Scheduler():
     def run(self):
 
         while True:
+            pickle.dump(self, open( picklepath, "wb" ))
             clinic = self.getClinic()
             if not clinic:
                 continue
@@ -671,11 +673,12 @@ class Scheduler():
             time.sleep(5)
 
 def usage():
-    print("scheduler [-c clinicid] [-h host] [-p port] [-u username] [-w password]")
+    print("scheduler [-f picklepath] [-c clinicid] [-h host] [-p port] [-u username] [-w password]")
 
 def main():
+    global picklepath
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "c:h:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "f:c:h:p:u:w:")
     except getopt.GetoptError as err:
         print str(err)
         usage()
@@ -685,6 +688,7 @@ def main():
     username = None
     password = None
     clinicid = None
+    picklepath = "save.p"
     for o, a in opts:
         if o == "-c":
             clinicid = a
@@ -692,14 +696,21 @@ def main():
             host = a
         elif o == "-p":
             port = int(a)
-        elif o == "-u":
-            username = a
         elif o == "-w":
             password = a
+        elif o == "-u":
+            username = a
+        elif o == "-f":
+            picklepath = a
         else:
             assert False, "unhandled option"
     #with daemon.DaemonContext():
-    x = Scheduler(host, port, username, password, clinicid)
+    try:
+        x = pickle.load( open( picklepath, "rb" ) )
+        print("loaded from pickle file")
+    except:
+        x = Scheduler(host, port, username, password, clinicid)
+        print("created new scheduler")
     x.run()
 
 if __name__ == '__main__':
