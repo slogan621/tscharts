@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2018
+#(C) Copyright Thousand Smiles Foundation 2017-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -677,8 +677,9 @@ def usage():
 
 def main():
     global picklepath
+    global restart
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "f:c:h:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "rf:c:h:p:u:w:")
     except getopt.GetoptError as err:
         print str(err)
         usage()
@@ -688,6 +689,7 @@ def main():
     username = None
     password = None
     clinicid = None
+    restart = False
     picklepath = "save.p"
     for o, a in opts:
         if o == "-c":
@@ -702,15 +704,20 @@ def main():
             username = a
         elif o == "-f":
             picklepath = a
+        elif o == "-r":
+            restart = True
         else:
             assert False, "unhandled option"
     #with daemon.DaemonContext():
-    try:
-        x = pickle.load( open( picklepath, "rb" ) )
-        print("loaded from pickle file")
-    except:
+    if restart == True:
+        try:
+            x = pickle.load( open( picklepath, "rb" ) )
+            print("loaded state from pickle {}".format(picklepath))
+        except:
+            print("Unable to load state from pickle {}".format(picklepath))
+            sys.exit(3)
+    else:
         x = Scheduler(host, port, username, password, clinicid)
-        print("created new scheduler")
     x.run()
 
 if __name__ == '__main__':
