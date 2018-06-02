@@ -204,8 +204,14 @@ LOGGING = {
             'propagate': True,
             'level':'DEBUG',
         },
-        'MYAPP': {
+        'common': {
             'handlers': ['file'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'tscharts': {
+            'handlers': ['file'],
+            'propagate': True,
             'level': 'DEBUG',
         },
     }

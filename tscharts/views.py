@@ -1,4 +1,4 @@
-#(C) Copyright Syd Logan 2016
+#(C) Copyright Syd Logan 2016-2018
 #(C) Copyright Thousand Smiles Foundation 2016
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,17 +23,20 @@ from django.http import JsonResponse
 from rest_framework.authtoken.models import Token
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest
 import json
+from common.decorators import *
 
 class LoginView(APIView):
 
     authentication_classes = ()
     permission_classes = ()
 
+    @log_request
     def post(self, request, format=None):
         badRequest = False
         forbidden = False
 
         data = json.loads(request.body)
+
         if not "username" in data:
             badRequest = True
         if not "password" in data:
@@ -62,6 +65,7 @@ class LogoutView(APIView):
     authentication_classes = ()
     permission_classes = ()
 
+    @log_request
     def post(self, request, format=None):
         logout(request)
         return HttpResponse()
