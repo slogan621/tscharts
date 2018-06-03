@@ -18,7 +18,7 @@ import sys
 import numbers
 import json 
 from datetime import datetime 
-
+from common.decorators import *
 
 class SurgeryHistoryView(APIView):
     authentication_classes = (TokenAuthentication,)
@@ -37,6 +37,7 @@ class SurgeryHistoryView(APIView):
 
         return m
 
+    @log_request
     def get(self, request, surgery_history_id = None, format = None):
         surgery_history = None
         badRequest = False
@@ -215,7 +216,7 @@ class SurgeryHistoryView(APIView):
 
         return valid, surgery_history
                 
-                
+    @log_request 
     def post(self, request, format = None):  
         badRequest = False
         implError = False
@@ -270,7 +271,7 @@ class SurgeryHistoryView(APIView):
         else:
             return Response({'id': surgery_history.id})
 
-
+    @log_request
     def put(self, request, surgery_history_id = None, format = None):
         badRequest = False
         implError = False
@@ -310,6 +311,7 @@ class SurgeryHistoryView(APIView):
         else:
             return Response({})
 
+    @log_request
     def delete(self, request, surgery_history_id=None, format=None):
         surgery_history = None
 

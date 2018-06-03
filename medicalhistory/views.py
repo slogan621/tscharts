@@ -24,6 +24,9 @@ from patient.models import *
 from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
+
+from common.decorators import *
+
 import sys
 import numbers
 import json
@@ -78,6 +81,7 @@ class MedicalHistoryView(APIView):
 
         return m
 
+    @log_request
     def get(self, request, medical_history_id=None, format=None):
         medical_history = None
         badRequest = False
@@ -526,6 +530,7 @@ class MedicalHistoryView(APIView):
 
         return valid, medical_history
 
+    @log_request
     def post(self, request, format=None):
         badRequest = False
         implError = False
@@ -587,6 +592,7 @@ class MedicalHistoryView(APIView):
         else:
             return Response({'id': medical_history.id})
 
+    @log_request
     def put(self, request, medical_history_id=None, format=None):
         badRequest = False
         implError = False
@@ -624,7 +630,8 @@ class MedicalHistoryView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
-        
+       
+    @log_request 
     def delete(self, request, medical_history_id=None, format=None):
         medical_history = None
 

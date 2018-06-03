@@ -23,6 +23,8 @@ from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
+from common.decorators import *
+
 import json
 
 class ClinicView(APIView):
@@ -30,6 +32,7 @@ class ClinicView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @log_request
     def get(self, request, clinic_id=None, format=None):
         clinic = None
         date = None
@@ -101,6 +104,7 @@ class ClinicView(APIView):
             return HttpResponseServerError() 
         return Response(ret)
 
+    @log_request
     def post(self, request, format=None):
 
         badRequest = False
@@ -153,7 +157,8 @@ class ClinicView(APIView):
             return HttpResponseServerError() 
         else:
             return Response({'id': clinic.id})
-        
+       
+    @log_request 
     def delete(self, request, clinic_id=None, format=None):
         clinic = None
 

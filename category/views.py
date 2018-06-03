@@ -14,6 +14,8 @@ from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
+from common.decorators import *
+
 import json
 import sys
 
@@ -27,6 +29,7 @@ class CategoryView(APIView):
         m["name"] = entry.name
         return m
 
+    @log_request
     def get(self, request, category_id=None, format=None):   
         badRequest = False
         notFound = False
@@ -63,6 +66,7 @@ class CategoryView(APIView):
         else:
             return Response(ret)
     
+    @log_request
     def post(self, request, format = None):
         badRequest = False
         implError = False
@@ -103,6 +107,7 @@ class CategoryView(APIView):
         else:
             return Response({'id':category.id})
 
+    @log_request
     def delete(self, request, category_id = None, format = None):
         category = None
         try:

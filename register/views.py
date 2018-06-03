@@ -24,6 +24,9 @@ from patient.models import *
 from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
+
+from common.decorators import *
+
 import sys
 import numbers
 import json
@@ -46,6 +49,7 @@ class RegisterView(APIView):
             m["state"] = "Checked Out"
         return m
 
+    @log_request
     def get(self, request, register_id=None, format=None):
         register = None
         badRequest = False
@@ -155,6 +159,7 @@ class RegisterView(APIView):
 
         return valid, register
 
+    @log_request
     def post(self, request, format=None):
         badRequest = False
         implError = False
@@ -215,6 +220,7 @@ class RegisterView(APIView):
         else:
             return Response({'id': register.id})
 
+    @log_request
     def put(self, request, register_id=None, format=None):
         badRequest = False
         implError = False
@@ -252,7 +258,8 @@ class RegisterView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
-        
+       
+    @log_request 
     def delete(self, request, register_id=None, format=None):
         register = None
 

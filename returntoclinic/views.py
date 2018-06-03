@@ -24,6 +24,8 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 import numbers
 
+from common.decorators import *
+
 import json
 import sys
 
@@ -32,6 +34,7 @@ class ReturnToClinicView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    @log_request
     def get(self, request, returntoclinic_id=None, format=None):
         notFound = False
         returntoclinic = None
@@ -104,6 +107,7 @@ class ReturnToClinicView(APIView):
                 ret.append(m)
         return Response(ret)
 
+    @log_request
     def put(self, request, id=None, format=None):
         badRequest = False
         implError = False
@@ -157,7 +161,8 @@ class ReturnToClinicView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
-        
+       
+    @log_request 
     def post(self, request, format=None):
         badRequest = False
         notFound = False
@@ -259,7 +264,8 @@ class ReturnToClinicView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({'id': returntoclinic.id})
-        
+       
+    @log_request 
     def delete(self, request, returntoclinic_id=None, format=None):
         returntoclinic = None
 

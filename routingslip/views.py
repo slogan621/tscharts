@@ -26,6 +26,8 @@ import sys
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
+from common.decorators import *
+
 import json
 
 class RoutingSlipView(APIView):
@@ -91,6 +93,7 @@ class RoutingSlipView(APIView):
 
         return m
 
+    @log_request
     def get(self, request, routing_slip_id=None, format=None):
         routing_slip = None
         aClinic = None
@@ -178,6 +181,7 @@ class RoutingSlipView(APIView):
         except:
             return HttpResponseServerError()
 
+    @log_request
     def post(self, request, format=None):
         badParam = False
         implError = False
@@ -256,6 +260,7 @@ class RoutingSlipView(APIView):
         else:
             return Response({'id': routing_slip.id})
 
+    @log_request
     def put(self, request, routing_slip_id=None, format=None):
         badParam = False
         implError = False
@@ -295,7 +300,8 @@ class RoutingSlipView(APIView):
         if implError:
             return HttpResponseServerError(implMsg) 
         return Response({})
-        
+       
+    @log_request 
     def delete(self, request, routing_slip_id=None, format=None):
         #remove routing slip, all comments, and all entries
 
@@ -370,6 +376,7 @@ class RoutingSlipEntryView(APIView):
             m = None
         return m
 
+    @log_request
     def get(self, request, routing_slip_entry_id=None, format=None):
         routing_slip_entry = None
         aRoutingSlip = None
@@ -450,6 +457,7 @@ class RoutingSlipEntryView(APIView):
         else:
           return HttpResponseServerError()
 
+    @log_request
     def post(self, request, format=None):
         badParam = False
         implError = False
@@ -535,6 +543,7 @@ class RoutingSlipEntryView(APIView):
                     ret = False
         return ret
 
+    @log_request
     def put(self, request, routing_slip_entry_id=None, format=None):
         badRequest = False
         implError = False
@@ -590,7 +599,8 @@ class RoutingSlipEntryView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
-        
+       
+    @log_request 
     def delete(self, request, routing_slip_entry_id=None, format=None):
 
         routing_slip_entry = None
@@ -627,6 +637,7 @@ class RoutingSlipCommentView(APIView):
 
         return m
 
+    @log_request
     def get(self, request, routing_slip_comment_id=None, format=None):
         routing_slip_comment = None
         badRequest = False
@@ -673,6 +684,7 @@ class RoutingSlipCommentView(APIView):
                     ret.append(x.id)
             return Response(ret)
 
+    @log_request
     def post(self, request, format=None):
         badParam = False
         implError = False
@@ -729,6 +741,7 @@ class RoutingSlipCommentView(APIView):
         else:
             return Response({'id': routing_slip_comment.id})
 
+    @log_request
     def delete(self, request, routing_slip_comment_id=None, format=None):
 
         routing_slip_comment = None

@@ -24,6 +24,8 @@ from django.core import serializers
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
+from common.decorators import *
+
 import json
 import sys
 
@@ -69,6 +71,7 @@ class PatientView(APIView):
 
         return m
 
+    @log_request
     def get(self, request, patient_id=None, format=None):
 
         badRequest = False
@@ -224,6 +227,7 @@ class PatientView(APIView):
 
         return valid, patient
 
+    @log_request
     def put(self, request, patient_id, format=None):
         badRequest = False
         implError = False
@@ -319,6 +323,7 @@ class PatientView(APIView):
 
         return valid, kwargs
         
+    @log_request
     def post(self, request, format=None):
         badRequest = False
         implError = False
@@ -363,6 +368,7 @@ class PatientView(APIView):
         else:
             return Response({'id': patient.id})
         
+    @log_request
     def delete(self, request, patient_id=None, format=None):
         patient = None
 
