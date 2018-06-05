@@ -1,4 +1,4 @@
-#(C) Copyright Syd Logan 2016
+#(C) Copyright Syd Logan 2016-2018
 #(C) Copyright Thousand Smiles Foundation 2016
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +43,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["54.193.67.202"]
 
-REGISTRATION_OPEN = True                # If True, users can register
+REGISTRATION_OPEN = True        # If True, users can register
 ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
 REGISTRATION_AUTO_LOGIN = True  # If True, the user will be automatically logged in.
 LOGIN_REDIRECT_URL = '/'  # The page you want users to arrive at after they successful log in
@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'surgerytype',
     'category',
     'surgeryhistory',
+    'requestlog',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -19,12 +19,40 @@ import logging
 LOGGER = logging.getLogger(__name__)
 import sys
 
+from requestlog.models import RequestLog
+
 def log_request(func_to_decorate):
     def wrapper(*args, **kwargs):
         try:
             request = args[1]
-            data = request.body
-            LOGGER.info(u'REQUEST_LOG: %(method)s request on “%(path)s” for %(user)s '
+            method = request.method
+            user = request.user.username
+            path = request.get_full_path()
+            origin = request.META.get('HTTP_HOST', u'Unknown')
+            useragent = request.META.get('HTTP_USER_AGENT', u'Unknown')
+            auth = request.auth
+            auths = u'\n    '.join(unicode(x) for x in request.authenticators)
+            body = request.body
+            files = u'\n    '.join(u'%s: %s' % (k,v) for k,v in sorted(request.FILES.items()))
+            content = request.content_type
+
+            r = RequestLog(method = method,
+                           user = user, 
+                           path = path, 
+                           origin = origin,
+                           useragent = useragent,
+                           auth = auth,
+                           auths = auths,
+                           body = body,
+                           files = files,
+                           content = content)
+            r.save()
+        except:
+            LOGGER.info(u'REQUEST_LOG: Exception trying to log request {}'.format(sys.exc_info()[0]))
+            try:
+                # logging to DB failed, try to log to file instead
+
+                LOGGER.info(u'REQUEST_LOG: %(method)s request on “%(path)s” for %(user)s '
                     u'from %(origin)s (%(useragent)s):\n'
                     u'auth: %(auth)s, authenticators: [\n%(auths)s\n]\n'
                     u'content-type: %(content)s\n'
@@ -45,8 +73,8 @@ def log_request(func_to_decorate):
                         'content': request.content_type,
                         }
                     )
-        except:
-            LOGGER.info(u'REQUEST_LOG: Exception trying to log request {}'.format(sys.exc_info()[0]))
+            except:
+                LOGGER.info(u'REQUEST_LOG: Exception trying to log request to file {}'.format(sys.exc_info()[0]))
         result = func_to_decorate(*args, **kwargs)
         return result
     return wrapper
