@@ -16,3 +16,4 @@ truncate image_image;
 truncate surgerytype_surgerytype;
 truncate surgeryhistory_surgeryhistory;
 truncate returntoclinic_returntoclinic;
+truncate consent_consent;

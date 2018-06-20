@@ -59,5 +59,6 @@ urlpatterns = [
     url(r'^tscharts/v1/surgerytype/', include('surgerytype.urls', namespace='surgerytype')),
     url(r'^tscharts/v1/category/', include('category.urls', namespace='category')),
     url(r'^tscharts/v1/surgeryhistory/', include('surgeryhistory.urls', namespace='surgeryhistory')),
+    url(r'^tscharts/v1/consent/', include('consent.urls', namespace='consent')),
 ]
 
