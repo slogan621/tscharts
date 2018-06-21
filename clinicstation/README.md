@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"name": string,"name_es": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer,"nextpatient":[id | null], "activepatient": [id | null]}`
+    **Content:** `{"name": string,"name_es": string,"active":[true|false],"clinic":id,"awaytime":integer,"away":[true|false], "finished":[true|false], "willreturn":UTC time string,"station":id,"id":id,"level":integer,"nextpatient":[id | null], "activepatient": [id | null]}`
  
 * **Error Response:**
 
@@ -53,7 +53,7 @@ Content-Type: application/json
 
 
 ac
-{"name":"test1","name_es":"test1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":1,"station":1,"active":false,"willreturn":"2017-07-29T22:36:21","id":1}
+{"name":"test1","name_es":"test1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":1,"station":1,"active":false,"finished":false,"willreturn":"2017-07-29T22:36:21","id":1}
 0
 ```
   
@@ -79,6 +79,7 @@ ac
  
    `away` true or false<br />
    `active` true or false<br />
+   `finished` true or false<br />
    `level` integer<br />
 
 * **Data Params**
@@ -88,7 +89,7 @@ ac
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{"name":string,"name_es":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer, "activepatient": [null | id], "nextpatient": [null | id]}, ...]`
+    **Content:** `[{"name":string,"name_es":string,"awaytime":integer,"willreturn":UTC time string,"away":[true|false],"finished":[true|false],"active":[true|false],"clinic":id,"station":id,"id":id,"level":integer, "activepatient": [null | id], "nextpatient": [null | id]}, ...]`
  
 * **Error Response:**
 
@@ -120,7 +121,7 @@ Content-Type: application/json
 
 
 34b
-[{"name":"Dental 1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":3,"active":false,"willreturn":"2017-07-29T22:36:22","id":7},{"name":"Dental 2","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":4,"active":false,"willreturn":"2017-07-29T22:36:22","id":8},{"name":"Ortho 1","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":5,"active":false,"willreturn":"2017-07-29T22:36:22","id":9},{"name":"Ortho 2","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":6,"active":false,"willreturn":"2017-07-29T22:36:22","id":10},{"name":"ENT","level":1,"activepatient":null,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":7,"active":false,"willreturn":"2017-07-29T22:36:22","id":11}]
+[{"name":"Dental 1","level":1,"activepatient":null,"finished":false,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":3,"active":false,"willreturn":"2017-07-29T22:36:22","id":7},{"name":"Dental 2","level":1,"activepatient":null,"finished":false,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":4,"active":false,"willreturn":"2017-07-29T22:36:22","id":8},{"name":"Ortho 1","level":1,"activepatient":null,"finished":false,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":5,"active":false,"willreturn":"2017-07-29T22:36:22","id":9},{"name":"Ortho 2","level":1,"activepatient":null,"finished":false,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":6,"active":false,"willreturn":"2017-07-29T22:36:22","id":10},{"name":"ENT","level":1,"activepatient":null,"finished":false,"away":true,"nextpatient":null,"awaytime":30,"clinic":3,"station":7,"active":false,"willreturn":"2017-07-29T22:36:22","id":11}]
 0
 ```
   
@@ -155,6 +156,7 @@ Content-Type: application/json
    `nextpatient` id of the next patient in the queue<br />
    `away` true if clinic station is away (i.e., station personnel are not present), else false (default is true)<br />
    `active` true if clinic station is active (i.e., a patient is currently being seen), else false (default is false)<br />
+   `finished` true if clinic station is no longer available this day<br />
    `level` priority level. Default is 1.<br />
    `awaytime` length of time from when `away` is set to true until the clinic station is expected to become available once again for patients (by setting `away` to false). Default is 30 minutes.<br />
 
@@ -216,6 +218,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    One or more of the following is required. 
  
+   `finished` true if station is away for the remainder of the day<br />
    `away` true if station is away (no personnel) else false. See `awaytime`<br />
    `activepatient` id of the currently active patient<br />
    `nextpatient` id of the next patient in the queue<br />

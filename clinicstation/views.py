@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2018
+#(C) Copyright Thousand Smiles Foundation 2016-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -79,6 +79,12 @@ class ClinicStationView(APIView):
                         badRequest = True
                     else:
                         kwargs["away"] = away
+                finished = request.GET.get('finished', '')
+                if finished != '':
+                    if not finished in [True, False]:
+                        badRequest = True
+                    else:
+                        kwargs["finished"] = finished
 
             if not badRequest and not notFound:
                 try:
@@ -106,6 +112,7 @@ class ClinicStationView(APIView):
                 m["willreturn"] = clinic_station.willreturn
                 m["activepatient"] = clinic_station.activepatient_id
                 m["nextpatient"] = clinic_station.nextpatient_id
+                m["finished"] = clinic_station.finished
                 ret = m
             else: 
                 ret = []
@@ -123,6 +130,7 @@ class ClinicStationView(APIView):
                     m["willreturn"] = x.willreturn
                     m["activepatient"] = x.activepatient_id
                     m["nextpatient"] = x.nextpatient_id
+                    m["finished"] = x.finished
                     ret.append(m)
             return Response(ret)
 
@@ -169,6 +177,13 @@ class ClinicStationView(APIView):
                 badRequest = True
             else:
                 kwargs["away"] = away
+
+        if "finished" in data:
+            finished = data["finished"]
+            if not finished == True and not finished == False:
+                badRequest = True
+            else:
+                kwargs["finished"] = finished
 
         if "level" in data:
             kwargs["level"] = data["level"]
@@ -250,6 +265,7 @@ class ClinicStationView(APIView):
         level = None
         name = None
         name_es = None
+        finished = None
         away = None
         awaytime = None
         activepatient = None
@@ -266,6 +282,10 @@ class ClinicStationView(APIView):
         if "away" in data:
             away = data["away"]
             if not away == True and not away == False:
+                badRequest = True
+        if "finished" in data:
+            finished = data["finished"]
+            if not finished == True and not finished == False:
                 badRequest = True
         if "level" in data:
             level = data["level"]
@@ -284,7 +304,7 @@ class ClinicStationView(APIView):
             nextpatient = data["nextpatient"]
             hasNextPatient = True
 
-        if level == None and away == None and active == None and awaytime == None and name == None and name_es == None and hasActivePatient == False and hasNextPatient == False:
+        if level == None and away == None and finished == None and active == None and awaytime == None and name == None and name_es == None and hasActivePatient == False and hasNextPatient == False:
             badRequest = True   # update but no data provided
 
         if not badRequest:
@@ -328,6 +348,8 @@ class ClinicStationView(APIView):
                             clinic_station.willreturn = datetime.now() + timedelta(minutes=clinic_station.awaytime)
                     if not (active == None):
                         clinic_station.active=active
+                    if not (finished == None):
+                        clinic_station.finished=finished
                     if not (level == None):
                         clinic_station.level=level
                     if not (name == None):

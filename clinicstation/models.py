@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2018
+#(C) Copyright Thousand Smiles Foundation 2016-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -54,11 +54,12 @@ class ClinicStation(models.Model):
     name = models.CharField(max_length=64)
     station = models.ForeignKey(Station)
     clinic = models.ForeignKey(Clinic)
-    active = models.BooleanField(default=False) # set to True if a patient is being seen
-    level = models.IntegerField(default=1) # relative importance to scheduler
+    active = models.BooleanField(default=False)  # set to True if a patient is being seen
+    level = models.IntegerField(default=1)  # relative importance to scheduler
     away = models.BooleanField(default=True)  # set to True when station is out to lunch
     awaytime = models.IntegerField(default=30) # default minutes when station goes to away state before clinic is returned to (informational only) 
     willreturn = models.DateTimeField(auto_now_add=True) # estimated time of returen, computed when away is set to True, using the awaytime value
-    activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient') # if active, patient of null
+    activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient') # if active, patient or null
     nextpatient = models.ForeignKey(Patient, null=True, related_name="activepatient") # next patient to be seen or null
     name_es = models.CharField(max_length=64)
+    finished = models.BooleanField(default=False)  # set to True if station finished for the day 
