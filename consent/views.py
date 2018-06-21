@@ -10,6 +10,7 @@ from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from consent.models import *
 from register.models import *
 from clinic.models import *
 from patient.models import *
@@ -31,7 +32,7 @@ class ConsentView(APIView):
         m["general_consent"] = entry.general_consent
         m["photo_consent"] = entry.photo_consent
         return m
-    '''
+    
     def get(self, request, consent_id = None, format = None):
         consent = None
         badRequest = False
@@ -66,18 +67,22 @@ class ConsentView(APIView):
         
         if not consent and not badRequest:
             raise NotFound
+
         elif not badRequest:
-            ret = self.serialize(consent)
+            if consent_id:
+                ret = self.serialize(consent)
+            else:
+                ret = self.serialize(consent[0])
 
         if badRequest:
             return HttpResponseBadRequest()
         else:
             return Response(ret)
-    '''
+    
     def validatePostArgs(self, data):
         valid = True
         kwargs = data
-
+        
         try:
             val = data["general_consent"]
             if not (val == True or val == False):
@@ -91,32 +96,40 @@ class ConsentView(APIView):
                     valid = False
         except:
             valid = False
+        
         return valid, kwargs    
 
-    def post(self, request, format = None):
-        
+    def post(self, request, format = None):  
         badRequest = False
-        
-        print("kkk")
         implError = False
         
- 
         data = json.loads(request.body)
         try:
             registrationid = int(data["register"])
         except:
             badRequest = True
 
+            
         if not badRequest:
             try:
                 aRegistration = Register.objects.get(id = registrationid)
             except:
                 raise NotFound
-        
+
         if not badRequest:
             valid, kwargs = self.validatePostArgs(data)
             if not valid:
                 badRequest = True
+        
+        if not badRequest:
+            try:
+                if Consent.objects.all().filter(register = aRegistration).exists():
+                    badRequest = True
+            except:
+                implMsg = "Consent.objects.all().filter {} {}".format(sys.exc_info()[0], data)
+                implError = True
+            
+
         if not badRequest:
             try:
                 kwargs["register"] = aRegistration
@@ -125,18 +138,18 @@ class ConsentView(APIView):
                     consent.save()
                 else:
                     implError = True
-
+            
             except Exception as e:
                 implError = True
                 implMsg = sys.exc_info()[0]
-        
+ 
         if badRequest:
             return HttpResponseBadRequest()
         if implError:
             return HttpResponseServerError(implMsg) 
         else:
             return Response({'id': consent.id}) 
-    
+
     def delete(self, request, consent_id=None, format=None):
         consent = None
 
