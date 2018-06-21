@@ -93,26 +93,26 @@ class ServiceConnection():
     auth = self.getAuth()
 
     payload = request.getPayloadAsJSON().encode("utf-8")
-    url = "http://%s:%d/%s" % (request.getHost(), request.getPort(), request.getURL())
+    url = "https://%s:%d/%s" % (request.getHost(), request.getPort(), request.getURL())
 
     if isGet:
       try:
-        r = requests.get(url, timeout=self._timeout, data=payload, headers=headers, auth=auth)
+        r = requests.get(url, timeout=self._timeout, data=payload, headers=headers, auth=auth, verify=False)
       except requests.exceptions.Timeout:
         timeout = True
     elif isPost:
       try:
-        r = requests.post(url, timeout=self._timeout, data=payload, headers=headers, auth=auth)
+        r = requests.post(url, timeout=self._timeout, data=payload, headers=headers, auth=auth, verify=False)
       except requests.exceptions.Timeout:
         timeout = True
     elif isPut:
       try:
-        r = requests.put(url, timeout=self._timeout, data=payload, headers=headers, auth=auth)
+        r = requests.put(url, timeout=self._timeout, data=payload, headers=headers, auth=auth, verify=False)
       except requests.exceptions.Timeout:
         timeout = True
     elif isDelete:
       try:
-        r = requests.delete(url, timeout=self._timeout, data=payload, headers=headers, auth=auth)
+        r = requests.delete(url, timeout=self._timeout, data=payload, headers=headers, auth=auth, verify=False)
       except requests.exceptions.Timeout:
         timeout = True
 
