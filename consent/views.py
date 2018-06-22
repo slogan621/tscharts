@@ -71,7 +71,7 @@ class ConsentView(APIView):
         elif not badRequest:
             if consent_id:
                 ret = self.serialize(consent)
-            else:
+            else: #one registration should correspond with one unique consent
                 ret = self.serialize(consent[0])
 
         if badRequest:

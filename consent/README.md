@@ -134,6 +134,7 @@ Content-Type: application/json
 * **Data Params**
 
    **Required:**
+
    `register` registration resource id <br />
    `general_consent` [true|false] whether the patient gives consent to the registration form <br />
    `photo_consent` [true|false] whether the patient gives consent to photograph usage <br />
@@ -151,8 +152,9 @@ Content-Type: application/json
 
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 404 NOT FOUND<br />
-  * **Code:** 500 SERVER ERRORi
-  `Creating a consent information that has the same register as one that already exists in the database returns a BAD REQUEST response. 
+  * **Code:** 500 SERVER ERROR
+  
+  `Creating a consent information that has the same register as one that already exists in the database returns a BAD REQUEST response.` 
 
 * **Example:**
 
