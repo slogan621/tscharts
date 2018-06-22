@@ -23,8 +23,6 @@ class CreateConsent(ServiceAPI):
         self.setToken(token)
 
         self.setPayload(payload)
-        print(payload)
-       
         self.setURL("tscharts/v1/consent/")
 
 class GetConsent(ServiceAPI):
@@ -435,6 +433,23 @@ class testTSConsent(unittest.TestCase):
         x.setRegistration(9999)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
+        
+        x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid1 = int(ret[1]["id"])
+
+        x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid1)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        registrationid1 = int(ret[1]["id"])
+    
+        #get consent with a registration id that exists but no consent info corresponds with it
+        x = GetConsent(host, port, token)
+        x.setRegistration(registrationid1)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 404)
 
         x = DeleteConsent(host, port, token, id)
         ret = x.send(timeout=30)
@@ -444,11 +459,19 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
+        x = DeleteRegistration(host, port, token, registrationid1)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
         x = DeletePatient(host, port, token, patientid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
         x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
