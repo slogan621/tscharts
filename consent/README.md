@@ -1,4 +1,4 @@
-**Get Consent Information**
+**Get Consent Information by ID**
 ----
   Returns json data about a single consent information resource. 
 
@@ -25,7 +25,9 @@
  
 * **Error Response:**
 
-  * **Code:** 404 NOT FOUND
+  * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 404 NOT FOUND<br />
+  * **Code:** 500 SERVER ERROR
 
 * **Example:**
 
@@ -50,7 +52,68 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 {"register":125,"general_consent":true,"photo_consent":false,"id":51}
 ```
+**Get Consent Information by Register ID**
+----
+  Returns json data about a single consent information resource. 
 
+* **URL**
+
+  /tscharts/v1/consent/
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+    **Required**
+
+    `register` register id<br />
+
+    **Optional:**
+ 
+    None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"register":id,"general_consent":true|false,"photo_consent":true|false}`
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 404 NOT FOUND<br />
+  * **Code:** 500 SERVER ERROR
+
+* **Example:**
+```
+GET /tscharts/v1/consent/?register=28 HTTP/1.1
+Host: 54.193.67.202
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
+Accept: */*
+User-Agent: python-requests/2.18.4
+Content-Type: application/json
+Authorization: Token c418abb265c76faa251c53c7dd152ecf768920f1
+Content-Length: 2
+
+{}HTTP/1.1 200 OK
+Date: Fri, 22 Jun 2018 04:43:42 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+Content-Length: 67
+Allow: GET, POST, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/json
+
+{"general_consent":true,"register":28,"id":33,"photo_consent":true}
+```
   
 **Create Consent Information**
 ----
@@ -87,7 +150,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Error Response:**
 
   * **Code:** 400 BAD REQUEST<br />
-  * **Code:** 500 SERVER ERROR
+  * **Code:** 404 NOT FOUND<br />
+  * **Code:** 500 SERVER ERRORi
+  `Creating a consent information that has the same register as one that already exists in the database returns a BAD REQUEST response. 
 
 * **Example:**
 
@@ -141,7 +206,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
 * **Error Response:**
 
-  * **Code:** 404 NOT FOUND
+  * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 404 NOT FOUND<br />
+  * **Code:** 500 SERVER ERROR
 
 * **Example:**
 
