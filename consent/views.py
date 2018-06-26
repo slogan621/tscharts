@@ -28,51 +28,101 @@ class ConsentView(APIView):
     def serialize(self, entry):
         m = {}
         m["id"] = entry.id
-        m["register"] = entry.register_id
+        m["registration"] = entry.register_id
+        m["patient"] = entry.patient_id
+        m["clinic"] = entry.clinic_id
         m["general_consent"] = entry.general_consent
         m["photo_consent"] = entry.photo_consent
         return m
     
-    def get(self, request, consent_id = None, format = None):
+    def get(self, request = None, consent_id = None, format = None):
         consent = None
         badRequest = False
         aRegistration = None
+        aPatient = None
+        aClinic = None
         kwargs = {}
-        
+        #consent id only returns a single consent item        
         if consent_id:
             try:
                 consent = Consent.objects.get(id = consent_id)
             except:
-                consent = None
+                raise NotFound
+            if request != None:
+                badRequest = True
+            if not badRequest:
+                ret = self.serialize(consent)
+
         else:
             try:
-                registrationid = request.GET.get('register','')
+                registrationid = request.GET.get('registration','')
                 if registrationid != '':
                     try:
                         aRegistration = Register.objects.get(id = registrationid)
                         if not aRegistration:
                             badRequest = True
                         else:
-                            kwargs["register"] = aRegistration
+                            kwargs["registration"] = aRegistration
                     except:
                         badRequest = True
             except:
                 pass #no registration ID
+
+            try:
+                patientid = request.GET.get('patient','')
+                if patientid != '':
+                    try:
+                        aPatient = Patient.objects.get(id = patientid)
+                        if not aPatient:
+                            badRequest = True
+                        else:
+                            kwargs["patient"] = aPatient
+                    except:
+                        badRequest = True
+            except:
+                pass #no patient ID
+
+            try:
+                clinicid = request.GET.get('clinic','')
+                if clinicid != '':
+                    try:
+                        aClinic = Clinic.objects.get(id = clinicid)
+                        if not aClinic:
+                            badRequest = True
+                        else:
+                            kwargs["clinic"] = aClinic
+                    except:
+                        badRequest = True
+            except:
+                pass #no clinic ID
+
             
             if not badRequest and len(kwargs):
-                try:
-                    consent = Consent.objects.filter(**kwargs)
-                except:
-                    consent = None
-        
-        if not consent and not badRequest:
-            raise NotFound
-
-        elif not badRequest:
-            if consent_id:
-                ret = self.serialize(consent)
-            else: #one registration should correspond with one unique consent
-                ret = self.serialize(consent[0])
+                aList = list(kwarts.keys())
+                if len(aList) == 1:
+                    if aList[0] == 'patient' or aList[0] == 'clinic':
+                        try:
+                            consent = Consent.objects.filter(**kwargs)
+                        except:
+                            raise NotFound
+                        ret = []
+                        for x in consent:
+                            y = self.serialize(x)
+                            ret.append(y)
+                    elif alist[0] == 'registration':
+                        try:
+                            consent = Consent.objects.filter(**kwargs)
+                        except:
+                            raise NotFound
+                        ret = self.serialize(consent[0])
+                else:
+                    try:
+                        consent = Consent.objects.filter(**kwargs)
+                    except:
+                        raise NotFound
+                    ret = self.serialize(consent[0])     
+                    
+            
 
         if badRequest:
             return HttpResponseBadRequest()
@@ -92,7 +142,7 @@ class ConsentView(APIView):
                 valid = False
             
             for key in data:
-                if key not in ["register", "general_consent", "photo_consent"]:
+                if key not in ["registration", "clinic", "patient", "general_consent", "photo_consent"]:
                     valid = False
         except:
             valid = False
@@ -105,25 +155,56 @@ class ConsentView(APIView):
         
         data = json.loads(request.body)
         try:
-            registrationid = int(data["register"])
+            registrationid = int(data["registration"])
+        except:
+            badRequest = True
+        
+        try:
+            clinicid = int(data["clinic"])
         except:
             badRequest = True
 
+        try:
+            patientid = int(data["patient"])
+        except:
+            badRequest = True
             
         if not badRequest:
             try:
                 aRegistration = Register.objects.get(id = registrationid)
             except:
-                raise NotFound
+                aRegistration = None
+
+        if not badRequest:
+            try:
+                aClinic = Clinic.objects.get(id = clinicid)
+            except:
+                aClinic = None
+
+        if not badRequest:
+            try:
+                aPatient = Patient.objects.get(id = patientid)
+            except:
+                aPatient = None
 
         if not badRequest:
             valid, kwargs = self.validatePostArgs(data)
             if not valid:
                 badRequest = True
+
+        if not aRegistration or not aClinic or not aPatient:
+            badRequest = True
+        else:
+            kwargs["registration"] = aRegistration
+            kwargs["clinic"] = aClinic
+            kwargs["patient"] = aPatient
+        
+        if aRegistration.clinic != aClinic or aRegistration.patient != aPatient:
+            badRequest = True
         
         if not badRequest:
             try:
-                if Consent.objects.all().filter(register = aRegistration).exists():
+                if Consent.objects.all().filter(registration = aRegistration, clinic = aClinic, patient = aPatient).exists():
                     badRequest = True
             except:
                 implMsg = "Consent.objects.all().filter {} {}".format(sys.exc_info()[0], data)
@@ -132,7 +213,6 @@ class ConsentView(APIView):
 
         if not badRequest:
             try:
-                kwargs["register"] = aRegistration
                 consent = Consent(**kwargs)
                 if consent:
                     consent.save()
@@ -167,3 +247,4 @@ class ConsentView(APIView):
             consent.delete()
 
         return Response({})   
+

@@ -6,13 +6,12 @@ and running on the specific host and port
 import unittest
 import getopt, sys
 import json
-
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.patient.patient import CreatePatient, DeletePatient
 from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.register.register import CreateRegistration, GetRegistration, UpdateRegistration, DeleteRegistration
-
+'''
 class CreateConsent(ServiceAPI):
     def __init__(self, host, port, token, payload):
         super(CreateConsent, self).__init__()
@@ -38,8 +37,25 @@ class GetConsent(ServiceAPI):
                 base += "?"
             else:
                 base += "&"
-            base += "register={}".format(self._registrationid)
+            base += "registration={}".format(self._registrationid)
             hasQArgs = True
+
+        if not self._patientid == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patientid)
+            hasQArgs = True
+
+        if not self._clinicid == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinicid)
+            hasQArgs = True
+        
 
         self.setURL(base)
 
@@ -52,15 +68,27 @@ class GetConsent(ServiceAPI):
         self.setToken(token)
         self._id = None
         self._registrationid = None
+        self._clinicid = None
+        self._patientid = None
         self.makeURL();
 
     def setId(self, id):
         self._id = id;
         self.makeURL()
 
-    def setRegistration(self, register):
-        self._registrationid = register
+    def setRegistration(self, registration):
+        self._registrationid = registration
         self.makeURL()
+
+    def setPatient(self, patient):
+        self._patientid = patient
+        self.makeURL()
+
+    def setClinic(self, clinic):
+        self._clinicid = clinic
+        self.makeURL()
+
+    
 
 class DeleteConsent(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -116,13 +144,42 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid = int(ret[1]["id"])
 
+        data = {}
+
+        data["paternal_last"] = "1234abcd"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid1 = int(ret[1]["id"])
+
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         registrationid = int(ret[1]["id"])
 
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = True
         data["photo_consent"] = True
         
@@ -135,10 +192,20 @@ class testTSConsent(unittest.TestCase):
         x = GetConsent(host, port, token)
         x.setId(id)
         ret = x.send(timeout = 30)
-        self.assertTrue("register" in ret[1])
-        registrationId = int(ret[1]["register"])
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
         self.assertTrue(registrationId == registrationid)
 
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
         data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
@@ -151,9 +218,19 @@ class testTSConsent(unittest.TestCase):
         x.setRegistration(registrationid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
-        self.assertTrue("register" in ret[1])
-        registrationId = int(ret[1]["register"])
-        self.assertTrue(registrationid == registrationId)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
         
         data = ret[1]
         self.assertTrue("general_consent" in data)
@@ -172,19 +249,51 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404) #non-exist after delete
 
-        #non-exist register
+        #non-exist registration
         data = {}
-        data["register"] = 9999
+        data["registration"] = 9999
+        data["clinic"] = clinicid
+        data["patient"] = patientid
         data["general_consent"] = True
         data["photo_consent"] = True
 
         x = CreateConsent(host, port, token, data)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 400)
+
+        
+        #non-exist patient
+        data = {}
+        data["registration"] = registrationid
+        data["clinic"] = clinicid
+        data["patient"] = 9999
+        data["general_consent"] = True
+        data["photo_consent"] = True
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        
+        #non-exist clinic
+        data = {}
+        data["registration"] = registrationid
+        data["clinic"] = 9999
+        data["patient"] = patientid
+        data["general_consent"] = True
+        data["photo_consent"] = True
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        
 
         #invalid data boolean argu
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = 123
         data["photo_consent"] = 456
         x = CreateConsent(host, port, token, data)
@@ -192,7 +301,9 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = "hello"
         data["photo_consent"] = "world"
         x = CreateConsent(host, port, token, data)
@@ -201,7 +312,9 @@ class testTSConsent(unittest.TestCase):
         
         #invalid field name        
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = True
         data["photo_consent"] = False
         data["hello_world"] = True
@@ -211,15 +324,30 @@ class testTSConsent(unittest.TestCase):
 
         #not contain all the required fields
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
         data["general_consent"] = True
         x = CreateConsent(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
+
+        #create consent that contains info that doesn't match
+        data = {}
+        data["registration"] = registrationid
+        data["patient"] = patientid1
+        data["clinic"] = clinicid
+        data["general_consent"] = True
+        data["photo_consent"] = False
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+        
         
         #duplicate consent info with same registration
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = True
         data["photo_consent"] = False
         x = CreateConsent(host, port, token, data)
@@ -229,7 +357,9 @@ class testTSConsent(unittest.TestCase):
         id = int(ret[1]["id"])
 
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["patient"] = patientid
+        data["clinic"] = clinicid
         data["general_consent"] = False
         data["photo_consent"] = True
         x = CreateConsent(host, port, token, data)
@@ -247,6 +377,10 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
         x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid1)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
 
@@ -295,7 +429,9 @@ class testTSConsent(unittest.TestCase):
         registrationid = int(ret[1]["id"])
 
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["clinic"] = clinicid
+        data["patient"] = patientid
         data["general_consent"] = True
         data["photo_consent"] = True
 
@@ -381,7 +517,9 @@ class testTSConsent(unittest.TestCase):
         registrationid = int(ret[1]["id"])
 
         data = {}
-        data["register"] = registrationid
+        data["registration"] = registrationid
+        data["clinic"] = clinicid
+        data["patient"] = patientid
         data["general_consent"] = True
         data["photo_consent"] = False
 
@@ -390,14 +528,25 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
 
-        #get consent with consent id
+        #get consent with consent id -- a single record returned
         x = GetConsent(host, port, token)
         x.setId(id)
         ret = x.send(timeout = 30)
-        self.assertTrue("register" in ret[1])
-        registrationId = int(ret[1]["register"])
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
         self.assertTrue(registrationId == registrationid)
 
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
         data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
@@ -406,15 +555,25 @@ class testTSConsent(unittest.TestCase):
         self.assertTrue(data["photo_consent"] == False)
 
 
-        #get consent with registration id
+        #get consent with registration id only -- a single record returned
         x = GetConsent(host, port, token)
         x.setRegistration(registrationid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
-        self.assertTrue("register" in ret[1])
-        registrationId = int(ret[1]["register"])
-        self.assertTrue(registrationid == registrationId)
+               
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
 
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
         data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
@@ -428,50 +587,460 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404)
 
-        #get consent with non-exist registration id
+        #get consent with consent id but there are query args
         x = GetConsent(host, port, token)
+        x.setId(id)
         x.setRegistration(9999)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
         
+
+        data = {}
+
+        data["paternal_last"] = "1234abcd"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid1 = int(ret[1]["id"])
+
+        data = {}
+
+        data["paternal_last"] = "12abcd"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid2 = int(ret[1]["id"])
+        
+        
+        x = CreateRegistration(host, port, token, patient=patientid1, clinic=clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        registrationid1 = int(ret[1]["id"]) #registrationid1: patientid1 & clinicid
+
+        x = CreateRegistration(host, port, token, patient=patientid2, clinic=clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        registrationid2 = int(ret[1]["id"]) #registrationid2: patientid2 & clinicid
+
+        
+        
+        data = {}
+        data["registration"] = registrationid1
+        data["clinic"] = clinicid
+        data["patient"] = patientid1
+        data["general_consent"] = False
+        data["photo_consent"] = True
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        id1 = int(ret[1]["id"])
+
+        data = {}
+        data["registration"] = registrationid2
+        data["clinic"] = clinicid
+        data["patient"] = patientid2
+        data["general_consent"] = False
+        data["photo_consent"] = False
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        id2 = int(ret[1]["id"])
+        
+        #test clinic id only -- an array of items returned
+        idlist1 = [id, id1, id2] #The ids correspond with clinicid
+        
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+
+        consents = ret[1]
+        self.assertTrue(len(consents) == 3)
+        for x in consents:
+            if x["id"] in idlist1:
+                idlist1.remove(x["id"])
+        if len(idlist1):
+            self.assertTrue("failed to find all created consent items {}".format(idlist1) == None)
+
         x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         clinicid1 = int(ret[1]["id"])
 
+        x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/05/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid2 = int(ret[1]["id"])
+
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        registrationid1 = int(ret[1]["id"])
-    
-        #get consent with a registration id that exists but no consent info corresponds with it
+        registrationid3 = int(ret[1]["id"]) #registrationid3: patientid & clinicid1
+
+        x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid2)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        registrationid4 = int(ret[1]["id"]) #registrationid4: patientid & clinicid2
+
+        data = {}
+        data["registration"] = registrationid3
+        data["clinic"] = clinicid1
+        data["patient"] = patientid
+        data["general_consent"] = False
+        data["photo_consent"] = True
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        id3 = int(ret[1]["id"])
+
+        data = {}
+        data["registration"] = registrationid4
+        data["clinic"] = clinicid2
+        data["patient"] = patientid
+        data["general_consent"] = False
+        data["photo_consent"] = True
+
+        x = CreateConsent(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        id4 = int(ret[1]["id"])
+
+        idlist2 = [id, id3, id4] #The ids correspond with patientid
+
+        #Get consent with patient id only -- an array of items returned
         x = GetConsent(host, port, token)
+        x.setPatient(patientid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+
+        consents = ret[1]
+        self.assertTrue(len(consents) == 3)
+        for x in consents:
+            if x["id"] in idlist2:
+                idlist2.remove(x["id"])
+        if len(idlist2):
+            self.assertTrue("failed to find all created consent items {}".format(idlist2) == None)
+
+        #Get consent with patient id and clinic id -- single record returned
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid)
+        x.setClinic(clinicid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == True)
+        self.assertTrue(data["photo_consent"] == False)
+
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid1)
+        x.setClinic(clinicid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid1)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid1)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == False)
+        self.assertTrue(data["photo_consent"] == True)
+
+        #Get consent with patient id and registration id -- a single record returns
+        
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid)
+        x.setRegistration(registrationid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == True)
+        self.assertTrue(data["photo_consent"] == False)
+
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid1)
         x.setRegistration(registrationid1)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 404)
-
-        x = DeleteConsent(host, port, token, id)
-        ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid1)
 
-        x = DeleteRegistration(host, port, token, registrationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid1)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
 
-        x = DeleteRegistration(host, port, token, registrationid1)
-        ret = x.send(timeout=30)
+        self.assertTrue(data["general_consent"] == False)
+        self.assertTrue(data["photo_consent"] == True)
+
+        #get Consent with clinic id and registrion id -- a single record returns
+       
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid)
+        x.setRegistration(registrationid)
+        ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == True)
+        self.assertTrue(data["photo_consent"] == False)
+
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid)
+        x.setRegistration(registrationid1)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid1)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid1)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == False)
+        self.assertTrue(data["photo_consent"] == True)
+
+        #get consent with registration and patient and clinic ids -- a single record returned
+
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid)
+        x.setRegistration(registrationid)
+        x.setPatient(patientid)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == True)
+        self.assertTrue(data["photo_consent"] == False)
+
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid)
+        x.setRegistration(registrationid1)
+        x.setPatient(patientid1)
+        
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+        
+        self.assertTrue("registration" in ret[1])
+        self.assertTrue("patient" in ret[1])
+        self.assertTrue("clinic" in ret[1])
+        
+        registrationId = int(ret[1]["registration"])
+        self.assertTrue(registrationId == registrationid1)
+
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid1)
+        
+        data = ret[1]
+        self.assertTrue("general_consent" in data)
+        self.assertTrue("photo_consent" in data)
+
+        self.assertTrue(data["general_consent"] == False)
+        self.assertTrue(data["photo_consent"] == True)
+
+        #get consent with patient id that doesn't exist
+        x = GetConsent(host, port, token)
+        x.setPatient(9999)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        #get consent with clinic id that doesn't exist
+        x = GetConsent(host, port, token)
+        x.setClinic(9999)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        #get consent with registration id that doesn't exist
+        x = GetConsent(host, port, token)
+        x.setRegistration(9999)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        #get consent with registration/patient/clinic id that exists but no record corresponds to it
+        x = GetConsent(host, port, token)
+        x.setRegistration(registrationid3)
+        x.setPatient(patientid1)
+        x.setClinic(clinicid2)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+        
+        #delete all the records created
+        for x in [id, id1, id2, id3, id4]:
+            x = DeleteConsent(host, port, token, x)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for x in [registrationid, registrationid1, registrationid2, registrationid3, registrationid4]:
+            x = DeleteRegistration(host, port, token, x)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
 
         x = DeletePatient(host, port, token, patientid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid1)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid2)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
 
         x = DeleteClinic(host, port, token, clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
         x = DeleteClinic(host, port, token, clinicid1)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid2)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -483,7 +1052,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:")
     except getopt.GetoptError as err:
-        print str(err) 
+        #print str(err) 
         usage()
         sys.exit(2)
     global host
@@ -509,3 +1078,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''
