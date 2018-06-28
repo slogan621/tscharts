@@ -11,7 +11,7 @@ from test.tscharts.tscharts import Login, Logout
 from test.patient.patient import CreatePatient, DeletePatient
 from test.clinic.clinic import CreateClinic, DeleteClinic
 from test.register.register import CreateRegistration, GetRegistration, UpdateRegistration, DeleteRegistration
-'''
+
 class CreateConsent(ServiceAPI):
     def __init__(self, host, port, token, payload):
         super(CreateConsent, self).__init__()
@@ -192,7 +192,7 @@ class testTSConsent(unittest.TestCase):
         x = GetConsent(host, port, token)
         x.setId(id)
         ret = x.send(timeout = 30)
-        
+        self.assertEqual(ret[0],200)        
         self.assertTrue("registration" in ret[1])
         self.assertTrue("patient" in ret[1])
         self.assertTrue("clinic" in ret[1])
@@ -587,14 +587,6 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404)
 
-        #get consent with consent id but there are query args
-        x = GetConsent(host, port, token)
-        x.setId(id)
-        x.setRegistration(9999)
-        ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
-        
-
         data = {}
 
         data["paternal_last"] = "1234abcd"
@@ -648,6 +640,33 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         patientid2 = int(ret[1]["id"])
+        
+        data = {}
+
+        data["paternal_last"] = "111abcd"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid3 = int(ret[1]["id"])
         
         
         x = CreateRegistration(host, port, token, patient=patientid1, clinic=clinicid)
@@ -713,6 +732,12 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         clinicid2 = int(ret[1]["id"])
+        
+        x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/05/2015")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid3 = int(ret[1]["id"])
 
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid1)
         ret = x.send(timeout=30)
@@ -723,6 +748,11 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         registrationid4 = int(ret[1]["id"]) #registrationid4: patientid & clinicid2
+
+        x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid3)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        registrationid5 = int(ret[1]["id"]) #registrationid5: patientid & clinicid3
 
         data = {}
         data["registration"] = registrationid3
@@ -1000,13 +1030,50 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
 
+        #get consent with ids that exist but no record corresponds to it
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid1)
+        x.setClinic(clinicid1)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid2)
+        x.setRegistration(registrationid3)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid2)
+        x.setRegistration(registrationid3)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
+        #get consent with patient id that exists but no record corresponds to it
+        x = GetConsent(host, port, token)
+        x.setPatient(patientid3)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
+        #get consent with clinic id that exists but no record corresponds to it
+        x = GetConsent(host, port, token)
+        x.setClinic(clinicid3)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
+        #get consent with registration id that exists but no record corresponds to it
+        x = GetConsent(host, port, token)
+        x.setRegistration(registrationid5)
+        ret = x.send(timeout = 30)
+        self.assertEqual(404, ret[0])
+
         #get consent with registration/patient/clinic id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setRegistration(registrationid3)
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
         
         #delete all the records created
         for x in [id, id1, id2, id3, id4]:
@@ -1014,35 +1081,21 @@ class testTSConsent(unittest.TestCase):
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        for x in [registrationid, registrationid1, registrationid2, registrationid3, registrationid4]:
-            x = DeleteRegistration(host, port, token, x)
-            ret = x.send(timeout=30)
+        for x in [registrationid, registrationid1, registrationid2, registrationid3, registrationid4, registrationid5]:
+            k = DeleteRegistration(host, port, token, x)
+            ret = k.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+       
+        for x in [patientid, patientid1, patientid2, patientid3]:
+            k = DeletePatient(host, port, token, x)
+            ret = k.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
-        x = DeletePatient(host, port, token, patientid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
+        for x in [clinicid, clinicid1, clinicid2, clinicid3]:
+            k = DeleteClinic(host, port, token, x)
+            ret = k.send(timeout=30)
+            self.assertEqual(ret[0], 200)
 
-        x = DeletePatient(host, port, token, patientid1)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeletePatient(host, port, token, patientid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-
-        x = DeleteClinic(host, port, token, clinicid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinic(host, port, token, clinicid1)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinic(host, port, token, clinicid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
 
 def usage():
@@ -1078,4 +1131,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-'''
