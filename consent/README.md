@@ -28,7 +28,8 @@
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
-
+  
+`Get a consent information with a consent id that doesn't exists returns a NotFound Error`
 * **Example:**
 
 ```
@@ -88,6 +89,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
+  
+`Get a consent information with the registration id doesn't exist returns a BadRequest Error`
+
+`Get a consent information with the registration id that exists but no consent record corresponds to it returns a NotFound Error`
 
 * **Example:**
 ```
@@ -114,9 +119,105 @@ Content-Type: application/json
 
 {"general_consent":true,"registration":28,"clinic":30,"patient":5,"id":33,"photo_consent":true}
 ```
-**Get Multiple consent Information**
+
+**Get Consent Information by Multiple Search Fields**
 ----
-  Returns json data about all matching consent information resources. 
+  Returns json data about a single consent information resource. 
+
+* **URL**
+
+  /tscharts/v1/consent/
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+    **Required**
+
+    `registration` registration id AND `clinic` clinic id <br/>
+    or
+    `registration` registration id AND `patient` patient id <br/>
+    or
+    `patient` registration id AND `clinic` clinic id <br/>
+    or
+    `registration` registration id AND `clinic` clinic id AND `patient` patient id<br/>
+
+    **Optional:**
+ 
+    None
+
+* **Data Params**
+
+  None
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{"registration":id,"clinic":id,"patient":id,"general_consent":true|false,"photo_consent":true|false}`
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 404 NOT FOUND<br />
+  * **Code:** 500 SERVER ERROR
+  
+`Get a consent information with the registration id, patient id, and clinic id that don't exist returns a BadRequest Error`
+
+`Get a consent information with the registration id, patient id, and clinic id that exist but no consent record corresponds to it returns a NotFound Error`
+* **Example:**
+```
+GET /tscharts/v1/consent/?registration=36&patient=33 HTTP/1.1
+Host: 54.193.67.202
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
+Accept: */*
+User-Agent: python-requests/2.18.4
+Content-Type: application/json
+Authorization: Token a1c3bd0728e2fc8e0ce83cbbdad016ed4b55ae80
+Content-Length: 2
+
+{}HTTP/1.1 200 OK
+Date: Thu, 28 Jun 2018 05:06:07 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+Content-Length: 97
+Allow: GET, POST, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/json
+
+{"patient":33,"photo_consent":true,"general_consent":false,"clinic":27,"registration":36,"id":37}
+
+GET /tscharts/v1/consent/?registration=35&clinic=27 HTTP/1.1
+Host: 54.193.67.202
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
+Accept: */*
+User-Agent: python-requests/2.18.4
+Content-Type: application/json
+Authorization: Token a1c3bd0728e2fc8e0ce83cbbdad016ed4b55ae80
+Content-Length: 2
+
+{}HTTP/1.1 200 OK
+Date: Thu, 28 Jun 2018 05:06:07 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+Content-Length: 97
+Allow: GET, POST, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/json
+
+{"patient":32,"photo_consent":false,"general_consent":true,"clinic":27,"registration":35,"id":36}
+```
+
+**Get Multiple consent Information with Patient ID or Clinic ID**
+----
+  Returns an array of consent information that matches the given Patient ID or the Clinic ID. 
 
 * **URL**
 
@@ -131,11 +232,12 @@ Content-Type: application/json
     **Required**
 
     `clinic` clinic id<br />
-
+    or
+    `patient` patient id<br />
+    
     **Optional:**
  
-    `registration` registration id<br />
-    `patient` patient id<br />
+    None
 
 * **Data Params**
 
@@ -151,6 +253,10 @@ Content-Type: application/json
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
+  
+`Get an array of consents with patient/clinic that doesn't exist returns a BadRequest Error`
+
+`Get an array of consents with patient/clinic that exists but no consent records correspond with it returns a NotFound Error`
 
 * **Example:**
 ```
@@ -176,6 +282,29 @@ Connection: Keep-Alive
 Content-Type: application/json
 
 [{"general_consent":true,"registration":28,"patient":10,"clinic":5,"id":33,"photo_consent":true},{"general_consent":false, "registration":30,"patient":11,"clinic":5,"id":6,"photo_consent":true}]
+
+GET /tscharts/v1/consent/?patient=6 HTTP/1.1
+Host: 54.193.67.202
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
+Accept: */*
+User-Agent: python-requests/2.18.4
+Content-Type: application/json
+Authorization: Token c418abb265c76faa251c53c7dd152ecf768920f1
+Content-Length: 2
+
+{}HTTP/1.1 200 OK
+Date: Fri, 22 Jun 2018 04:43:42 GMT
+Server: Apache/2.4.7 (Ubuntu)
+Vary: Accept
+X-Frame-Options: SAMEORIGIN
+Content-Length: 67
+Allow: GET, POST, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: application/json
+
+[{"general_consent":true,"registration":28,"patient":6,"clinic":5,"id":33,"photo_consent":true},{"general_consent":false, "registration":30,"patient":11,"clinic":7,"id":6,"photo_consent":true}]
 ```
 
 **Create Consent Information**
@@ -216,11 +345,15 @@ Content-Type: application/json
 * **Error Response:**
 
   * **Code:** 400 BAD REQUEST<br />
-  * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
   
-  `Creating a consent information that has the same registration id as one that already exists in the database returns a BAD REQUEST response.` 
-  `Creating a consent information that has clinic id or patient id that doesn't match with the registration returns a BAD REQUEST response.`
+  `Creating a consent information that has the same registration id as one that already exists in the database returns a BadRequest error.` 
+  
+  `Creating a consent information that has clinic id or patient id that doesn't match with the registration returns a BadRequest error.`
+  
+  `Creating a consent information with missing fields returns a BadRequest error.`
+  
+  `Creating a consent information with patient id, clinic id, or registration id that couldn't be found returns a BadRequest error.`
 
 * **Example:**
 
