@@ -565,7 +565,7 @@ class Scheduler():
                     smallest = tmp
         return ret
 
-    def isWaiting(self, routing):
+    def isScheduledOrCheckedIn(self, routing):
         retval = False
 
         for x in routing:
@@ -585,7 +585,7 @@ class Scheduler():
         queueables = []
         retval = None      # default: nothing to queue on this routing slip
 
-        if not self.isWaiting(routing):
+        if not self.isScheduledOrCheckedIn(routing):
             for x in routing:
                 entry = GetRoutingSlipEntry(self._host, self._port, self._token)
 	    	entry.setId(x)

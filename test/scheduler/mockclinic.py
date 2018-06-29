@@ -474,7 +474,7 @@ class MockClinic:
         entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrino")) 
         print("Creating station {}".format("ENT"))
         orthoStations = []
-        for x in [("Ortho1","Ortorino"), ("Ortho2","Ortorino2")]:
+        for x in [("Ortho1","Ortorino1"), ("Ortho2","Ortorino2")]:
             print("Creating station {}".format(x))
             orthoStations.append(self.createClinicStation(clinic, ortho, x))
         print("Creating station {}".format("X-Ray"))
