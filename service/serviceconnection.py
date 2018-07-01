@@ -93,7 +93,10 @@ class ServiceConnection():
     auth = self.getAuth()
 
     payload = request.getPayloadAsJSON().encode("utf-8")
-    url = "https://%s:%d/%s" % (request.getHost(), request.getPort(), request.getURL())
+    proto = "http"
+    if request.getPort() == 443:
+        proto = "https"
+    url = "%s://%s:%d/%s" % (proto, request.getHost(), request.getPort(), request.getURL())
 
     if isGet:
       try:
