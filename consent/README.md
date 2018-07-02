@@ -1,6 +1,6 @@
-**Get Consent Information by consent ID**
+**Get Consent Resource by ID**
 ----
-  Returns json data about a single consent information resource. 
+  Returns json data about a single consent resource. 
 
 * **URL**
 
@@ -29,7 +29,7 @@
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
   
-`Get a consent information with a consent id that doesn't exists returns a NotFound Error`
+`Attempting to get a consent resource using a consent id that doesn't exist returns a NotFound Error`
 * **Example:**
 
 ```
@@ -53,9 +53,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 {"registration":125,"clinic":10,"patient":20,"general_consent":true,"photo_consent":false,"id":51}
 ```
-**Get Consent Information by Registration ID**
+**Search for Consent Resources**
 ----
-  Returns json data about a single consent information resource. 
+  Return one or more consent resources based on search terms
 
 * **URL**
 
@@ -67,14 +67,26 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-    **Required**
+    **Required:**
 
-    `registration` registration id<br />
-
-    **Optional:**
+    See discusson below
  
-    None
+    **Optional:**
 
+    `clinic` clinic id <br/>
+    `patient` patient id <br/>
+    `registration` registration id <br/>
+
+The following are valid usages of this API:
+
+GET /tscharts/v1/consent?patient=id - return an array of consents that match the patient
+GET /tscharts/v1/consent?clinic=id - return an array of consents that match the clinic
+GET /tscharts/v1/consent?registration=id - return an array containing a single consent (will only be one found for a registration)
+GET /tscharts/v1/consent?patient=id&clinic=id - return an array containing a single consent resource (will be for the specified patient and clinic) 
+GET /tscharts/v1/consent?patient=id&registration=id - return an array containing a single consent resource (will be for the specified patient and registration)
+GET /tscharts/v1/consent?clinic=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration)
+GET /tscharts/v1/consent?clinic=id&patient=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration)
+ 
 * **Data Params**
 
   None
@@ -82,7 +94,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"registration":id,"clinic":id,"patient":id,"general_consent":true|false,"photo_consent":true|false}`
+    **Content (array of resources):** `[{"registration":id,"clinic":id,"patient":id,"general_consent":true|false,"photo_consent":true|false}, ...]`
  
 * **Error Response:**
 
@@ -90,11 +102,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
   
-`Get a consent information with the registration id doesn't exist returns a BadRequest Error`
-
-`Get a consent information with the registration id that exists but no consent record corresponds to it returns a NotFound Error`
-
-* **Example:**
+* **Example1:**
 ```
 GET /tscharts/v1/consent/?registration=28 HTTP/1.1
 Host: 54.193.67.202
@@ -117,56 +125,10 @@ Keep-Alive: timeout=5, max=100
 Connection: Keep-Alive
 Content-Type: application/json
 
-{"general_consent":true,"registration":28,"clinic":30,"patient":5,"id":33,"photo_consent":true}
+[{"general_consent":true,"registration":28,"clinic":30,"patient":5,"id":33,"photo_consent":true}]
 ```
 
-**Get Consent Information by Multiple Search Fields**
-----
-  Returns json data about a single consent information resource. 
-
-* **URL**
-
-  /tscharts/v1/consent/
-
-* **Method:**
-
-  `GET`
-  
-*  **URL Params**
-
-    **Required**
-
-    `registration` registration id AND `clinic` clinic id <br/>
-    or
-    `registration` registration id AND `patient` patient id <br/>
-    or
-    `patient` registration id AND `clinic` clinic id <br/>
-    or
-    `registration` registration id AND `clinic` clinic id AND `patient` patient id<br/>
-
-    **Optional:**
- 
-    None
-
-* **Data Params**
-
-  None
-
-* **Success Response:**
-
-  * **Code:** 200 <br />
-    **Content:** `{"registration":id,"clinic":id,"patient":id,"general_consent":true|false,"photo_consent":true|false}`
- 
-* **Error Response:**
-
-  * **Code:** 400 BAD REQUEST<br />
-  * **Code:** 404 NOT FOUND<br />
-  * **Code:** 500 SERVER ERROR
-  
-`Get a consent information with the registration id, patient id, and clinic id that don't exist returns a BadRequest Error`
-
-`Get a consent information with the registration id, patient id, and clinic id that exist but no consent record corresponds to it returns a NotFound Error`
-* **Example:**
+* **Example2:**
 ```
 GET /tscharts/v1/consent/?registration=36&patient=33 HTTP/1.1
 Host: 54.193.67.202
@@ -189,7 +151,7 @@ Keep-Alive: timeout=5, max=100
 Connection: Keep-Alive
 Content-Type: application/json
 
-{"patient":33,"photo_consent":true,"general_consent":false,"clinic":27,"registration":36,"id":37}
+[{"patient":33,"photo_consent":true,"general_consent":false,"clinic":27,"registration":36,"id":37}]
 
 GET /tscharts/v1/consent/?registration=35&clinic=27 HTTP/1.1
 Host: 54.193.67.202
@@ -212,53 +174,9 @@ Keep-Alive: timeout=5, max=100
 Connection: Keep-Alive
 Content-Type: application/json
 
-{"patient":32,"photo_consent":false,"general_consent":true,"clinic":27,"registration":35,"id":36}
+[{"patient":32,"photo_consent":false,"general_consent":true,"clinic":27,"registration":35,"id":36}]
 ```
-
-**Get Multiple consent Information with Patient ID or Clinic ID**
-----
-  Returns an array of consent information that matches the given Patient ID or the Clinic ID. 
-
-* **URL**
-
-  /tscharts/v1/consent/
-
-* **Method:**
-
-  `GET`
-  
-*  **URL Params**
-
-    **Required**
-
-    `clinic` clinic id<br />
-    or
-    `patient` patient id<br />
-    
-    **Optional:**
- 
-    None
-
-* **Data Params**
-
-  None
-
-* **Success Response:**
-
-  * **Code:** 200 <br />
-    **Content:** `[{"registration":id,"general_consent":true|false,"photo_consent":true|false}, ...]`
- 
-* **Error Response:**
-
-  * **Code:** 400 BAD REQUEST<br />
-  * **Code:** 404 NOT FOUND<br />
-  * **Code:** 500 SERVER ERROR
-  
-`Get an array of consents with patient/clinic that doesn't exist returns a BadRequest Error`
-
-`Get an array of consents with patient/clinic that exists but no consent records correspond with it returns a NotFound Error`
-
-* **Example:**
+* **Example3:**
 ```
 GET /tscharts/v1/consent/?clinic=5 HTTP/1.1
 Host: 54.193.67.202
@@ -306,10 +224,9 @@ Content-Type: application/json
 
 [{"general_consent":true,"registration":28,"patient":6,"clinic":5,"id":33,"photo_consent":true},{"general_consent":false, "registration":30,"patient":11,"clinic":7,"id":6,"photo_consent":true}]
 ```
-
-**Create Consent Information**
+**Create a Consent Resource**
 ----
-  Record consent information get from patients.
+  Create a consent resource using data obtained from a patient at registration.
 
 * **URL**
 
@@ -330,8 +247,8 @@ Content-Type: application/json
    `registration` registration resource id <br />
    `patient` patient resource id <br />
    `clinic` clinic resource id <br />
-   `general_consent` [true|false] whether the patient gives consent to the registration form <br />
-   `photo_consent` [true|false] whether the patient gives consent to photograph usage <br />
+   `general_consent` [true|false] whether the patient gave consent for care at registration time <br />
+   `photo_consent` [true|false] whether the patient gives consent for photograph usage at time of registration <br />
 
    **Optional:**
 
@@ -347,13 +264,13 @@ Content-Type: application/json
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 500 SERVER ERROR
   
-  `Creating a consent information that has the same registration id as one that already exists in the database returns a BadRequest error.` 
+  `Attempting to create a consent resource that has the same registration id as one that already exists in the database returns a BadRequest error.` 
   
-  `Creating a consent information that has clinic id or patient id that doesn't match with the registration returns a BadRequest error.`
+  `Attempting to create a consent resource that has clinic id or patient id that doesn't match with the registration returns a BadRequest error.`
   
-  `Creating a consent information with missing fields returns a BadRequest error.`
+  `Attempting to create a consent resource with missing fields returns a BadRequest error.`
   
-  `Creating a consent information with patient id, clinic id, or registration id that couldn't be found returns a BadRequest error.`
+  `Attempting to create a consent resource with patient id, clinic id, or registration id that couldn't be found returns a BadRequest error.`
 
 * **Example:**
 
@@ -380,9 +297,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 {"id":141}
 ```
 
-**Delete a Consent Information**
+**Delete a Consent Resource**
 ----
-  Delete a consent information. Use is not recommended except for unit test applications.
+  Delete a consent resource. Use is not recommended except for unit test applications.
 
 * **URL**
 
@@ -435,4 +352,5 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 {}
 ```
+
 

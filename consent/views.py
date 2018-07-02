@@ -107,20 +107,23 @@ class ConsentView(APIView):
                             ret.append(y)
                         if ret == []:
                             raise NotFound
-
+                    #only one consent exists
                     elif aList[0] == 'registration':
                         try:
                             consent = Consent.objects.get(**kwargs)
                         except:
                             raise NotFound
-                        ret = self.serialize(consent)
+                        ret = []
+                        y = self.serialize(consent)
+                        ret.append(y)
                 else:
                     try:
                         consent = Consent.objects.get(**kwargs)
                     except:
                         raise NotFound
-                    ret = self.serialize(consent)     
-                    
+                    ret = []
+                    y = self.serialize(consent)
+                    ret.append(y) 
             
 
         if badRequest:
