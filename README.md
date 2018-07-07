@@ -114,7 +114,9 @@ active at the clinic. Each clinicstation is created before the clinic.
  * surgeryhistory - used to add, delete, update and get surgery histories from the database. Used to record the surgery histories of the patients.
     * [API](../master/surgeryhistory/README.md)
     * [Unit Tests](../master/test/surgeryhistory/surgeryhistory.py)
- 
+ * consent - used to add, delete, update and get consent information from the database. Used to record the consent information of the patients.
+    * [API](../master/consent/README.md)
+    * [Unit Tests](../master/test/consent/consent.py) 
 Payload (when provided) must be in JSON.
 
 Generally, we use the following HTTP response codes to indicate the status
