@@ -19,7 +19,7 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequ
 import sys
 import numbers
 import json 
-
+from common.decorators import *
 
 class ConsentView(APIView):
     authentication_classes = (TokenAuthentication,)
@@ -35,6 +35,7 @@ class ConsentView(APIView):
         m["photo_consent"] = entry.photo_consent
         return m
     
+    @log_request
     def get(self, request = None, consent_id = None, format = None):
         consent = None
         badRequest = False
@@ -130,6 +131,7 @@ class ConsentView(APIView):
         
         return valid, kwargs    
 
+    @log_request
     def post(self, request, format = None):  
         badRequest = False
         implError = False
@@ -211,6 +213,7 @@ class ConsentView(APIView):
         else:
             return Response({'id': consent.id}) 
 
+    @log_request
     def delete(self, request, consent_id=None, format=None):
         consent = None
 
