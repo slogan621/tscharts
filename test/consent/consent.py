@@ -196,7 +196,7 @@ class testTSConsent(unittest.TestCase):
         self.assertTrue("registration" in ret[1])
         self.assertTrue("patient" in ret[1])
         self.assertTrue("clinic" in ret[1])
-        
+                
         registrationId = int(ret[1]["registration"])
         self.assertTrue(registrationId == registrationid)
 
@@ -583,6 +583,11 @@ class testTSConsent(unittest.TestCase):
 
         self.assertTrue(data["general_consent"] == True)
         self.assertTrue(data["photo_consent"] == False)
+
+        #get consent without consentid and optional params
+        x = GetConsent(host, port, token)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0],400)
 
         #get consent with non-exist consent id
         x = GetConsent(host, port, token)
@@ -1038,56 +1043,62 @@ class testTSConsent(unittest.TestCase):
         x = GetConsent(host, port, token)
         x.setPatient(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with clinic id that doesn't exist
         x = GetConsent(host, port, token)
         x.setClinic(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with registration id that doesn't exist
         x = GetConsent(host, port, token)
         x.setRegistration(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with ids that exist but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setPatient(patientid1)
         x.setClinic(clinicid1)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         x = GetConsent(host, port, token)
         x.setClinic(clinicid2)
         x.setRegistration(registrationid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         x = GetConsent(host, port, token)
         x.setPatient(patientid2)
         x.setRegistration(registrationid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with patient id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setPatient(patientid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with clinic id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setClinic(clinicid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with registration id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setRegistration(registrationid5)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with registration/patient/clinic id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
@@ -1095,7 +1106,8 @@ class testTSConsent(unittest.TestCase):
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual([],ret[1])
         
         #delete all the records created
         for x in [id, id1, id2, id3, id4]:

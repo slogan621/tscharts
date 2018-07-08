@@ -79,13 +79,13 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 The following are valid usages of this API:
 
-GET /tscharts/v1/consent?patient=id - return an array of consents that match the patient
-GET /tscharts/v1/consent?clinic=id - return an array of consents that match the clinic
-GET /tscharts/v1/consent?registration=id - return an array containing a single consent (will only be one found for a registration)
-GET /tscharts/v1/consent?patient=id&clinic=id - return an array containing a single consent resource (will be for the specified patient and clinic) 
-GET /tscharts/v1/consent?patient=id&registration=id - return an array containing a single consent resource (will be for the specified patient and registration)
-GET /tscharts/v1/consent?clinic=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration)
-GET /tscharts/v1/consent?clinic=id&patient=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration)
+GET /tscharts/v1/consent?patient=id - return an array of consents that match the patient <br/>
+GET /tscharts/v1/consent?clinic=id - return an array of consents that match the clinic <br/>
+GET /tscharts/v1/consent?registration=id - return an array containing a single consent (will only be one found for a registration) <br/>
+GET /tscharts/v1/consent?patient=id&clinic=id - return an array containing a single consent resource (will be for the specified patient and clinic) <br/>
+GET /tscharts/v1/consent?patient=id&registration=id - return an array containing a single consent resource (will be for the specified patient and registration) <br/>
+GET /tscharts/v1/consent?clinic=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration) <br/>
+GET /tscharts/v1/consent?clinic=id&patient=id&registration=id - return an array containing a single consent resource (will be for the specified clinic and registration) <br/>
  
 * **Data Params**
 
@@ -101,7 +101,13 @@ GET /tscharts/v1/consent?clinic=id&patient=id&registration=id - return an array 
   * **Code:** 400 BAD REQUEST<br />
   * **Code:** 404 NOT FOUND<br />
   * **Code:** 500 SERVER ERROR
-  
+
+`Attempting to get a consent resource with registrationid/patientid/clinicid that doesn't exist returns a notFound error.`
+
+`Attempting to get a consent resource without any URL parameters returns a badRequest error.`
+
+`Getting a consent resource with registrationid/patientid/clinicid that exists but no consent record corresponds to it returns an empty array.`
+
 * **Example1:**
 ```
 GET /tscharts/v1/consent/?registration=28 HTTP/1.1
