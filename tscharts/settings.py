@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'category',
     'surgeryhistory',
     'requestlog',
+    'consent',
 ]
 
 MIDDLEWARE_CLASSES = [
