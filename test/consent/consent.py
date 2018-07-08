@@ -196,7 +196,7 @@ class testTSConsent(unittest.TestCase):
         self.assertTrue("registration" in ret[1])
         self.assertTrue("patient" in ret[1])
         self.assertTrue("clinic" in ret[1])
-        
+                
         registrationId = int(ret[1]["registration"])
         self.assertTrue(registrationId == registrationid)
 
@@ -219,20 +219,22 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+ 
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -555,31 +557,37 @@ class testTSConsent(unittest.TestCase):
         self.assertTrue(data["photo_consent"] == False)
 
 
-        #get consent with registration id only -- a single record returned
+        #get consent with registration id only -- an array containing a single record returned
         x = GetConsent(host, port, token)
         x.setRegistration(registrationid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
-               
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
         self.assertTrue(data["general_consent"] == True)
         self.assertTrue(data["photo_consent"] == False)
+
+        #get consent without consentid and optional params
+        x = GetConsent(host, port, token)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0],400)
 
         #get consent with non-exist consent id
         x = GetConsent(host, port, token)
@@ -587,6 +595,7 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 404)
 
+        #create patient1
         data = {}
 
         data["paternal_last"] = "1234abcd"
@@ -613,7 +622,7 @@ class testTSConsent(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         patientid1 = int(ret[1]["id"])
-
+        #create patient 2
         data = {}
 
         data["paternal_last"] = "12abcd"
@@ -641,6 +650,7 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid2 = int(ret[1]["id"])
         
+        #create patient3
         data = {}
 
         data["paternal_last"] = "111abcd"
@@ -668,12 +678,13 @@ class testTSConsent(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid3 = int(ret[1]["id"])
         
-        
+        #create registration 1
         x = CreateRegistration(host, port, token, patient=patientid1, clinic=clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         registrationid1 = int(ret[1]["id"]) #registrationid1: patientid1 & clinicid
 
+        #create registration 2
         x = CreateRegistration(host, port, token, patient=patientid2, clinic=clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -720,35 +731,40 @@ class testTSConsent(unittest.TestCase):
                 idlist1.remove(x["id"])
         if len(idlist1):
             self.assertTrue("failed to find all created consent items {}".format(idlist1) == None)
-
+        #create clinic 1
         x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         clinicid1 = int(ret[1]["id"])
 
+        #create clinic 2
         x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/05/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         clinicid2 = int(ret[1]["id"])
         
+        #create clinic 3
         x = CreateClinic(host, port, token, "Ensenada", "02/08/2016", "02/05/2015")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         self.assertTrue("id" in ret[1])
         clinicid3 = int(ret[1]["id"])
 
+        #create registration 3
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         registrationid3 = int(ret[1]["id"]) #registrationid3: patientid & clinicid1
 
+        #create registration 4
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid2)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         registrationid4 = int(ret[1]["id"]) #registrationid4: patientid & clinicid2
 
+        #create registration 5
         x = CreateRegistration(host, port, token, patient=patientid, clinic=clinicid3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -794,27 +810,29 @@ class testTSConsent(unittest.TestCase):
         if len(idlist2):
             self.assertTrue("failed to find all created consent items {}".format(idlist2) == None)
 
-        #Get consent with patient id and clinic id -- single record returned
+        #Get consent with patient id and clinic id -- an array that contains a single record returned
         x = GetConsent(host, port, token)
         x.setPatient(patientid)
         x.setClinic(clinicid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -826,49 +844,51 @@ class testTSConsent(unittest.TestCase):
         x.setClinic(clinicid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid1)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid1)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
         self.assertTrue(data["general_consent"] == False)
         self.assertTrue(data["photo_consent"] == True)
 
-        #Get consent with patient id and registration id -- a single record returns
+        #Get consent with patient id and registration id -- an array that contains a single record returns
         
         x = GetConsent(host, port, token)
         x.setPatient(patientid)
         x.setRegistration(registrationid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -880,49 +900,52 @@ class testTSConsent(unittest.TestCase):
         x.setRegistration(registrationid1)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid1)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid1)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
         self.assertTrue(data["general_consent"] == False)
         self.assertTrue(data["photo_consent"] == True)
 
-        #get Consent with clinic id and registrion id -- a single record returns
+        #get Consent with clinic id and registrion id -- an array that contains a single record returns
        
         x = GetConsent(host, port, token)
         x.setClinic(clinicid)
         x.setRegistration(registrationid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+
+        data = ret[1][0]
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -934,28 +957,30 @@ class testTSConsent(unittest.TestCase):
         x.setRegistration(registrationid1)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid1)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid1)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
         self.assertTrue(data["general_consent"] == False)
         self.assertTrue(data["photo_consent"] == True)
 
-        #get consent with registration and patient and clinic ids -- a single record returned
+        #get consent with registration and patient and clinic ids -- an array that contains a single record returned
 
         x = GetConsent(host, port, token)
         x.setClinic(clinicid)
@@ -963,21 +988,22 @@ class testTSConsent(unittest.TestCase):
         x.setPatient(patientid)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -991,21 +1017,22 @@ class testTSConsent(unittest.TestCase):
         
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]),1)
+        data = ret[1][0]
+
+        self.assertTrue("registration" in data)
+        self.assertTrue("patient" in data)
+        self.assertTrue("clinic" in data)
         
-        self.assertTrue("registration" in ret[1])
-        self.assertTrue("patient" in ret[1])
-        self.assertTrue("clinic" in ret[1])
-        
-        registrationId = int(ret[1]["registration"])
+        registrationId = int(data["registration"])
         self.assertTrue(registrationId == registrationid1)
 
-        clinicId = int(ret[1]["clinic"])
+        clinicId = int(data["clinic"])
         self.assertTrue(clinicId == clinicid)
         
-        patientId = int(ret[1]["patient"])
+        patientId = int(data["patient"])
         self.assertTrue(patientId == patientid1)
         
-        data = ret[1]
         self.assertTrue("general_consent" in data)
         self.assertTrue("photo_consent" in data)
 
@@ -1016,56 +1043,62 @@ class testTSConsent(unittest.TestCase):
         x = GetConsent(host, port, token)
         x.setPatient(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with clinic id that doesn't exist
         x = GetConsent(host, port, token)
         x.setClinic(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with registration id that doesn't exist
         x = GetConsent(host, port, token)
         x.setRegistration(9999)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 400)
+        self.assertEqual(ret[0], 404)
 
         #get consent with ids that exist but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setPatient(patientid1)
         x.setClinic(clinicid1)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         x = GetConsent(host, port, token)
         x.setClinic(clinicid2)
         x.setRegistration(registrationid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         x = GetConsent(host, port, token)
         x.setPatient(patientid2)
         x.setRegistration(registrationid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with patient id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setPatient(patientid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with clinic id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setClinic(clinicid3)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with registration id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
         x.setRegistration(registrationid5)
         ret = x.send(timeout = 30)
-        self.assertEqual(404, ret[0])
+        self.assertEqual(200, ret[0])
+        self.assertEqual([],ret[1])
 
         #get consent with registration/patient/clinic id that exists but no record corresponds to it
         x = GetConsent(host, port, token)
@@ -1073,7 +1106,8 @@ class testTSConsent(unittest.TestCase):
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
         ret = x.send(timeout = 30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual([],ret[1])
         
         #delete all the records created
         for x in [id, id1, id2, id3, id4]:
