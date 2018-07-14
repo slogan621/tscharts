@@ -51,7 +51,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 {"patient":356,"state":"Checked In","clinic":287,"timeout":"2017-04-21T05:52:49Z","timein":"2017-04-21T05:52:54Z","id":141}
 ```
   
-**Get Multiple Clinic Stations**
+**Search for Registration Objects**
 ----
   Returns data about all matching register resources.
 
@@ -68,11 +68,14 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    None
 
 * **Data Params**
+ 
+   NOTE: this form of request is deprecated. It will be replaced by a
+   request using query args/URL params instead of JSON payload to 
+   specify search terms.
 
    **Required:**
 
    None
- 
 
    **Optional:**
  
