@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2018
+#(C) Copyright Thousand Smiles Foundation 2016-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ class StationView(APIView):
                 m = {}
                 m["id"] = station.id  
                 m["name"] = station.name
+                m["level"] = station.level
                 ret = m
             else:
                 ret = []
@@ -57,6 +58,7 @@ class StationView(APIView):
                     m = {}
                     m["id"] = x.id  
                     m["name"] = x.name
+                    m["level"] = x.level
                     ret.append(m)
             return Response(ret)
 
@@ -64,11 +66,18 @@ class StationView(APIView):
         badRequest = False
         implError = False
 
+        kwargs = {}
+
         data = json.loads(request.body)
         try:
-            name = data["name"]
+            kwargs["name"] = data["name"]
+            name = kwargs["name"]
         except:
             badRequest = True
+        try:
+            kwargs["level"] = data["level"]
+        except:
+            pass
 
         if not badRequest:
             station = None
@@ -86,7 +95,7 @@ class StationView(APIView):
 
             if not station:
                 try:
-                    station = Station(name=name)
+                    station = Station(**kwargs)
                     if station:
                         station.save()
                     else:
@@ -104,15 +113,28 @@ class StationView(APIView):
         badRequest = False
         implError = False
         notFound = False
+        hasName = False
+        hasLevel = False
 
         data = json.loads(request.body)
         try:
             id = data["id"]
         except:
             badRequest = True
+
         try:
             name = data["name"]
+            hasName = True
         except:
+            pass
+
+        try:
+            level = data["level"]
+            hasLevel = True
+        except:
+            pass
+
+        if not hasLevel and not hasName:
             badRequest = True
 
         if not badRequest:
@@ -133,7 +155,10 @@ class StationView(APIView):
                 notFound = True 
             else:
                 try:
-                    station.name=name
+                    if hasName:
+                        station.name=name
+                    if hasLevel:
+                        station.level=level
                     station.save()
                 except:
                     implError = True

@@ -11,7 +11,7 @@ from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 
 class CreateStation(ServiceAPI):
-    def __init__(self, host, port, token, name):
+    def __init__(self, host, port, token, name, level=1):
         super(CreateStation, self).__init__()
         
         self.setHttpMethod("POST")
@@ -19,7 +19,7 @@ class CreateStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"name": name}
+        payload = {"name": name, "level": level}
         self.setPayload(payload)
         self.setURL("tscharts/v1/station/")
     

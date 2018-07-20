@@ -253,9 +253,9 @@ class MockClinic:
             retval = self._clinicid
         return retval
 
-    def createStation(self, name):
+    def createStation(self, name, level):
         retval = None
-        x = CreateStation(self._host, self._port, self._token, name)
+        x = CreateStation(self._host, self._port, self._token, name, level)
         ret = x.send(timeout=30)
         if ret[0] != 200:
             print("failed to create station {}".format(name))
@@ -459,13 +459,13 @@ class MockClinic:
         print("Creating clinic")
         clinic = self.createClinic("Ensenada")
         print("Creating stations")
-        dental = self.createStation("Dental")
-        ent = self.createStation("ENT")
-        ortho = self.createStation("Ortho") 
-        xray = self.createStation("X-Ray") 
-        surgery = self.createStation("Surgery Screening") 
-        speech = self.createStation("Speech") 
-        audiology = self.createStation("Audiology") 
+        dental = self.createStation("Dental", 1)
+        ent = self.createStation("ENT", 2)
+        ortho = self.createStation("Ortho", 1) 
+        xray = self.createStation("X-Ray", 2) 
+        surgery = self.createStation("Surgery Screening", 1) 
+        speech = self.createStation("Speech", 1) 
+        audiology = self.createStation("Audiology", 1) 
 
         dentalStations = []
         for x in [("Dental1","Dental1"), ("Dental2","Dental2"), ("Dental3", "Dental3"), ("Dental4","Dental4"), ("Dental5","Dental5")]:

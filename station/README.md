@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{ id : 12, name : "Dental Chair 1"}`
+    **Content:** `{ "id" : integer, "name" : string, "level" : integer}`
  
 * **Error Response:**
 
@@ -49,10 +49,10 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"id":99,"name":"ENT"}
+{"id":99,"name":"ENT", "level": 2}
 ```
   
-**Get Multiple Station**
+**Get Multiple Stations**
 ----
   Returns data about all known stations.
 
@@ -75,7 +75,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `[{ id : 12, name : "Dental Chair 1" }, ...]`
+    **Content:** `[{"id": integer, "name" : string, "level": integer}, ...]`
  
 * **Error Response:**
 
@@ -103,14 +103,14 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-[{"id":99,"name":"ENT"},{"id":95,"name":"Dental"},{"id":96,"name":"Ortho"},{"id":97,"name":"Screening"},{"id":100,"name":"test1"},{"id":101,"name":"test2"},{"id":102,"name":"test3"}]
+[{"id":99,"name":"ENT", "level":1},{"id":95,"name":"Dental", "level":1},{"id":96,"name":"Ortho", "level":1},{"id":97,"name":"Screening", "level":1},{"id":100,"name":"test1", "level":1},{"id":101,"name":"test2", "level":1},{"id":102,"name":"test3", "level":1}]
 ```
   
 **Create Station**
 ----
   Create a station instance. Stations are rarely created, since they are 
-  mostly static for a physical clinic. To create stations that are
-  operational at a specific clinic, use clinicstation.
+  mostly static for a physical clinic. To create instances of a station
+  that are operational at a specific clinic, use clinicstation.
 
 * **URL**
 
@@ -129,6 +129,10 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    **Required:**
  
    `name` name of the station<br />
+
+   **Optional:**
+
+   `level` integer level of station. Higher number means higher priority when scheduling patients (e.g., if Dental is 1, and X-Ray is 2, patient will be sent to X-Ray before Dental<br />
 
 * **Success Response:**
 

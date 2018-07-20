@@ -14,7 +14,7 @@ from test.station.station import CreateStation, DeleteStation
 from test.patient.patient import CreatePatient, GetPatient, DeletePatient
 
 class CreateClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, clinic, station, active=False, away=True, finished=False, name="", name_es=""):
+    def __init__(self, host, port, token, clinic, station, active=False, away=True, finished=False, name="", name_es="", level="1"):
         super(CreateClinicStation, self).__init__()
         
         self.setHttpMethod("POST")
@@ -22,7 +22,7 @@ class CreateClinicStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"clinic": clinic, "away": away, "station": station, "active": active, "name": name, "finished": finished, "name_es": name_es}
+        payload = {"clinic": clinic, "away": away, "station": station, "active": active, "name": name, "finished": finished, "name_es": name_es, "level": level}
         self.setPayload(payload)
         self.setURL("tscharts/v1/clinicstation/")
     

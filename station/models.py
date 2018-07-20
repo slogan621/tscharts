@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2018
+#(C) Copyright Thousand Smiles Foundation 2016-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -23,3 +23,4 @@ See clinicstation.models.py for details.
 
 class Station(models.Model):
     name = models.CharField(max_length=30)
+    level = models.IntegerField(default=1)
