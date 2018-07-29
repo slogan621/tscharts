@@ -1,0 +1,55 @@
+{
+"name": "Thousand Smiles Ensenada",
+"categories": [
+                "New Cleft", 
+                "Dental", 
+                "Returning Cleft", 
+                "Ortho",
+                "Other"
+              ],
+"stations": [
+              {"name": "Dental", "level": 1,
+               "stations": [
+                   {"name": "Dental1", "name_es": "Dental1"},
+                   {"name": "Dental2", "name_es": "Dental2"},
+                   {"name": "Dental3", "name_es": "Dental3"},
+                   {"name": "Dental4", "name_es": "Dental4"},
+                   {"name": "Dental5", "name_es": "Dental5"},
+                   {"name": "Dental6", "name_es": "Dental6"},
+                   {"name": "Dental7", "name_es": "Dental7"},
+                   {"name": "Dental8", "name_es": "Dental8"}
+               ]
+              },
+              {"name": "ENT", "level": 2,
+               "stations": [
+                   {"name": "ENT", "name_es": "Ortorrino"}
+                ]
+              },
+              {"name": "Ortho", "level": 1,
+               "stations": [
+                   {"name": "Ortho1", "name_es": "Orto1"},
+                   {"name": "Ortho2", "name_es": "Orto2"}
+               ]
+              },
+              {"name": "X-Ray", "level": 2,
+               "stations": [
+                   {"name": "X-Ray", "name_es": "Rayos-X"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 1,
+               "stations": [
+                   {"name": "Surgery Screening", "name_es": "Cirugia"}
+               ]
+              },
+              {"name": "Speech", "level": 1,
+               "stations": [
+                   {"name": "Speech", "name_es": "Terapia Del Habla"}
+               ]
+              },
+              {"name": "Audiology", "level": 1,
+               "stations": [
+                   {"name": "Audiology", "name_es": "Audiologia"}
+               ]
+              }
+            ]
+}

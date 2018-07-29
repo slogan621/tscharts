@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2018
+#(C) Copyright Thousand Smiles Foundation 2017-2018
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -227,7 +227,9 @@ class MockClinic:
         if ret[0] != 200:
             print("failed to create return to clinic {}".format(x))
 
-    def createCategories(self):
+    def createCategories(self, cats = None):
+        if cats != None:
+            self._categories = cats
         for x in self._categories:
             data = {}
             data["name"] = x
@@ -453,6 +455,18 @@ class MockClinic:
             if doImages:
                 self.addPhoto(clinic, data["gender"], id)
 
+    def createClinicResourcesFromFile(self, path):
+        f = open(path, 'r')
+        x = f.read()
+        x = json.loads(x)
+        f.close()
+        self.createCategories(x["categories"])
+        clinic = self.createClinic(x["name"])
+        for y in x["stations"]:
+            station = self.createStation(y["name"], y["level"])
+            for z in y["stations"]:
+                self.createClinicStation(clinic, station, (z["name"], z["name_es"])) 
+
     def createClinicResources(self):
         print("Creating patient categories")
         self.createCategories()
@@ -474,7 +488,7 @@ class MockClinic:
         entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrino")) 
         print("Creating station {}".format("ENT"))
         orthoStations = []
-        for x in [("Ortho1","Ortorino1"), ("Ortho2","Ortorino2")]:
+        for x in [("Ortho1","Orto1"), ("Ortho2","Orto2")]:
             print("Creating station {}".format(x))
             orthoStations.append(self.createClinicStation(clinic, ortho, x))
         print("Creating station {}".format("X-Ray"))
@@ -487,23 +501,25 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-q] [-r] [-c] [-a interval]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-q] [-r] [-c] [-f filename] [-a interval]") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qrcaih:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "qrcaih:p:u:w:f:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
         sys.exit(2)
     host = "127.0.0.1"
     port = 8000
+    clinicFile = ""
     username = None
     password = None
     doCheckins = False
     doRegister = False
     doAway = False
     doImages = False
+    fromFile = False
     doReturnToClinic = False
     numAway = 0
     for o, a in opts:
@@ -513,6 +529,9 @@ def main():
             doImages = True
         elif o == "-c":
             doCheckins = True
+        elif o == "-f":
+            fromFile = True
+            clinicFile = a
         elif o == "-r":
             doRegister = True
         elif o == "-q":
@@ -530,7 +549,10 @@ def main():
 
     mock = MockClinic(host, port, username, password)   
     if mock.login():
-        mock.createClinicResources()
+        if fromFile:
+            mock.createClinicResourcesFromFile(clinicFile)
+        else:
+            mock.createClinicResources()
         clinic = mock.getClinic()
         n = randint(90, 100)
         print("Registering {} patients for this clinic".format(n))
