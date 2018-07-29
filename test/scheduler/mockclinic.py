@@ -464,8 +464,18 @@ class MockClinic:
         clinic = self.createClinic(x["name"])
         for y in x["stations"]:
             station = self.createStation(y["name"], y["level"])
+            if y["name"] == "X-Ray":
+                self._xray = station
+            elif y["name"] == "Dental":
+                self._dental = station
             for z in y["stations"]:
                 self.createClinicStation(clinic, station, (z["name"], z["name_es"])) 
+    
+    def getXray(self):
+        return self._xray
+
+    def getDental(self):
+        return self._dental
 
     def createClinicResources(self):
         print("Creating patient categories")
@@ -473,10 +483,10 @@ class MockClinic:
         print("Creating clinic")
         clinic = self.createClinic("Ensenada")
         print("Creating stations")
-        dental = self.createStation("Dental", 1)
+        self._dental = self.createStation("Dental", 1)
         ent = self.createStation("ENT", 2)
         ortho = self.createStation("Ortho", 1) 
-        xray = self.createStation("X-Ray", 2) 
+        self._xray = self.createStation("X-Ray", 2) 
         surgery = self.createStation("Surgery Screening", 1) 
         speech = self.createStation("Speech", 1) 
         audiology = self.createStation("Audiology", 1) 
@@ -576,10 +586,16 @@ def main():
                 cat = mock.getRandomCategory()
                 routingslip = mock.createRoutingSlip(x, clinic, cat)
                 print("\n\nCreating routingslip for {} patient {} at UTC time {}".format(cat, x, datetime.utcnow().strftime("%H:%M:%S")))
-                for y in mock.getStations():
-                    if randint(0, 1) == 1:
-                        print("Adding station {} to routing slip".format(mock.getStationName(y)))
-                        mock.createRoutingSlipEntry(routingslip, y)    
+                if cat == "Dental":
+                    xray = mock.getXray()
+                    dental = mock.getDental()
+                    mock.createRoutingSlipEntry(routingslip, xray)    
+                    mock.createRoutingSlipEntry(routingslip, dental)    
+                else:
+                    for y in mock.getStations():
+                        if randint(0, 1) == 1:
+                            print("Adding station {} to routing slip".format(mock.getStationName(y)))
+                            mock.createRoutingSlipEntry(routingslip, y)    
         mock.logout()
     main_thread = threading.currentThread()
     for t in threading.enumerate():
