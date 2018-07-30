@@ -509,6 +509,8 @@ class RoutingSlipEntryView(APIView):
                 try:
                     routing_slip_entry = RoutingSlipEntry(station=aStation, routingslip=aRoutingSlip)
                     if routing_slip_entry:
+                        # set the order of the entry to the station level
+                        routing_slip_entry.order = aStation.level
                         routing_slip_entry.save()
                     else:
                         implError = True

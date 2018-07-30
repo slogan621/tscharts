@@ -535,7 +535,7 @@ class Scheduler():
         return ret
 
     def sortQueueablesByPriority(self, queueables):
-        tmp = sorted(queueables, key=lambda k: k["order"])
+        tmp = sorted(queueables, reverse=True, key=lambda k: k["order"])
         ret = []
 
         # create a list of the highest priority item
