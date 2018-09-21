@@ -6,49 +6,44 @@
                 "Returning Cleft", 
                 "Ortho",
                 "Other"
-              ],
+             ],
 "stations": [
               {"name": "Dental", "level": 1,
                "stations": [
                    {"name": "Dental1", "name_es": "Dental1"},
                    {"name": "Dental2", "name_es": "Dental2"},
                    {"name": "Dental3", "name_es": "Dental3"},
-                   {"name": "Dental4", "name_es": "Dental4"},
-                   {"name": "Dental5", "name_es": "Dental5"},
-                   {"name": "Dental6", "name_es": "Dental6"},
-                   {"name": "Dental7", "name_es": "Dental7"},
-                   {"name": "Dental8", "name_es": "Dental8"}
-               ]
-              },
-              {"name": "ENT", "level": 2,
-               "stations": [
-                   {"name": "ENT", "name_es": "Ortorrino"}
-                ]
-              },
-              {"name": "Ortho", "level": 1,
-               "stations": [
-                   {"name": "Ortho1", "name_es": "Orto1"},
-                   {"name": "Ortho2", "name_es": "Orto2"}
+                   {"name": "Dental4", "name_es": "Dental4"}
                ]
               },
               {"name": "X-Ray", "level": 2,
                "stations": [
-                   {"name": "X-Ray", "name_es": "Rayos-X"}
+                   {"name": "X-Ray1", "name_es": "Rayos-X1"},
+                   {"name": "X-Ray2", "name_es": "Rayos-X2"}
                ]
               },
-              {"name": "Surgery Screening", "level": 1,
+              {"name": "Ortho", "level": 1,
                "stations": [
-                   {"name": "Surgery Screening", "name_es": "Cirugia"}
+                   {"name": "Ortho-1", "name_es": "Orto-1"},
+                   {"name": "Ortho-2", "name_es": "Orto-2"}
                ]
               },
-              {"name": "Speech", "level": 1,
+              {"name": "ENT", "level": 2,
                "stations": [
-                   {"name": "Speech", "name_es": "Terapia Del Habla"}
+                   {"name": "ENT1", "name_es": "ENT1"},
+                   {"name": "ENT2", "name_es": "ENT2"}
                ]
               },
               {"name": "Audiology", "level": 1,
                "stations": [
-                   {"name": "Audiology", "name_es": "Audiologia"}
+                   {"name": "Audiology1", "name_es": "Audiology1"},
+                   {"name": "Audiology2", "name_es": "Audiology2"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 1,
+               "stations": [
+                   {"name": "Surgery Screening 1", "name_es": "Surgery Screening 1"},
+                   {"name": "Surgery Screening 2", "name_es": "Surgery Screening 2"}
                ]
               }
             ]
