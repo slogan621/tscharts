@@ -494,7 +494,7 @@ class MockClinic:
         dentalStations = []
         for x in [("Dental1","Dental1"), ("Dental2","Dental2"), ("Dental3", "Dental3"), ("Dental4","Dental4"), ("Dental5","Dental5")]:
             print("Creating station {}".format(x))
-            dentalStations.append(self.createClinicStation(clinic, dental, x))
+            dentalStations.append(self.createClinicStation(clinic, self._dental, x))
         entStation = self.createClinicStation(clinic, ent, ("ENT","Otorrino")) 
         print("Creating station {}".format("ENT"))
         orthoStations = []
@@ -502,7 +502,7 @@ class MockClinic:
             print("Creating station {}".format(x))
             orthoStations.append(self.createClinicStation(clinic, ortho, x))
         print("Creating station {}".format("X-Ray"))
-        xrayStation = self.createClinicStation(clinic, xray, ("X-Ray","Rayos X")) 
+        xrayStation = self.createClinicStation(clinic, self._xray, ("X-Ray","Rayos X")) 
         print("Creating station {}".format("Surgery Screening"))
         surgeryStation = self.createClinicStation(clinic, surgery, ("Surgery Screening","Cirugía")) 
         print("Creating station {}".format("Speech"))
@@ -511,7 +511,7 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-q] [-r] [-c] [-f filename] [-a interval]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a interval]") 
 
 def main():
     try:
