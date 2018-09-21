@@ -511,7 +511,7 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-q] [-r] [-c] [-f filename] [-a interval]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-q] [-r] [-c] [-f filename] [-a interval]") 
 
 def main():
     try:
@@ -526,6 +526,7 @@ def main():
     username = None
     password = None
     doCheckins = False
+    doPatients = False
     doRegister = False
     doAway = False
     doImages = False
@@ -544,6 +545,8 @@ def main():
             clinicFile = a
         elif o == "-r":
             doRegister = True
+        elif o == "-y":
+            doPatients = True
         elif o == "-q":
             doReturnToClinic = True
         elif o == "-h":
@@ -564,9 +567,10 @@ def main():
         else:
             mock.createClinicResources()
         clinic = mock.getClinic()
-        n = randint(90, 100)
-        print("Registering {} patients for this clinic".format(n))
-        mock.createAllPatients(clinic, n, doImages)
+        if doPatients:
+            n = randint(90, 100)
+            print("Registering {} patients for this clinic".format(n))
+            mock.createAllPatients(clinic, n, doImages)
         checkinThreads = None
         awayThreads = None
         if doCheckins:
