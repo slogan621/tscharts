@@ -268,19 +268,6 @@ class MockClinic:
 
     def createClinicStation(self, clinicid, stationid, name):
         retval = None        
-        '''
-        state = randint(0, 1)
-        if state == 0:
-            away = False
-            state = randint(0, 1)
-            if state == 1:
-                active = True 
-            else:
-                active = False
-        else:
-            away = True
-            active = False
-        '''
         away = False
         active = False
         print("Creating clinicstation {} away {} active {}".format(name[0], away, active))
@@ -515,7 +502,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qrcaih:p:u:w:f:")
+        opts, args = getopt.getopt(sys.argv[1:], "qrcyaih:p:u:w:f:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
