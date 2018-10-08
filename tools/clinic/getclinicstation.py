@@ -113,7 +113,7 @@ def getAllClinicStations(clinicid):
     if ret[0] == 200:
         stations = ret[1]       
         for x in stations:
-            print("clinic {} station id {} name {}".format(clinicid, x["id"], x["name"]))
+            print("clinic {} station id {} id {} name {}".format(clinicid, x["station"], x["id"], x["name"]))
     else:
         print("Error getting all clinic stations for clinic id {}: {}".format(clinicid, ret[0]))   
 
@@ -124,6 +124,7 @@ def getClinicStation(clinicid, id):
     ret = x.send(timeout=30)
     if ret[0] == 200:
         station = ret[1]       
+        print("clinic {} station id {} id {} name {}".format(clinicid, station["station"], station["id"], station["name"]))
         print("clinic {} station id {} name {}".format(clinicid, station["id"], station["name"]))
     else:
         print("Error getting clinic station {} for clinic id {}: {}".format(id, clinicid, ret[0]))   
