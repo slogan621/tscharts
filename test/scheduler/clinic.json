@@ -30,20 +30,20 @@
               },
               {"name": "ENT", "level": 2,
                "stations": [
-                   {"name": "ENT1", "name_es": "ENT1"},
-                   {"name": "ENT2", "name_es": "ENT2"}
+                   {"name": "ENT1", "name_es": "Otorrino1"},
+                   {"name": "ENT2", "name_es": "Otorrino2"}
                ]
               },
               {"name": "Audiology", "level": 1,
                "stations": [
-                   {"name": "Audiology1", "name_es": "Audiology1"},
-                   {"name": "Audiology2", "name_es": "Audiology2"}
+                   {"name": "Audiology1", "name_es": "Audiología1"},
+                   {"name": "Audiology2", "name_es": "Audiología2"}
                ]
               },
               {"name": "Surgery Screening", "level": 1,
                "stations": [
-                   {"name": "Surgery Screening 1", "name_es": "Surgery Screening 1"},
-                   {"name": "Surgery Screening 2", "name_es": "Surgery Screening 2"}
+                   {"name": "Surgery Screening 1", "name_es": "Cirugía 1"},
+                   {"name": "Surgery Screening 2", "name_es": "Cirugía 2"}
                ]
               }
             ]

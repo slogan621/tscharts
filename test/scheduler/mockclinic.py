@@ -498,7 +498,7 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a interval]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a]") 
 
 def main():
     try:
@@ -523,7 +523,7 @@ def main():
     for o, a in opts:
         if o == "-a":
             doAway = True
-        if o == "-i":
+        elif o == "-i":
             doImages = True
         elif o == "-c":
             doCheckins = True
