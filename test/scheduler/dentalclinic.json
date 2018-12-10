@@ -10,10 +10,12 @@
                    {"name": "Dental2", "name_es": "Dental2"},
                    {"name": "Dental3", "name_es": "Dental3"},
                    {"name": "Dental4", "name_es": "Dental4"},
-                   {"name": "Dental5", "name_es": "Dental5"},
-                   {"name": "Dental6", "name_es": "Dental6"},
-                   {"name": "Dental7", "name_es": "Dental7"},
-                   {"name": "Dental8", "name_es": "Dental8"}
+                   {"name": "Dental5", "name_es": "Dental5"}
+               ]
+              },
+              {"name": "Hygiene", "level": 1,
+               "stations": [
+                   {"name": "Hygiene1", "name_es": "Higiene1"}
                ]
               },
               {"name": "X-Ray", "level": 2,
