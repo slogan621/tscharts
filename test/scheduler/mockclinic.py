@@ -411,21 +411,46 @@ class MockClinic:
         if ret[0] != 200:
             print("Unable to set medical history clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
 
+    def genFLast(self):
+        names = ["Gomez", "Sanchez", "Romero", "Gutierrez", "Lopez"];
+        return names[randint(0, len(names) - 1)]
+
+    def genMLast(self):
+        names = ["Gomez", "Sanchez", "Romero", "Gutierrez", "Lopez"];
+        return names[randint(0, len(names) - 1)]
+
+    def genFirst(self, male):
+        maleNames = ["Roberto", "Angel", "Jose", "Luis"];
+        femaleNames = ["Yolanda", "Gloria", "Maria", "Alicia"];
+        if male:
+            return maleNames[randint(0, len(maleNames) - 1)]
+        else:
+            return femaleNames[randint(0, len(femaleNames) - 1)]
+
+    def genMiddle(self, male):
+        maleNames = ["Roberto", "Angel", "Jose", "Luis"];
+        femaleNames = ["Yolanda", "Gloria", "Maria", "Alicia"];
+        if male:
+            return maleNames[randint(0, len(maleNames) - 1)]
+        else:
+            return femaleNames[randint(0, len(femaleNames) - 1)]
+
+
     def createAllPatients(self, clinic, count, doImages):
         for i in xrange(0, count):
             data = {}
-            data["paternal_last"] = "{}abcd1234".format(i)
-            data["maternal_last"] = "yyyyyy"
-            data["first"] = "zzzzzzz"
-            data["middle"] = ""
+            male = randint(0, 1)
+            data["paternal_last"] = "{}{}".format(i, self.genFLast())
+            data["maternal_last"] = "{}".format(self.genMLast())
+            data["first"] = "{}".format(self.genFirst(male))
+            data["middle"] = "{}".format(self.genMiddle(male))
             data["suffix"] = "Jr."
             data["prefix"] = ""
-            data["dob"] = "04/01/1962"
-            female = randint(0, 1)
-            if female:
-                data["gender"] = "Female"
-            else:
+            data["dob"] = "{}/{}/200{}".format(randint(1,12), randint(1,30), randint(0, 9))
+            if male:
                 data["gender"] = "Male"
+            else:
+                data["gender"] = "Female"
             data["street1"] = "1234 First Ave"
             data["street2"] = ""
             data["city"] = "Ensenada"
