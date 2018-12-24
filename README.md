@@ -105,6 +105,10 @@ active at the clinic. Each clinicstation is created before the clinic.
  * returntoclinic - used to record that a patient needs to return to a future clinic and visit a specific station at that future clinic. Used to prefill the routing slip of the patient at a subsequent visit. 
     * [API](../master/returntoclinic/README.md)  
     * [Unit Tests](../master/test/returntoclinic/returntoclinic.py)
+ * returntoclinicstation - used to record that a patient needs to return during
+the current clinic to a station the patient has aleady visited after visiting another clinic station. For example, a dentist may send a patient to x-ray and want the patient to be returned to dental once the x-rays have been taken. 
+    * [API](../master/returntoclinicstation/README.md)  
+    * [Unit Tests](../master/test/returntoclinicstation/returntoclinicstation.py)
  * medications - used to add, delete and get medication names from the database. Used to update and retrieve the entire list of medications from the database.
     * [API](../master/medications/README.md)
     * [Unit Tests](../master/test/medications/medications.py)
