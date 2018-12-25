@@ -25,9 +25,14 @@ from clinicstation.models import ClinicStation
 
 class ReturnToClinicStation(models.Model):
 
-    SCHEDULED = 's'
-    CREATED = 'c'
-    STATE_CHOICES = ((SCHEDULED, "scheduled"), (CREATED, "created"))
+    CREATED = '1'           # created, but not yet processed by scheduler
+    SCHEDULED_DEST = '2'    # patient in line for destination, or being seen
+    CHECKED_OUT_DEST = '3'  # patient seen at dest, not processed by scheduler
+    SCHEDULED_RETURN = '4'  # patient in line for return, or being (has been) seen
+    STATE_CHOICES = ((CREATED, "created"), 
+                     (SCHEDULED_DEST, "scheduled_dest"),
+                     (CHECKED_OUT_DEST, "checked_out_dest"),
+                     (SCHEDULED_RETURN, "scheduled_return"))
 
     state = models.CharField(
         max_length = 1,

@@ -34,6 +34,32 @@ class ReturnToClinicStationView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def stateToDb(self, state):
+        ret = None
+
+        if state == "created":
+            ret = '1' 
+        elif state == "scheduled_dest":
+            ret = '2'
+        elif state == "checked_out_dest":
+            ret = '3'
+        elif state == "scheduled_return":
+            ret = '4'
+        return ret
+
+    def dbToState(self, db):
+        ret = None
+
+        if db == '1':
+            ret = "created"
+        elif db == '2':
+            ret = "scheduled_dest"
+        elif db == '3':
+            ret = "checked_out_dest"
+        elif db == '4':
+            ret = "scheduled_return"
+        return ret
+
     @log_request
     def get(self, request, returntoclinicstation_id=None, format=None):
         notFound = False
@@ -97,14 +123,11 @@ class ReturnToClinicStationView(APIView):
             try:
                 state = request.GET.get('state', '')
                 if state != '':
-                    if state != "created" and state != "scheduled":
+                    stateDb = self.stateToDb(state)
+                    if stateDb == None:
                         badRequest = True
                     else:
-                        if state == "created":
-                            state = 'c'
-                        else:
-                            state = 's'
-                        kwargs["state"] = state
+                        kwargs["state"] = stateDb
             except:
                 pass
 
@@ -129,10 +152,7 @@ class ReturnToClinicStationView(APIView):
             ret["requestingclinicstation"] = x.requestingclinicstation.id  
             ret["createtime"] = x.createtime  
             ret["statechangetime"] = x.statechangetime  
-            if x.state == 'c':
-                ret["state"] = "created"
-            else:
-                ret["state"] = "scheduled"
+            ret["state"] = self.dbToState(x.state)
             ret["id"] = x.id
         else:
             ret = []
@@ -155,7 +175,12 @@ class ReturnToClinicStationView(APIView):
         except:
             pass
 
-        if state == None or state != "scheduled":
+        if state == None:  
+            badRequest = True
+
+        stateDb = self.stateToDb(state)
+
+        if stateDb == None:
             badRequest = True
 
         if not badRequest:
@@ -172,7 +197,7 @@ class ReturnToClinicStationView(APIView):
                 notFound = True 
             else:
                 try:
-                    returntoclinicstation.state="s"
+                    returntoclinicstation.state=stateDb
                     returntoclinicstation.save()
                 except:
                     implError = True
@@ -262,7 +287,7 @@ class ReturnToClinicStationView(APIView):
                                       patient=aPatient,
                                       clinicstation=aClinicStation,
                                       requestingclinicstation=aRequestingClinicStation,
-                                      state='c')
+                                      state='1')
                     if returntoclinicstation:
                         returntoclinicstation.save()
                     else:

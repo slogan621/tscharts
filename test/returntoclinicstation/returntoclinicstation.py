@@ -235,6 +235,8 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertTrue("patient" in ret[1])
         patientId = int(ret[1]["patient"])
         self.assertTrue(patientId == patientid)
+        self.assertTrue("state" in ret[1])
+        self.assertTrue(ret[1]["state"] == "created")
 
         x = DeleteReturnToClinicStation(host, port, token, id)
         ret = x.send(timeout=30)
@@ -458,7 +460,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertTrue(clinicstationId == requestingclinicstationid)
 
         x = UpdateReturnToClinicStation(host, port, token, id)
-        x.setState("scheduled")
+        x.setState("scheduled_dest")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -467,7 +469,31 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("state" in ret[1])
-        self.assertTrue(ret[1]["state"] == "scheduled")
+        self.assertTrue(ret[1]["state"] == "scheduled_dest")
+
+        x = UpdateReturnToClinicStation(host, port, token, id)
+        x.setState("checked_out_dest")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetReturnToClinicStation(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("state" in ret[1])
+        self.assertTrue(ret[1]["state"] == "checked_out_dest")
+
+        x = UpdateReturnToClinicStation(host, port, token, id)
+        x.setState("scheduled_return")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetReturnToClinicStation(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("state" in ret[1])
+        self.assertTrue(ret[1]["state"] == "scheduled_return")
 
         x = UpdateReturnToClinicStation(host, port, token, id)
         x.setState("foo")
@@ -480,7 +506,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         x = UpdateReturnToClinicStation(host, port, token, 9999)
-        x.setState("scheduled")
+        x.setState("scheduled_dest")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 

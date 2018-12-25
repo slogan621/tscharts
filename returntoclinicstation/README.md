@@ -25,7 +25,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"patient":id, "clinic":id,"requestclinicstation":id,"clinicstation":id,"state":"created|scheduled","created":date,"scheduled":date}`
+    **Content:** `{"patient":id, "clinic":id,"requestclinicstation":id,"clinicstation":id,"state":"created|scheduled_dest|checkout_out_dest|scheduled_return","createtime":timestamp,"statechangetime":timestamp}`
  
 * **Error Response:**
 
@@ -52,7 +52,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"patient":405,"clinic":340,"requestingclinicstation":203,"clinicstation",45,"state":"created","created": 12345678, "scheduled":0}
+{"patient":405,"clinic":340,"requestingclinicstation":203,"clinicstation",45,"state":"created","createtime": 12345678, "statechangetime":12345678}
 ```
   
 **Get Multiple Return To ClinicStation Resources**
@@ -86,7 +86,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `clinic` clinic id<br />
    `clinicstation` clinic station id<br />
    `requestingclinicstation` requesting clinic station id<br />
-   `state` "created" | "scheduled"<br />
+   `state` "created" | "scheduled_dest" | "checked_out_dest" | "scheduled_return"<br />
 
 * **Success Response:**
 
@@ -112,7 +112,7 @@ Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
 
-{"station": 17}HTTP/1.0 200 OK
+{"clinicstation": 17}HTTP/1.0 200 OK
 Date: Sun, 23 Apr 2017 03:34:24 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -210,7 +210,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    One or more of the following is required:
 
-   `state` "scheduled" 
+   `state` "scheduled_dest" | "checked_out_dest" | "scheduled_return" 
 
 * **Success Response:**
 
@@ -235,7 +235,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"state": "scheduled"}HTTP/1.0 200 OK
+{"state": "scheduled_dest"}HTTP/1.0 200 OK
 Date: Tue, 25 Apr 2017 02:18:08 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
