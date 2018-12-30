@@ -30,7 +30,7 @@ from test.station.station import CreateStation, DeleteStation
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation
 
 class CreateReturnToClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, clinic, patient, clinicstation, requestingclinicstation):
+    def __init__(self, host, port, token, clinic, patient, station, requestingclinicstation):
         super(CreateReturnToClinicStation, self).__init__()
         
         self.setHttpMethod("POST")
@@ -38,7 +38,7 @@ class CreateReturnToClinicStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
 
-        payload = {"clinic": clinic, "patient": patient, "clinicstation": clinicstation, "requestingclinicstation": requestingclinicstation}
+        payload = {"clinic": clinic, "patient": patient, "station": station, "requestingclinicstation": requestingclinicstation}
         self.setPayload(payload)
         self.setURL("tscharts/v1/returntoclinicstation/")
     
@@ -74,12 +74,12 @@ class GetReturnToClinicStation(ServiceAPI):
             base += "patient={}".format(self._patient)
             hasQArgs = True
 
-        if not self._clinicstation == None:
+        if not self._station == None:
             if not hasQArgs:
                 base += "?"
             else:
                 base += "&"
-            base += "clinicstation={}".format(self._clinicstation)
+            base += "station={}".format(self._station)
             hasQArgs = True
 
         if not self._requestingclinicstation == None:
@@ -100,8 +100,8 @@ class GetReturnToClinicStation(ServiceAPI):
         self.setPort(port)
         self.setToken(token)
         self._clinic = None
+        self._station = None
         self._patient = None
-        self._clinicstation = None
         self._requestingclinicstation = None
         self._state = None
         self._id = None
@@ -115,16 +115,16 @@ class GetReturnToClinicStation(ServiceAPI):
         self._clinic = clinic
         self.makeURL()
 
+    def setStation(self, station):
+        self._station = station
+        self.makeURL()
+
     def setPatient(self, patient):
         self._patient = patient
         self.makeURL()
 
     def setState(self, state):
         self._state = state
-        self.makeURL()
-
-    def setClinicStation(self, clinicstation):
-        self._clinicstation = clinicstation
         self.makeURL()
 
     def setRequestingClinicStation(self, requestingclinicstation):
@@ -206,17 +206,12 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test1")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateClinicStation(host, port, token, clinicid, stationid, name="test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         requestingclinicstationid = int(ret[1]["id"])
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, clinicstation=clinicstationid, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -227,9 +222,9 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertTrue("clinic" in ret[1])
         clinicId = int(ret[1]["clinic"])
         self.assertTrue(clinicId == clinicid)
-        self.assertTrue("clinicstation" in ret[1])
-        clinicstationId = int(ret[1]["clinicstation"])
-        self.assertTrue(clinicstationId == clinicstationid)
+        self.assertTrue("station" in ret[1])
+        stationId = int(ret[1]["station"])
+        self.assertTrue(stationId == stationid)
         requestingclinicstationId = int(ret[1]["requestingclinicstation"])
         self.assertTrue(requestingclinicstationId == requestingclinicstationid)
         self.assertTrue("patient" in ret[1])
@@ -248,31 +243,27 @@ class TestTSReturnToClinicStation(unittest.TestCase):
 
         # non-existent clinic param
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=9999, clinicstation=clinicstationid, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=9999, station=stationid, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
-        # non-existent clinicstation param
+        # non-existent station param
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, clinicstation=9999, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=9999, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
         # non-existent requestingclinicstation param
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, clinicstation=clinicstationid, requestingclinicstation=9999)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=9999)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
         # non-existent patient param
 
-        x = CreateReturnToClinicStation(host, port, token, patient=9999, clinic=clinicid, clinicstation=clinicstationid, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=9999, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteClinicStation(host, port, token, requestingclinicstationid)
         ret = x.send(timeout=30)
@@ -329,17 +320,12 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test1")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateClinicStation(host, port, token, clinicid, stationid, name="test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         requestingclinicstationid = int(ret[1]["id"])
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, clinicstation=clinicstationid, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -370,10 +356,6 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         # cleanup
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteClinicStation(host, port, token, requestingclinicstationid)
         ret = x.send(timeout=30)
@@ -430,17 +412,12 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         patientid = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test1")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid = int(ret[1]["id"])
-
         x = CreateClinicStation(host, port, token, clinicid, stationid, name="test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         requestingclinicstationid = int(ret[1]["id"])
 
-        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, clinicstation=clinicstationid, requestingclinicstation=requestingclinicstationid)
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -452,9 +429,9 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertTrue("clinic" in ret[1])
         clinicId = int(ret[1]["clinic"])
         self.assertTrue(clinicId == clinicid)
-        self.assertTrue("clinicstation" in ret[1])
-        clinicstationId = int(ret[1]["clinicstation"])
-        self.assertTrue(clinicstationId == clinicstationid)
+        self.assertTrue("station" in ret[1])
+        stationId = int(ret[1]["station"])
+        self.assertTrue(stationId == stationid)
         self.assertTrue("requestingclinicstation" in ret[1])
         clinicstationId = int(ret[1]["requestingclinicstation"])
         self.assertTrue(clinicstationId == requestingclinicstationid)
@@ -511,10 +488,6 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         x = DeleteReturnToClinicStation(host, port, token, id)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -588,29 +561,14 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         x = CreateClinicStation(host, port, token, clinicid, stationid, name="test1")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        clinicstationid1 = int(ret[1]["id"])
+        requestingclinicstationid1 = int(ret[1]["id"])
 
         x = CreateClinicStation(host, port, token, clinicid, stationid, name="test2")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        clinicstationid2 = int(ret[1]["id"])
-
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test3")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        clinicstationid3 = int(ret[1]["id"])
-
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test4")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        requestingclinicstationid1 = int(ret[1]["id"])
-
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test5")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
         requestingclinicstationid2 = int(ret[1]["id"])
 
-        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test6")
+        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test3")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         requestingclinicstationid3 = int(ret[1]["id"])
@@ -618,25 +576,24 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         ids = []
         delids = []
 
-        # 3 different patients, 3 different clinicstations, 
-        # 3 different requesting clinicstations = 27 combinations
+        # 3 different patients, 
+        # 3 different requesting clinicstations = 9 combinations
 
         for aPatient in [patientid1, patientid2, patientid3]:
-            for aClinicStation in [clinicstationid1, clinicstationid2, clinicstationid3]:
-                for aRequestingClinicStation in [requestingclinicstationid1, requestingclinicstationid2, requestingclinicstationid3]:
+            for aRequestingClinicStation in [requestingclinicstationid1, requestingclinicstationid2, requestingclinicstationid3]:
  
-                    x = CreateReturnToClinicStation(host, port, token, patient=aPatient, clinic=clinicid, clinicstation=aClinicStation, requestingclinicstation=aRequestingClinicStation)
-                    ret = x.send(timeout=30)
-                    self.assertEqual(ret[0], 200)
-                    ids.append(int(ret[1]["id"]))
-                    delids.append(int(ret[1]["id"]))
+                x = CreateReturnToClinicStation(host, port, token, patient=aPatient, clinic=clinicid, station=stationid, requestingclinicstation=aRequestingClinicStation)
+                ret = x.send(timeout=30)
+                self.assertEqual(ret[0], 200)
+                ids.append(int(ret[1]["id"]))
+                delids.append(int(ret[1]["id"]))
 
         x = GetReturnToClinicStation(host, port, token)
         x.setPatient(patientid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertEqual(len(rtcs), 9)
+        self.assertEqual(len(rtcs), 3)
         for x in rtcs:
             y = GetReturnToClinicStation(host, port, token)
             y.setId(int(x["id"]))
@@ -649,7 +606,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertEqual(len(rtcs), 9)
+        self.assertEqual(len(rtcs), 3)
         for x in rtcs:
             y = GetReturnToClinicStation(host, port, token)
             y.setId(int(x["id"]))
@@ -662,7 +619,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertEqual(len(rtcs), 9)
+        self.assertEqual(len(rtcs), 3)
         for x in rtcs:
             y = GetReturnToClinicStation(host, port, token)
             y.setId(int(x["id"]))
@@ -671,7 +628,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
             self.assertTrue(patientid3 == int(ret[1]["patient"]))
 
         x = GetReturnToClinicStation(host, port, token)
-        x.setClinicStation(clinicstationid1)
+        x.setClinic(clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
@@ -681,40 +638,14 @@ class TestTSReturnToClinicStation(unittest.TestCase):
             y.setId(int(x["id"]))
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
-            self.assertTrue(clinicstationid1 == int(ret[1]["clinicstation"]))
-
-        x = GetReturnToClinicStation(host, port, token)
-        x.setClinicStation(clinicstationid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        rtcs = ret[1]
-        self.assertTrue(len(rtcs) == 9)
-        for x in rtcs:
-            y = GetReturnToClinicStation(host, port, token)
-            y.setId(int(x["id"]))
-            ret = y.send(timeout=30)
-            self.assertEqual(ret[0], 200)
-            self.assertTrue(clinicstationid2 == int(ret[1]["clinicstation"]))
-
-        x = GetReturnToClinicStation(host, port, token)
-        x.setClinicStation(clinicstationid3)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        rtcs = ret[1]
-        self.assertTrue(len(rtcs) == 9)
-        for x in rtcs:
-            y = GetReturnToClinicStation(host, port, token)
-            y.setId(int(x["id"]))
-            ret = y.send(timeout=30)
-            self.assertEqual(ret[0], 200)
-            self.assertTrue(clinicstationid3 == int(ret[1]["clinicstation"]))
+            self.assertTrue(stationid == int(ret[1]["station"]))
 
         x = GetReturnToClinicStation(host, port, token)
         x.setRequestingClinicStation(requestingclinicstationid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertTrue(len(rtcs) == 9)
+        self.assertTrue(len(rtcs) == 3)
         for x in rtcs:
             y = GetReturnToClinicStation(host, port, token)
             y.setId(int(x["id"]))
@@ -727,7 +658,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertTrue(len(rtcs) == 9)
+        self.assertTrue(len(rtcs) == 3)
         for x in rtcs:
             y = GetReturnToClinicStation(host, port, token)
             y.setId(int(x["id"]))
@@ -736,7 +667,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
             self.assertTrue(requestingclinicstationid2 == int(ret[1]["requestingclinicstation"]))
 
         x = GetReturnToClinicStation(host, port, token)
-        x.setClinicStation(clinicstationid1)
+        x.setStation(stationid)
         x.setRequestingClinicStation(requestingclinicstationid1)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -747,14 +678,14 @@ class TestTSReturnToClinicStation(unittest.TestCase):
             y.setId(int(x["id"]))
             ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
-            self.assertTrue(clinicstationid1 == int(ret[1]["clinicstation"]))
+            self.assertTrue(stationid == int(ret[1]["station"]))
             self.assertTrue(requestingclinicstationid1 == int(ret[1]["requestingclinicstation"]))
 
         x = GetReturnToClinicStation(host, port, token)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         rtcs = ret[1]
-        self.assertTrue(len(rtcs) == 27)
+        self.assertTrue(len(rtcs) == 9)
 
         for x in rtcs:
             if x["id"] in ids:
@@ -776,7 +707,7 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertTrue(len(rtcs) == 0)
 
         x = GetReturnToClinicStation(host, port, token)
-        x.setClinicStation(clinicstationid1)
+        x.setClinic(stationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
@@ -795,18 +726,6 @@ class TestTSReturnToClinicStation(unittest.TestCase):
         self.assertEqual(ret[0], 404)
         rtcs = ret[1]
         self.assertTrue(len(rtcs) == 0)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid1)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid2)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-
-        x = DeleteClinicStation(host, port, token, clinicstationid3)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
 
         x = DeleteClinicStation(host, port, token, requestingclinicstationid1)
         ret = x.send(timeout=30)

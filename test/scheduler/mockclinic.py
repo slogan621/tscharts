@@ -34,6 +34,7 @@ from test.patient.patient import CreatePatient, DeletePatient
 from test.returntoclinic.returntoclinic import CreateReturnToClinic
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
 from test.statechange.statechange import CreateStateChange
+from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
 import random
@@ -67,8 +68,11 @@ def checkinWorker(clinicstationid, mockclinic):
     print("checkinWorker starting thread for clinic station {}".format(clinicstationid))
     host = mockclinic._host
     port = mockclinic._port
-    token = mockclinic._token
-    clinicid = mockclinic.getClinic()
+    token = mockclinic._token   
+    doReturnToClinicStation = mockclinic._doReturnToClinicStation
+    clinicid = mockclinic.getClinic() 
+    clinicstations = mockclinic.getClinicStations()
+    stations = mockclinic.getStations()
     while True:
         time.sleep(randint(1, 30))
         # get queue for this clinicstation 
@@ -119,6 +123,23 @@ def checkinWorker(clinicstationid, mockclinic):
                                     t = randint(1, 600)
                                     print("GetQueue: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
                                     time.sleep(t)
+                                    if randint(0, 1) == 1 and doReturnToClinicStation == True:
+                                        o = randint(0, len(stations) - 1)
+                                        try:              
+                                            # create returntoclinicstation 
+                                            print("Creating return to clinicstation record")
+                                            rtc = CreateReturnToClinicStation(host, port, token, clinicid, entry["patient"], o, clinicstationid)
+
+                                            ret = rtc.send(timeout=30)
+                                            if ret[0] != 200:
+                                                print("Unable to create return to clinicstation object. ret is {}".format(ret[0]))
+                                                sys.exit(1)
+                                            else:
+                                                print("Created return to clinicstation object")
+                                        except Exception as e:
+                                            msg = sys.exc_info()[0]
+                                            print("GetQueue: exception creating return to clinic {}: {}".format(ret[1], msg))
+                                            sys.exit(1)
                                     z.setState("Checked Out")
                                     ret = z.send(timeout=30)
                                     if ret[0] == 200:
@@ -149,6 +170,7 @@ def checkinWorker(clinicstationid, mockclinic):
             except Exception as e:
                 msg = sys.exc_info()[0]
                 print("GetQueue: exception {}: {}".format(ret[1], msg))
+                sys.exit(1)
         else:
             print("GetQueue: failed to get queue entry for clinicstation {}: {}".format(clinicstationid, ret[0]))
 
@@ -167,6 +189,7 @@ class MockClinic:
         self._routingslipentryids = []
 
         self._categories = ["New Cleft", "Dental", "Returning Cleft", "Ortho", "Other"]
+        self._doReturnToClinicStation = False 
 
     def login(self):
         retval = True
@@ -207,6 +230,9 @@ class MockClinic:
 
     def getStations(self):
         return self._stationids
+
+    def getClinicStations(self):
+        return self._clinicstationids
 
     def getStationName(self, station):
         retval = None
@@ -327,6 +353,9 @@ class MockClinic:
                 self._routingslipentryids.append(int(ret[1]["id"]))
                 retval = int(ret[1]["id"])
         return retval
+
+    def simulateReturnToClinicStation(self, doReturnToClinicStation):
+        self._doReturnToClinicStation = doReturnToClinicStation
 
     def getRandomCategory(self):
         return self._categories[randint(0, len(self._categories)) - 1]    
@@ -523,11 +552,11 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x]") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qrcyaih:p:u:w:f:")
+        opts, args = getopt.getopt(sys.argv[1:], "qrcyaixh:p:u:w:f:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -544,6 +573,7 @@ def main():
     doImages = False
     fromFile = False
     doReturnToClinic = False
+    doReturnToClinicStation = False
     numAway = 0
     for o, a in opts:
         if o == "-a":
@@ -561,6 +591,8 @@ def main():
             doPatients = True
         elif o == "-q":
             doReturnToClinic = True
+        elif o == "-x":
+            doReturnToClinicStation = True
         elif o == "-h":
             host = a
         elif o == "-p":
@@ -572,7 +604,12 @@ def main():
         else:   
             assert False, "unhandled option"
 
+    if doReturnToClinicStation == True and doCheckins == False:
+        print("warning: -x selected but not -c. Adding -c since checkins are required to exercise return to clinicstation functionality")
+        doCheckins = True
+
     mock = MockClinic(host, port, username, password)   
+    mock.simulateReturnToClinicStation(doReturnToClinicStation)
     if mock.login():
         if fromFile:
             mock.createClinicResourcesFromFile(clinicFile)
@@ -589,6 +626,9 @@ def main():
             checkinThreads = mock.simulateCheckins()
         if doAway:
             awayThreads = mock.simulateAway() 
+        # NOTYET
+        #if doReturnToClinicStation:
+        #    mock.processReturnToClinicStationStateChanges() 
         if doReturnToClinic:
             stations = mock.getStations()
             intervals = [3, 6, 9, 12]

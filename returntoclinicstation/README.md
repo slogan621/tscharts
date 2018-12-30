@@ -1,10 +1,10 @@
 **Get Return To ClinicStation Resource**
 ----
   Returns json data about a single returntoclinicstation resource. The return 
-  value contains the ids of the clinicstation that the patient needs to
+  value contains the ids of the station that the patient needs to
   return to, the id of the clinicstation making the request, the id of the
   clinic, and the id of the patient. It also contains the state of the 
-  return, either created, or finished. 
+  return to clinic station object.
 
 * **URL**
 
@@ -25,7 +25,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"patient":id, "clinic":id,"requestclinicstation":id,"clinicstation":id,"state":"created|scheduled_dest|checkout_out_dest|scheduled_return","createtime":timestamp,"statechangetime":timestamp}`
+    **Content:** `{"patient":id, "clinic":id,"requestclinicstation":id,"station":id,"state":"created|scheduled_dest|checkout_out_dest|scheduled_return","createtime":timestamp,"statechangetime":timestamp}`
  
 * **Error Response:**
 
@@ -52,7 +52,7 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"patient":405,"clinic":340,"requestingclinicstation":203,"clinicstation",45,"state":"created","createtime": 12345678, "statechangetime":12345678}
+{"patient":405,"clinic":340,"requestingclinicstation":203,"station",45,"state":"created","createtime": 12345678, "statechangetime":12345678}
 ```
   
 **Get Multiple Return To ClinicStation Resources**
@@ -84,7 +84,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    `patient` patient id<br />
    `clinic` clinic id<br />
-   `clinicstation` clinic station id<br />
+   `station` station id<br />
    `requestingclinicstation` requesting clinic station id<br />
    `state` "created" | "scheduled_dest" | "checked_out_dest" | "scheduled_return"<br />
 
@@ -112,7 +112,7 @@ Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
 
-{"clinicstation": 17}HTTP/1.0 200 OK
+{"station": 17}HTTP/1.0 200 OK
 Date: Sun, 23 Apr 2017 03:34:24 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -145,7 +145,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
  
    `patient` patient id<br />
    `clinic` clinic id<br />
-   `clinicstation` clinic station id<br />
+   `station` station id<br />
    `requestingclinicstation` requesting clinic station id<br />
 
    **Optional:**
@@ -176,7 +176,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"patient": 45, "clinic": 337, "clinicstation": 196, "requestingclinicstation": 402}HTTP/1.0 200 OK
+{"patient": 45, "clinic": 337, "station": 196, "requestingclinicstation": 402}HTTP/1.0 200 OK
 Date: Tue, 25 Apr 2017 02:18:06 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept

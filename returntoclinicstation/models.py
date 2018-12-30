@@ -22,6 +22,7 @@ from django.db import models
 from clinic.models import Clinic
 from patient.models import Patient
 from clinicstation.models import ClinicStation
+from station.models import Station
 
 class ReturnToClinicStation(models.Model):
 
@@ -41,7 +42,7 @@ class ReturnToClinicStation(models.Model):
     )
     clinic = models.ForeignKey(Clinic)
     patient = models.ForeignKey(Patient)
-    clinicstation = models.ForeignKey(ClinicStation, related_name="clinicstations")
+    station = models.ForeignKey(Station, related_name="stations")
     requestingclinicstation = models.ForeignKey(ClinicStation, related_name="requestingclinicstations")
     createtime = models.DateTimeField(auto_now_add=True)
     statechangetime = models.DateTimeField(auto_now=True)

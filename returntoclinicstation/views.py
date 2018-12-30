@@ -97,12 +97,12 @@ class ReturnToClinicStationView(APIView):
                 pass
 
             try:
-                clinicstationid = request.GET.get('clinicstation', '')
-                if clinicstationid != '':
-                    clinicstationid = int(clinicstationid)
+                stationid = request.GET.get('station', '')
+                if stationid != '':
+                    stationid = int(stationid)
                     try:
-                        aClinicStation = ClinicStation.objects.get(id=clinicstationid)
-                        kwargs["clinicstation"] = aClinicStation
+                        aStation = Station.objects.get(id=stationid)
+                        kwargs["station"] = aStation
                     except:
                         notFound = True
             except:
@@ -148,7 +148,7 @@ class ReturnToClinicStationView(APIView):
             x = returntoclinicstation
             ret["clinic"] = x.clinic.id  
             ret["patient"] = x.patient.id  
-            ret["clinicstation"] = x.clinicstation.id  
+            ret["station"] = x.station.id  
             ret["requestingclinicstation"] = x.requestingclinicstation.id  
             ret["createtime"] = x.createtime  
             ret["statechangetime"] = x.statechangetime  
@@ -218,7 +218,7 @@ class ReturnToClinicStationView(APIView):
         implError = False
         aClinic = None
         aPatient = None
-        aClinicStation = None
+        aStation = None
         aRequestingClinicStation = None
         state = None 
 
@@ -232,7 +232,7 @@ class ReturnToClinicStationView(APIView):
         except:
             badRequest = True
         try:
-            clinicstation = data["clinicstation"]
+            station = data["station"]
         except:
             badRequest = True
         try:
@@ -247,9 +247,9 @@ class ReturnToClinicStationView(APIView):
                 aClinic = None
 
             try:
-                aClinicStation = ClinicStation.objects.get(id=clinicstation)
+                aStation = Station.objects.get(id=station)
             except:
-                aClinicStation = None
+                aStation = None
 
             try:
                 aRequestingClinicStation = ClinicStation.objects.get(id=requestingclinicstation)
@@ -261,7 +261,7 @@ class ReturnToClinicStationView(APIView):
             except:
                 aPatient = None
 
-            if not aClinic or not aClinicStation or not aPatient or not aRequestingClinicStation:
+            if not aClinic or not aStation or not aPatient or not aRequestingClinicStation:
                 notFound = True
 
         if not badRequest and not notFound:
@@ -273,7 +273,7 @@ class ReturnToClinicStationView(APIView):
             try:
                 returntoclinicstation = ReturnToClinicStation.objects.filter(clinic=aClinic,
                                                  patient=aPatient,
-                                                 clinicstation=aClinicStation,
+                                                 station=aStation,
                                                  requestingclinicstation=aRequestingClinicStation)
                 if not returntoclinicstation or len(returntoclinicstation) == 0:
                     returntoclinicstation = None
@@ -285,7 +285,7 @@ class ReturnToClinicStationView(APIView):
                 try:
                     returntoclinicstation = ReturnToClinicStation(clinic=aClinic,
                                       patient=aPatient,
-                                      clinicstation=aClinicStation,
+                                      station=aStation,
                                       requestingclinicstation=aRequestingClinicStation,
                                       state='1')
                     if returntoclinicstation:
