@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#(C) Copyright Syd Logan 2017-2018
-#(C) Copyright Thousand Smiles Foundation 2017-2018
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ from test.patient.patient import CreatePatient, DeletePatient
 from test.returntoclinic.returntoclinic import CreateReturnToClinic
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
 from test.statechange.statechange import CreateStateChange
-from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation
+from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation, GetReturnToClinicStation, UpdateReturnToClinicStation
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
 from test.routingslip.routingslip import CreateRoutingSlip, UpdateRoutingSlip, GetRoutingSlip, DeleteRoutingSlip, CreateRoutingSlipEntry, GetRoutingSlipEntry, UpdateRoutingSlipEntry, DeleteRoutingSlipEntry
 import random
@@ -64,6 +64,81 @@ def awayWorker(mc):
             y.setAway(False)
             ret = y.send(timeout=30)
 
+def hasReturnToClinicStation(mockclinic, clinicid, patientid):
+    retval = False
+
+    host = mockclinic._host
+    port = mockclinic._port
+    token = mockclinic._token   
+
+    x = GetReturnToClinicStation(host, port, token)
+    x.setClinic(clinicid)
+    x.setPatient(patientid)
+    ret = x.send(timeout=30)
+    if ret[0] == 200:
+        if len(ret[1]) > 0:
+            retval = True
+    return retval
+
+def inRoutingSlip(mockclinic, clinicid, patientid, stationid):
+    retval = False
+    host = mockclinic._host
+    port = mockclinic._port
+    token = mockclinic._token   
+
+    x = GetRoutingSlip(host, port, token)
+    x.setClinic(clinicid)
+    x.setPatient(patientid)
+    ret = x.send(timeout=30)
+    if ret[0] == 200:
+        entries = ret[1]["routing"]
+        for entry in entries:
+            x = GetRoutingSlipEntry(host, port, token)
+            x.setId(entry)
+            ret = x.send(timeout=30)
+            if ret[0] == 200:
+                station = ret[1]["station"]
+                if station == stationid:
+                    retval = True
+                    break
+            else:
+                print("inRoutingSlip failed to get routing slip entry {} return {}".format(entry, ret[0]))
+    else:       
+        print("inRoutingSlip failed to get routing slip for clinic {} patient {} return {}".format(clinicid, patientid, ret[0]))
+    return retval    
+
+def checkAndUpdateScheduledDestReturnToClinicStation(mockclinic, clinicid, patientid, stationid):
+    retval = False
+
+    host = mockclinic._host
+    port = mockclinic._port
+    token = mockclinic._token   
+
+    x = GetReturnToClinicStation(host, port, token)
+    x.setClinic(clinicid)
+    x.setStation(stationid)
+    x.setPatient(patientid)
+    x.setState("scheduled_dest")
+    ret = x.send(timeout=30)
+    if ret[0] == 200:
+        if len(ret[1]) > 1:
+            print("checkAndUpdateScheduledDestReturnToClinicStation: found more than one ({}) returntoclinicstation for clinic {} patient {} station {}".format(len(ret[1]), clinicid, patientid, stationid))
+        elif len(ret[1]) == 0:
+            print("checkAndUpdateScheduledDestReturnToClinicStation: success returned but empty list returntoclinicstation for clinic {} patient {} station {}".format(clinicid, patientid, stationid))
+        else:
+            rtcsid = ret[1][0]["id"]
+            x = UpdateReturnToClinicStation(host, port, token, rtcsid)
+            x.setState("checked_out_dest")
+            ret = x.send(timeout=30)
+            if ret[0] != 200:
+                print("checkAndUpdateScheduledDestReturnToClinicStation: failed to put returntoclinicstation {} for clinic {} patient {} station {} into checked_out_dest state. return code {}".format(rtcsid, clinicid, patientid, stationid, ret[0]))
+            else:
+                print("checkAndUpdateScheduledDestReturnToClinicStation: put returntoclinicstation {} for clinic {} patient {} station {} into checked_out_dest state. return code {}".format(rtcsid, clinicid, patientid, stationid, ret[0]))
+                retval = True
+    else:
+        print("checkAndUpdateScheduledDestReturnToClinicStation: failed to get returntoclinicstation for clinic {} patient {} station {}. return {}".format(clinicid, patientid, stationid, ret[0]))
+    return retval
+
 def checkinWorker(clinicstationid, mockclinic):
     print("checkinWorker starting thread for clinic station {}".format(clinicstationid))
     host = mockclinic._host
@@ -85,6 +160,14 @@ def checkinWorker(clinicstationid, mockclinic):
         if ret[0] == 200:
             if ret[1]["away"] == True:
                 continue
+        else:
+            print("checkinWorker: unable to get clinicstation {} ret {}".format(clinicstationid, ret[0]))
+        
+        try:    
+            stationid = ret[1]["station"] # used to find returntoclinicstation matches
+        except:
+            print("checkinWorker: unable to get station for clinicstation {}".format(clinicstationid))
+            continue
 
         x = GetQueue(host, port, token)
         x.setClinic(clinicid)
@@ -92,7 +175,7 @@ def checkinWorker(clinicstationid, mockclinic):
         ret = x.send(timeout=30)
         if ret[0] == 200 and len(ret[1]["queues"]) > 0:
             try:
-                print("query queues for clinicstation {} got {}".format(clinicstationid, ret[1]))
+                print("checkinWorker: query queues for clinicstation {} got {}".format(clinicstationid, ret[1]))
                 entries = ret[1]["queues"][0]["entries"]
                 if len(entries):
                     # something in the queue
@@ -101,18 +184,18 @@ def checkinWorker(clinicstationid, mockclinic):
                     q.setQueueEntryId(entry["id"])
                     ret = q.send(timeout=30)
                     if ret[0] == 200:
-                        print("GetQueue: deleted queueentry {}".format(entry["id"]))
+                        print("checkinWorker: deleted queueentry {}".format(entry["id"]))
                         y = UpdateClinicStation(host, port, token, clinicstationid)
                         y.setActive(True)
                         y.setActivePatient(entry["patient"])
                         ret = y.send(timeout=30)
                         if ret[0] == 200:
-                            print("GetQueue: set clinicstation {} active patient to {}".format(clinicstationid, entry["patient"]))
+                            print("checkinWorker: set clinicstation {} active patient to {}".format(clinicstationid, entry["patient"]))
                             z = UpdateRoutingSlipEntry(host, port, token, entry["routingslipentry"])
                             z.setState("Checked In")
                             ret = z.send(timeout=30)
                             if ret[0] == 200:
-                                print("GetQueue: clinicstation {} checked in patient {}".format(clinicstationid, entry["patient"]))
+                                print("checkinWorker: clinicstation {} checked in patient {}".format(clinicstationid, entry["patient"]))
                                 r = CreateStateChange(host, port, token)
                                 r.setClinicStation(clinicstationid)
                                 r.setPatient(entry["patient"])
@@ -120,59 +203,75 @@ def checkinWorker(clinicstationid, mockclinic):
                                 ret = r.send(timeout=30)
                                 if ret[0] == 200:
                                     # do some work
-                                    t = randint(1, 600)
-                                    print("GetQueue: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
+                                    t = randint(120, 180)
+                                    print("checkinWorker: clinicstation {} starting work on patient {} for {} seconds".format(clinicstationid, entry["patient"], t))
                                     time.sleep(t)
-                                    if randint(0, 1) == 1 and doReturnToClinicStation == True:
-                                        o = randint(0, len(stations) - 1)
-                                        try:              
-                                            # create returntoclinicstation 
-                                            print("Creating return to clinicstation record")
-                                            rtc = CreateReturnToClinicStation(host, port, token, clinicid, entry["patient"], o, clinicstationid)
 
-                                            ret = rtc.send(timeout=30)
-                                            if ret[0] != 200:
-                                                print("Unable to create return to clinicstation object. ret is {}".format(ret[0]))
+                                    '''
+                                    check for a returntoclinicstation object
+                                    that is in state scheduled_dest and matches
+                                    our station type and patient for this
+                                    clinic. If found, update the state of the
+                                    returntoclinicstation object to 
+                                    checked_out_dest.
+                                    '''
+
+                                    success = checkAndUpdateScheduledDestReturnToClinicStation(mockclinic, clinicid, entry["patient"], stationid)
+
+                                    if not hasReturnToClinicStation(mockclinic, clinicid, entry["patient"]) and randint(0, 1) == 1 and doReturnToClinicStation == True:
+                                        o = randint(1, len(stations))
+                                        if o != stationid and not inRoutingSlip(mockclinic, clinicid, entry["patient"], o):
+                                            try:              
+                                                # create returntoclinicstation 
+                                                print("checkinWorker: Creating return to clinicstation record")
+                                                rtc = CreateReturnToClinicStation(host, port, token, clinicid, entry["patient"], o, clinicstationid)
+
+                                                ret = rtc.send(timeout=30)
+                                                if ret[0] != 200:
+                                                    print("checkinWorker: Unable to create return to clinicstation object. clinic {} patient {} station {} clinicstation {} ret is {}".format(clinicid, entry["patient"], o, clinicstationid, ret[0]))
+                                                    sys.exit(1)
+                                                else:
+                                                    print("checkinWorker: Created return to clinicstation object")
+                                            except Exception as e:
+                                                msg = sys.exc_info()[0]
+                                                print("checkinWorker: exception creating return to clinic {}: {}".format(ret[1], msg))
                                                 sys.exit(1)
-                                            else:
-                                                print("Created return to clinicstation object")
-                                        except Exception as e:
-                                            msg = sys.exc_info()[0]
-                                            print("GetQueue: exception creating return to clinic {}: {}".format(ret[1], msg))
-                                            sys.exit(1)
+
+                                    # check the patient out
+
                                     z.setState("Checked Out")
                                     ret = z.send(timeout=30)
                                     if ret[0] == 200:
-                                        print("GetQueue: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
+                                        print("checkinWorker: clinicstation {} checked out patient {}".format(clinicstationid, entry["patient"]))
                                         r.setState("out")
                                         ret = r.send(timeout=30)
                                         if ret[0] == 200:
                                             y.setActive(False)
                                             ret = y.send(timeout=30)
                                             if ret[0] == 200:
-                                                print("GetQueue: set clinicstation {} active state to False".format(clinicstationid))
+                                                print("checkinWorker: set clinicstation {} active state to False".format(clinicstationid))
                                             else:
-                                                print("GetQueue: failed to set clinicstation active to false {}".format(ret[0]))
+                                                print("checkinWorker: failed to set clinicstation active to false {}".format(ret[0]))
                                         else:
-                                            print("GetQueue: failed to create statechange record for state 'out' {}".format(ret[0]))
+                                            print("checkinWorker: failed to create statechange record for state 'out' {}".format(ret[0]))
                                     else:
-                                        print("GetQueue: failed to set state to 'Checked Out' {}".format(ret[0]))
+                                        print("checkinWorker: failed to set state to 'Checked Out' {}".format(ret[0]))
                                 else:
-                                    print("GetQueue: failed to create statechange record for state 'in' {}".format(ret[0]))
+                                    print("checkinWorker: failed to create statechange record for state 'in' {}".format(ret[0]))
                             else:
-                                print("GetQueue: failed to set state to 'Checked In' {}".format(ret[0]))
+                                print("checkinWorker: failed to set state to 'Checked In' {}".format(ret[0]))
                         else:
-                            print("GetQueue: failed to set clinicstation active patient id {} : {}".format(entry["patient"], ret[0]))
+                            print("checkinWorker: failed to set clinicstation active patient id {} : {}".format(entry["patient"], ret[0]))
                     else: 
-                        print("GetQueue: failed to delete queue entry {}  {}".format(entry["id"], ret[0]))
+                        print("checkinWorker: failed to delete queue entry {}  {}".format(entry["id"], ret[0]))
                 else:
-                    print("GetQueue: no waiting entries for clinicstation {}".format(clinicstationid))
+                    print("checkinWorker: no waiting entries for clinicstation {}".format(clinicstationid))
             except Exception as e:
                 msg = sys.exc_info()[0]
-                print("GetQueue: exception {}: {}".format(ret[1], msg))
+                print("checkinWorker: exception {}: {}".format(ret[1], msg))
                 sys.exit(1)
         else:
-            print("GetQueue: failed to get queue entry for clinicstation {}: {}".format(clinicstationid, ret[0]))
+            print("checkinWorker: failed to get queue entry for clinicstation {}: {}".format(clinicstationid, ret[0]))
 
 class MockClinic: 
     def __init__(self, host, port, username, password):
@@ -617,7 +716,7 @@ def main():
             mock.createClinicResources()
         clinic = mock.getClinic()
         if doPatients:
-            n = randint(90, 100)
+            n = randint(120, 130)
             print("Registering {} patients for this clinic".format(n))
             mock.createAllPatients(clinic, n, doImages)
         checkinThreads = None

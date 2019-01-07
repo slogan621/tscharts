@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from station.models import *
 from clinic.models import *
+from returntoclinicstation.models import *
 from routingslip.models import *
 from datetime import *
 import sys
@@ -356,8 +357,8 @@ class RoutingSlipEntryView(APIView):
 
     def __init__(self):
         super(RoutingSlipEntryView, self).__init__()
-        self.stateToText = {"n": "New", "s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed"}
-        self.textToState = {"New": "n", "Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r"}
+        self.stateToText = {"n": "New", "s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed", "l": "Return"}
+        self.textToState = {"New": "n", "Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r", "Return": "l"}
 
     def serialize(self, entry):
         error = False
@@ -367,6 +368,7 @@ class RoutingSlipEntryView(APIView):
             m["id"] = entry.id  
             m["routingslip"] = entry.routingslip_id  
             m["station"] = entry.station_id
+            m["returntoclinicstation"] = entry.returntoclinicstation_id
             m["order"] = entry.order
             m["state"] = self.stateToText[entry.state]
         except:
@@ -381,8 +383,13 @@ class RoutingSlipEntryView(APIView):
         routing_slip_entry = None
         aRoutingSlip = None
         aStation = None
+        aReturnToClinicStation = None
         badRequest = False
         notFound = False
+        stateFilters = []
+        nullrcs = None
+        kwargs = {}
+        ret = None
 
         if routing_slip_entry_id:
             try:
@@ -394,17 +401,46 @@ class RoutingSlipEntryView(APIView):
                 notFound = True
         else:
             try:
+                nullrcs = request.GET.get("nullrcs", '')
+                if nullrcs == '':
+                    nullrcs = None
+                else:
+                    if nullrcs == "true" or nullrcs == "True":
+                        nullrcs = True
+                    else:
+                        nullrcs = False
+            except:
+                pass
+
+            try:
+                states = request.GET.get("states", '')
+                if not states == '':
+                    states = [x.strip() for x in states.split(",")]
+                    if len(states):
+                        for s in states:
+                            try:
+                                c = self.textToState[s]
+                                stateFilters.append(c)
+                            except:
+                                badRequest = True
+                                break
+            except:
+                pass
+
+            try:
                 routingslipid = request.GET.get("routingslip", '')
                 if not routingslipid == '':
                     try:
                         aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
                         if not aRoutingSlip:
                             notFound = True
+                        else:
+                            kwargs["routingslip"] = aRoutingSlip
                     except:
-                        aRoutingSlip = None
                         notFound = True
             except:
                 pass
+
             try:
                 stationid = request.GET.get("station", '')
                 if not stationid == '':
@@ -412,61 +448,88 @@ class RoutingSlipEntryView(APIView):
                         aStation = Station.objects.get(id=stationid)
                         if not aStation:
                             notFound = True
+                        else:
+                            kwargs["station"] = aStation
                     except:
-                        aStation = None
                         notFound = True
             except:
                 pass
 
-            if notFound == False and not aRoutingSlip and not aStation:
-                badRequest = True
+            try:
+                returntoclinicstationid = request.GET.get("returntoclinicstation", '')
+                if not returntoclinicstationid == '':
+                    try:
+                        aReturnToClinicStation = ReturnToClinicStation.objects.get(id=returntoclinicstationid)
+                        if not aReturnToClinicStation:
+                            notFound = True
+                        else:
+                            kwargs["returntoclinicstation"] = aReturnToClinicStation
+                    except:
+                        notFound = True
+            except:
+                pass
 
             if not notFound and not badRequest:
-                if aRoutingSlip and not aStation:
-                    try:
-                        routing_slip_entry = RoutingSlipEntry.objects.filter(routingslip=aRoutingSlip)
-                    except:
+                try:
+                    routing_slip_entry = RoutingSlipEntry.objects.filter(**kwargs)
+                    if routing_slip_entry == None or len(routing_slip_entry) == 0:
                         routing_slip_entry = None
-                elif aStation and not aRoutingSlip:
-                    try:
-                        routing_slip_entry = RoutingSlipEntry.objects.filter(station=aStation)
-                    except:
-                        routing_slip_entry = None
-                else:
-                    try:
-                        routing_slip_entry = RoutingSlipEntry.objects.get(station=aStation, routingslip=aRoutingSlip)
-                    except:
-                        routing_slip_entry = None
-        if badRequest:
-            return HttpResponseBadRequest()
+                        notFound = True
+                except:
+                    routing_slip_entry = None
+                    notFound = True
         if notFound:
             return HttpResponseNotFound()
+        if badRequest:
+            return HttpResponseBadRequest()
+
         if routing_slip_entry:
             if routing_slip_entry_id:
-                ret = self.serialize(routing_slip_entry)
-            elif aStation and aRoutingSlip:
                 ret = self.serialize(routing_slip_entry)
             else:
                 ret = []
                 for x in routing_slip_entry:
+
+                    # do some additional filtering
+
+                    if nullrcs != None:
+                        if nullrcs == True and x.returntoclinicstation:
+                            continue
+                        elif nullrcs == False and not x.returntoclinicstation:
+                            continue
+
+                    if len(stateFilters) and not x.state in stateFilters:
+                            continue 
+
+                    # got a match, append it
+
                     ret.append(x.id)
-            if ret:
-                return Response(ret)
-            else:
-                return HttpResponseServerError() 
+                if len(ret) == 0:
+                    ret = None
+                    return HttpResponseNotFound()
+        if ret:
+            return Response(ret)
         else:
-          return HttpResponseServerError()
+            return HttpResponseNotFound()
 
     @log_request
     def post(self, request, format=None):
         badParam = False
         implError = False
+        returntoclinicstationid = None
+        kwargs = {}
+        aReturnToClinicStation = None
 
         data = json.loads(request.body)
         try:
             routingslipid = int(data["routingslip"])
         except:
             badParam = True
+
+        try:
+            returntoclinicstationid = int(data["returntoclinicstation"])
+        except:
+            returntoclinicstationid = None
 
         try:
             stationid = int(data["station"])
@@ -479,13 +542,25 @@ class RoutingSlipEntryView(APIView):
 
             try:
                 aRoutingSlip = RoutingSlip.objects.get(id=routingslipid)
+                kwargs["routingslip"] = aRoutingSlip
             except:
                 aRoutingSlip = None
  
             try:
                 aStation = Station.objects.get(id=stationid)
+                kwargs["station"] = aStation
             except:
                 aStation = None
+
+            if returntoclinicstationid != None:
+                try:
+                    aReturnToClinicStation = ReturnToClinicStation.objects.get(id=returntoclinicstationid)
+                    if aReturnToClinicStation != None:
+                        kwargs["returntoclinicstation"] = aReturnToClinicStation
+                    else:
+                        raise NotFound
+                except:
+                    raise NotFound
 
             if not aRoutingSlip or not aStation:
                 raise NotFound
@@ -497,7 +572,7 @@ class RoutingSlipEntryView(APIView):
             # see if the routing slip already exists
 
             try:
-                routing_slip_entry = RoutingSlipEntry.objects.filter(station=aStation, routingslip=aRoutingSlip)
+                routing_slip_entry = RoutingSlipEntry.objects.filter(**kwargs)
                 if not routing_slip_entry or len(routing_slip_entry) == 0:
                     routing_slip_entry = None
                 else:
@@ -507,10 +582,14 @@ class RoutingSlipEntryView(APIView):
 
             if not routing_slip_entry:
                 try:
-                    routing_slip_entry = RoutingSlipEntry(station=aStation, routingslip=aRoutingSlip)
+                    routing_slip_entry = RoutingSlipEntry(**kwargs)
                     if routing_slip_entry:
                         # set the order of the entry to the station level
                         routing_slip_entry.order = aStation.level
+                        # if it is a returntoclinicstation, set state to "created"
+                        if aReturnToClinicStation != None:
+                            routing_slip_entry.state = "l"
+
                         routing_slip_entry.save()
                     else:
                         implError = True
@@ -525,7 +604,6 @@ class RoutingSlipEntryView(APIView):
             return Response({'id': routing_slip_entry.id})
 
     def verifyState(self, old, new):
-
         ret = True
 
         try:
@@ -535,13 +613,13 @@ class RoutingSlipEntryView(APIView):
 
         if ret:
             if old == "i":
-                if new in ["s", "n", "r"]:
+                if new in ["s", "n", "r", "l"]:
                     ret = False
             elif old == "o":
-                if new in ["s", "r", "i", "n"]:
+                if new in ["s", "i", "n", 'l']:
                     ret = False
             elif old == "r":
-                if new in ["i", "o", "s"]:
+                if new in ["i", "n", "o", "s"]:
                     ret = False
         return ret
 
@@ -550,6 +628,7 @@ class RoutingSlipEntryView(APIView):
         badRequest = False
         implError = False
         notFound = False
+        aReturnToClinicStation = None
 
         data = json.loads(request.body)
         try:
@@ -560,12 +639,24 @@ class RoutingSlipEntryView(APIView):
             state = data["state"]
         except:
             state = None
+        try:
+            returntoclinicstationid = int(data["returntoclinicstation"])
+        except:
+            returntoclinicstationid = None
+
+        if returntoclinicstationid != None:
+            try:
+                aReturnToClinicStation = ReturnToClinicStation.objects.get(id=returntoclinicstationid)
+                if aReturnToClinicStation == None:
+                    raise NotFound
+            except:
+                raise NotFound
 
         if not routing_slip_entry_id:
             badRequest = True
 
         if not badRequest:
-            if not state and not order: 
+            if not state and not order and not returntoclinicstationid: 
                 badRequest = True
 
         if not badRequest:
@@ -583,10 +674,14 @@ class RoutingSlipEntryView(APIView):
                 if state:
                     badRequest = not self.verifyState(routing_slip_entry.state, state)
                 if not badRequest:
+                    if aReturnToClinicStation:
+                        routing_slip_entry.returntoclinicstation = aReturnToClinicStation
                     if order:
                         routing_slip_entry.order = order
+
                     if state:
                         routing_slip_entry.state = self.textToState[state]
+
                     try:
                         routing_slip_entry.save()
                     except:

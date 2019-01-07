@@ -1,3 +1,18 @@
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#
+#You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 '''
 unit tests for routingslip application. Assumes django server is up
 and running on the specified host and port.
@@ -14,6 +29,8 @@ from test.tscharts.tscharts import Login, Logout
 from test.patient.patient import CreatePatient, DeletePatient
 from test.station.station import CreateStation, DeleteStation
 from test.clinic.clinic import CreateClinic, DeleteClinic
+from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation
+from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation, DeleteReturnToClinicStation
 
 class CreateRoutingSlip(ServiceAPI):
     def __init__(self, host, port, token):
@@ -138,6 +155,10 @@ class CreateRoutingSlipEntry(ServiceAPI):
         self._payload["routingslip"] = routingslip
         self.setPayload(self._payload)
 
+    def setReturnToClinicStation(self, returntoclinicstation):
+        self._payload["returntoclinicstation"] = returntoclinicstation
+        self.setPayload(self._payload)
+
     def clearPayload(self):
         self._payload = {}
         self.setPayload(self._payload)
@@ -167,6 +188,30 @@ class GetRoutingSlipEntry(ServiceAPI):
             base += "station={}".format(self._station)
             hasQArgs = True
 
+        if not self._returntoclinicstation == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "returntoclinicstation={}".format(self._returntoclinicstation)
+            hasQArgs = True
+
+        if not self._nullrcs == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "nullrcs={}".format(self._nullrcs)
+            hasQArgs = True
+
+        if not self._states == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "states={}".format(self._states)
+            hasQArgs = True
+
         self.setURL(base)
 
     def __init__(self, host, port, token):
@@ -181,17 +226,28 @@ class GetRoutingSlipEntry(ServiceAPI):
 
     def clearArgs(self):
         self._routingslip = None
+        self._returntoclinicstation = None
         self._station = None
+        self._nullrcs = None
+        self._states = None
         self._id = None
 
-    def setRoutingslip(self, routingslip):
+    def setRoutingSlip(self, routingslip):
         self._routingslip = routingslip
         self.makeURL()
     
-    def setStation(self, station):
-        self._station = station
+    def setReturnToClinicStation(self, returntoclinicstation):
+        self._returntoclinicstation = returntoclinicstation
         self.makeURL()
     
+    def setStates(self, states):
+        self._states = states
+        self.makeURL()
+
+    def setNullrcs(self, nullrcs):
+        self._nullrcs = nullrcs
+        self.makeURL()
+
     def setId(self, id):
         self._id = id
         self.makeURL()
@@ -214,6 +270,10 @@ class UpdateRoutingSlipEntry(ServiceAPI):
 
     def setState(self, state):
         self._payload["state"] = state
+        self.setPayload(self._payload)
+    
+    def setReturnToClinicStation(self, id):
+        self._payload["returntoclinicstation"] = id
         self.setPayload(self._payload)
     
     def clearPayload(self):
@@ -317,6 +377,7 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertTrue("token" in ret[1])
         global token
         token = ret[1]["token"]
+        self._states = ["New", "Scheduled", "Checked In", "Checked Out", "Removed", "Return"]
 
     def testCreateRoutingSlip(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
@@ -387,7 +448,6 @@ class TestTSRoutingSlip(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
     def testCreateRoutingSlipBadClinic(self):
-
         data = {}
         data["paternal_last"] = "abcd1234"
         data["maternal_last"] = "yyyyyy"
@@ -1047,10 +1107,127 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
         self.assertTrue(int(ret[1]["station"] == stationid))
-        self.assertTrue(int(ret[1]["order"] == 0))
+        self.assertTrue(int(ret[1]["order"] == 1))
         self.assertTrue(ret[1]["state"] == "New")
 
         x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteStation(host, port, token, stationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteRoutingSlip(host, port, token, routingslipid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testCreateRoutingSlipEntryWithReturnToClinicStation(self):
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        data = {}
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid = int(ret[1]["id"])
+
+        x = CreateStation(host, port, token, "ENT")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        stationid = int(ret[1]["id"])
+
+        x = CreateClinicStation(host, port, token, clinicid, stationid, name="test")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        requestingclinicstationid = int(ret[1]["id"])
+
+        x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        returntoclinicstationid = int(ret[1]["id"])
+
+        x = CreateRoutingSlip(host, port, token)
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        x.setCategory("New Cleft")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        routingslipid = int(ret[1]["id"])
+
+        x = CreateRoutingSlipEntry(host, port, token)
+        x.setRoutingSlip(routingslipid)
+        x.setStation(stationid)
+        x.setReturnToClinicStation(returntoclinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        routingslipentryid = int(ret[1]["id"])
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setId(routingslipentryid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        self.assertTrue("routingslip" in ret[1])
+        self.assertTrue("station" in ret[1])
+        self.assertTrue("state" in ret[1])
+        self.assertTrue("order" in ret[1])
+        self.assertTrue("returntoclinicstation" in ret[1])
+        self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
+        self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
+        self.assertTrue(int(ret[1]["station"] == stationid))
+        self.assertTrue(int(ret[1]["order"] == 1))
+        self.assertTrue(int(ret[1]["returntoclinicstation"] == returntoclinicstationid))
+        self.assertEqual(ret[1]["state"], "Return")
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setReturnToClinicStation(returntoclinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        print("ret 1 is {}".format(ret[1]))
+        self.assertTrue(len(ret[1]) == 1)
+        self.assertTrue(ret[1][0] == routingslipentryid)
+
+        x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteReturnToClinicStation(host, port, token, returntoclinicstationid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinicStation(host, port, token, requestingclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -1262,7 +1439,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
         self.assertTrue(int(ret[1]["station"] == stationid))
-        self.assertTrue(int(ret[1]["order"] == 0))
+        self.assertTrue(int(ret[1]["order"] == 1))
         self.assertTrue(ret[1]["state"] == "New")
 
         x = DeleteRoutingSlipEntry(host, port, token, routingslipentryid)
@@ -1424,7 +1601,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertTrue(int(ret[1]["id"]) == routingslipentryid)
         self.assertTrue(int(ret[1]["routingslip"] == routingslipid))
         self.assertTrue(int(ret[1]["station"] == stationid))
-        self.assertTrue(int(ret[1]["order"] == 0))
+        self.assertTrue(int(ret[1]["order"] == 1))
         self.assertTrue(ret[1]["state"] == "New")
 
         x = UpdateRoutingSlipEntry(host, port, token, routingslipentryid)
@@ -1568,6 +1745,8 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         stationids = []
         stationids = []
         routingslipentryids = []
+        requestingclinicstationids = []
+        returntoclinicstationids = []
         stations = ["ENT", "Speech", "Dental", "Ortho", "Screening"]
         for i in stations:
             x = CreateStation(host, port, token, i)
@@ -1583,7 +1762,19 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             self.assertEqual(ret[0], 200)
             routingslipentryids.append(int(ret[1]["id"]))
 
-        # search on routingslip, returns array
+            x = CreateClinicStation(host, port, token, clinicid, stationid, name="test")
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            requestingclinicstationid = int(ret[1]["id"])
+            requestingclinicstationids.append(int(ret[1]["id"]))
+
+            x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            returntoclinicstationid = int(ret[1]["id"])
+            returntoclinicstationids.append(int(ret[1]["id"]))
+
+        # search on clinic and patient, returns array
 
         x = GetRoutingSlip(host, port, token)
         x.setClinic(clinicid)
@@ -1595,7 +1786,7 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         # search on routingslip, returns array
 
         x = GetRoutingSlipEntry(host, port, token)
-        x.setRoutingslip(routingslipid)
+        x.setRoutingSlip(routingslipid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -1603,43 +1794,215 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertTrue(len(results) == len(stations))
         for i in results:
             self.assertTrue(i in routingslipentryids)
-
-        # search on station, returns single item 
-   
-        for i in stationids: 
-            x = GetRoutingSlipEntry(host, port, token)
-            x.setRoutingslip(routingslipid)
-            x.setStation(i)
-            ret = x.send(timeout=30)
+            y = GetRoutingSlipEntry(host, port, token)
+            y.setId(i)
+            ret = y.send(timeout=30)
             self.assertEqual(ret[0], 200)
-            results = ret[1]
-            self.assertTrue("routingslip" in results)
-            self.assertTrue(results["routingslip"] == routingslipid)
-            self.assertTrue("station" in results)
-            self.assertTrue(results["station"] == i)
-
-        # same thing, but don't pass routingslip
-   
-        for i in stationids: 
-            x = GetRoutingSlipEntry(host, port, token)
-            x.setStation(i)
-            ret = x.send(timeout=30)
-            self.assertEqual(ret[0], 200)
-            results = ret[1]
-            self.assertTrue(len(results) == 1)
+            self.assertTrue("id" in ret[1])
+            self.assertTrue(ret[1]["id"] == i)
+            self.assertTrue("routingslip" in ret[1])
+            self.assertTrue(ret[1]["routingslip"] == routingslipid)
+            self.assertTrue("station" in ret[1])
+            self.assertTrue(ret[1]["station"] in stationids)
 
         x = GetRoutingSlipEntry(host, port, token)
-        x.setRoutingslip(9999)
+        x.setRoutingSlip(9999)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
         x = GetRoutingSlipEntry(host, port, token)
-        x.setStation(9999)
+        x.setId(9999)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        for i in returntoclinicstationids:
+            x = DeleteReturnToClinicStation(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in requestingclinicstationids:
+            x = DeleteClinicStation(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in routingslipentryids:
+            x = DeleteRoutingSlipEntry(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in stationids:
+            x = DeleteStation(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        x = DeleteRoutingSlip(host, port, token, routingslipid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testSearchReturnToClinicStationRoutingSlipEntry(self):
+
+
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        data = {}
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid = int(ret[1]["id"])
+
+        x = CreateRoutingSlip(host, port, token)
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        x.setCategory("New Cleft")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        routingslipid = int(ret[1]["id"])
+
+        stationids = []
+        routingslipentryids = []
+        requestingclinicstationids = []
+        returntoclinicstationids = []
+        stations = ["ENT", "Speech", "Dental", "Ortho", "Screening"]
+        for i in stations:
+            x = CreateStation(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            stationid = int(ret[1]["id"])
+            stationids.append(stationid)
+
+            x = CreateRoutingSlipEntry(host, port, token)
+            x.setRoutingSlip(routingslipid)
+            x.setStation(stationid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            routingslipentryids.append(int(ret[1]["id"]))
+            routingslipentryid = int(ret[1]["id"])
+
+            x = CreateClinicStation(host, port, token, clinicid, stationid, name="test")
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            requestingclinicstationid = int(ret[1]["id"])
+            requestingclinicstationids.append(int(ret[1]["id"]))
+
+            x = CreateReturnToClinicStation(host, port, token, patient=patientid, clinic=clinicid, station=stationid, requestingclinicstation=requestingclinicstationid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            returntoclinicstationid = int(ret[1]["id"])
+            returntoclinicstationids.append(int(ret[1]["id"]))
+
+            x = UpdateRoutingSlipEntry(host, port, token, routingslipentryid)
+            x.setReturnToClinicStation(returntoclinicstationid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)   
+
+        entryStates = ["Scheduled", "Checked In", "Checked Out", "Removed"]
+        for i in entryStates:
+            for j in routingslipentryids:
+                x = UpdateRoutingSlipEntry(host, port, token, j)
+                x.setState(i)
+                ret = x.send(timeout=30)
+                self.assertEqual(ret[0], 200)   
+
+            x = GetRoutingSlipEntry(host, port, token)
+            x.setRoutingSlip(routingslipid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            self.assertTrue(len(ret[1]) == len(routingslipentryids))
+            for z in ret[1]:
+                x = GetRoutingSlipEntry(host, port, token)
+                x.setId(z)
+                ret = x.send(timeout=30)
+                self.assertEqual(ret[0], 200)
+                self.assertTrue(ret[1]["state"] == i)
+
+        for j in routingslipentryids:
+            x = UpdateRoutingSlipEntry(host, port, token, j)
+            x.setState("Removed")
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)   
+
+        x = UpdateRoutingSlipEntry(host, port, token, routingslipentryids[0])
+        x.setState("Checked Out")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)   
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setRoutingSlip(routingslipid)
+        x.setStates("Removed")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]), 5)
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setRoutingSlip(routingslipid)
+        x.setNullrcs(False)
+        x.setStates("Removed")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertEqual(len(ret[1]), 5)
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setRoutingSlip(routingslipid)
+        x.setNullrcs(True)
+        x.setStates("Removed")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = UpdateRoutingSlipEntry(host, port, token, routingslipentryids[0])
+        x.setState("Checked In")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)   
+
+        x = GetRoutingSlipEntry(host, port, token)
+        x.setRoutingSlip(routingslipid)
+        x.setStates("Checked In")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
         for i in routingslipentryids:
             x = DeleteRoutingSlipEntry(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in returntoclinicstationids:
+            x = DeleteReturnToClinicStation(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in requestingclinicstationids:
+            x = DeleteClinicStation(host, port, token, i)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 

@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2018
-#(C) Copyright Thousand Smiles Foundation 2017-2018
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -23,9 +23,10 @@ import pickle
 
 from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
-from test.routingslip.routingslip import GetRoutingSlip, GetRoutingSlipEntry, UpdateRoutingSlipEntry
+from test.routingslip.routingslip import GetRoutingSlip, GetRoutingSlipEntry, UpdateRoutingSlipEntry, CreateRoutingSlipEntry
 from test.clinic.clinic import GetClinic, GetAllClinics
 from test.clinicstation.clinicstation import GetClinicStation
+from test.returntoclinicstation.returntoclinicstation import GetReturnToClinicStation, UpdateReturnToClinicStation
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tscharts.settings")
 import django
@@ -96,7 +97,7 @@ class ClinicStationQueueEntry():
             q.save()            
             ret = True
         else:
-            print("unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            print("update: unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
         return ret
 
     def __str__(self):
@@ -503,10 +504,33 @@ class Scheduler():
                 retval = ret[1]
         return retval
 
+    def insertFrontOfClinicStationQueue(self, routingslipentry, patientid, clinicstationid):
+
+        index = str(clinicstationid)
+        isInQueue = routingslipentry in self._queues[index]
+        if not isInQueue:
+            qent = ClinicStationQueueEntry()
+            qent.setRoutingSlip(routingslipentry["routingslip"])
+            qent.setRoutingSlipEntry(routingslipentry["id"])
+            qent.setPatientId(patientid)
+            qent.setQueue(index)
+            routingslipentry["qent"] = qent
+            self._queues[index].append(routingslipentry)
+            dbQueue = self._dbQueues[index]
+            # create queue entry
+            dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
+                                                   patientid, 
+                                                   routingslipentry["id"])
+            if dbQueueEntry:
+                self._dbQueueEntries[index] = dbQueueEntry
+            ret = True
+        return ret
+
     def addToQueue(self, routingslipentry, patientid):
         ret = False
         min = 9999      
         index = None
+
         clinicstations = self.getClinicStationsForStation(routingslipentry["station"])
         for x in clinicstations:
             away = self._clinicStationAwayMap[str(x)]
@@ -586,12 +610,166 @@ class Scheduler():
 
         return retval
 
+    '''
+    create a list of routing slip entries that correspond to a newly created 
+    returntoclinicstation resource (state is "created"). The main loop will 
+    iterate this list and place each in the queue of a clinicstation that 
+    corresponds to the station that was requested.
+    '''
+
+    def findCreatedReturnToClinicStationQueueables(self, clinicid):
+        queueables = []
+
+        x = GetReturnToClinicStation(self._host, self._port, self._token)
+        x.setClinic(clinicid)
+        x.setState("created")
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            createdList = ret[1]
+        else:
+            createdList = []
+
+        for x in createdList:
+
+            # get the routing slip for the patient
+
+            y = GetReturnToClinicStation(self._host, self._port, self._token)
+            y.setId(x["id"])
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCreatedReturnToClinicStation warning: unable to get returntoclinicstation id {}: return {}".format(x["id"], ret[0]))
+                continue
+            y = GetRoutingSlip(self._host, self._port, self._token)
+            y.setClinic(clinicid)
+            patientid = ret[1]["patient"]
+            stationid = ret[1]["station"]
+            y.setPatient(patientid)
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCreateReturnToClinicStation warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
+                continue
+
+            # create a routing slip entry for the patient
+
+            routingslipid = ret[1]["id"]
+            y = CreateRoutingSlipEntry(self._host, self._port, self._token)
+            y.setRoutingSlip(routingslipid)
+            y.setStation(stationid)
+            y.setReturnToClinicStation(x["id"])
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCreateReturnToClinicStation warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, x["id"], ret[0]))
+                continue
+            entry = GetRoutingSlipEntry(self._host, self._port, self._token)
+	    entry.setId(ret[1]["id"])
+            ret = entry.send(timeout=30)
+            if ret[0] == 200:
+                queueables.append((ret[1], patientid, x["id"]))
+        return queueables
+
+    '''
+    create a list of routing slip entries that correspond to a  
+    returntoclinicstation resource that is in checked_out_dest state, which
+    means the patient needs to be returned to the front of the line of the
+    station that created the original returntoclinicstation request. The main 
+    loop will iterate this list and place each in the front of the queue of 
+    the requesting clinicstation, and update state.
+    '''
+
+    def findCheckedOutDestReturnToClinicStationQueueables(self, clinicid):
+        queueables = []
+
+        x = GetReturnToClinicStation(self._host, self._port, self._token)
+        x.setClinic(clinicid)
+        x.setState("checked_out_dest")
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            checkedOutDestList = ret[1]
+        else:
+            checkedOutDestList = []
+
+        for x in checkedOutDestList:
+
+            returntoclinicstationid = x["id"]
+            y = GetReturnToClinicStation(self._host, self._port, self._token)
+            y.setId(returntoclinicstationid)
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get returntoclinicstation id {}: return {}".format(returntoclinicstationid, ret[0]))
+                continue
+
+            # get the routing slip for the patient
+
+            requestingclinicstationid = ret[1]["requestingclinicstation"]
+            patientid = ret[1]["patient"]
+            stationid = ret[1]["station"]
+
+            y = GetRoutingSlip(self._host, self._port, self._token)
+            y.setClinic(clinicid)
+            y.setPatient(patientid)
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
+                continue
+
+            # create a routing slip entry for the patient
+
+            routingslipid = ret[1]["id"]
+            y = CreateRoutingSlipEntry(self._host, self._port, self._token)
+            y.setRoutingSlip(routingslipid)
+            y.setStation(self._clinicStationToStationMap[str(requestingclinicstationid)])
+            #y.setStation(stationid)
+            y.setReturnToClinicStation(returntoclinicstationid)
+            ret = y.send(timeout=30)
+            if not (ret[0] == 200):
+                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, returntoclinicstationid, ret[0]))
+                continue
+            entry = GetRoutingSlipEntry(self._host, self._port, self._token)
+	    entry.setId(ret[1]["id"])
+            ret = entry.send(timeout=30)
+            if ret[0] == 200:
+                queueables.append((ret[1], patientid, returntoclinicstationid, requestingclinicstationid))
+        return queueables
+
+    def hasReturnToClinicNotCheckedOut(self, routingslipid):
+        '''
+        call this function from findQueueableEntry. If returns True, skip this patient.
+        otherwise, the patient may be returned to a clinicstation that is not the
+        specified requestingclinicstation for the active returntoclinicstation record.
+
+        this keeps the scheduler for overriding the returntoclinicstation logic and
+        sending the patient to the next unscheduled item in the routingslip, instead
+        of back to the requesting station (which is where a patient must go after being
+        seen by a "returntoclinicstation" station). Example, if dentist sends to xray,
+        patient must go back to that dentist, not to some other station (like hygiene).
+        '''
+
+        '''
+        pseudocode
+
+        select routingslipentry where routingslip == routingslip and returntoclinic != null and state != o
+
+        if result not empty
+            skip
+        '''
+        x = GetRoutingSlipEntry(self._host, self._port, self._token)
+        x.setRoutingSlip(routingslipid)
+        x.setNullrcs(False)
+        x.setStates("Checked In, New, Scheduled, Removed, Return")
+        ret = x.send(timeout=30)
+        if ret[0] == 404:
+            return False
+        else:
+            return True
+
     def findQueueableEntry(self, routing):
         queueables = []
         retval = None      # default: nothing to queue on this routing slip
 
         if not self.isScheduledOrCheckedIn(routing):
             for x in routing:
+                if self.hasReturnToClinicNotCheckedOut(x):
+                    continue
                 entry = GetRoutingSlipEntry(self._host, self._port, self._token)
 	    	entry.setId(x)
                 ret = entry.send(timeout=30)
@@ -601,7 +779,6 @@ class Scheduler():
                         queueables.append(ret[1])
                 else:
                     print("findQueueableEntry failure in GetRoutingSlipEntry".format(ret[0]))
-
         if len(queueables):
 
             # found something to schedule, find highest priority with smallest queue size
@@ -631,6 +808,13 @@ class Scheduler():
         if ret[0] != 200:
             print("markNew failure for entry {}".format(entry["id"]))
 
+    def setRtcState(self, rtcid, state):
+        x = UpdateReturnToClinicStation(self._host, self._port, self._token, rtcid)
+        x.setState(state)
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("setRtcState failure for rtc {} state {}".format(rtcid, state))
+
     def run(self):
 
         while True:
@@ -641,31 +825,78 @@ class Scheduler():
 
             self.updateClinicStations()
 
-            # get all the routing slips for the clinic
+            # process any newly created returntoclinicstation resources
 
-            x = GetRoutingSlip(self._host, self._port, self._token)
-            x.setClinic(clinic["id"])
-            ret = x.send(timeout=30)
-            if ret[0] == 200:
-                results = ret[1]
+            found = False
 
-                # process each of the routing slips
+            rtcQueueables = self.findCreatedReturnToClinicStationQueueables(clinic["id"])
+    
+            for rtc in rtcQueueables:
+                # append the entry to the corresponding
+                # clinicstation queue
+                entry = rtc[0]
+                patient = rtc[1]
+                rtcresource = rtc[2]
 
-                for i in results:
-                    routing = i["routing"]
-                    entry = self.findQueueableEntry(routing)
-                    if entry:
-                        # append the entry to the corresponding
-                        # clinicstation queue
-                        if self.addToQueue(entry, i["patient"]) == True:
-                            # update the routingslip entry state to "Scheduled"
-                            self.markScheduled(entry)
-                            break
-                        else:
-                            print("Unable to add item to queue");
+                if self.addToQueue(entry, patient) == True:
+                    # update the routingslip entry state to "Scheduled"
+                    self.markScheduled(entry)
+                    # update the returntoclinicstation entry state to "scheduled_dest"
+                    self.setRtcState(rtcresource, "scheduled_dest")
+                    found = True
+                else:
+                    print("Unable to add created return to clinic station item to queue");
 
-            else:
-                print("GetRoutingSlip failed"); 
+            # process any returntoclinicstation resources that need to be
+            # sent back to the requesting clinic station. 
+
+            if found == False:
+                rtcCheckedOut = self.findCheckedOutDestReturnToClinicStationQueueables(clinic["id"])
+
+                for rtc in rtcCheckedOut:
+                    entry = rtc[0]
+                    patient = rtc[1]
+                    rtcresource = rtc[2]
+                    requestingclinicstation = rtc[3]
+
+                    if self.insertFrontOfClinicStationQueue(entry, patient, requestingclinicstation) == True:
+                        # update the routingslip entry state to "Scheduled"
+                        self.markScheduled(entry)
+                        self.setRtcState(rtcresource, "scheduled_return")
+                        found = True
+                    else:
+                        print("Unable to add checkedout return to clinic station item to queue");
+
+            if found == False:
+
+                # get all the routing slips for the clinic
+
+                x = GetRoutingSlip(self._host, self._port, self._token)
+                x.setClinic(clinic["id"])
+                ret = x.send(timeout=30)
+                if ret[0] == 200:
+                    results = ret[1]
+
+                    # process each of the routing slips
+
+                    for i in results:
+                        routing = i["routing"]
+                        entry = self.findQueueableEntry(routing)
+                        if entry:
+                            # append the entry to the corresponding
+                            # clinicstation queue
+                            if self.addToQueue(entry, i["patient"]) == True:
+                                # update the routingslip entry state to "Scheduled"
+                                self.markScheduled(entry)
+                                break
+                            else:
+                                print("Unable to add item to queue");
+
+                else:
+                    print("GetRoutingSlip failed"); 
+
+            # process queues
+
             for k, v in self._queues.iteritems():
                 for y in v:
                     ret = y["qent"].update()
@@ -673,7 +904,7 @@ class Scheduler():
                         v.remove(y)
 
             self.dumpQueues()
-            self.fillAnEmptyQueue()
+            #self.fillAnEmptyQueue()
             self.updateQueueAvgServiceTime()
             time.sleep(5)
 

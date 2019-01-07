@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"station":id}`
+    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}`
 
 * **Error Response:**
 
@@ -48,13 +48,12 @@ Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 
-{"order":1,"state":"Checked In","routingslip":32479,"id":811,"station":353}
+{"order":1,"state":"Checked In","routingslip":32479,"id":811,"station":353, "returntoclinicstation": null}
 ```
   
 **Get Multiple Routing Slip Entry Resources**
 ----
-  Returns all matching routing slip entry resources. 
-  Note: return format is based on search parameters. See below for details.
+  Returns a list of all matching routing slip entry resources. 
 
 * **URL**
 
@@ -68,12 +67,13 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    **Required:**
 
-   One or more of the following must be used to filter the results. Depending
-   on what is passed, either a routingslip object or an array of routingslip
-   object ids is returned.
+   One or more of the following must be used to filter the results. 
 
-   `routingslip` routingslip id. If specified with a station, a single routing slip entry is returned. Otherwise, all routing slip entries for the routing slip are returned in an array.<br />
-   `station` station id. If specified alone, routing slips entries for all patients are returned for the station. If specified with routingslip, then a single routing slip entry is returned. <br />
+   `routingslip` routingslip id. 
+   `station` station id. 
+   `returntoclinicstation` returntoclinicstation id. 
+   `nullrcs` if "true" return only entries with a NULL returntoclinicstation field. If "false" return only non-NULL entries.<br />
+   `states` return entries matching the specified states. Comma-separated list consisting of one or more of the following states: "New", "Scheduled", "Checked In", "Checked Out", "Return", and "Removed"<br />
 
 * **Data Params**
 
@@ -83,7 +83,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
   * **Code:** 200 <br />
     **Content (patient & clinic):** `[id, id, id, ...]`<br>
-    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed","routingslip":id,"id":id,"station":id}`
+    **Content:** `[{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}, ...]`
  
 * **Error Response:**
 
@@ -141,7 +141,7 @@ Content-Type: application/json
 
    **Optional:**
 
-   None 
+   `returntoclinicstation` return to clinic station resource id. If specified, object state will be set to "Return"<br/>
 
 * **Success Response:**
 
@@ -202,7 +202,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    One of the following is required. If both are missing, a bad request is returned.
 
    `order` integer - the order of this item in the set of routing slip entries for the specified routingslip<br/>
-   `state` string, one of "New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" <br/>
+   `returntoclinicstation` integer - id of a returntoclinicstation record<br/>
+   `state` string, one of "New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed". Note that state "Return" can only be set at creation time. <br/>
 
 * **Success Response:**
 
