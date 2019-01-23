@@ -363,14 +363,14 @@ class MockClinic:
             if ret[0] != 200:
                 print("failed to create category {}".format(x))
 
-    def createClinic(self, location):
+    def createClinic(self, location="Ensenada", duration=1):
         # create clinic that is occurring today, since scheduler will only
         # process a clinic that is currently active.
 
         retval = None
 
         today = datetime.utcnow().strftime("%m/%d/%Y")
-        todayplusone = (datetime.utcnow() + timedelta(hours=24)).strftime("%m/%d/%Y")
+        todayplusone = (datetime.utcnow() + timedelta(hours=24 * (duration - 1))).strftime("%m/%d/%Y")
         x = CreateClinic(self._host, self._port, self._token, location, today, todayplusone)
         ret = x.send(timeout=30)
         if ret[0] != 200:
@@ -601,7 +601,7 @@ class MockClinic:
         x = json.loads(x)
         f.close()
         self.createCategories(x["categories"])
-        clinic = self.createClinic(x["name"])
+        clinic = self.createClinic(x["name"], int(x["duration"]))
         for y in x["stations"]:
             station = self.createStation(y["name"], y["level"])
             if y["name"] == "X-Ray":
@@ -621,7 +621,7 @@ class MockClinic:
         print("Creating patient categories")
         self.createCategories()
         print("Creating clinic")
-        clinic = self.createClinic("Ensenada")
+        clinic = self.createClinic("Ensenada", 1)
         print("Creating stations")
         self._dental = self.createStation("Dental", 1)
         ent = self.createStation("ENT", 2)

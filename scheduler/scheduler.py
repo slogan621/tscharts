@@ -363,6 +363,8 @@ class Scheduler():
                 for x in ret[1]:
                     start = datetime.datetime.strptime(x["start"], "%m/%d/%Y")
                     end = datetime.datetime.strptime(x["end"], "%m/%d/%Y")
+                    if start == end:
+                        end = end + datetime.timedelta(hours=24)
                     if today >= start and today <= end:
                         retval = x
                         self._clinicid = x["id"]
