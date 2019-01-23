@@ -127,7 +127,7 @@ DATABASES = {
         'HOST': '',
         'PORT': '',
         'OPTIONS': {
-           "init_command": "SET storage_engine=MyISAM",
+           "init_command": "SET default_storage_engine=MyISAM",
            'sql_mode': 'traditional',
         }
     }
