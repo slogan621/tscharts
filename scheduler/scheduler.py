@@ -444,7 +444,9 @@ class Scheduler():
         totalWait = datetime.timedelta(seconds=0)
         print("\nClinic queue report UTC time {}\n".format(datetime.datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
         for k, v in self._queues.iteritems():
-            print("***** Station {} *****".format(self.getClinicStationName(int(k))))
+            away = self._clinicStationAwayMap[k]
+            finished = self._clinicStationFinishedMap[k]
+            print("***** Station {} id {} Away {} Finished {} *****".format(self.getClinicStationName(int(k)), k, away, finished))
             if len(v):
                 localWait = datetime.timedelta(seconds=0)
                 numQueues = numQueues + 1
