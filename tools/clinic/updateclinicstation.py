@@ -80,7 +80,7 @@ def updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, f
         count += 1 
     if active == True:
         count += 1
-    if away  == True:
+    if away == True:
         count += 1
 
     if count >= 2:
@@ -170,6 +170,7 @@ def main():
             finished = True
         elif o == "-a":
             active = True
+            away = False
         elif o == "-n":
             name = a
         elif o == "-s":
