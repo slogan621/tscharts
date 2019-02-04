@@ -168,9 +168,12 @@ def main():
             away = True
         elif o == "-f":
             finished = True
+            active = False
+            away = False
         elif o == "-a":
             active = True
             away = False
+            finished = False
         elif o == "-n":
             name = a
         elif o == "-s":
