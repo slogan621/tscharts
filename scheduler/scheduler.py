@@ -34,7 +34,7 @@ django.setup()
 
 from statechange.models import StateChange
 from queue.models import QueueStatus, Queue, QueueEntry
-from routingslip.models import RoutingSlipEntry
+from routingslip.models import RoutingSlip, RoutingSlipEntry
 from patient.models import Patient
 from clinic.models import Clinic
 from station.models import Station
@@ -186,7 +186,7 @@ class Scheduler():
                 print("createDbQueue unable to create queue")
         return queue
 
-    def createDbQueueEntry(self, queueid, patientid, routingslipentryid):
+    def createDbQueueEntry(self, queueid, patientid, routingslipid, routingslipentryid):
         queueent = None
 
         try:
@@ -200,6 +200,12 @@ class Scheduler():
             print("exception: {}".format(sys.exc_info()[0]))
             print("createDbQueueEntry unable to get patient {}".format(patientid))
         try:
+            aRoutingSlip = RoutingSlip.objects.get(id=int(routingslipid))
+        except:
+            print("exception: {}".format(sys.exc_info()[0]))
+            print("createDbQueueEntry unable to get routingslip {}".format(routingslipid))
+
+        try:
             aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
         except:
             print("exception: {}".format(sys.exc_info()[0]))
@@ -209,6 +215,7 @@ class Scheduler():
             queueent = QueueEntry(queue = aQueue,
                                   patient = aPatient,
                                   timein = datetime.datetime.utcnow(),
+                                  routingslip = aRoutingSlip,
                                   routingslipentry = aRoutingSlipEntry)
             queueent.save()
         except:
@@ -430,7 +437,7 @@ class Scheduler():
                                     dbQueue = self._dbQueues[k]
                                     ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rse["id"])
                                     if ret == True:
-                                        self.markNew(rse)
+                                        self.markNew(rse["id"])
                                         self._queues[k].remove(item)
 
     def dumpQueues(self):
@@ -524,6 +531,7 @@ class Scheduler():
             # create queue entry
             dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
                                                    patientid, 
+                                                   routingslipentry["routingslip"],
                                                    routingslipentry["id"])
             if dbQueueEntry:
                 self._dbQueueEntries[index] = dbQueueEntry
@@ -561,6 +569,7 @@ class Scheduler():
                 # create queue entry
                 dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
                                                        patientid, 
+                                                       routingslipentry["routingslip"],
                                                        routingslipentry["id"])
                 if dbQueueEntry:
                     self._dbQueueEntries[index] = dbQueueEntry
@@ -766,6 +775,16 @@ class Scheduler():
         else:
             return True
 
+    def findRemovedRoutingSlipEntries(self, routing):
+        retval = []
+        x = GetRoutingSlipEntry(self._host, self._port, self._token)
+        x.setRoutingSlip(routing)
+        x.setStates("Removed")
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            retval = ret[1]
+        return retval
+
     def findQueueableEntry(self, routing):
         queueables = []
         retval = None      # default: nothing to queue on this routing slip
@@ -798,19 +817,21 @@ class Scheduler():
                 
         return retval
 
-    def markScheduled(self, entry):
-        x = UpdateRoutingSlipEntry(self._host, self._port, self._token, entry["id"])
-        x.setState("Scheduled")
+    def setRoutingSlipEntryState(self, rseId, state):
+        x = UpdateRoutingSlipEntry(self._host, self._port, self._token, rseId)
+        x.setState(state)
         ret = x.send(timeout=30)
         if ret[0] != 200:
-            print("markScheduled failure for entry {}".format(entry["id"]))
+            print("setRoutingSlipState failure to set state {} for routingslip entry {}".format(state, rseId))
 
-    def markNew(self, entry):
-        x = UpdateRoutingSlipEntry(self._host, self._port, self._token, entry["id"])
-        x.setState("New")
-        ret = x.send(timeout=30)
-        if ret[0] != 200:
-            print("markNew failure for entry {}".format(entry["id"]))
+    def markDeleted(self, rseId):
+        self.setRoutingSlipEntryState(rseId, "Deleted")
+
+    def markScheduled(self, rseId):
+        self.setRoutingSlipEntryState(rseId, "Scheduled")
+
+    def markNew(self, rseId):
+        self.setRoutingSlipEntryState(rseId, "New")
 
     def setRtcState(self, rtcid, state):
         x = UpdateReturnToClinicStation(self._host, self._port, self._token, rtcid)
@@ -844,7 +865,7 @@ class Scheduler():
 
                 if self.addToQueue(entry, patient) == True:
                     # update the routingslip entry state to "Scheduled"
-                    self.markScheduled(entry)
+                    self.markScheduled(entry["id"])
                     # update the returntoclinicstation entry state to "scheduled_dest"
                     self.setRtcState(rtcresource, "scheduled_dest")
                     found = True
@@ -865,7 +886,7 @@ class Scheduler():
 
                     if self.insertFrontOfClinicStationQueue(entry, patient, requestingclinicstation) == True:
                         # update the routingslip entry state to "Scheduled"
-                        self.markScheduled(entry)
+                        self.markScheduled(entry["id"])
                         self.setRtcState(rtcresource, "scheduled_return")
                         found = True
                     else:
@@ -885,13 +906,37 @@ class Scheduler():
 
                     for i in results:
                         routing = i["routing"]
+            
+                        # search for any routingslip entries that are in 
+                        # removed state and make sure that routingslip 
+                        # entries that are in a queue are removed from that 
+                        # queue
+
+                        for slip in routing:
+                            entries = self.findRemovedRoutingSlipEntries(slip)
+                            if entries and len(entries) > 0:
+                                for rseId in entries:
+                                    for k, v in self._queues.iteritems():
+                                        dbQueue = self._dbQueues[k]
+                                        for item in v:
+                                            qent = item["qent"] 
+                                            ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rseId)
+                                            if ret == True:
+                                                print("deleted DbQueueEntry id {} patient {} rseId {} removing item from queue".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                try:
+                                                    self._queues[k].remove(item)
+                                                except:
+                                                    print("failed to remove entry corresponding to DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
+                                            else:
+                                                print("failed to delete DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
+                                    self.markDeleted(rseId)
                         entry = self.findQueueableEntry(routing)
                         if entry:
                             # append the entry to the corresponding
                             # clinicstation queue
                             if self.addToQueue(entry, i["patient"]) == True:
                                 # update the routingslip entry state to "Scheduled"
-                                self.markScheduled(entry)
+                                self.markScheduled(entry["id"])
                                 break
                             else:
                                 print("Unable to add item to queue");

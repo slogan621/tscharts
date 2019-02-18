@@ -357,8 +357,8 @@ class RoutingSlipEntryView(APIView):
 
     def __init__(self):
         super(RoutingSlipEntryView, self).__init__()
-        self.stateToText = {"n": "New", "s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed", "l": "Return"}
-        self.textToState = {"New": "n", "Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r", "Return": "l"}
+        self.stateToText = {"n": "New", "s": "Scheduled", "i": "Checked In", "o": "Checked Out", "r": "Removed", "d": "Deleted", "l": "Return"}
+        self.textToState = {"New": "n", "Scheduled": "s", "Checked In": "i", "Checked Out": "o", "Removed": "r", "Deleted": "d", "Return": "l"}
 
     def serialize(self, entry):
         error = False

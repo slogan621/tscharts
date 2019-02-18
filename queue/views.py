@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -146,6 +146,7 @@ class QueueView(APIView):
                     entryData["timein"] = str(y.timein)
                     entryData["waittime"] = str(y.waittime)
                     entryData["estwaittime"] = str(y.estwaittime)
+                    entryData["routingslip"] = y.routingslip_id
                     entryData["routingslipentry"] = y.routingslipentry_id
                     
                     queueData["entries"].append(entryData)

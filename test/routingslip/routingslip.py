@@ -1952,6 +1952,10 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
             x.setState("Removed")
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)   
+            x = GetRoutingSlipEntry(host, port, token)
+            x.setId(j)
+            ret = x.send(timeout=30)
+            self.assertTrue(ret[1]["state"] == "Removed")
 
         x = UpdateRoutingSlipEntry(host, port, token, routingslipentryids[0])
         x.setState("Checked Out")

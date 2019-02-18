@@ -91,6 +91,7 @@ class RoutingSlipEntry(models.Model):
                      (CHECKEDIN, "Checked In"),
                      (CHECKEDOUT, "Checked Out"),
                      (REMOVED, "Removed"),
+                     (REMOVED, "Deleted"),
                      (RETURN, "Return"),)
 
     state = models.CharField(

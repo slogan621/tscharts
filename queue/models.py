@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2017-2019
+#(C) Copyright Thousand Smiles Foundation 2017-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ from patient.models import Patient
 from clinic.models import Clinic
 from station.models import Station
 from clinicstation.models import ClinicStation
+from routingslip.models import RoutingSlip
 from routingslip.models import RoutingSlipEntry
 import datetime
 
@@ -51,5 +52,6 @@ class QueueEntry(models.Model):
     patient = models.ForeignKey(Patient)
     timein = models.DateTimeField()
     waittime = models.TimeField(default=datetime.time(0,0)) # timenow - timein
-    estwaittime = models.TimeField(default=datetime.time(0,0)) # queue average service time * (number of patients ahead of this patient in the queue)
+    routingslip = models.ForeignKey(RoutingSlip)
     routingslipentry = models.ForeignKey(RoutingSlipEntry)
+    estwaittime = models.TimeField(default=datetime.time(0,0)) # queue average service time * (number of patients ahead of this patient in the queue)

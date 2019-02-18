@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}`
+    **Content:** `{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Deleted","Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}`
 
 * **Error Response:**
 
@@ -73,7 +73,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `station` station id. 
    `returntoclinicstation` returntoclinicstation id. 
    `nullrcs` if "true" return only entries with a NULL returntoclinicstation field. If "false" return only non-NULL entries.<br />
-   `states` return entries matching the specified states. Comma-separated list consisting of one or more of the following states: "New", "Scheduled", "Checked In", "Checked Out", "Return", and "Removed"<br />
+   `states` return entries matching the specified states. Comma-separated list consisting of one or more of the following states: "New", "Scheduled", "Checked In", "Checked Out", "Return", "Removed", and "Deleted"<br />
 
 * **Data Params**
 
@@ -83,7 +83,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
   * **Code:** 200 <br />
     **Content (patient & clinic):** `[id, id, id, ...]`<br>
-    **Content:** `[{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}, ...]`
+    **Content:** `[{"order":integer [1-n],"state":"New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Deleted" | "Return","routingslip":id,"id":id,"station":id, "returntoclinicstation": id}, ...]`
  
 * **Error Response:**
 
@@ -203,7 +203,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    `order` integer - the order of this item in the set of routing slip entries for the specified routingslip<br/>
    `returntoclinicstation` integer - id of a returntoclinicstation record<br/>
-   `state` string, one of "New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed". Note that state "Return" can only be set at creation time. <br/>
+   `state` string, one of "New" | "Scheduled" | "Checked In" | "Checked Out" | "Removed" | "Deleted". Note that state "Return" can only be set at creation time. <br/>
 
 * **Success Response:**
 
