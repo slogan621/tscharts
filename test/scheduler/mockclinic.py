@@ -652,6 +652,14 @@ class MockClinic:
 
 def usage():
     print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x]") 
+    print("-y -- create a random number of simulated patients") 
+    print("-i -- randomly create simulated headshots") 
+    print("-q -- generate return to clinics randomly") 
+    print("-r -- simulate registering all patients") 
+    print("-c -- simulate checking patients in") 
+    print("-f -- read clinic description from file") 
+    print("-a -- simulate stations going away") 
+    print("-x -- randomly generate return to clinic station") 
 
 def main():
     try:
