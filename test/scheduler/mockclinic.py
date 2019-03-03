@@ -316,12 +316,14 @@ class MockClinic:
         threads = []
         for x in self._clinicstationids:
             t = threading.Thread(target=checkinWorker, args=(x,self,))
+            t.daemon = True
             t.start()
             threads.append(t)
         return threads
 
     def simulateAway(self):
         t = threading.Thread(target=awayWorker, args=(self,))
+        t.daemon = True
         t.start()
 
     def getClinic(self):
