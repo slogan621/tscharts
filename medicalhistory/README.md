@@ -292,7 +292,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 **Delete a Medical History**
 ----
-  Delete a registration. Use is not recommended except for unit test applications.
+  Delete a medical history resource. Use is not recommended except for unit test applications.
 
 * **URL**
 
