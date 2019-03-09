@@ -24,8 +24,6 @@ class CreatePatient(ServiceAPI):
         if not "curp" in payload:
             payload["curp"] = ""
 
-        print(payload)
-
         self.setPayload(payload)
         self.setURL("tscharts/v1/patient/")
 
