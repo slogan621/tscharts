@@ -112,6 +112,9 @@ the current clinic to a station the patient has aleady visited after visiting an
  * medications - used to add, delete and get medication names from the database. Used to update and retrieve the entire list of medications from the database.
     * [API](../master/medications/README.md)
     * [Unit Tests](../master/test/medications/medications.py)
+ * xray - used to add, delete, modify and get xray records from the database. 
+    * [API](../master/xray/README.md)
+    * [Unit Tests](../master/test/xray/xray.py)
  * surgerytype - used to add, delete and get surgery types from the database. Used to update and retrieve the entire list of surgery types from the database.
     * [API](../master/surgerytype/README.md)
     * [Unit Tests](../master/test/surgerytype/surgerytype.py)
@@ -156,6 +159,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 # License
 
+```
 (C) Copyright Syd Logan 2016
 (C) Copyright Thousand Smiles Foundation 2016
 
@@ -170,4 +174,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
+```

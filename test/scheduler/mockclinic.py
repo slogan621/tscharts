@@ -33,6 +33,7 @@ from test.station.station import CreateStation, DeleteStation, GetStation
 from test.patient.patient import CreatePatient, DeletePatient
 from test.returntoclinic.returntoclinic import CreateReturnToClinic
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
+from test.xray.xray import CreateXRay, DeleteXRay
 from test.statechange.statechange import CreateStateChange
 from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation, GetReturnToClinicStation, UpdateReturnToClinicStation
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
@@ -495,6 +496,20 @@ class MockClinic:
         if ret[0] != 200:
             print("Unable to create patient headshot photo clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
 
+    def createXRay(self, clinicid, patientid):    
+        x = CreateXRay(self._host, self._port, self._token)
+        x.setPatient(patientid)
+        x.setClinic(clinicid)
+        x.setTeeth(randint(0, 2147483647))
+        r = self.randomBoolean()
+        if r == True:
+            x.setXRayType("full")
+        else:
+            x.setXRayType("anteriors_bitewings")
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("Unable to create XRay clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
+
     def createMedicalHistory(self, clinicid, patientid):    
         x = CreateMedicalHistory(self._host, self._port, self._token, patient=patientid, clinic=clinicid)
 
@@ -566,7 +581,7 @@ class MockClinic:
             return femaleNames[randint(0, len(femaleNames) - 1)]
 
 
-    def createAllPatients(self, clinic, count, doImages):
+    def createAllPatients(self, clinic, count, doImages, doXRay):
         for i in xrange(0, count):
             data = {}
             male = randint(0, 1)
@@ -593,6 +608,11 @@ class MockClinic:
             data["emergencyphone"] = "1-222-222-2222"
             data["emergencyemail"] = "maria.sanchez@example.com"
             id = self.createPatient(data)
+            self.createMedicalHistory(clinic, id)
+            if doXRay:
+                if self.randomBoolean() == True:
+                    self.createXRay(clinic, id)
+ 
             self.createMedicalHistory(clinic, id)
             if doImages:
                 self.addPhoto(clinic, data["gender"], id)
@@ -662,10 +682,11 @@ def usage():
     print("-f -- read clinic description from file") 
     print("-a -- simulate stations going away") 
     print("-x -- randomly generate return to clinic station") 
+    print("-l -- randomly generate xray") 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "qrcyaixh:p:u:w:f:")
+        opts, args = getopt.getopt(sys.argv[1:], "lqrcyaixh:p:u:w:f:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -680,6 +701,7 @@ def main():
     doRegister = False
     doAway = False
     doImages = False
+    doXRay = False
     fromFile = False
     doReturnToClinic = False
     doReturnToClinicStation = False
@@ -698,6 +720,8 @@ def main():
             doRegister = True
         elif o == "-y":
             doPatients = True
+        elif o == "-l":
+            doXRay = True
         elif o == "-q":
             doReturnToClinic = True
         elif o == "-x":
@@ -728,7 +752,7 @@ def main():
         if doPatients:
             n = randint(120, 130)
             print("Registering {} patients for this clinic".format(n))
-            mock.createAllPatients(clinic, n, doImages)
+            mock.createAllPatients(clinic, n, doImages, doXRay)
         checkinThreads = None
         awayThreads = None
         if doCheckins:
