@@ -65,7 +65,7 @@ class XRayView(APIView):
         m["id"] = entry.id  
         m["clinic"] = entry.clinic_id
         m["patient"] = entry.patient_id
-        m["time"] = entry.time
+        m["time"] = entry.time.strftime("%m/%d/%Y")
         m["xray_type"] = self.xrayTypeToName(entry.type)
         m["teeth"] = entry.teeth 
 
