@@ -28,11 +28,20 @@ class XRay(models.Model):
     FULL = 'f'
     ANTERIORS_AND_BITEWINGS = 'a'
     TYPE_CHOICES = ((FULL, "full"), (ANTERIORS_AND_BITEWINGS, "anteriors_bitewings"))
-
     type = models.CharField(
         max_length = 1,
         choices = TYPE_CHOICES,
         default = FULL,
+    )
+
+    ADULT = 'a'
+    CHILD = 'c'
+    MOUTH_TYPE_CHOICES = ((ADULT, "adult"), (CHILD, "child"))
+
+    mouthtype = models.CharField(
+        max_length = 1,
+        choices = MOUTH_TYPE_CHOICES,
+        default = CHILD,
     )
 
     teeth = models.BigIntegerField(default = 0)

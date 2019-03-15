@@ -23,7 +23,7 @@
   * **Code:** 200 <br />
     **Content:** 
 
-   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type" : "full" | "anteriors_bitewings", "teeth" : bitmask}
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type" : "full" | "anteriors_bitewings", "mouth_type" : "child" | "adult", "teeth" : bitmask}
  
 * **Error Response:**
 
@@ -52,7 +52,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 2c5
-{"xray_type":"full","teeth":234,"id":12,"patient":6,"clinic":11,"time":"2017-12-11T01:02:24"}
+{"xray_type":"full","mouth_type": "child", "teeth":234,"id":12,"patient":6,"clinic":11,"time":"2017-12-11T01:02:24"}
 0
 ```
   
@@ -85,7 +85,7 @@ Content-Type: application/json
 
   * **Code:** 200 <br />
     **Content:** 
-   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type": "full" | "anteriors_bitewings", "teeth": bitmask}, ...]
+   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type": "full" | "anteriors_bitewings", "mouth_type": "child" | "adult", "teeth": bitmask}, ...]
  
 * **Error Response:**
 
@@ -117,7 +117,7 @@ Content-Type: application/json
 
 
 859
-[{"xray_type":"full","teeth":234,"id":12,"patient":6,"clinic":3,"time":"2017-12-11T02:02:24"},{"xray_type":"full","teeth":234,"id":14,"patient":8,"clinic":3,"time":"2017-12-11T01:02:24"},{"xray_type":"full","teeth":234,"id":32,"patient":15,"clinic":3,"time":"2017-12-11T15:02:24"},{"xray_type":"full","teeth":234,"id":7,"patient":17,"clinic":3,"time":"2017-12-11T03:02:24"},{"xray_type":"full","teeth":234,"id":56,"patient":19,"clinic":3,"time":"2017-12-11T07:02:24"},{"xray_type":"full","teeth":234,"id":45,"patient":32,"clinic":3,"time":"2017-12-11T01:25:24"}]
+[{"xray_type":"full","teeth":234,"id":12,"patient":6,"clinic":3,"time":"2017-12-11T02:02:24"},{"xray_type":"full","mouth_type": "child","teeth":234,"id":14,"patient":8,"clinic":3,"time":"2017-12-11T01:02:24"},{"xray_type":"full","mouth_type": "child","teeth":234,"id":32,"patient":15,"clinic":3,"time":"2017-12-11T15:02:24"},{"xray_type":"full","mouth_type": "child","teeth":234,"id":7,"patient":17,"clinic":3,"time":"2017-12-11T03:02:24"},{"xray_type":"full","mouth_type": "child","teeth":234,"id":56,"patient":19,"clinic":3,"time":"2017-12-11T07:02:24"},{"xray_type":"full","mouth_type": "child","teeth":234,"id":45,"patient":32,"clinic":3,"time":"2017-12-11T01:25:24"}]
 0
 ```
   
@@ -144,6 +144,7 @@ Content-Type: application/json
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
    `xray_type` "full" | "anteriors_bitewings"<br />
+   `mouth_type` "child" | "adult"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 
    **Optional:**
@@ -174,7 +175,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"xray_type":"full", "teeth":48421, "clinic": 2, "patient": 2}HTTP/1.1 200 OK
+{"xray_type":"full", "mouth_type": "child", "teeth":48421, "clinic": 2, "patient": 2}HTTP/1.1 200 OK
 Date: Mon, 11 Dec 2017 01:02:23 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
@@ -211,6 +212,7 @@ Content-Type: application/json
 
    One or more of the field/value pairs below:
 
+   `mouth_type` "child" | "adult"<br />
    `xray_type` "full" | "anteriors_bitewings"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 

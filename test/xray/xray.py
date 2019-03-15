@@ -51,6 +51,10 @@ class CreateXRay(ServiceAPI):
         self._payload["xray_type"] = val 
         self.setPayload(self._payload)
 
+    def setMouthType(self, val):
+        self._payload["mouth_type"] = val 
+        self.setPayload(self._payload)
+
     def setTeeth(self, val):
         self._payload["teeth"] = val
         self.setPayload(self._payload)
@@ -69,6 +73,10 @@ class UpdateXRay(ServiceAPI):
 
     def setXRayType(self, val):
         self._payload["xray_type"] = val
+        self.setPayload(self._payload)
+
+    def setMouthType(self, val):
+        self._payload["mouth_type"] = val
         self.setPayload(self._payload)
 
     def setTeeth(self, val):
@@ -203,6 +211,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(5467)
         x.setXRayType("full")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -217,6 +226,7 @@ class TestTSXRay(unittest.TestCase):
         self.assertEqual(ret['id'], id1)
         self.assertEqual(ret['teeth'], 5467)
         self.assertEqual(ret['xray_type'], "full")
+        self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
 
@@ -246,6 +256,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(5467)
         x.setXRayType("anteriors_bitewings")
+        x.setMouthType("child")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -260,6 +271,7 @@ class TestTSXRay(unittest.TestCase):
         ret = ret[1]
         self.assertEqual(ret['teeth'], 5467)
         self.assertEqual(ret['xray_type'], "anteriors_bitewings")
+        self.assertEqual(ret['mouth_type'], "child")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
 
@@ -277,6 +289,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("nontype")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -285,6 +298,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -293,6 +307,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("")
+        x.setMouthType("adult")
         x.setClinic(9999)
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -301,6 +316,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(9999)
         ret = x.send(timeout = 30)
@@ -309,6 +325,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("full")
+        x.setMouthType("adult")
         x.setClinic(9999)
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -317,6 +334,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(3456)
         x.setXRayType("full")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(9999)
         ret = x.send(timeout = 30)
@@ -334,6 +352,7 @@ class TestTSXRay(unittest.TestCase):
             x = CreateXRay(host, port, token)
             x.setTeeth(5467)
             x.setXRayType("anteriors_bitewings")
+            x.setMouthType("adult")
             x.setClinic(clinics[0])
             x.setPatient(patients[i])
             ret = x.send(timeout=30)
@@ -365,6 +384,8 @@ class TestTSXRay(unittest.TestCase):
         xrays = []
         types = ("full", "anteriors_bitewings")
         counts = {"full" : 0, "anteriors_bitewings": 0} 
+        mouthtypes = ("child", "adult")
+        mouthTypeCounts = {"child" : 0, "adult": 0} 
 
         for i in range(0,100):
             x = CreateXRay(host, port, token)
@@ -372,9 +393,13 @@ class TestTSXRay(unittest.TestCase):
             if i % 2 == 0:
                 x.setXRayType(types[0])
                 counts[types[0]] = counts[types[0]] + 1
+                x.setMouthType(mouthtypes[0])
+                mouthTypeCounts[mouthtypes[0]] = mouthTypeCounts[mouthtypes[0]] + 1
             else:
                 x.setXRayType(types[1])
                 counts[types[1]] = counts[types[1]] + 1
+                x.setMouthType(mouthtypes[1])
+                mouthTypeCounts[mouthtypes[1]] = mouthTypeCounts[mouthtypes[1]] + 1
 
             x.setClinic(clinics[i])
             x.setPatient(patients[i])
@@ -415,6 +440,8 @@ class TestTSXRay(unittest.TestCase):
         xrays = []
         types = ("full", "anteriors_bitewings")
         counts = {"full" : 0, "anteriors_bitewings": 0} 
+        mouthtypes = ("child", "adult")
+        mouthTypeCounts = {"child" : 0, "adult": 0} 
 
         for i in range(0,100):
             x = CreateXRay(host, port, token)
@@ -422,9 +449,13 @@ class TestTSXRay(unittest.TestCase):
             if i % 2 == 0:
                 x.setXRayType(types[0])
                 counts[types[0]] = counts[types[0]] + 1
+                x.setMouthType(mouthtypes[0])
+                mouthTypeCounts[mouthtypes[0]] = mouthTypeCounts[mouthtypes[0]] + 1
             else:
                 x.setXRayType(types[1])
                 counts[types[1]] = counts[types[1]] + 1
+                x.setMouthType(mouthtypes[1])
+                mouthTypeCounts[mouthtypes[1]] = mouthTypeCounts[mouthtypes[1]] + 1
 
             x.setClinic(clinics[i])
             x.setPatient(patients[i])
@@ -460,6 +491,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(5467)
         x.setXRayType("full")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -474,6 +506,7 @@ class TestTSXRay(unittest.TestCase):
         self.assertEqual(int(ret["id"]), id)
         self.assertEqual(ret['teeth'], 5467)
         self.assertEqual(ret['xray_type'], "full")
+        self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
 
@@ -489,6 +522,11 @@ class TestTSXRay(unittest.TestCase):
         self.assertEqual(ret[0], 400)
 
         x = UpdateXRay(host, port, token, id)
+        x.setMouthType("")
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400)
+
+        x = UpdateXRay(host, port, token, id)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
 
@@ -500,6 +538,7 @@ class TestTSXRay(unittest.TestCase):
         self.assertEqual(int(ret["id"]), id)
         self.assertEqual(ret['teeth'], 5467)
         self.assertEqual(ret['xray_type'], "full")
+        self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
 
@@ -517,6 +556,7 @@ class TestTSXRay(unittest.TestCase):
         x = CreateXRay(host, port, token)
         x.setTeeth(5467)
         x.setXRayType("full")
+        x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
         ret = x.send(timeout = 30)
@@ -531,6 +571,7 @@ class TestTSXRay(unittest.TestCase):
         self.assertEqual(int(ret["id"]), id)
         self.assertEqual(ret['teeth'], 5467)
         self.assertEqual(ret['xray_type'], "full")
+        self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
 
@@ -547,9 +588,28 @@ class TestTSXRay(unittest.TestCase):
         ret = ret[1]
         self.assertEqual(int(ret["id"]), id)
         self.assertEqual(ret['teeth'], 7654)
+        self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['xray_type'], "anteriors_bitewings")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
+
+        x = UpdateXRay(host, port, token, id)
+        x.setTeeth(1111)
+        x.setMouthType("child")
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetXRay(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertEqual(int(ret["id"]), id)
+        self.assertEqual(ret['teeth'], 1111)
+        self.assertEqual(ret['xray_type'], "anteriors_bitewings")
+        self.assertEqual(ret['clinic'], clinics[0])
+        self.assertEqual(ret['patient'], patients[0])
+        self.assertEqual(ret['mouth_type'], "child")
 
         x = DeleteXRay(host, port, token, id)
         ret = x.send(timeout=30)

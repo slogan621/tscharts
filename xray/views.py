@@ -39,6 +39,26 @@ class XRayView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def mouthTypeToName(self, t):
+        mouthTypeToNameMap = {'a': "adult", 'c': "child"}
+
+        ret = None
+        try:
+            ret = mouthTypeToNameMap[t] 
+        except:
+            pass
+        return ret
+
+    def nameToMouthType(self, name):
+        nameToMouthTypeMap = {"adult": 'a', "child": 'c'}
+
+        ret = None
+        try:
+            ret = nameToMouthTypeMap[name] 
+        except:
+            pass
+        return ret
+
     def xrayTypeToName(self, t):
         xrayTypeToNameMap = {'f': "full", 'a': "anteriors_bitewings"}
 
@@ -67,6 +87,7 @@ class XRayView(APIView):
         m["patient"] = entry.patient_id
         m["time"] = entry.time.strftime("%m/%d/%Y")
         m["xray_type"] = self.xrayTypeToName(entry.type)
+        m["mouth_type"] = self.mouthTypeToName(entry.mouthtype)
         m["teeth"] = entry.teeth 
 
         return m
@@ -143,6 +164,10 @@ class XRayView(APIView):
         kwargs = {} 
 
         try:
+            val = data["mouth_type"] 
+            kwargs["mouthtype"] = self.nameToMouthType(val)
+            if kwargs["mouthtype"] == None:
+                valid = False
             val = data["xray_type"] 
             kwargs["type"] = self.nameToXrayType(val)
             if kwargs["type"] == None:
@@ -168,6 +193,7 @@ class XRayView(APIView):
         valid = True
         sawType = False
         sawTeeth = False
+        sawMouthType = False
 
         try:
             if "xray_type" in data:
@@ -177,13 +203,20 @@ class XRayView(APIView):
                     valid = False
                 else:
                     sawType = True
+            if valid and "mouth_type" in data:
+                val = data["mouth_type"] 
+                xray.mouthtype = self.nameToMouthType(val)
+                if xray.mouthtype == None:
+                    valid = False
+                else:
+                    sawMouthType = True
             if valid and "teeth" in data:
                 xray.teeth = int(data["teeth"])
                 sawTeeth = True
         except:
             valid = False
 
-        if valid and (sawType == False or sawTeeth == False):
+        if valid and (sawType == False and sawMouthType == False and sawTeeth == False):
             valid = False
         return valid, xray
 
@@ -279,6 +312,7 @@ class XRayView(APIView):
                 except:
                     implError = True
                     implMsg = sys.exc_info()[0] 
+                    LOG.info(u'xray put: Exception trying to update xray {} {}'.format(sys.exc_info()[0], xray.__dict__))
         if badRequest:
             return HttpResponseBadRequest()
         if notFound:
