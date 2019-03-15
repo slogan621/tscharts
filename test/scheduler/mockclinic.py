@@ -613,7 +613,6 @@ class MockClinic:
                 if self.randomBoolean() == True:
                     self.createXRay(clinic, id)
  
-            self.createMedicalHistory(clinic, id)
             if doImages:
                 self.addPhoto(clinic, data["gender"], id)
 
