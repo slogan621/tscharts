@@ -500,6 +500,7 @@ class MockClinic:
         x = CreateXRay(self._host, self._port, self._token)
         x.setPatient(patientid)
         x.setClinic(clinicid)
+        x.setMouthType("child")
         x.setTeeth(randint(0, 2147483647))
         r = self.randomBoolean()
         if r == True:
