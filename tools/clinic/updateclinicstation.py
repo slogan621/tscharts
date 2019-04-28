@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2018
-#(C) Copyright Thousand Smiles Foundation 2018
+#(C) Copyright Syd Logan 2018-2019
+#(C) Copyright Thousand Smiles Foundation 2018-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -46,6 +46,10 @@ class UpdateClinicStation(ServiceAPI):
         self._payload["finished"] = finished
         self.setPayload(self._payload)
 
+    def setWaiting(self, waiting):
+        self._payload["waiting"] = waiting
+        self.setPayload(self._payload)
+
     def setActive(self, active):
         self._payload["active"] = active
         self.setPayload(self._payload)
@@ -74,7 +78,7 @@ class UpdateClinicStation(ServiceAPI):
         self._payload["awaytime"] = minutes
         self.setPayload(self._payload)
 
-def updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, finished, active, name, spanishName):
+def updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, finished, waiting, active, name, spanishName):
     count = 0
     if finished == True:
         count += 1 
@@ -82,9 +86,11 @@ def updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, f
         count += 1
     if away == True:
         count += 1
+    if waiting == True:
+        count += 1
 
     if count >= 2:
-        print("Only one of away, finished, or active state can be set")
+        print("Only one of away, waiting, finished, or active state can be set")
         usage()
         sys.exit(1)
 
@@ -101,6 +107,8 @@ def updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, f
         x.setAway(away)
     if finished != None:
         x.setFinished(finished)
+    if waiting != None:
+        x.setWaiting(waiting)
     if active != None:
         x.setActive(active)
     if name != None:
@@ -118,11 +126,12 @@ def usage():
     print("updateclinicstation [-h host] [-p port] [-u username] [-w password] [-i id] [-t awaytime_in_min] [-z nextpatient] [-c activepatient] [-l level] [-b] [-f] [-a] [-n name] [-s spanish_name]")
     print("-b puts station in away state")
     print("-f puts station in finished state")
+    print("-k puts station in waiting state")
     print("-a puts station in active state")
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:i:t:z:c:l:bfan:s:")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:i:t:z:c:l:bfakn:s:")
     except getopt.GetoptError as err:
         print str(err)
         usage()
@@ -142,6 +151,7 @@ def main():
     level=None
     away=None
     finished=None
+    waiting=None
     active=None
     name=None
     spanishName=None 
@@ -167,11 +177,18 @@ def main():
         elif o == "-b":
             away = True
         elif o == "-f":
+            waiting = False
             finished = True
             active = False
             away = False
         elif o == "-a":
+            waiting = False
             active = True
+            away = False
+            finished = False
+        elif o == "-k":
+            waiting = True
+            active = False
             away = False
             finished = False
         elif o == "-n":
@@ -181,7 +198,7 @@ def main():
         else:
             assert False, "unhandled option"
     setUp()
-    updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, finished, active, name, spanishName)
+    updateClinicStation(id, awayTime, nextPatient, activePatient, level, away, finished, waiting, active, name, spanishName)
 if __name__ == "__main__":
     main()
 
