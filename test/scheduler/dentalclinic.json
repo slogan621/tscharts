@@ -2,7 +2,7 @@
 "name": "Thousand Smiles Ensenada",
 "duration": 1,
 "categories": [
-                "Dental"
+                "Dental", "Ortho"
               ],
 "stations": [
               {"name": "Dental", "level": 1,
@@ -10,13 +10,19 @@
                    {"name": "Dental1", "name_es": "Dental1"},
                    {"name": "Dental2", "name_es": "Dental2"},
                    {"name": "Dental3", "name_es": "Dental3"},
-                   {"name": "Dental4", "name_es": "Dental4"},
-                   {"name": "Dental5", "name_es": "Dental5"}
+                   {"name": "Dental4", "name_es": "Dental4"}
                ]
               },
               {"name": "Hygiene", "level": 1,
                "stations": [
-                   {"name": "Hygiene1", "name_es": "Higiene1"}
+                   {"name": "Hygiene1", "name_es": "Higiene1"},
+                   {"name": "Hygiene2", "name_es": "Higiene2"}
+               ]
+              },
+              {"name": "Ortho", "level": 1,
+               "stations": [
+                   {"name": "Ortho1", "name_es": "Orto1"},
+                   {"name": "Ortho2", "name_es": "Orto2"}
                ]
               },
               {"name": "X-Ray", "level": 2,
