@@ -3,8 +3,7 @@ RESTful Patient Registration and Clinic Charts backend for Thousand Smiles Found
 
 # Overview
 
-For background and overview on the context in which this project is being developed,
-please read the following:
+For background and overview on the context in which this project is being developed, please read the following:
 
  * [Registration requirements document](../master/docs/requirements/pdf/registration_requirements_1.2.pdf)
 
@@ -160,8 +159,8 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 # License
 
 ```
-(C) Copyright Syd Logan 2016
-(C) Copyright Thousand Smiles Foundation 2016
+(C) Copyright Syd Logan 2016-2019
+(C) Copyright Thousand Smiles Foundation 2016-2019
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
