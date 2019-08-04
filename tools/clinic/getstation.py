@@ -61,7 +61,7 @@ def getAllStations():
     if ret[0] == 200:
         stations = ret[1]
         for x in stations:
-            print("id {} name {}".format(x["id"], x["name"]))
+            print("id {} name {} level {}".format(x["id"], x["name"], x["level"]))
     else:
         print("unable to get stations: ret {}".format(ret[0]))
 
