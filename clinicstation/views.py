@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016-2018
-#(C) Copyright Thousand Smiles Foundation 2016-2018
+#(C) Copyright Syd Logan 2016-2019
+#(C) Copyright Thousand Smiles Foundation 2016-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -132,6 +132,9 @@ class ClinicStationView(APIView):
                     m["nextpatient"] = x.nextpatient_id
                     m["finished"] = x.finished
                     ret.append(m)
+                # sort by station type
+                
+                ret = sorted(ret, key = lambda i: (i['station'], i['id']))
             return Response(ret)
 
     @log_request
