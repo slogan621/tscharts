@@ -958,7 +958,10 @@ class Scheduler():
             time.sleep(5)
 
 def usage():
-    print("scheduler [-f picklepath] [-c clinicid] [-h host] [-p port] [-u username] [-w password]")
+    print("scheduler [-f picklepath] [-c clinicid] [-h host] [-p port] [-r] [-u username] [-w password]")
+    print("where:")
+    print("-f picklepath -- pathname of saved state")
+    print("-r            -- initialize with state found in pickelpath")
 
 def main():
     global picklepath
