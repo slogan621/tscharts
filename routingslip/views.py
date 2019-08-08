@@ -26,6 +26,7 @@ from datetime import *
 import sys
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
+import urllib
 
 from common.decorators import *
 
@@ -415,6 +416,7 @@ class RoutingSlipEntryView(APIView):
             try:
                 states = request.GET.get("states", '')
                 if not states == '':
+                    states = urllib.unquote(states)
                     states = [x.strip() for x in states.split(",")]
                     if len(states):
                         for s in states:
