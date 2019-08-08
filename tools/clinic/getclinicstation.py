@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2018
-#(C) Copyright Thousand Smiles Foundation 2018
+#(C) Copyright Syd Logan 2018-2019
+#(C) Copyright Thousand Smiles Foundation 2018-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ def getAllClinicStations(clinicid):
     if ret[0] == 200:
         stations = ret[1]       
         for x in stations:
-            print("clinic {} station id {} id {} name {}".format(clinicid, x["station"], x["id"], x["name"]))
+            print("clinic {} station id {} id {} name {} name_es {} level {}".format(clinicid, x["station"], x["id"], x["name"], x['name_es'], x['level']))
     else:
         print("Error getting all clinic stations for clinic id {}: {}".format(clinicid, ret[0]))   
 
@@ -134,8 +134,7 @@ def getClinicStation(clinicid, id):
     ret = x.send(timeout=30)
     if ret[0] == 200:
         station = ret[1]       
-        print("clinic {} station id {} id {} name {}".format(clinicid, station["station"], station["id"], station["name"]))
-        print("clinic {} station id {} name {}".format(clinicid, station["id"], station["name"]))
+        print("clinic {} station id {} id {} name {} name_es {} level {}".format(clinicid, station["station"], station["id"], station["name"], station['name_es'], station['level']))
     else:
         print("Error getting clinic station {} for clinic id {}: {}".format(id, clinicid, ret[0]))   
 

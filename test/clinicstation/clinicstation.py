@@ -14,7 +14,7 @@ from test.station.station import CreateStation, DeleteStation
 from test.patient.patient import CreatePatient, GetPatient, DeletePatient
 
 class CreateClinicStation(ServiceAPI):
-    def __init__(self, host, port, token, clinic, station, active=False, away=True, finished=False, name="", name_es="", level="1"):
+    def __init__(self, host, port, token, clinic, station, active=False, away=True, finished=False, name="", name_es="", level=None):
         super(CreateClinicStation, self).__init__()
         
         self.setHttpMethod("POST")
