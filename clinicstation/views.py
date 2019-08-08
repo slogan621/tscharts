@@ -224,6 +224,8 @@ class ClinicStationView(APIView):
             else:
                 kwargs["station"] = aStation   
                 kwargs["clinic"] = aClinic   
+                if kwargs["level"] == None:
+                    kwargs["level"] = aStation.level
 
         if not badRequest:
  
@@ -239,6 +241,9 @@ class ClinicStationView(APIView):
                     clinic_station = None
                 else:
                     clinic_station = clinic_station[0]
+                    if kwargs["level"] != None:
+                        clinic_station.level = kwargs["level"]
+                        clinic_station.save()
             except:
                 pass
 

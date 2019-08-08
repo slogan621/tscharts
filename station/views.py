@@ -90,6 +90,9 @@ class StationView(APIView):
                     station = None
                 else:
                     station = station[0]
+                    if kwargs["level"] != None:
+                        station.level = kwargs["level"]
+                        station.save()
             except:
                 pass
 
