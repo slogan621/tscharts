@@ -501,7 +501,7 @@ class MockClinic:
         x.setPatient(patientid)
         x.setClinic(clinicid)
         x.setMouthType("child")
-        x.setTeeth(randint(0, 2147483647))
+        x.setTeeth(randint(0, 15))
         r = self.randomBoolean()
         if r == True:
             x.setXRayType("full")
@@ -631,7 +631,7 @@ class MockClinic:
             elif y["name"] == "Dental":
                 self._dental = station
             for z in y["stations"]:
-                self.createClinicStation(clinic, station, (z["name"], z["name_es"])) 
+                self.createClinicStation(clinic, station, (z["name"], z["name_es"]))
     
     def getXray(self):
         return self._xray
@@ -673,8 +673,9 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x] [-n limit]") 
     print("-y -- create a random number of simulated patients") 
+    print("-n -- limit number of simulated patients to specified value") 
     print("-i -- randomly create simulated headshots") 
     print("-q -- generate return to clinics randomly") 
     print("-r -- simulate registering all patients") 
@@ -686,7 +687,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "lqrcyaixh:p:u:w:f:")
+        opts, args = getopt.getopt(sys.argv[1:], "lqrcyaixh:p:u:w:f:n:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -706,6 +707,7 @@ def main():
     doReturnToClinic = False
     doReturnToClinicStation = False
     numAway = 0
+    limit = 130
     for o, a in opts:
         if o == "-a":
             doAway = True
@@ -734,6 +736,8 @@ def main():
             username = a
         elif o == "-w":
             password = a
+        elif o == "-n":
+            limit = int(a)
         else:   
             assert False, "unhandled option"
 
@@ -750,7 +754,10 @@ def main():
             mock.createClinicResources()
         clinic = mock.getClinic()
         if doPatients:
-            n = randint(120, 130)
+            lowerLimit = limit - 10;
+            if lowerLimit < 0:
+                lowerLimit = 0;
+            n = randint(lowerLimit, limit)
             print("Registering {} patients for this clinic".format(n))
             mock.createAllPatients(clinic, n, doImages, doXRay)
         checkinThreads = None
