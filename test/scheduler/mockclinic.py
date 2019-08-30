@@ -785,7 +785,9 @@ def main():
                 if cat == "Dental":
                     xray = mock.getXray()
                     dental = mock.getDental()
+                    print("Adding xray")
                     mock.createRoutingSlipEntry(routingslip, xray)    
+                    print("Adding dental")
                     mock.createRoutingSlipEntry(routingslip, dental)    
                 else:
                     for y in mock.getStations():
