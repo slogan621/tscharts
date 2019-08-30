@@ -2,7 +2,9 @@
 "name": "Thousand Smiles Ensenada",
 "duration": 1,
 "categories": [
-                "Dental"
+                "Dental",
+                "New Cleft",
+                "Returning Cleft"
               ],
 "stations": [
               {"name": "Dental", "level": 8,
@@ -25,6 +27,26 @@
                "stations": [
                    {"name": "X-Ray1", "name_es": "Rayos-X1"},
                    {"name": "X-Ray2", "name_es": "Rayos-X2"}
+               ]
+              },
+              {"name": "ENT", "level": 12,
+               "stations": [
+                   {"name": "ENT1", "name_es": "ENT1"}
+               ]
+              },
+              {"name": "Speech", "level": 4,
+               "stations": [
+                   {"name": "Speech", "name_es": "Speech"}
+               ]
+              },
+              {"name": "Audiology", "level": 8,
+               "stations": [
+                   {"name": "Audiology", "name_es": "Audiology"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 4,
+               "stations": [
+                   {"name": "Surgery", "name_es": "Surgery"}
                ]
               }
             ]
