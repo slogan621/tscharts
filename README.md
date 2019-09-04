@@ -111,9 +111,6 @@ the current clinic to a station the patient has aleady visited after visiting an
  * medications - used to add, delete and get medication names from the database. Used to update and retrieve the entire list of medications from the database.
     * [API](../master/medications/README.md)
     * [Unit Tests](../master/test/medications/medications.py)
- * xray - used to add, delete, modify and get xray records from the database. 
-    * [API](../master/xray/README.md)
-    * [Unit Tests](../master/test/xray/xray.py)
  * surgerytype - used to add, delete and get surgery types from the database. Used to update and retrieve the entire list of surgery types from the database.
     * [API](../master/surgerytype/README.md)
     * [Unit Tests](../master/test/surgerytype/surgerytype.py)
@@ -124,7 +121,19 @@ the current clinic to a station the patient has aleady visited after visiting an
     * [API](../master/consent/README.md)
     * [Unit Tests](../master/test/consent/consent.py) 
 
-Payload (when provided) must be in JSON.
+The remaining APIs are oriented towards storing clinic data related to a
+specialty (medical history is the other type of clinic data, described above
+since it is an integral part of the registration process).
+
+ * enthistory - used to add, delete, modify and get ENT medical history records from the database. 
+    * [API](../master/enthistory/README.md)
+    * [Unit Tests](../master/test/enthistory/enthistory.py)
+
+ * xray - used to add, delete, modify and get xray records from the database. 
+    * [API](../master/xray/README.md)
+    * [Unit Tests](../master/test/xray/xray.py)
+
+Payloads (when provided as a part of POST and PUT requests) must be in JSON.
 
 Generally, we use the following HTTP response codes to indicate the status
 of a request:

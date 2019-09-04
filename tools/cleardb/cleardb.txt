@@ -18,5 +18,6 @@ truncate surgeryhistory_surgeryhistory;
 truncate returntoclinic_returntoclinic;
 truncate returntoclinicstation_returntoclinicstation;
 truncate xray_xray;
-truncate requestlog_requestlog;
 truncate consent_consent;
+truncate enthistory_enthistory;
+truncate requestlog_requestlog;
