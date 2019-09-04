@@ -121,6 +121,8 @@ the current clinic to a station the patient has aleady visited after visiting an
     * [API](../master/consent/README.md)
     * [Unit Tests](../master/test/consent/consent.py) 
 
+## Clinical Data
+
 The remaining APIs are oriented towards storing clinic data related to a
 specialty (medical history is the other type of clinic data, described above
 since it is an integral part of the registration process).
