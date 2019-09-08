@@ -127,13 +127,18 @@ The remaining APIs are oriented towards storing clinic data related to a
 specialty (medical history is the other type of clinic data, described above
 since it is an integral part of the registration process).
 
+ * xray - used to add, delete, modify and get xray records from the database. 
+    * [API](../master/xray/README.md)
+    * [Unit Tests](../master/test/xray/xray.py)
+
  * enthistory - used to add, delete, modify and get ENT medical history records from the database. 
     * [API](../master/enthistory/README.md)
     * [Unit Tests](../master/test/enthistory/enthistory.py)
 
- * xray - used to add, delete, modify and get xray records from the database. 
-    * [API](../master/xray/README.md)
-    * [Unit Tests](../master/test/xray/xray.py)
+ * enttreatment - used to add, delete, modify and get ENT treatment records from the database. 
+    * [API](../master/enttreatment/README.md)
+    * [Unit Tests](../master/test/enttreatment/enttreatment.py)
+
 
 Payloads (when provided as a part of POST and PUT requests) must be in JSON.
 

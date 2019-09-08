@@ -20,4 +20,5 @@ truncate returntoclinicstation_returntoclinicstation;
 truncate xray_xray;
 truncate consent_consent;
 truncate enthistory_enthistory;
+truncate enttreatment_enttreatment;
 truncate requestlog_requestlog;

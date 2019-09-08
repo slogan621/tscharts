@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'clinicstation.apps.ClinicstationConfig',
     'image',
     'enthistory',
+    'enttreatment',
     'medicalhistory',
     'mexicanstates',
     'patient',

@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^tscharts/v1/login/$', LoginView.as_view()),
     url(r'^tscharts/v1/logout/$', LogoutView.as_view()),
     url(r'^tscharts/v1/enthistory/', include('enthistory.urls', namespace='enthistory')),
+    url(r'^tscharts/v1/enttreatment/', include('enttreatment.urls', namespace='enttreatment')),
     url(r'^tscharts/v1/medicalhistory/', include('medicalhistory.urls', namespace='medicalhistory')),
     url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
     url(r'^tscharts/v1/mexicanstates/', include('mexicanstates.urls', namespace='mexicanstates')),
