@@ -630,6 +630,12 @@ class MockClinic:
                 self._xray = station
             elif y["name"] == "Dental":
                 self._dental = station
+            elif y["name"] == "Ortho":
+                self._ortho = station
+            elif y["name"] == "ENT":
+                self._ent = station
+            elif y["name"] == "Surgery Screening":
+                self._surgery = station
             for z in y["stations"]:
                 self.createClinicStation(clinic, station, (z["name"], z["name_es"]))
     
@@ -639,6 +645,15 @@ class MockClinic:
     def getDental(self):
         return self._dental
 
+    def getENT(self):
+        return self._ent
+
+    def getOrtho(self):
+        return self._ortho
+
+    def getSurgery(self):
+        return self._surgery
+
     def createClinicResources(self):
         print("Creating patient categories")
         self.createCategories()
@@ -646,10 +661,10 @@ class MockClinic:
         clinic = self.createClinic("Ensenada", 1)
         print("Creating stations")
         self._dental = self.createStation("Dental", 1)
-        ent = self.createStation("ENT", 2)
-        ortho = self.createStation("Ortho", 1) 
+        self._ent = self.createStation("ENT", 2)
+        self._ortho = self.createStation("Ortho", 1) 
         self._xray = self.createStation("X-Ray", 2) 
-        surgery = self.createStation("Surgery Screening", 1) 
+        self._surgery = self.createStation("Surgery Screening", 1) 
         speech = self.createStation("Speech", 1) 
         audiology = self.createStation("Audiology", 1) 
 
@@ -789,7 +804,19 @@ def main():
                     mock.createRoutingSlipEntry(routingslip, xray)    
                     print("Adding dental")
                     mock.createRoutingSlipEntry(routingslip, dental)    
+                elif cat == "New Cleft" or cat == "Returning Cleft":
+                    st = mock.getENT()
+                    print("Adding ENT")
+                    mock.createRoutingSlipEntry(routingslip, st) 
+                    st = mock.getSurgery()
+                    print("Adding Surgery Screening")
+                    mock.createRoutingSlipEntry(routingslip, st) 
+                elif cat == "Ortho":
+                    ortho = mock.getOrtho()
+                    print("Adding Ortho")
+                    mock.createRoutingSlipEntry(routingslip, ent) 
                 else:
+                    print("Adding Random Stations")
                     for y in mock.getStations():
                         if randint(0, 1) == 1:
                             print("Adding station {} to routing slip".format(mock.getStationName(y)))
