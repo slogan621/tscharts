@@ -139,6 +139,10 @@ since it is an integral part of the registration process).
     * [API](../master/enttreatment/README.md)
     * [Unit Tests](../master/test/enttreatment/enttreatment.py)
 
+ * entexam - used to add, delete, modify and get ENT exam records from the database. 
+    * [API](../master/entexam/README.md)
+    * [Unit Tests](../master/test/entexam/entexam.py)
+
 
 Payloads (when provided as a part of POST and PUT requests) must be in JSON.
 
