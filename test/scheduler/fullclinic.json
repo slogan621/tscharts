@@ -13,14 +13,14 @@
                    {"name": "Dental2", "name_es": "Dental2"},
                    {"name": "Dental3", "name_es": "Dental3"},
                    {"name": "Dental4", "name_es": "Dental4"},
-                   {"name": "Dental5", "name_es": "Dental5"}
+                   {"name": "Dental5", "name_es": "Dental5"},
+                   {"name": "Dental6", "name_es": "Dental6"}
                ]
               },
               {"name": "Hygiene", "level": 4,
                "stations": [
                    {"name": "Hygiene1", "name_es": "Higiene1"},
-                   {"name": "Hygiene2", "name_es": "Higiene2"},
-                   {"name": "Hygiene3", "name_es": "Higiene3"}
+                   {"name": "Hygiene2", "name_es": "Higiene2"}
                ]
               },
               {"name": "X-Ray", "level": 12,
@@ -34,19 +34,54 @@
                    {"name": "ENT1", "name_es": "ENT1"}
                ]
               },
+              {"name": "ENT", "level": 12,
+               "stations": [
+                   {"name": "ENT2", "name_es": "ENT2"}
+               ]
+              },
+              {"name": "ENT", "level": 12,
+               "stations": [
+                   {"name": "ENT3", "name_es": "ENT3"}
+               ]
+              },
               {"name": "Speech", "level": 4,
                "stations": [
                    {"name": "Speech", "name_es": "Speech"}
                ]
               },
-              {"name": "Audiology", "level": 8,
+              {"name": "Audiology", "level": 4,
                "stations": [
                    {"name": "Audiology", "name_es": "Audiology"}
                ]
               },
-              {"name": "Surgery Screening", "level": 4,
+              {"name": "Surgery Screening", "level": 12,
                "stations": [
-                   {"name": "Surgery", "name_es": "Surgery"}
+                   {"name": "Surgery1", "name_es": "Surgery1"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 12,
+               "stations": [
+                   {"name": "Surgery2", "name_es": "Surgery2"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 12,
+               "stations": [
+                   {"name": "Surgery3", "name_es": "Surgery3"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 12,
+               "stations": [
+                   {"name": "Surgery4", "name_es": "Surgery4"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 12,
+               "stations": [
+                   {"name": "Surgery5", "name_es": "Surgery5"}
+               ]
+              },
+              {"name": "Surgery Screening", "level": 12,
+               "stations": [
+                   {"name": "Surgery6", "name_es": "Surgery6"}
                ]
               }
             ]

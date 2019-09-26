@@ -86,7 +86,7 @@ Content-Type: application/json
 
 ```
   
-**Get Multiple ENT Histories**
+**Get Multiple ENT Treatments**
 ----
   Returns data for all matching ENT treatment resources. A given patient 
 may have multiple treatments depending on his or her condition for a given
