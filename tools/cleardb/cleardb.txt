@@ -19,6 +19,7 @@ truncate returntoclinic_returntoclinic;
 truncate returntoclinicstation_returntoclinicstation;
 truncate xray_xray;
 truncate consent_consent;
+truncate entexam_entexam;
 truncate enthistory_enthistory;
 truncate enttreatment_enttreatment;
 truncate requestlog_requestlog;

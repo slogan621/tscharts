@@ -163,7 +163,7 @@ Content-Type: application/json
    `forkAS` one of the following: "a greater b" | "b greater a" | "a equal b" | "none"<br/>
    `bc` one of the following: "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as"<br/>
    `fork` one of the following: "256" | "512" | "none"<br/>
-   `comment` comment supplied by the user for this exam item<br /><
+   `comment` comment supplied by the user for this exam item<br />
    `username` name of logged in user making this change <br />
 
    **Optional:**
@@ -253,7 +253,7 @@ Content-Type: application/json
    `forkAS` one of the following: "a greater b" | "b greater a" | "a equal b" | "none"<br/>
    `bc` one of the following: "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as"<br/>
    `fork` one of the following: "256" | "512" | "none"<br/>
-   `comment` comment supplied by the user for this exam item<br /><
+   `comment` comment supplied by the user for this exam item<br />
    `username` name of logged in user making this change <br />
 
 * **Success Response:**

@@ -110,7 +110,7 @@ class ENTExamView(APIView):
         ret = None 
         data = {'anterior': ENTExam.ENT_PERF_ANTERIOR, 
                 'posterior': ENTExam.ENT_PERF_POSTERIOR, 
-                'posterior': ENTExam.ENT_PERF_MARGINAL, 
+                'marginal': ENTExam.ENT_PERF_MARGINAL, 
                 '25 percent': ENTExam.ENT_PERF_25, 
                 '50 percent': ENTExam.ENT_PERF_50, 
                 '75 percent': ENTExam.ENT_PERF_75, 
@@ -176,7 +176,7 @@ class ENTExamView(APIView):
         ret = None 
         data = {ENTExam.ENT_FORK_TEST_A_GREATER_B:"a greater b",
                 ENTExam.ENT_FORK_TEST_B_GREATER_A:"b greater a",
-                ENTExam.ENT_FORK_TEST_A_EQUAL_B:"a equal b",
+                ENTExam.ENT_FORK_TEST_EQUAL:"a equal b",
                 ENTExam.ENT_FORK_TEST_NONE:"none"}
 
         try:
@@ -189,7 +189,7 @@ class ENTExamView(APIView):
         ret = None 
         data = {"a greater b":ENTExam.ENT_FORK_TEST_A_GREATER_B,
                 "b greater a":ENTExam.ENT_FORK_TEST_B_GREATER_A,
-                "a equal b":ENTExam.ENT_FORK_TEST_A_EQUAL_B,
+                "a equal b":ENTExam.ENT_FORK_TEST_EQUAL,
                 "none":ENTExam.ENT_FORK_TEST_NONE}
 
         try:
@@ -354,6 +354,9 @@ class ENTExamView(APIView):
         valid = True
         kwargs = data
 
+        if not "comment" in data:
+            valid = False
+
         if not "username" in data:
             valid = False
         elif len(data["username"]) == 0:
@@ -407,6 +410,7 @@ class ENTExamView(APIView):
                 kwargs["fb"] = val
         except:
             valid = False
+
         try:
             val = self.stringToTube(data["tubeRight"])
             if val == None:

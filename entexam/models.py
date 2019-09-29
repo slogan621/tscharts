@@ -42,9 +42,9 @@ class ENTExam(models.Model):
     ENT_TUBE_IN_PLACE = 'p'
     ENT_TUBE_EXTRUDING = 'e'
     ENT_TUBE_IN_CANAL = 'c'
-    ENT_TUBE_NONE = 'c'
+    ENT_TUBE_NONE = 'n'
 
-    ENT_TUBE_CHOICES = ((ENT_TUBE_IN_PLACE = 'in place'), (ENT_TUBE_EXTRUDING = 'extruding'), (ENT_TUBE_IN_CANAL = 'in canal'), (ENT_TUBE_NONE = 'none'))
+    ENT_TUBE_CHOICES = ((ENT_TUBE_IN_PLACE, 'in place'), (ENT_TUBE_EXTRUDING, 'extruding'), (ENT_TUBE_IN_CANAL, 'in canal'), (ENT_TUBE_NONE, 'none'))
 
     tubeRight = models.CharField(max_length = 1, choices = ENT_TUBE_CHOICES, default = ENT_TUBE_NONE)
     tubeLeft = models.CharField(max_length = 1, choices = ENT_TUBE_CHOICES, default = ENT_TUBE_NONE)
@@ -57,7 +57,7 @@ class ENTExam(models.Model):
     ENT_TYMPANOSCLEROSIS_TOTAL = 't'
     ENT_TYMPANOSCLEROSIS_NONE = 'n'
 
-    ENT_TYMPANOSCLEROSIS_CHOICES = ((ENT_TYMPANOSCLEROSIS_ANTERIOR = 'anterior'), (ENT_TYMPANOSCLEROSIS_POSTERIOR = 'posterior'), (ENT_TYMPANOSCLEROSIS_25 = '25 percent'), (ENT_TYMPANOSCLEROSIS_50 = '50 percent'), (ENT_TYMPANOSCLEROSIS_75 = '75 percent'), (ENT_TYMPANOSCLEROSIS_TOTAL = 'total'), (ENT_TYMPANOSCLEROSIS_NONE = 'none'))
+    ENT_TYMPANOSCLEROSIS_CHOICES = ((ENT_TYMPANOSCLEROSIS_ANTERIOR, 'anterior'), (ENT_TYMPANOSCLEROSIS_POSTERIOR, 'posterior'), (ENT_TYMPANOSCLEROSIS_25, '25 percent'), (ENT_TYMPANOSCLEROSIS_50, '50 percent'), (ENT_TYMPANOSCLEROSIS_75, '75 percent'), (ENT_TYMPANOSCLEROSIS_TOTAL, 'total'), (ENT_TYMPANOSCLEROSIS_NONE, 'none'))
 
     tympanoRight = models.CharField(max_length = 1, choices = ENT_TYMPANOSCLEROSIS_CHOICES, default = ENT_TYMPANOSCLEROSIS_NONE)
     tympanoLeft = models.CharField(max_length = 1, choices = ENT_TYMPANOSCLEROSIS_CHOICES, default = ENT_TYMPANOSCLEROSIS_NONE)
@@ -75,7 +75,7 @@ class ENTExam(models.Model):
     ENT_PERF_TOTAL = 't'
     ENT_PERF_NONE = 'n'
 
-    ENT_PERF_CHOICES = ((ENT_PERF_ANTERIOR = 'anterior'), (ENT_PERF_POSTERIOR = 'posterior'), (ENT_PERF_MARGINAL, 'marginal'), (ENT_PERF_25 = '25 percent'), (ENT_PERF_50 = '50 percent'), (ENT_PERF_75 = '75 percent'), (ENT_PERF_TOTAL = 'total'), (ENT_PERF_NONE = 'none'))
+    ENT_PERF_CHOICES = ((ENT_PERF_ANTERIOR, 'anterior'), (ENT_PERF_POSTERIOR, 'posterior'), (ENT_PERF_MARGINAL, 'marginal'), (ENT_PERF_25, '25 percent'), (ENT_PERF_50, '50 percent'), (ENT_PERF_75, '75 percent'), (ENT_PERF_TOTAL, 'total'), (ENT_PERF_NONE, 'none'))
 
     perfRight = models.CharField(max_length = 1, choices = ENT_PERF_CHOICES, default = ENT_PERF_NONE)
     perfLeft = models.CharField(max_length = 1, choices = ENT_PERF_CHOICES, default = ENT_PERF_NONE)
@@ -84,16 +84,16 @@ class ENTExam(models.Model):
     ENT_VOICE_TEST_ABNORMAL = 'a'
     ENT_VOICE_TEST_NONE = 'o'
 
-    ENT_VOICE_TEST_CHOICES = ((ENT_VOICE_TEST_NORMAL = 'normal'), (ENT_VOICE_TEST_ABNORMAL = 'abnormal'), (ENT_VOICE_TEST_NONE, 'none'))
+    ENT_VOICE_TEST_CHOICES = ((ENT_VOICE_TEST_NORMAL, 'normal'), (ENT_VOICE_TEST_ABNORMAL, 'abnormal'), (ENT_VOICE_TEST_NONE, 'none'))
 
     voiceTest = models.CharField(max_length = 1, choices = ENT_VOICE_TEST_CHOICES, default = ENT_VOICE_TEST_NONE)
 
     ENT_FORK_TEST_A_GREATER_B = 'a'
     ENT_FORK_TEST_B_GREATER_A = 'b'
     ENT_FORK_TEST_EQUAL = 'e'
-    ENT_FORK_TEST_NONE = 'e'
+    ENT_FORK_TEST_NONE = 'n'
 
-    ENT_FORK_TEST_CHOICES = ((ENT_FORK_TEST_A_GREATER_B = 'a greater b'), (ENT_FORK_TEST_B_GREATER_A = 'b greater a'), (ENT_FORK_TEST_EQUAL = 'a equal b'), (ENT_FORK_TEST_NONE, 'none'))
+    ENT_FORK_TEST_CHOICES = ((ENT_FORK_TEST_A_GREATER_B, 'a greater b'), (ENT_FORK_TEST_B_GREATER_A, 'b greater a'), (ENT_FORK_TEST_EQUAL, 'a equal b'), (ENT_FORK_TEST_NONE, 'none'))
 
     forkAD = models.CharField(max_length = 1, choices = ENT_FORK_TEST_CHOICES, default = ENT_FORK_TEST_NONE)
     forkAS = models.CharField(max_length = 1, choices = ENT_FORK_TEST_CHOICES, default = ENT_FORK_TEST_NONE)
@@ -104,7 +104,7 @@ class ENTExam(models.Model):
     ENT_BC_AS_LAT_TO_AS = 'd'
     ENT_BC_NONE = 'n'
 
-    ENT_BC_CHOICES = ((ENT_BC_AD_LAT_TO_AD = 'ad lat ad'), (ENT_BC_AD_LAT_TO_AS = 'ad lat as'), (ENT_BC_AS_LAT_TO_AD = 'as lat ad'), (ENT_BC_AS_LAT_TO_AS = 'as lat as'), (ENT_BC_NONE = 'none'))
+    ENT_BC_CHOICES = ((ENT_BC_AD_LAT_TO_AD, 'ad lat ad'), (ENT_BC_AD_LAT_TO_AS, 'ad lat as'), (ENT_BC_AS_LAT_TO_AD, 'as lat ad'), (ENT_BC_AS_LAT_TO_AS, 'as lat as'), (ENT_BC_NONE, 'none'))
 
     bc = models.CharField(max_length = 1, choices = ENT_BC_CHOICES, default = ENT_BC_AD_LAT_TO_AD)
 
@@ -112,7 +112,7 @@ class ENTExam(models.Model):
     ENT_FORK_512 = '5'
     ENT_FORK_NONE = 'n'
 
-    ENT_FORK_CHOICES = ((ENT_FORK_256 = '2'), (ENT_FORK_512 = '5'), (ENT_FORK_NONE = 'none'))
+    ENT_FORK_CHOICES = ((ENT_FORK_256, '256'), (ENT_FORK_512, '512'), (ENT_FORK_NONE, 'none'))
 
     fork = models.CharField(max_length = 1, choices = ENT_FORK_CHOICES, default = ENT_FORK_NONE)
 
