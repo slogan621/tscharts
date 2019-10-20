@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'entexam',
     'enthistory',
     'enttreatment',
+    'entdiagnosis',
     'medicalhistory',
     'mexicanstates',
     'patient',

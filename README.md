@@ -144,8 +144,7 @@ the current clinic to a station the patient has aleady visited after visiting an
 ## Clinical Data APIs
 
 The remaining APIs are oriented towards storing clinic data related to a
-specialty (medical history is the other type of clinic data, described above
-since it is an integral part of the registration process).
+specialty.
 
  * medicalhistory - patient status recorded at the time the patient registers. Records the overall health of the patient. 
     * [API](../master/medicalhistory/README.md)  
@@ -178,6 +177,10 @@ since it is an integral part of the registration process).
  * entexam - used to add, delete, modify and get ENT exam records from the database. 
     * [API](../master/entexam/README.md)
     * [Unit Tests](../master/test/entexam/entexam.py)
+
+ * entdiagnosis - used to add, delete, modify and get ENT diagnosis records from the database. 
+    * [API](../master/entdiagnosis/README.md)
+    * [Unit Tests](../master/test/entdiagnosis/entdiagnosis.py)
 
 
 # License
