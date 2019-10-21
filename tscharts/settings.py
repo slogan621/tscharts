@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'enthistory',
     'enttreatment',
     'entdiagnosis',
+    'entdiagnosisextra',
     'medicalhistory',
     'mexicanstates',
     'patient',

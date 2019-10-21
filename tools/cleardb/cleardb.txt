@@ -23,4 +23,5 @@ truncate entexam_entexam;
 truncate enthistory_enthistory;
 truncate enttreatment_enttreatment;
 truncate entdiagnosis_entdiagnosis;
+truncate entdiagnosisextra_entdiagnosisextra;
 truncate requestlog_requestlog;

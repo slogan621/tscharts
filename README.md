@@ -182,6 +182,10 @@ specialty.
     * [API](../master/entdiagnosis/README.md)
     * [Unit Tests](../master/test/entdiagnosis/entdiagnosis.py)
 
+ * entdiagnosisextra - used to add, delete, modify and get ENT diagnosis records from the database. These are records that contain data not supported by entdiagnosis tables, extending the conditions recorded for a specific entdiagnosis record.
+    * [API](../master/entdiagnosisextra/README.md)
+    * [Unit Tests](../master/test/entdiagnosisextra/entdiagnosisextra.py)
+
 
 # License
 
