@@ -5,7 +5,7 @@
                 "Dental", "Ortho"
               ],
 "stations": [
-              {"name": "Dental", "level": 1,
+              {"name": "Dental", "level": 8,
                "stations": [
                    {"name": "Dental1", "name_es": "Dental1"},
                    {"name": "Dental2", "name_es": "Dental2"},
@@ -13,7 +13,7 @@
                    {"name": "Dental4", "name_es": "Dental4"}
                ]
               },
-              {"name": "Hygiene", "level": 1,
+              {"name": "Hygiene", "level": 4,
                "stations": [
                    {"name": "Hygiene1", "name_es": "Higiene1"},
                    {"name": "Hygiene2", "name_es": "Higiene2"}
@@ -25,7 +25,7 @@
                    {"name": "Ortho2", "name_es": "Orto2"}
                ]
               },
-              {"name": "X-Ray", "level": 2,
+              {"name": "X-Ray", "level": 12,
                "stations": [
                    {"name": "X-Ray1", "name_es": "Rayos-X1"},
                    {"name": "X-Ray2", "name_es": "Rayos-X2"}

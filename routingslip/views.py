@@ -579,6 +579,8 @@ class RoutingSlipEntryView(APIView):
                     routing_slip_entry = None
                 else:
                     routing_slip_entry = routing_slip_entry[0]
+                    routing_slip_entry.state = 'n'
+                    routing_slip_entry.save()
             except:
                 pass
 

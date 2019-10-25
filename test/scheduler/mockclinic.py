@@ -501,7 +501,7 @@ class MockClinic:
         x.setPatient(patientid)
         x.setClinic(clinicid)
         x.setMouthType("child")
-        x.setTeeth(randint(0, 2147483647))
+        x.setTeeth(randint(0, 15))
         r = self.randomBoolean()
         if r == True:
             x.setXRayType("full")
@@ -630,14 +630,29 @@ class MockClinic:
                 self._xray = station
             elif y["name"] == "Dental":
                 self._dental = station
+            elif y["name"] == "Ortho":
+                self._ortho = station
+            elif y["name"] == "ENT":
+                self._ent = station
+            elif y["name"] == "Surgery Screening":
+                self._surgery = station
             for z in y["stations"]:
-                self.createClinicStation(clinic, station, (z["name"], z["name_es"])) 
+                self.createClinicStation(clinic, station, (z["name"], z["name_es"]))
     
     def getXray(self):
         return self._xray
 
     def getDental(self):
         return self._dental
+
+    def getENT(self):
+        return self._ent
+
+    def getOrtho(self):
+        return self._ortho
+
+    def getSurgery(self):
+        return self._surgery
 
     def createClinicResources(self):
         print("Creating patient categories")
@@ -646,10 +661,10 @@ class MockClinic:
         clinic = self.createClinic("Ensenada", 1)
         print("Creating stations")
         self._dental = self.createStation("Dental", 1)
-        ent = self.createStation("ENT", 2)
-        ortho = self.createStation("Ortho", 1) 
+        self._ent = self.createStation("ENT", 2)
+        self._ortho = self.createStation("Ortho", 1) 
         self._xray = self.createStation("X-Ray", 2) 
-        surgery = self.createStation("Surgery Screening", 1) 
+        self._surgery = self.createStation("Surgery Screening", 1) 
         speech = self.createStation("Speech", 1) 
         audiology = self.createStation("Audiology", 1) 
 
@@ -673,8 +688,9 @@ class MockClinic:
         audiologyStation = self.createClinicStation(clinic, audiology, ("Audiology", "Audiología")) 
 
 def usage():
-    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x]") 
+    print("mockclinic [-h host] [-p port] [-u username] [-w password] [-y] [-i] [-q] [-r] [-c] [-f filename] [-a] [-x] [-n limit]") 
     print("-y -- create a random number of simulated patients") 
+    print("-n -- limit number of simulated patients to specified value") 
     print("-i -- randomly create simulated headshots") 
     print("-q -- generate return to clinics randomly") 
     print("-r -- simulate registering all patients") 
@@ -686,7 +702,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "lqrcyaixh:p:u:w:f:")
+        opts, args = getopt.getopt(sys.argv[1:], "lqrcyaixh:p:u:w:f:n:")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -706,6 +722,7 @@ def main():
     doReturnToClinic = False
     doReturnToClinicStation = False
     numAway = 0
+    limit = 130
     for o, a in opts:
         if o == "-a":
             doAway = True
@@ -734,6 +751,8 @@ def main():
             username = a
         elif o == "-w":
             password = a
+        elif o == "-n":
+            limit = int(a)
         else:   
             assert False, "unhandled option"
 
@@ -750,7 +769,10 @@ def main():
             mock.createClinicResources()
         clinic = mock.getClinic()
         if doPatients:
-            n = randint(120, 130)
+            lowerLimit = limit - 10;
+            if lowerLimit < 0:
+                lowerLimit = 0;
+            n = randint(lowerLimit, limit)
             print("Registering {} patients for this clinic".format(n))
             mock.createAllPatients(clinic, n, doImages, doXRay)
         checkinThreads = None
@@ -778,9 +800,23 @@ def main():
                 if cat == "Dental":
                     xray = mock.getXray()
                     dental = mock.getDental()
+                    print("Adding xray")
                     mock.createRoutingSlipEntry(routingslip, xray)    
+                    print("Adding dental")
                     mock.createRoutingSlipEntry(routingslip, dental)    
+                elif cat == "New Cleft" or cat == "Returning Cleft":
+                    st = mock.getENT()
+                    print("Adding ENT")
+                    mock.createRoutingSlipEntry(routingslip, st) 
+                    st = mock.getSurgery()
+                    print("Adding Surgery Screening")
+                    mock.createRoutingSlipEntry(routingslip, st) 
+                elif cat == "Ortho":
+                    ortho = mock.getOrtho()
+                    print("Adding Ortho")
+                    mock.createRoutingSlipEntry(routingslip, ent) 
                 else:
+                    print("Adding Random Stations")
                     for y in mock.getStations():
                         if randint(0, 1) == 1:
                             print("Adding station {} to routing slip".format(mock.getStationName(y)))

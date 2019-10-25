@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016-2018
-#(C) Copyright Thousand Smiles Foundation 2016-2018
+#(C) Copyright Syd Logan 2016-2019
+#(C) Copyright Thousand Smiles Foundation 2016-2019
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ class PatientView(APIView):
         m["emergencyphone"] = entry.emergencyphone
         m["emergencyemail"] = entry.emergencyemail
         m["curp"] = entry.curp
+        m["oldid"] = entry.oldid
 
         return m
 
@@ -117,6 +118,10 @@ class PatientView(APIView):
                 if not curp == '':
                     kwargs["curp"] = curp
                     
+                oldid = request.GET.get('oldid', '')
+                if not oldid == '':
+                    kwargs["oldid"] = oldid
+                    
                 gender = request.GET.get('gender', '')
                 if not gender == '':
                     if gender == "Male":
@@ -164,6 +169,8 @@ class PatientView(APIView):
 
         if "curp" in data: 
             patient.curp = data["curp"]
+        if "oldid" in data: 
+            patient.oldid = data["oldid"]
         if "paternal_last" in data: 
             patient.paternal_last = data["paternal_last"]
         if "maternal_last" in data:
@@ -269,7 +276,7 @@ class PatientView(APIView):
     def validatePostArgs(self, data):
         valid = True
         kwargs = data
-        keys = ["paternal_last",
+        required = ["paternal_last",
                 "maternal_last",
                 "first",
                 "middle",
@@ -290,12 +297,14 @@ class PatientView(APIView):
                 "emergencyemail",
                 "curp"]
 
+        optional = ["oldid"]
+
         for key, val in data.iteritems():
-            if not key in keys:
+            if not key in required and not key in optional:
                 valid = False
                 break
 
-        for k in keys:
+        for k in required:
             if not k in data:
                 valid = False
                 break
