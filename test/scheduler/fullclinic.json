@@ -31,57 +31,30 @@
               },
               {"name": "ENT", "level": 12,
                "stations": [
-                   {"name": "ENT1", "name_es": "ENT1"}
-               ]
-              },
-              {"name": "ENT", "level": 12,
-               "stations": [
-                   {"name": "ENT2", "name_es": "ENT2"}
-               ]
-              },
-              {"name": "ENT", "level": 12,
-               "stations": [
-                   {"name": "ENT3", "name_es": "ENT3"}
+                   {"name": "ENT1", "name_es": "ONG1"},
+                   {"name": "ENT2", "name_es": "ONG2"},
+                   {"name": "ENT3", "name_es": "ONG3"}
                ]
               },
               {"name": "Speech", "level": 4,
                "stations": [
-                   {"name": "Speech", "name_es": "Speech"}
+                   {"name": "Speech", "name_es": "Logopeda"}
                ]
               },
               {"name": "Audiology", "level": 4,
                "stations": [
-                   {"name": "Audiology", "name_es": "Audiology"}
+                   {"name": "Audiology1", "name_es": "Audiologia1"},
+                   {"name": "Audiology2", "name_es": "Audiologia2"}
                ]
               },
               {"name": "Surgery Screening", "level": 12,
                "stations": [
-                   {"name": "Surgery1", "name_es": "Surgery1"}
-               ]
-              },
-              {"name": "Surgery Screening", "level": 12,
-               "stations": [
-                   {"name": "Surgery2", "name_es": "Surgery2"}
-               ]
-              },
-              {"name": "Surgery Screening", "level": 12,
-               "stations": [
-                   {"name": "Surgery3", "name_es": "Surgery3"}
-               ]
-              },
-              {"name": "Surgery Screening", "level": 12,
-               "stations": [
-                   {"name": "Surgery4", "name_es": "Surgery4"}
-               ]
-              },
-              {"name": "Surgery Screening", "level": 12,
-               "stations": [
-                   {"name": "Surgery5", "name_es": "Surgery5"}
-               ]
-              },
-              {"name": "Surgery Screening", "level": 12,
-               "stations": [
-                   {"name": "Surgery6", "name_es": "Surgery6"}
+                   {"name": "Surgery1", "name_es": "Cirugía1"},
+                   {"name": "Surgery2", "name_es": "Cirugía2"},
+                   {"name": "Surgery3", "name_es": "Cirugía3"},
+                   {"name": "Surgery4", "name_es": "Cirugía4"},
+                   {"name": "Surgery5", "name_es": "Cirugía5"},
+                   {"name": "Surgery6", "name_es": "Cirugía6"}
                ]
               }
             ]
