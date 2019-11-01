@@ -297,7 +297,7 @@ class PatientView(APIView):
                 "emergencyemail",
                 "curp"]
 
-        optional = ["oldid"]
+        optional = ["id", "oldid"]
 
         for key, val in data.iteritems():
             if not key in required and not key in optional:
