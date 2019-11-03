@@ -42,7 +42,7 @@ class CreatePatient(ServiceAPI):
         # same with oldid
 
         if not "oldid" in payload:
-            payload["oldid"] = ""
+            payload["oldid"] = -1 
 
         self.setPayload(payload)
         self.setURL("tscharts/v1/patient/")
@@ -204,7 +204,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
         data["curp"] = "1234"
-        data["oldid"] = "8888"
+        data["oldid"] = 8888
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -242,7 +242,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
         data["curp"] = "5678"
-        data["oldid"] = "5467"
+        data["oldid"] = 5467
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -288,7 +288,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
         data["curp"] = "abcd"
-        data["oldid"] = "1234"
+        data["oldid"] = 1234
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -320,7 +320,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
         self.assertTrue(ret["curp"] == "abcd")
-        self.assertTrue(ret["oldid"] == "1234")
+        self.assertTrue(ret["oldid"] == 1234)
     
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
@@ -349,7 +349,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
         data["curp"] = "1234"
-        data["oldid"] = "7799"
+        data["oldid"] = 7799
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -380,7 +380,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
         self.assertTrue(ret["curp"] == "1234")
-        self.assertTrue(ret["oldid"] == "7799")
+        self.assertTrue(ret["oldid"] == 7799)
    
         data["paternal_last"] = "abcdefg" 
         id = int(ret["id"])
@@ -412,12 +412,12 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Male")
         self.assertTrue(ret["curp"] == "1234")
-        self.assertTrue(ret["oldid"] == "7799")
+        self.assertTrue(ret["oldid"] == 7799)
     
         data["paternal_last"] = "xxyyzz" 
         data["gender"] = "Female" 
         data["curp"] = "z1u2" 
-        data["oldid"] = "q2q2" 
+        data["oldid"] = 1234 
         id = int(ret["id"])
         x = UpdatePatient(host, port, token, id, data)
         ret = x.send(timeout=30)
@@ -447,7 +447,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertTrue(ret["dob"] == "04/01/1962")
         self.assertTrue(ret["gender"] == "Female")
         self.assertTrue(ret["curp"] == "z1u2")
-        self.assertTrue(ret["oldid"] == "q2q2")
+        self.assertTrue(ret["oldid"] == 1234)
     
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
@@ -477,7 +477,7 @@ class TestTSPatient(unittest.TestCase):
         data["emergencyphone"] = "1-222-222-2222"
         data["emergencyemail"] = "maria.sanchez@example.com"
         data["curp"] = "1111"
-        data["oldid"] = "9999"
+        data["oldid"] = 9999
 
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
@@ -490,7 +490,7 @@ class TestTSPatient(unittest.TestCase):
         data["first"] = "yyyyyyy"
         data["dob"] = "04/01/1962"
         data["curp"] = "2222"
-        data["oldid"] = "8888"
+        data["oldid"] = 8888
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -502,7 +502,7 @@ class TestTSPatient(unittest.TestCase):
         data["first"] = "yyyyyyy"
         data["dob"] = "04/02/1962"
         data["curp"] = "3333"
-        data["oldid"] = "7777"
+        data["oldid"] = 7777
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -514,7 +514,7 @@ class TestTSPatient(unittest.TestCase):
         data["first"] = "xxxxxxx"
         data["dob"] = "04/02/1962"
         data["curp"] = "4444"
-        data["oldid"] = "6666"
+        data["oldid"] = 6666
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -526,7 +526,7 @@ class TestTSPatient(unittest.TestCase):
         data["first"] = "qqqqqqq"
         data["dob"] = "04/03/1962"
         data["curp"] = "5555"
-        data["oldid"] = "5555"
+        data["oldid"] = 5555
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -538,7 +538,7 @@ class TestTSPatient(unittest.TestCase):
         data["first"] = "qqqqqqq"
         data["dob"] = "04/03/1962"
         data["curp"] = "6666"
-        data["oldid"] = "4444"
+        data["oldid"] = 4444
         x = CreatePatient(host, port, token, data)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -704,7 +704,7 @@ class TestTSPatient(unittest.TestCase):
         x = GetPatient(host, port, token)
         x.setOldid("vvvvvv")
         ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 404)
+        self.assertEqual(ret[0], 400)
 
         x = GetPatient(host, port, token)
         x.setFirstName("Fred")
@@ -773,6 +773,7 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         patients = ret[1]
+
         for x in patients:
             ids.remove(x)
             x = DeletePatient(host, port, token, x)
