@@ -120,7 +120,10 @@ class PatientView(APIView):
                     
                 oldid = request.GET.get('oldid', '')
                 if not oldid == '':
-                    kwargs["oldid"] = oldid
+                    try:
+                        kwargs["oldid"] = int(oldid)
+                    except:
+                        badRequest = True
                     
                 gender = request.GET.get('gender', '')
                 if not gender == '':
