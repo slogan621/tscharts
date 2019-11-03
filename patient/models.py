@@ -77,4 +77,4 @@ class Patient(models.Model):
     emergencyphone = models.CharField(max_length=20)
     emergencyemail = models.EmailField()
     curp = models.CharField(max_length=128, default="") # Mexican CURP (national ID)
-    oldid = models.CharField(blank=True, max_length=128, default="") # ID in previous database 
+    oldid = models.IntegerField(default=-1) # ID in previous database 
