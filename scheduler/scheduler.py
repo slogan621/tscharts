@@ -81,7 +81,7 @@ class ClinicStationQueueEntry():
         # compute an estimated time for this particular entry
         return self._elapsedtime  # XXX
 
-    def update(self):
+    def update(self, scheduler):
         ret = False
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
         q = None
@@ -97,7 +97,7 @@ class ClinicStationQueueEntry():
             q.save()            
             ret = True
         else:
-            print("update: unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            scheduler.showError("update: unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
         return ret
 
     def __str__(self):
@@ -121,6 +121,9 @@ class Scheduler():
         self._clinicStationFinishedMap = {}
         self._clinicStationActiveMap = {}
         self._clinicStationAwayMap = {}
+        self._abortOnError = False
+        self._f = None
+
         fail = False
         try:
             login = Login(self._host, self._port, self._username, self._password)
@@ -135,6 +138,45 @@ class Scheduler():
         if fail:
             print("failed to login")
             sys.exit(2)
+
+    def getAbortOnError(self):
+        return self._abortOnError
+
+    def setAbortOnError(self, val):
+        self._abortOnError = val
+
+    def setLogOutfile(self, path):
+        if path == None:
+            if self._f:
+                self._f.close()
+            self._f = None
+        else:
+            try:
+                self._f = open(path, 'a')  
+            except:
+                self._f = None
+            if self._f == None:
+                print("Unable to open {} for writing".format(path))
+                sys.exit(1)
+
+    def showError(self, msg):
+        if self._f:
+            msg = "{}\n".format(msg)
+            self._f.write(msg);
+        else:
+            print(msg);
+
+        if (getAbortOnError() == True):
+            if self._f:
+                self._f.close()
+            sys.exit(1)
+
+    def showWarning(self, msg):
+        if self._f:
+            msg = "{}\n".format(msg)
+            self._f.write(msg);
+        else:
+            print(msg);
 
     def __del__(self):
         logout = Logout(self._host, self._port)
@@ -154,15 +196,15 @@ class Scheduler():
         try:
             aClinic = Clinic.objects.get(id=clinicid)
         except:
-            print("createDbQueue unable to get clinic {}".format(clinicid))
+            self.showError("createDbQueue unable to get clinic {}".format(clinicid))
         try:
             aStation = Station.objects.get(id=stationid)
         except:
-            print("createDbQueue unable to get station {}".format(stationid))
+            self.showError("createDbQueue unable to get station {}".format(stationid))
         try:
             aClinicStation = ClinicStation.objects.get(id=clinicstationid)
         except:
-            print("createDbQueue unable to get clinicstation {}".format(clinicstationid))
+            self.showError("createDbQueue unable to get clinicstation {}".format(clinicstationid))
 
         create = False
         try:
@@ -183,7 +225,7 @@ class Scheduler():
                               avgservicetime = datetime.time(0,0))
                 queue.save()
             except:
-                print("createDbQueue unable to create queue")
+                self.showError("createDbQueue unable to create queue")
         return queue
 
     def createDbQueueEntry(self, queueid, patientid, routingslipid, routingslipentryid):
@@ -192,24 +234,24 @@ class Scheduler():
         try:
             aQueue = Queue.objects.get(id=queueid)
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("createDbQueueEntry unable to get queue {}".format(queueid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("createDbQueueEntry unable to get queue {}".format(queueid))
         try:
             aPatient = Patient.objects.get(id=int(patientid))
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("createDbQueueEntry unable to get patient {}".format(patientid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("createDbQueueEntry unable to get patient {}".format(patientid))
         try:
             aRoutingSlip = RoutingSlip.objects.get(id=int(routingslipid))
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("createDbQueueEntry unable to get routingslip {}".format(routingslipid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("createDbQueueEntry unable to get routingslip {}".format(routingslipid))
 
         try:
             aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("createDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("createDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
 
         try:
             queueent = QueueEntry(queue = aQueue,
@@ -219,8 +261,8 @@ class Scheduler():
                                   routingslipentry = aRoutingSlipEntry)
             queueent.save()
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("createDbQueueEntry unable to create queue entry")
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("createDbQueueEntry unable to create queue entry")
         return queueent
 
     def deleteDbQueueEntry(self, queueid, patientid, routingslipentryid):
@@ -230,18 +272,18 @@ class Scheduler():
         try:
             aQueue = Queue.objects.get(id=queueid)
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("deleteDbQueueEntry unable to get queue {}".format(queueid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("deleteDbQueueEntry unable to get queue {}".format(queueid))
         try:
             aPatient = Patient.objects.get(id=int(patientid))
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("deleteDbQueueEntry unable to get patient {}".format(patientid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("deleteDbQueueEntry unable to get patient {}".format(patientid))
         try:
             aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("deleteDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("deleteDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
 
         try:
             queueent = QueueEntry.objects.get(queue = aQueue,
@@ -251,8 +293,8 @@ class Scheduler():
                 queueent.delete()
                 ret = True
         except:
-            print("exception: {}".format(sys.exc_info()[0]))
-            print("deleteDbQueueEntry unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
+            self.showError("exception: {}".format(sys.exc_info()[0]))
+            self.showError("deleteDbQueueEntry unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
         return ret
 
     def getClinicStationAvgServiceTime(self, statechanges):
@@ -289,12 +331,12 @@ class Scheduler():
         for x in statechanges:          
             if count % 2 == 0:
                 if not x.state == 'i':
-                    print("statechanges expected in 'i' but got '{}'".format(x.state))
+                    self.showWarning("statechanges expected in 'i' but got '{}'".format(x.state))
                     ret = False
                     break
             else:
                if not x.state == 'o':
-                   print("statechanges expected out 'o' but got '{}'".format(x.state))
+                   self.showWarning("statechanges expected out 'o' but got '{}'".format(x.state))
                    ret = False
                    break
             count = count + 1
@@ -310,19 +352,19 @@ class Scheduler():
             try:
                 aClinicStation = ClinicStation.objects.get(id=x["id"])
                 if not aClinicStation:
-                    print("updateQueueAvgServiceTime not found clinicstation {}".format(x["id"]))
+                    self.showWarning("updateQueueAvgServiceTime not found clinicstation {}".format(x["id"]))
                     
             except:
-                print("updateQueueAvgServiceTime unable to get clinicstation {}".format(x["id"]))
+                self.showError("updateQueueAvgServiceTime unable to get clinicstation {}".format(x["id"]))
                 continue
             try:
                 statechanges = StateChange.objects.filter(clinicstation=aClinicStation).order_by("time")              
             except:
-                print("updateQueueAvgServiceTime unable to get statechanges {}".format(x["id"]))
+                self.showError("updateQueueAvgServiceTime unable to get statechanges {}".format(x["id"]))
                 continue
             if statechanges and len(statechanges):
                 if not self.verifyStateChanges(statechanges): 
-                    print("updateQueueAvgServiceTime statechanges for clinicstation {} are not valid".format(x))                        
+                    self.showError("updateQueueAvgServiceTime statechanges for clinicstation {} are not valid".format(x))                        
                     continue
                 avg = self.getClinicStationAvgServiceTime(statechanges)
                 try:
@@ -331,8 +373,8 @@ class Scheduler():
                         aQueue[0].avgservicetime = avg
                         aQueue[0].save() 
                 except:
-                    print("exception: {}".format(sys.exc_info()[0]))
-                    print("updateQueueAvgServiceTime unable to get queue")
+                    self.showError("exception: {}".format(sys.exc_info()[0]))
+                    self.showError("updateQueueAvgServiceTime unable to get queue")
 
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
@@ -650,7 +692,7 @@ class Scheduler():
             y.setId(x["id"])
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCreatedReturnToClinicStation warning: unable to get returntoclinicstation id {}: return {}".format(x["id"], ret[0]))
+                self.showWarning("findCreatedReturnToClinicStation warning: unable to get returntoclinicstation id {}: return {}".format(x["id"], ret[0]))
                 continue
             y = GetRoutingSlip(self._host, self._port, self._token)
             y.setClinic(clinicid)
@@ -659,7 +701,7 @@ class Scheduler():
             y.setPatient(patientid)
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCreateReturnToClinicStation warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
+                self.showWarning("findCreateReturnToClinicStation warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
                 continue
 
             # create a routing slip entry for the patient
@@ -671,7 +713,7 @@ class Scheduler():
             y.setReturnToClinicStation(x["id"])
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCreateReturnToClinicStation warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, x["id"], ret[0]))
+                self.showWarning("findCreateReturnToClinicStation warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, x["id"], ret[0]))
                 continue
             entry = GetRoutingSlipEntry(self._host, self._port, self._token)
 	    entry.setId(ret[1]["id"])
@@ -708,7 +750,7 @@ class Scheduler():
             y.setId(returntoclinicstationid)
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get returntoclinicstation id {}: return {}".format(returntoclinicstationid, ret[0]))
+                self.showWarning("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get returntoclinicstation id {}: return {}".format(returntoclinicstationid, ret[0]))
                 continue
 
             # get the routing slip for the patient
@@ -722,7 +764,7 @@ class Scheduler():
             y.setPatient(patientid)
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
+                self.showWarning("findCheckedOutDestReturnToClinicStationQueueables warning: unable to get routing slip for clinic {} and patient {}: return {}".format(x["clinic"], x["patient"], ret[0]))
                 continue
 
             # create a routing slip entry for the patient
@@ -735,7 +777,7 @@ class Scheduler():
             y.setReturnToClinicStation(returntoclinicstationid)
             ret = y.send(timeout=30)
             if not (ret[0] == 200):
-                print("findCheckedOutDestReturnToClinicStationQueueables warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, returntoclinicstationid, ret[0]))
+                self.showWarning("findCheckedOutDestReturnToClinicStationQueueables warning: unable to create a routing slip entry for clinic {} patient {} station {} routingslip {} returntoclinicstation {}: return {}".format(clinicid, patientid, stationid, routingslipid, returntoclinicstationid, ret[0]))
                 continue
             entry = GetRoutingSlipEntry(self._host, self._port, self._token)
 	    entry.setId(ret[1]["id"])
@@ -801,7 +843,7 @@ class Scheduler():
                     if state == "New" :
                         queueables.append(ret[1])
                 else:
-                    print("findQueueableEntry failure in GetRoutingSlipEntry".format(ret[0]))
+                    self.showError("findQueueableEntry failure in GetRoutingSlipEntry".format(ret[0]))
         if len(queueables):
 
             # found something to schedule, find highest priority with smallest queue size
@@ -822,7 +864,7 @@ class Scheduler():
         x.setState(state)
         ret = x.send(timeout=30)
         if ret[0] != 200:
-            print("setRoutingSlipState failure to set state {} for routingslip entry {}".format(state, rseId))
+            self.showError("setRoutingSlipState failure to set state {} for routingslip entry {}".format(state, rseId))
 
     def markDeleted(self, rseId):
         self.setRoutingSlipEntryState(rseId, "Deleted")
@@ -838,7 +880,7 @@ class Scheduler():
         x.setState(state)
         ret = x.send(timeout=30)
         if ret[0] != 200:
-            print("setRtcState failure for rtc {} state {}".format(rtcid, state))
+            self.showError("setRtcState failure for rtc {} state {}".format(rtcid, state))
 
     def run(self):
 
@@ -870,7 +912,7 @@ class Scheduler():
                     self.setRtcState(rtcresource, "scheduled_dest")
                     found = True
                 else:
-                    print("Unable to add created return to clinic station item to queue");
+                    self.showError("Unable to add created return to clinic station item to queue");
 
             # process any returntoclinicstation resources that need to be
             # sent back to the requesting clinic station. 
@@ -890,7 +932,7 @@ class Scheduler():
                         self.setRtcState(rtcresource, "scheduled_return")
                         found = True
                     else:
-                        print("Unable to add checkedout return to clinic station item to queue");
+                        self.showError("Unable to add checkedout return to clinic station item to queue");
 
             if found == False:
 
@@ -922,13 +964,13 @@ class Scheduler():
                                             qent = item["qent"] 
                                             ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rseId)
                                             if ret == True:
-                                                print("deleted DbQueueEntry id {} patient {} rseId {} removing item from queue".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                self.showWarning("deleted DbQueueEntry id {} patient {} rseId {} removing item from queue".format(dbQueue.id, qent.getPatientId(), rseId))
                                                 try:
                                                     self._queues[k].remove(item)
                                                 except:
-                                                    print("failed to remove entry corresponding to DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                    self.showError("failed to remove entry corresponding to DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
                                             else:
-                                                print("failed to delete DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                self.showError("failed to delete DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
                                     self.markDeleted(rseId)
                         entry = self.findQueueableEntry(routing)
                         if entry:
@@ -939,16 +981,16 @@ class Scheduler():
                                 self.markScheduled(entry["id"])
                                 break
                             else:
-                                print("Unable to add item to queue");
+                                self.showError("Unable to add item to queue");
 
                 else:
-                    print("GetRoutingSlip failed"); 
+                    self.showError("GetRoutingSlip failed"); 
 
             # process queues
 
             for k, v in self._queues.iteritems():
                 for y in v:
-                    ret = y["qent"].update()
+                    ret = y["qent"].update(self)
                     if not ret:
                         v.remove(y)
 
@@ -958,16 +1000,18 @@ class Scheduler():
             time.sleep(5)
 
 def usage():
-    print("scheduler [-f picklepath] [-c clinicid] [-h host] [-p port] [-r] [-u username] [-w password]")
+    print("scheduler [-f picklepath] [-c clinicid] [-h host] [-p port] [-r] [-u username] [-w password] [-x] [-l path]")
     print("where:")
     print("-f picklepath -- pathname of saved state")
     print("-r            -- initialize with state found in pickelpath")
+    print("-x            -- fail on errors")
+    print("-l            -- send warnings and errors to path")
 
 def main():
     global picklepath
     global restart
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "rf:c:h:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "xrf:c:h:p:u:w:kl:")
     except getopt.GetoptError as err:
         print str(err)
         usage()
@@ -978,6 +1022,8 @@ def main():
     password = None
     clinicid = None
     restart = False
+    abortOnError = False
+    outFile = None
     picklepath = "save.p"
     for o, a in opts:
         if o == "-c":
@@ -986,6 +1032,8 @@ def main():
             host = a
         elif o == "-p":
             port = int(a)
+        elif o == "-l":
+            outFile = a
         elif o == "-w":
             password = a
         elif o == "-u":
@@ -994,6 +1042,8 @@ def main():
             picklepath = a
         elif o == "-r":
             restart = True
+        elif o == "-x":
+            abortOnError = True
         else:
             assert False, "unhandled option"
     #with daemon.DaemonContext():
@@ -1006,6 +1056,8 @@ def main():
             sys.exit(3)
     else:
         x = Scheduler(host, port, username, password, clinicid)
+    x.setAbortOnError(abortOnError)
+    x.setLogOutfile(outFile)
     x.run()
 
 if __name__ == '__main__':
