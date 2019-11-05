@@ -89,6 +89,8 @@ class ClinicStationQueueEntry():
             q = QueueEntry.objects.get(queue=self._queueid,
                                        patient=self._patientid)
         except:
+            scheduler.showWarning("exception: {}".format(sys.exc_info()[0]))
+            scheduler.showError("update unable to get QueueEntry for queue {} patient {}".format(self._queueid, self._patientid))
             q = None
             
         if (q != None) :
