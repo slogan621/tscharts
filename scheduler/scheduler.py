@@ -47,11 +47,15 @@ class ClinicStationQueueEntry():
         self._elapsedtime = 0
         self._timeout = 0
         self._queueid = None
+        self._queueEntryId = None
         self._routingslipentryid = None
         self._routingslip = None
 
     def setQueue(self, id):
         self._queueid = id
+
+    def setQueueEntryId(self, id):
+        self._queueEntryId = id
 
     def setRoutingSlip(self, id):
         self._routingslip = id
@@ -86,7 +90,7 @@ class ClinicStationQueueEntry():
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
         q = None
         try:
-            q = QueueEntry.objects.get(queue=self._queueid,
+            q = QueueEntry.objects.get(id=self._queueEntryId,
                                        patient=self._patientid)
         except:
             scheduler.showWarning("exception: {}".format(sys.exc_info()[0]))
@@ -585,6 +589,7 @@ class Scheduler():
                                                    routingslipentry["id"])
             if dbQueueEntry:
                 self._dbQueueEntries[index] = dbQueueEntry
+                qent.setQueueEntryId(dbQueueEntry.id)
             ret = True
         return ret
 
@@ -617,12 +622,16 @@ class Scheduler():
                 self._queues[index].append(routingslipentry)
                 dbQueue = self._dbQueues[index]
                 # create queue entry
+                self.showWarning("addToQueue creating queue entry index is {} dbQueue.id is {} patientid is {} routingslip is {} routingslipentry is {}".format(index, dbQueue.id, patientid, routingslipentry["routingslip"], routingslipentry["id"]))
                 dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
                                                        patientid, 
                                                        routingslipentry["routingslip"],
                                                        routingslipentry["id"])
                 if dbQueueEntry:
                     self._dbQueueEntries[index] = dbQueueEntry
+                    qent.setQueueEntryId(dbQueueEntry.id)
+                else:
+                    self.showError("addToQueue failed to create queue entry dbQueue.id {} patientid {} routingslip {} routingslipentry {}".format(dbQueue.id, patientid, routingslipentry["routingslip"], routingslipentry["id"]))
                 ret = True
         return ret
 
