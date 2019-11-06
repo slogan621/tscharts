@@ -90,11 +90,9 @@ class ClinicStationQueueEntry():
         self._elapsedtime = datetime.datetime.utcnow() - self._timein
         q = None
         try:
-            q = QueueEntry.objects.get(id=self._queueEntryId,
-                                       patient=self._patientid)
+            q = QueueEntry.objects.get(id=self._queueEntryId, patient=self._patientid)
         except:
-            scheduler.showWarning("exception: {}".format(sys.exc_info()[0]))
-            scheduler.showError("update unable to get QueueEntry for queue {} patient {}".format(self._queueid, self._patientid))
+            scheduler.showWarning("update exception: {} unable to get QueueEntry for queueentry id {} queue {} patient {}".format(sys.exc_info()[0], self._queueEntryId, self._queueid, self._patientid))
             q = None
             
         if (q != None) :
@@ -103,7 +101,7 @@ class ClinicStationQueueEntry():
             q.save()            
             ret = True
         else:
-            scheduler.showError("update: unable to get queue entry queue {} patient {} routingslipentry {}".format(self._queueid, self._patientid, self._routingslipentryid))
+            scheduler.showWarning("update: unable to get queue entry queueentry id {} queue {} patient {} routingslipentry {}".format(self._queueEntryId, self._queueid, self._patientid, self._routingslipentryid))
         return ret
 
     def __str__(self):
@@ -143,7 +141,7 @@ class Scheduler():
             fail = True
 
         if fail:
-            print("failed to login")
+            self.showError("failed to login")
             sys.exit(2)
 
     def getAbortOnError(self):
@@ -170,7 +168,7 @@ class Scheduler():
     def showError(self, msg):
         global f
         if f:
-            msg = "error: {}\n".format(msg)
+            msg = "{} error: {}\n".format(datetime.datetime.utcnow(), msg)
             f.write(msg);
             f.flush()
         else:
@@ -184,7 +182,16 @@ class Scheduler():
     def showWarning(self, msg):
         global f
         if f:
-            msg = "warning: {}\n".format(msg)
+            msg = "{} warning: {}\n".format(datetime.datetime.utcnow(), msg)
+            f.write(msg);
+            f.flush()
+        else:
+            print(msg);
+
+    def showInfo(self, msg):
+        global f
+        if f:
+            msg = "{} info: {}\n".format(datetime.datetime.utcnow(), msg)
             f.write(msg);
             f.flush()
         else:
@@ -246,24 +253,20 @@ class Scheduler():
         try:
             aQueue = Queue.objects.get(id=queueid)
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("createDbQueueEntry unable to get queue {}".format(queueid))
+            self.showError("createDbQueueEntry exception: {} unable to get queue {}".format(sys.exc_info()[0], queueid))
         try:
             aPatient = Patient.objects.get(id=int(patientid))
         except:
-            self.showError("exception: {}".format(sys.exc_info()[0]))
-            self.showError("createDbQueueEntry unable to get patient {}".format(patientid))
+            self.showError("createDbQueueEntry exception: {} unable to get patient {}".format(sys.exc_info()[0], patientid))
         try:
             aRoutingSlip = RoutingSlip.objects.get(id=int(routingslipid))
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("createDbQueueEntry unable to get routingslip {}".format(routingslipid))
+            self.showError("createDbQueueEntry exception: {} unable to get routingslip {}".format(sys.exc_info()[0], routingslipid))
 
         try:
             aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("createDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+            self.showError("createDbQueueEntry exception: {} unable to get routingslipentry {}".format(sys.exc_info()[0], routingslipentryid))
 
         try:
             queueent = QueueEntry(queue = aQueue,
@@ -273,8 +276,7 @@ class Scheduler():
                                   routingslipentry = aRoutingSlipEntry)
             queueent.save()
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("createDbQueueEntry unable to create queue entry")
+            self.showError("createDbQueueEntry exception: {} unable to create queue entry".format(sys.exc_info()[0]))
         return queueent
 
     def deleteDbQueueEntry(self, queueid, patientid, routingslipentryid):
@@ -284,18 +286,15 @@ class Scheduler():
         try:
             aQueue = Queue.objects.get(id=queueid)
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("deleteDbQueueEntry unable to get queue {}".format(queueid))
+            self.showError("deleteDbQueueEntry exception: {} unable to get queue {}".format(sys.exc_info()[0], queueid))
         try:
             aPatient = Patient.objects.get(id=int(patientid))
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("deleteDbQueueEntry unable to get patient {}".format(patientid))
+            self.showError("deleteDbQueueEntry exception: {} unable to get patient {}".format(sys.exc_info()[0], patientid))
         try:
             aRoutingSlipEntry = RoutingSlipEntry.objects.get(id=int(routingslipentryid))
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("deleteDbQueueEntry unable to get routingslipentry {}".format(routingslipentryid))
+            self.showError("deleteDbQueueEntry exception: {} unable to get routingslipentry {}".format(sys.exc_info()[0], routingslipentryid))
 
         try:
             queueent = QueueEntry.objects.get(queue = aQueue,
@@ -305,8 +304,7 @@ class Scheduler():
                 queueent.delete()
                 ret = True
         except:
-            self.showWarning("exception: {}".format(sys.exc_info()[0]))
-            self.showError("deleteDbQueueEntry unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
+            self.showError("deleteDbQueueEntry exception: {} unable to delete queue entry queue ({}) {} patient ({}) {} routingslipentry ({}) {}".format(sys.exc_info()[0], queueid, aQueue, patientid, aPatient, routingslipentryid, aRoutingSlipEntry))
         return ret
 
     def getClinicStationAvgServiceTime(self, statechanges):
@@ -367,16 +365,16 @@ class Scheduler():
                     self.showWarning("updateQueueAvgServiceTime not found clinicstation {}".format(x["id"]))
                     
             except:
-                self.showError("updateQueueAvgServiceTime unable to get clinicstation {}".format(x["id"]))
+                self.showWarning("updateQueueAvgServiceTime exception: {} unable to get clinicstation {}".format(sys.exc_info()[0], x["id"]))
                 continue
             try:
                 statechanges = StateChange.objects.filter(clinicstation=aClinicStation).order_by("time")              
             except:
-                self.showError("updateQueueAvgServiceTime unable to get statechanges {}".format(x["id"]))
+                self.showWarning("updateQueueAvgServiceTime exception: {} unable to get statechanges {}".format(sys.exc_info()[0], x["id"]))
                 continue
             if statechanges and len(statechanges):
                 if not self.verifyStateChanges(statechanges): 
-                    self.showError("updateQueueAvgServiceTime statechanges for clinicstation {} are not valid".format(x))                        
+                    self.showWarning("updateQueueAvgServiceTime statechanges for clinicstation {} are not valid".format(x))                        
                     continue
                 avg = self.getClinicStationAvgServiceTime(statechanges)
                 try:
@@ -385,8 +383,7 @@ class Scheduler():
                         aQueue[0].avgservicetime = avg
                         aQueue[0].save() 
                 except:
-                    self.showWarning("exception: {}".format(sys.exc_info()[0]))
-                    self.showError("updateQueueAvgServiceTime unable to get queue")
+                    self.showError("updateQueueAvgServiceTime exception: {} unable to get queue".format(sys.exc_info()[0]))
 
     def updateClinicStations(self):
         self._clinicstations = self.getClinicStations()
@@ -486,7 +483,7 @@ class Scheduler():
                                 rse = ret[1]
                                 state = ret[1]["state"] 
                                 if str(ret[1]["station"]) == station and (state == "Scheduled"):
-                                    print ("************ moving a queue item ******************* item {} patient {}".format(y, patient))
+                                    self.showInfo("************ moving a queue item ******************* item {} patient {}".format(y, patient))
 
                                     dbQueue = self._dbQueues[k]
                                     ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rse["id"])
@@ -622,7 +619,7 @@ class Scheduler():
                 self._queues[index].append(routingslipentry)
                 dbQueue = self._dbQueues[index]
                 # create queue entry
-                self.showWarning("addToQueue creating queue entry index is {} dbQueue.id is {} patientid is {} routingslip is {} routingslipentry is {}".format(index, dbQueue.id, patientid, routingslipentry["routingslip"], routingslipentry["id"]))
+                self.showInfo("addToQueue creating queue entry index is {} dbQueue.id is {} patientid is {} routingslip is {} routingslipentry is {}".format(index, dbQueue.id, patientid, routingslipentry["routingslip"], routingslipentry["id"]))
                 dbQueueEntry = self.createDbQueueEntry(dbQueue.id,
                                                        patientid, 
                                                        routingslipentry["routingslip"],
@@ -981,11 +978,11 @@ class Scheduler():
                                             qent = item["qent"] 
                                             ret = self.deleteDbQueueEntry(dbQueue.id, qent.getPatientId(), rseId)
                                             if ret == True:
-                                                self.showWarning("deleted DbQueueEntry id {} patient {} rseId {} removing item from queue".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                self.showInfo("deleted DbQueueEntry id {} patient {} rseId {} removing item from queue".format(dbQueue.id, qent.getPatientId(), rseId))
                                                 try:
                                                     self._queues[k].remove(item)
                                                 except:
-                                                    self.showError("failed to remove entry corresponding to DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
+                                                    self.showError("exception: {} failed to remove entry corresponding to DbQueueEntry id {} patient {} rseId {}".format(sys.exc_info()[0], dbQueue.id, qent.getPatientId(), rseId))
                                             else:
                                                 self.showError("failed to delete DbQueueEntry id {} patient {} rseId {}".format(dbQueue.id, qent.getPatientId(), rseId))
                                     self.markDeleted(rseId)
