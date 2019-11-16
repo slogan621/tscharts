@@ -178,6 +178,10 @@ specialty.
     * [API](../master/entexam/README.md)
     * [Unit Tests](../master/test/entexam/entexam.py)
 
+ * entsurgicalhistory - used to add, delete, modify and get ENT surgical history records from the database. 
+    * [API](../master/entsurgicalhistory/README.md)
+    * [Unit Tests](../master/test/entsurgicalhistory/entsurgicalhistory.py)
+
  * entdiagnosis - used to add, delete, modify and get ENT diagnosis records from the database. 
     * [API](../master/entdiagnosis/README.md)
     * [Unit Tests](../master/test/entdiagnosis/entdiagnosis.py)

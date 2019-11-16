@@ -36,8 +36,14 @@ class ENTSurgicalHistoryView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    sideKeyNames = ["tubes", "tplasty", "eua", "fb", "myringotomy", "cerumen", "granuloma"]
+    sideKeyNames = ["tubes", "tplasty", "eua", "fb", "myringotomy", 
+                    "cerumen", "granuloma"]
     booleanKeyNames = ["septorhinoplasty", "scarrevision", "frenulectomy"]
+    commentKeyNames = ["tubescomment", "tplastycomment", "euacomment", 
+                       "fbcomment", "myringotomycomment", 
+                       "cerumencomment", "granulomacomment", 
+                       "septorhinoplastycomment", 
+                       "scarrevisioncomment", "frenulectomycomment"]
 
     def sideToString(self, val):
         ret = None 
@@ -73,6 +79,8 @@ class ENTSurgicalHistoryView(APIView):
         m["username"] = entry.username
         m["time"] = entry.time
 
+        m["granuoma"] = self.sideToString(entry.granuloma)
+        m["granulomacomment"] = entry.granulomacomment
         m["tubes"] = self.sideToString(entry.tubes)
         m["tubescomment"] = entry.tubescomment
         m["tplasty"] = self.sideToString(entry.tplasty)
@@ -171,7 +179,11 @@ class ENTSurgicalHistoryView(APIView):
             valid = False
         elif len(data["username"]) == 0:
             valid = False
-        
+
+        for x in self.commentKeyNames:
+            if not x in data:
+                valid = False
+
         for x in self.sideKeyNames:
             if not x in data:
                 valid = False
@@ -274,6 +286,44 @@ class ENTSurgicalHistoryView(APIView):
                 valid = False
                 break
 
+        for x in self.commentKeyNames:
+            if not x in data:
+                continue
+            try:
+                val = data[x]
+                if val == None:
+                    valid = False
+                    break
+                elif not isinstance(val, basestring):
+                    valid = False
+                    break
+                else:
+                    if x == "tubescomment":
+                        ent_surgicalhistory.tubescomment = val
+                        foundOne = True
+                    elif x == "tplastycomment":
+                        ent_surgicalhistory.tplastycomment = val
+                        foundOne = True
+                    elif x == "euacomment":
+                        ent_surgicalhistory.euacomment = val
+                        foundOne = True
+                    elif x == "fbcomment":
+                        ent_surgicalhistory.fbcomment = val
+                        foundOne = True
+                    elif x == "myringotomycomment":
+                        ent_surgicalhistory.myringotomycomment = val
+                        foundOne = True
+                    elif x == "cerumencomment":
+                        ent_surgicalhistory.cerumencomment = val
+                        foundOne = True
+                    elif x == "granulomacomment":
+                        ent_surgicalhistory.granulomacomment = val
+                        foundOne = True
+                    foundOne = True
+            except:
+                valid = False
+                break
+
         if foundOne == False:
             valid = False
 
@@ -329,9 +379,10 @@ class ENTSurgicalHistoryView(APIView):
                     ent_surgicalhistory.save()
                 else:
                     implError = True
+                    implMsg = "Unable to save ENTSurgicalHistory"
             except Exception as e:
                 implError = True
-                implMsg = sys.exc_info()[0] 
+                implMsg = str(e)
 
         if badRequest:
             return HttpResponseBadRequest()

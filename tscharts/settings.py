@@ -66,8 +66,6 @@ INSTALLED_APPS = [
     'entexam',
     'enthistory',
     'enttreatment',
-    'entdiagnosis',
-    'entdiagnosisextra',
     'medicalhistory',
     'mexicanstates',
     'patient',
@@ -86,6 +84,7 @@ INSTALLED_APPS = [
     'requestlog',
     'consent',
     'xray',
+    'entsurgicalhistory',
 ]
 
 MIDDLEWARE_CLASSES = [

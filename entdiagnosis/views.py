@@ -295,9 +295,6 @@ class ENTDiagnosisView(APIView):
                 valid = False
                 break
 
-            if foundOne == False:
-                valid = False
-
         for x in self.booleanKeyNames:
             if not x in data:
                 continue
