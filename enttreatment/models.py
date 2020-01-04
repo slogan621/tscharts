@@ -92,9 +92,10 @@ class ENTTreatment(models.Model):
     EAR_SIDE_LEFT = 'l'
     EAR_SIDE_RIGHT = 'r'
     EAR_SIDE_BOTH = 'b'
-    EAR_SIDE_CHOICES = ((EAR_SIDE_LEFT, "left"), (EAR_SIDE_RIGHT, "right"), (EAR_SIDE_BOTH, "both"))
+    EAR_SIDE_NONE = 'n'
+    EAR_SIDE_CHOICES = ((EAR_SIDE_LEFT, "left"), (EAR_SIDE_RIGHT, "right"), (EAR_SIDE_BOTH, "both"), (EAR_SIDE_NONE, "none"))
 
-    side = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_BOTH)
+    side = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
 
     '''
     If treatment == ENT_TREATMENT_OTHER, comment holds mandatory details of 

@@ -92,7 +92,8 @@ class ENTHistoryView(APIView):
         ret = None 
         data = {ENTHistory.EAR_SIDE_LEFT:"left",
                 ENTHistory.EAR_SIDE_RIGHT:"right",
-                ENTHistory.EAR_SIDE_BOTH:"both"}
+                ENTHistory.EAR_SIDE_BOTH:"both",
+                ENTHistory.EAR_SIDE_NONE:"none"}
 
         try:
             ret = data[val]
@@ -104,7 +105,8 @@ class ENTHistoryView(APIView):
         ret = None 
         data = {"left":ENTHistory.EAR_SIDE_LEFT,
                 "right":ENTHistory.EAR_SIDE_RIGHT,
-                "both":ENTHistory.EAR_SIDE_BOTH}
+                "both":ENTHistory.EAR_SIDE_BOTH,
+                "none":ENTHistory.EAR_SIDE_NONE}
 
         try:
             ret = data[val]
