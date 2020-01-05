@@ -372,8 +372,8 @@ class MockClinic:
 
         retval = None
 
-        today = datetime.utcnow().strftime("%m/%d/%Y")
-        todayplusone = (datetime.utcnow() + timedelta(hours=24 * (duration - 1))).strftime("%m/%d/%Y")
+        today = datetime.now().strftime("%m/%d/%Y")
+        todayplusone = (datetime.now() + timedelta(hours=24 * (duration - 1))).strftime("%m/%d/%Y")
         x = CreateClinic(self._host, self._port, self._token, location, today, todayplusone)
         ret = x.send(timeout=30)
         if ret[0] != 200:
@@ -796,7 +796,7 @@ def main():
                 time.sleep(randint(1, 30))
                 cat = mock.getRandomCategory()
                 routingslip = mock.createRoutingSlip(x, clinic, cat)
-                print("\n\nCreating routingslip for {} patient {} at UTC time {}".format(cat, x, datetime.utcnow().strftime("%H:%M:%S")))
+                print("\n\nCreating routingslip for {} patient {} at time {}".format(cat, x, datetime.now().strftime("%H:%M:%S")))
                 if cat == "Dental":
                     xray = mock.getXray()
                     dental = mock.getDental()

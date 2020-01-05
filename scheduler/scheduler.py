@@ -43,7 +43,7 @@ from clinicstation.models import ClinicStation
 class ClinicStationQueueEntry():
     def __init__(self):
         self._patientid = None
-        self._timein = datetime.datetime.utcnow()
+        self._timein = datetime.datetime.now()
         self._elapsedtime = 0
         self._timeout = 0
         self._queueid = None
@@ -87,7 +87,7 @@ class ClinicStationQueueEntry():
 
     def update(self, scheduler):
         ret = False
-        self._elapsedtime = datetime.datetime.utcnow() - self._timein
+        self._elapsedtime = datetime.datetime.now() - self._timein
         q = None
         try:
             q = QueueEntry.objects.get(id=self._queueEntryId, patient=self._patientid)
@@ -105,7 +105,7 @@ class ClinicStationQueueEntry():
         return ret
 
     def __str__(self):
-        self._elapsedtime = datetime.datetime.utcnow() - self._timein
+        self._elapsedtime = datetime.datetime.now() - self._timein
         return "id: {} time in: {} waiting time {}".format(self._patientid, self._timein.strftime("%H:%M:%S"), self._elapsedtime)
 
 f = None
@@ -168,7 +168,7 @@ class Scheduler():
     def showError(self, msg):
         global f
         if f:
-            msg = "{} error: {}\n".format(datetime.datetime.utcnow(), msg)
+            msg = "{} error: {}\n".format(datetime.datetime.now(), msg)
             f.write(msg);
             f.flush()
         else:
@@ -182,7 +182,7 @@ class Scheduler():
     def showWarning(self, msg):
         global f
         if f:
-            msg = "{} warning: {}\n".format(datetime.datetime.utcnow(), msg)
+            msg = "{} warning: {}\n".format(datetime.datetime.now(), msg)
             f.write(msg);
             f.flush()
         else:
@@ -191,7 +191,7 @@ class Scheduler():
     def showInfo(self, msg):
         global f
         if f:
-            msg = "{} info: {}\n".format(datetime.datetime.utcnow(), msg)
+            msg = "{} info: {}\n".format(datetime.datetime.now(), msg)
             f.write(msg);
             f.flush()
         else:
@@ -271,7 +271,7 @@ class Scheduler():
         try:
             queueent = QueueEntry(queue = aQueue,
                                   patient = aPatient,
-                                  timein = datetime.datetime.utcnow(),
+                                  timein = datetime.datetime.now(),
                                   routingslip = aRoutingSlip,
                                   routingslipentry = aRoutingSlipEntry)
             queueent.save()
@@ -414,7 +414,7 @@ class Scheduler():
                 retval = ret[1]
 
         if not retval:
-            today = datetime.datetime.utcnow()
+            today = datetime.datetime.now()
             x = GetAllClinics(self._host, self._port, self._token) 
             ret = x.send(timeout=30)
             if ret[0] == 200:
@@ -423,6 +423,7 @@ class Scheduler():
                     end = datetime.datetime.strptime(x["end"], "%m/%d/%Y")
                     if start == end:
                         end = end + datetime.timedelta(hours=24)
+                    print("today {} start {} end {}".format(today, start, end))
                     if today >= start and today <= end:
                         retval = x
                         self._clinicid = x["id"]
@@ -500,7 +501,7 @@ class Scheduler():
         total = 0
         numQueues = 0
         totalWait = datetime.timedelta(seconds=0)
-        print("\nClinic queue report UTC time {}\n".format(datetime.datetime.utcnow().strftime("%m/%d/%Y %H:%M:%S")))
+        print("\nClinic queue report time {}\n".format(datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S")))
         for k, v in self._queues.iteritems():
             away = self._clinicStationAwayMap[k]
             finished = self._clinicStationFinishedMap[k]
