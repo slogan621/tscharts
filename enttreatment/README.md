@@ -43,7 +43,7 @@ Value for treatment_name, above, can be one of the following:
 "foreign body removed"<br/>
 "referred ensenada"<br/>
 "referred childrens tijuana"<br/>
-"surgery tubs"<br/>
+"surgery tubes"<br/>
 "surgery tplasty"<br/>
 "surgery eua"<br/>
 "surgery fb"<br/>

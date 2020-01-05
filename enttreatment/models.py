@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ class ENTTreatment(models.Model):
         (ENT_TREATMENT_TUBE_REMOVED, "tube removed"),
         (ENT_TREATMENT_FOREIGN_BODY_REMOVED, "foreign body removed"),
         (ENT_TREATMENT_REFERRED_PVT_ENSENADA, "referred ensenada"),
-        (ENT_TREATMENT_REFERRED_CHILDRENS_HOSP_TIJUANA, "referred childrensi tijuana"),
-        (ENT_TREATMENT_SURGERY_TUBES, "surgery tubs"),
+        (ENT_TREATMENT_REFERRED_CHILDRENS_HOSP_TIJUANA, "referred childrens tijuana"),
+        (ENT_TREATMENT_SURGERY_TUBES, "surgery tubes"),
         (ENT_TREATMENT_SURGERY_TPLASTY, "surgery tplasty"),
         (ENT_TREATMENT_SURGERY_EUA, "surgery eua"),
         (ENT_TREATMENT_SURGERY_FB, "surgery fb"),
