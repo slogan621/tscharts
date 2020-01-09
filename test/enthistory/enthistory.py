@@ -33,20 +33,28 @@ class CreateENTHistory(ServiceAPI):
         self._payload["patient"] = val
         self.setPayload(self._payload)
     
-    def setType(self, val):
-        self._payload["type"] = val 
+    def setPainDuration(self, val):
+        self._payload["painDuration"] = val 
         self.setPayload(self._payload)
     
-    def setName(self, val):
-        self._payload["name"] = val 
+    def setPainSide(self, val):
+        self._payload["painSide"] = val 
         self.setPayload(self._payload)
     
-    def setDuration(self, val):
-        self._payload["duration"] = val 
+    def setHearingLossDuration(self, val):
+        self._payload["hearingLossDuration"] = val 
         self.setPayload(self._payload)
     
-    def setSide(self, val):
-        self._payload["side"] = val 
+    def setHearingLossSide(self, val):
+        self._payload["hearingLossSide"] = val 
+        self.setPayload(self._payload)
+    
+    def setDrainageDuration(self, val):
+        self._payload["drainageDuration"] = val 
+        self.setPayload(self._payload)
+    
+    def setDrainageSide(self, val):
+        self._payload["drainageSide"] = val 
         self.setPayload(self._payload)
     
     def setComment(self, val):
@@ -107,20 +115,28 @@ class GetENTHistory(ServiceAPI):
         self._patient = patient
         self.makeURL()
 
-    def setType(self, val):
-        self._type = type
+    def setPainSide(self, val):
+        self._painSide = val
         self.makeURL()
 
-    def setSide(self, val):
-        self._side = val
+    def setPainDuration(self, val):
+        self._painuration = val
         self.makeURL()
 
-    def setName(self, val):
-        self._name = val
+    def setHearingLossSide(self, val):
+        self._hearingLossSide = val
         self.makeURL()
 
-    def setDuration(self, val):
-        self._duration = val
+    def setHearingLossDuration(self, val):
+        self._hearingLossDuration = val
+        self.makeURL()
+
+    def setDrainageSide(self, val):
+        self._drainageSide = val
+        self.makeURL()
+
+    def setDrainageDuration(self, val):
+        self._drainageDuration = val
         self.makeURL()
 
 class UpdateENTHistory(ServiceAPI):
@@ -143,20 +159,28 @@ class UpdateENTHistory(ServiceAPI):
         self._payload["patient"] = val
         self.setPayload(self._payload)
 
-    def setType(self, val):
-        self._payload["type"] = val
+    def setPainDuration(self, val):
+        self._payload["painDuration"] = val
         self.setPayload(self._payload)
 
-    def setName(self, val):
-        self._payload["name"] = val
+    def setPainSide(self, val):
+        self._payload["painSide"] = val
         self.setPayload(self._payload)
 
-    def setDuration(self, val):
-        self._payload["duration"] = val
+    def setHearingLossDuration(self, val):
+        self._payload["hearingLossDuration"] = val
         self.setPayload(self._payload)
 
-    def setSide(self, val):
-        self._payload["side"] = val
+    def setHearingLossSide(self, val):
+        self._payload["hearingLossSide"] = val
+        self.setPayload(self._payload)
+
+    def setDrainageDuration(self, val):
+        self._payload["drainageDuration"] = val
+        self.setPayload(self._payload)
+
+    def setDrainageSide(self, val):
+        self._payload["drainageSide"] = val
         self.setPayload(self._payload)
 
     def setComment(self, val):
@@ -224,9 +248,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setType("hearing loss")
-        x.setSide("right")
-        x.setDuration("weeks")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
        
@@ -245,12 +272,18 @@ class TestTSENTHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         data = ret[1]
 
-        self.assertTrue("type" in data)
-        self.assertTrue(data["type"] == "hearing loss")
-        self.assertTrue("side" in data)
-        self.assertTrue(data["side"] == "right")
-        self.assertTrue("duration" in data)
-        self.assertTrue(data["duration"] == "weeks")
+        self.assertTrue("painSide" in data)
+        self.assertTrue(data["painSide"] == "right")
+        self.assertTrue("painDuration" in data)
+        self.assertTrue(data["painDuration"] == "weeks")
+        self.assertTrue("hearingLossSide" in data)
+        self.assertTrue(data["hearingLossSide"] == "right")
+        self.assertTrue("hearingLossDuration" in data)
+        self.assertTrue(data["hearingLossDuration"] == "weeks")
+        self.assertTrue("drainageSide" in data)
+        self.assertTrue(data["drainageSide"] == "right")
+        self.assertTrue("drainageDuration" in data)
+        self.assertTrue(data["drainageDuration"] == "weeks")
         self.assertTrue("comment" in data)
         self.assertTrue(data["comment"] == "A comment")
         self.assertTrue("username" in data)
@@ -294,27 +327,19 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setClinic(clinicid)
         x.setPatient(patientid)
-        x.setType("foobar")
+        x.setDrainageDuration("17")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        # other requires a non-zero length name field
-
-        x.setType("other")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        x.setType("drainage")
-        x.setSide("oooo")
-        x.setDuration("weeks")
+        x.setHearingLossSide("oooo")
+        x.setHearingLossDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
        
-        x.setType("drainage")
-        x.setSide("left")
-        x.setDuration("jjjj")
+        x.setPainSide("left")
+        x.setPainDuration("jjjj")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
@@ -324,9 +349,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setClinic(clinicid)
         x.setPatient(patientid)
-        x.setType("drainage")
-        x.setSide("left")
-        x.setDuration("months")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
@@ -376,9 +404,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setType("hearing loss")
-        x.setSide("right")
-        x.setDuration("weeks")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
        
@@ -458,9 +489,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
 
@@ -480,7 +514,7 @@ class TestTSENTHistory(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         x = UpdateENTHistory(host, port, token, id)
-        x.setType("hearing loss")
+        x.setHearingLossDuration("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -494,19 +528,12 @@ class TestTSENTHistory(unittest.TestCase):
         self.assertTrue("patient" in ret[1])
         patientId = int(ret[1]["patient"])
         self.assertTrue(patientId == patientid)
-        self.assertTrue(ret[1]["type"] == "hearing loss")
-
-        x = UpdateENTHistory(host, port, token, id)
-        x.setType("other")
-        x.setName("Itchy Scratchy")
-        x.setSide("both")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
+        self.assertTrue(ret[1]["hearingLossDuration"] == "none")
 
         x = UpdateENTHistory(host, port, token, id)
         x.setClinic(clinicid)
         x.setPatient(patientid)
-        x.setSide("both")
+        x.setHearingLossSide("both")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -520,19 +547,16 @@ class TestTSENTHistory(unittest.TestCase):
         self.assertTrue("patient" in ret[1])
         patientId = int(ret[1]["patient"])
         self.assertTrue(patientId == patientid)
-        self.assertTrue(ret[1]["type"] == "other")
-        self.assertTrue(ret[1]["side"] == "both")
-        self.assertTrue(ret[1]["name"] == "Itchy Scratchy")
+        self.assertTrue(ret[1]["hearingLossSide"] == "both")
 
         x = UpdateENTHistory(host, port, token, id)
-        x.setType("other")
-        x.setName("")
+        x.setPainSide("zzz")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
         x = UpdateENTHistory(host, port, token, id)
-        x.setType("drainage")
-        x.setSide("yadda")
+        x.setDrainageDuration("weeks")
+        x.setDrainageSide("yadda")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
@@ -650,9 +674,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid1)
         x.setClinic(clinicid1)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
 
@@ -663,9 +690,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid2)
         x.setClinic(clinicid1)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
 
@@ -676,9 +706,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid3)
         x.setClinic(clinicid1)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
 
@@ -689,9 +722,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
 
@@ -702,9 +738,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid2)
         x.setClinic(clinicid2)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
@@ -714,9 +753,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid3) 
         x.setClinic(clinicid2)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
@@ -726,9 +768,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid1)
         x.setClinic(clinicid3)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
@@ -738,9 +783,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid2)
         x.setClinic(clinicid3)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
@@ -750,9 +798,12 @@ class TestTSENTHistory(unittest.TestCase):
         x = CreateENTHistory(host, port, token)
         x.setPatient(patientid3)
         x.setClinic(clinicid3)
-        x.setType("pain")
-        x.setSide("right")
-        x.setDuration("intermittent")
+        x.setDrainageSide("right")
+        x.setDrainageDuration("weeks")
+        x.setHearingLossSide("right")
+        x.setHearingLossDuration("weeks")
+        x.setPainSide("right")
+        x.setPainDuration("weeks")
         x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)

@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -35,30 +35,6 @@ class ENTHistoryView(APIView):
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    def ENTTypeToString(self, val):
-        ret = None 
-        data = {ENTHistory.ENT_TYPE_HEARING_LOSS:"hearing loss",
-                ENTHistory.ENT_TYPE_DRAINAGE:"drainage", 
-                ENTHistory.ENT_TYPE_PAIN:"pain",
-                ENTHistory.ENT_TYPE_OTHER:"other"}
-        try:
-            ret = data[val]
-        except:
-            pass
-        return ret
-
-    def stringToENTType(self, val):
-        ret = None
-        data = {"hearing loss":ENTHistory.ENT_TYPE_HEARING_LOSS,
-                "drainage":ENTHistory.ENT_TYPE_DRAINAGE, 
-                "pain":ENTHistory.ENT_TYPE_PAIN,
-                "other":ENTHistory.ENT_TYPE_OTHER}
-        try:
-            ret = data[val]
-        except:
-            pass
-        return ret
 
     def durationToString(self, val):
         ret = None 
@@ -121,10 +97,12 @@ class ENTHistoryView(APIView):
         m["patient"] = entry.patient_id
         m["username"] = entry.username
         m["time"] = entry.time
-        m["type"] = self.ENTTypeToString(entry.type)
-        m["name"] = entry.name
-        m["duration"] = self.durationToString(entry.duration)
-        m["side"] = self.sideToString(entry.side)
+        m["drainageSide"] = self.sideToString(entry.drainageSide)
+        m["drainageDuration"] = self.durationToString(entry.drainageDuration)
+        m["hearingLossSide"] = self.sideToString(entry.hearingLossSide)
+        m["hearingLossDuration"] = self.durationToString(entry.hearingLossDuration)
+        m["painSide"] = self.sideToString(entry.painSide)
+        m["painDuration"] = self.durationToString(entry.painDuration)
         m["comment"] = entry.comment 
 
         return m
@@ -172,46 +150,6 @@ class ENTHistoryView(APIView):
             except:
                 pass # no clinic ID
 
-            try:
-                val = request.GET.get('type', '')
-                if val != '':
-                    val = self.stringToENTType(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["type"] = val
-                        if val == ENT_TYPE_OTHER:
-                            # name is required if type is "other"
-                            try:
-                                val = request.GET.get('name', '')
-                                kwargs["name"] = val
-                            except:
-                                badRequest = True
-            except:
-                pass
-
-            try:
-                val = request.GET.get('duration', '')
-                if val != '':
-                    val = self.stringToDuration(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["duration"] = val
-            except:
-                pass
-
-            try:
-                val = request.GET.get('side', '')
-                if val != '':
-                    val = self.stringToSide(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["side"] = val
-            except:
-                pass
-
             if not badRequest:
                 try:
                     ent_history = ENTHistory.objects.filter(**kwargs)
@@ -237,35 +175,67 @@ class ENTHistoryView(APIView):
         valid = True
         kwargs = data
 
+        if not "comment" in data:
+            valid = False
+        elif len(data["comment"]) == 0:
+            valid = False
+
         if not "username" in data:
             valid = False
         elif len(data["username"]) == 0:
             valid = False
 
         try:
-            val = self.stringToENTType(data["type"])
+            val = self.stringToDuration(data["drainageDuration"])
             if val == None:
                 valid = False
             else:
-                kwargs["type"] = val
+                kwargs["drainageDuration"] = val
         except:
             valid = False
 
         try:
-            val = self.stringToDuration(data["duration"])
+            val = self.stringToSide(data["drainageSide"])
             if val == None:
                 valid = False
             else:
-                kwargs["duration"] = val
+                kwargs["drainageSide"] = val
         except:
             valid = False
 
         try:
-            val = self.stringToSide(data["side"])
+            val = self.stringToDuration(data["painDuration"])
             if val == None:
                 valid = False
             else:
-                kwargs["side"] = val
+                kwargs["painDuration"] = val
+        except:
+            valid = False
+
+        try:
+            val = self.stringToSide(data["painSide"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["painSide"] = val
+        except:
+            valid = False
+
+        try:
+            val = self.stringToDuration(data["hearingLossDuration"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["hearingLossDuration"] = val
+        except:
+            valid = False
+
+        try:
+            val = self.stringToSide(data["hearingLossSide"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["hearingLossSide"] = val
         except:
             valid = False
 
@@ -275,39 +245,61 @@ class ENTHistoryView(APIView):
         valid = True
 
         try:
-            if "type" in data:
-                val = self.stringToENTType(data["type"])
+            if "drainageDuration" in data:
+                val = self.stringToDuration(data["drainageDuration"])
                 if val == None:
                     valid = False
                 else:
-                    ent_history.type = val
-                    if val == ENTHistory.ENT_TYPE_OTHER:
-                        if not "name" in data:
-                            valid = False
-                        elif len(data["name"]) == 0:
-                            valid = False
-                        else:
-                            ent_history.name = data["name"]
+                    ent_history.drainageDuration = val
         except:
             pass
 
         try:
-            if "duration" in data:
-                val = self.stringToDuration(data["duration"])
+            if "drainageSide" in data:
+                val = self.stringToSide(data["drainageSide"])
                 if val == None:
                     valid = False
                 else:
-                    ent_history.duration = val
+                    ent_history.drainageSide = val
         except:
             pass
 
         try:
-            if "side" in data:
-                val = self.stringToSide(data["side"])
+            if "hearingLossDuration" in data:
+                val = self.stringToDuration(data["hearingLossDuration"])
                 if val == None:
                     valid = False
                 else:
-                    ent_history.side = val
+                    ent_history.hearingLossDuration = val
+        except:
+            pass
+
+        try:
+            if "hearingLossSide" in data:
+                val = self.stringToSide(data["hearingLossSide"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_history.hearingLossSide = val
+        except:
+            pass
+        try:
+            if "painDuration" in data:
+                val = self.stringToDuration(data["painDuration"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_history.painDuration = val
+        except:
+            pass
+
+        try:
+            if "painSide" in data:
+                val = self.stringToSide(data["painSide"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_history.painSide = val
         except:
             pass
 
@@ -326,12 +318,18 @@ class ENTHistoryView(APIView):
             pass
 
         try:
+            if "username" in data:
+                ent_history.username = data["username"]
+        except:
+            pass
+
+        try:
             if "comment" in data:
                 ent_history.comment = data["comment"]
         except:
             pass
 
-        val = "type" in data or "name" in data or "duration" in data or "side" in data or "comment" in data or "username" in data
+        val = "drainageDuration" in data or "drainageSide" in data or "hearingLossDuration" in data or "hearingLossSide" in data or "painDuration" in data or "painSide" in data or "comment" in data or "username" in data
         if val == False:
             valid = False
 
@@ -352,7 +350,6 @@ class ENTHistoryView(APIView):
             clinicid = int(data["clinic"])
         except:
             badRequest = True
-
 
         # validate the post data, and get a kwargs dict for
         # creating the object 

@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -27,34 +27,26 @@ class ENTHistory(models.Model):
 
     time = models.DateTimeField(auto_now=True)
 
-    ENT_TYPE_HEARING_LOSS = 'm'
-    ENT_TYPE_DRAINAGE = 'd'
-    ENT_TYPE_PAIN = 'p'
-    ENT_TYPE_OTHER = 'o'
-    ENT_TYPE_CHOICES = ((ENT_TYPE_HEARING_LOSS, "hearing loss"), (ENT_TYPE_DRAINAGE, "drainage"), (ENT_TYPE_PAIN, "pain"), (ENT_TYPE_OTHER, "other"))
-    type = models.CharField(max_length = 1, choices = ENT_TYPE_CHOICES, default = ENT_TYPE_OTHER)
-
-    '''
-    If type == ENT_TYPE_OTHER, name supplies the name of the condition.
-    Otherwise, name is ignored.
-    '''
-
-    name = models.CharField(max_length = 32, default = "")
-
-    EAR_DURATION_NONE = 'n'
     EAR_DURATION_DAYS = 'd'
     EAR_DURATION_WEEKS = 'w'
     EAR_DURATION_MONTHS = 'm'
     EAR_DURATION_INTERMITTENT = 'i'
+    EAR_DURATION_NONE = 'n'
 
     EAR_DURATION_CHOICES = ((EAR_DURATION_NONE, "none"), (EAR_DURATION_DAYS, "days"), (EAR_DURATION_WEEKS, "weeks"), (EAR_DURATION_MONTHS, "months"), (EAR_DURATION_INTERMITTENT, "intermittent"))
-    duration = models.CharField(max_length = 1, choices = EAR_DURATION_CHOICES, default = EAR_DURATION_NONE)
 
     EAR_SIDE_LEFT = 'l'
     EAR_SIDE_RIGHT = 'r'
     EAR_SIDE_BOTH = 'b'
     EAR_SIDE_NONE = 'n'
+
     EAR_SIDE_CHOICES = ((EAR_SIDE_LEFT, "left"), (EAR_SIDE_RIGHT, "right"), (EAR_SIDE_BOTH, "both"), (EAR_SIDE_NONE, "none"))
 
-    side = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_BOTH)
+    drainageSide = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_BOTH)
+    drainageDuration = models.CharField(max_length = 1, choices = EAR_DURATION_CHOICES, default = EAR_DURATION_NONE)
+    hearingLossSide = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_BOTH)
+    hearingLossDuration = models.CharField(max_length = 1, choices = EAR_DURATION_CHOICES, default = EAR_DURATION_NONE)
+    painSide = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_BOTH)
+    painDuration = models.CharField(max_length = 1, choices = EAR_DURATION_CHOICES, default = EAR_DURATION_NONE)
+
     comment = models.TextField(default = "")

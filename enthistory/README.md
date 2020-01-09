@@ -24,7 +24,14 @@
   * **Code:** 200 <br />
     **Content:** 
 
-   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "type": "hearing loss" | "drainage" | "pain" | "other", "name": string: if type is other, then name of condition, "duration": "none" | "days" | "weeks" | "months" | "intermittent", "side" : "right" | "left" | "both", "username" : text, "comment": text}
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, 
+    "painDuration": "none" | "days" | "weeks" | "months" | "intermittent", 
+    "painSide" : "right" | "left" | "both" | "none", 
+    "hearingLossDuration": "none" | "days" | "weeks" | "months" | "intermittent", 
+    "hearingLossSide" : "right" | "left" | "both" | "none", 
+    "drainageDuration": "none" | "days" | "weeks" | "months" | "intermittent", 
+    "drainageSide" : "right" | "left" | "both" | "none", 
+    "username" : text, "comment": text}
  
 * **Error Response:**
 
@@ -53,7 +60,11 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 2c5
-{"id":27,"type":"hearing loss","name": "", "side": "left", "duration": "days","clinic": 9,"patient":6,"time":"2017-12-11T01:02:24","username":"xxyyzz","comment":"Some comment here"}
+{"id":27, 
+ "painSide": "left", "painDuration": "days",
+ "hearingLossSide": "left", "hearingLossDuration": "days",
+ "drainageSide": "left", "drainageDuration": "days",
+ "clinic": 9,"patient":6,"time":"2017-12-11T01:02:24","username":"xxyyzz","comment":"Some comment here"}
 
 ```
   
@@ -77,10 +88,12 @@ Content-Type: application/json
 
    `patient` patient id<br />
    `clinic` clinic id<br />
-   `type` one of the following: "hearing loss", "drainage", "pain", or "other"<br />
-   `name` text string<br />
-   `side` "left", "right", or "both"<br />
-   `duration` "days", "weeks", "months", or "intermittent"<br />
+   `painSide` "left", "right", "none", or "both"<br />
+   `painDuration` "days", "weeks", "months", "none", or "intermittent"<br />
+   `hearingLossSide` "left", "right", "none", or "both"<br />
+   `hearingLossDuration` "days", "weeks", "months", "none", or "intermittent"<br />
+   `drainageSide` "left", "right", "none", or "both"<br />
+   `drainageDuration` "days", "weeks", "months", "none", or "intermittent"<br />
 
 * **Data Params**
 
@@ -90,7 +103,6 @@ Content-Type: application/json
 
   * **Code:** 200 <br />
     **Content:** 
-    [{"id":27,"type":"hearing loss","name": "","side": "left":"duration":"days","clinic": 9,"patient":6,"time":"2017-12-11T01:02:24","username":"xxyyzz","comment":"Some comment here"}, ...]
  
 * **Error Response:**
 
@@ -122,7 +134,11 @@ Content-Type: application/json
 
 
 859
-[{"id":27,"type":"hearing loss","name": "","side":"left","duration":"days","clinic": 3,"patient":6,"time":"2017-12-11T01:02:24","username":"xxyyzz","comment":"Some comment here"}, ...]
+[{"id":27, 
+ "painSide": "left", "painDuration": "days",
+ "hearingLossSide": "left", "hearingLossDuration": "days",
+ "drainageSide": "left", "drainageDuration": "days",
+ "clinic": 9,"patient":6,"time":"2017-12-11T01:02:24","username":"xxyyzz","comment":"Some comment here"}, ...]
 0
 ```
   
@@ -148,10 +164,12 @@ Content-Type: application/json
  
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
-   `type` one of the following: "hearing loss", "drainage", "pain", or "other"<br />
-   `name` if type is "other", then name of the condition as supplied by doctor<br />
-   `side` one of the following: "left", "right", "both"<br />
-   `duration` one of the following: "days", "weeks", "months", "intermittent"<br />
+   `painSide` one of the following: "none", "left", "right", "both"<br />
+   `painDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
+   `drainageSide` one of the following: "none", "left", "right", "both"<br />
+   `drainageDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
+   `hearingLossSide` one of the following: "none", "left", "right", "both"<br />
+   `hearingLossDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
    `comment` comment supplied by the user for this history item<br />
    `username` name of logged in user making this change <br />
 
@@ -183,7 +201,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"type":"hearing loss","name": "","side":"left", "duration":"days","clinic":3,"patient":6,"username":"xxyyzz","comment":"Some comment here"}HTTP/1.1 200 OK
+{"painSide": "left", "painDuration": "weeks", "drainageSide": "none", "drainageDuration" : "none", "hearingLossSide" : "none", "hearingLossDuration": "none","clinic":3,"patient":6,"username":"xxyyzz","comment":"Some comment here"}HTTP/1.1 200 OK
 Date: Mon, 11 Dec 2017 01:02:23 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
@@ -220,12 +238,14 @@ Content-Type: application/json
 
    One or more of the following field/value pairs
 
-   `type` one of the following: "hearing loss", "drainage", "pain", or "other"<br />
-   `name` if type is "other", then name of the condition as supplied by doctor<br />
-   `duration` one of the following: 'days", "weeks", "months", "intermittent", "none"<br />
-   `side` one of the following: "right, "left", "both"<br />
    `comment` optional comment supplied by the user for this history item<br />
    `username` name of logged in user making this change <br />
+   `painSide` one of the following: "none", "left", "right", "both"<br />
+   `painDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
+   `drainageSide` one of the following: "none", "left", "right", "both"<br />
+   `drainageDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
+   `hearingLossSide` one of the following: "none", "left", "right", "both"<br />
+   `hearingLossDuration` one of the following: "none", "days", "weeks", "months", "intermittent"<br />
 
 * **Success Response:**
 
@@ -250,7 +270,7 @@ Content-Type: application/json
 Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
 
 
-{"duration": "days"}HTTP/1.0 200 OK
+{"hearingLossDuration": "days"}HTTP/1.0 200 OK
 Date: Sun, 23 Apr 2017 01:19:21 GMT
 Server: WSGIServer/0.1 Python/2.7.6
 Vary: Accept
@@ -315,4 +335,3 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 {}
 ```
-
