@@ -14,7 +14,7 @@
 #limitations under the License.
 
 '''
-unit tests for ent diagnosis application. Assumes django server is up
+unit tests for ent diagnosis extra application. Assumes django server is up
 and running on the specified host and port
 '''
 
