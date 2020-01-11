@@ -170,6 +170,10 @@ specialty.
     * [API](../master/enthistory/README.md)
     * [Unit Tests](../master/test/enthistory/enthistory.py)
 
+ * enthistoryextra - used to add, delete, modify and get ENT history "extra" records from the database. These are records that contain data not supported by enthistory tables, extending the conditions recorded for a specific enthistory record.
+    * [API](../master/enthistoryextra/README.md)
+    * [Unit Tests](../master/test/enthistoryextra/enthistoryextra.py)
+
  * enttreatment - used to add, delete, modify and get ENT treatment records from the database. 
     * [API](../master/enttreatment/README.md)
     * [Unit Tests](../master/test/enttreatment/enttreatment.py)
@@ -194,8 +198,8 @@ specialty.
 # License
 
 ```
-(C) Copyright Syd Logan 2016-2019
-(C) Copyright Thousand Smiles Foundation 2016-2019
+(C) Copyright Syd Logan 2016-2020
+(C) Copyright Thousand Smiles Foundation 2016-2020
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

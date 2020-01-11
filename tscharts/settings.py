@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'image',
     'entexam',
     'enthistory',
+    'enthistoryextra',
     'enttreatment',
     'entdiagnosis',
     'entdiagnosisextra',

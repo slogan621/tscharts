@@ -21,6 +21,7 @@ truncate xray_xray;
 truncate consent_consent;
 truncate entexam_entexam;
 truncate enthistory_enthistory;
+truncate enthistoryextra_enthistoryextra;
 truncate entsurgicalhistory_entsurgicalhistory;
 truncate enttreatment_enttreatment;
 truncate entdiagnosis_entdiagnosis;

@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^tscharts/v1/entexam/', include('entexam.urls', namespace='entexam')),
     url(r'^tscharts/v1/entsurgicalhistory/', include('entsurgicalhistory.urls', namespace='entsurgicalhistory')),
     url(r'^tscharts/v1/enthistory/', include('enthistory.urls', namespace='enthistory')),
+    url(r'^tscharts/v1/enthistoryextra/', include('enthistoryextra.urls', namespace='enthistory')),
     url(r'^tscharts/v1/enttreatment/', include('enttreatment.urls', namespace='enttreatment')),
     url(r'^tscharts/v1/entdiagnosis/', include('entdiagnosis.urls', namespace='entdiagnosis')),
     url(r'^tscharts/v1/entdiagnosisextra/', include('entdiagnosisextra.urls', namespace='entdiagnosisextra')),
