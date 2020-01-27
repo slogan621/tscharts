@@ -177,8 +177,6 @@ class ENTHistoryView(APIView):
 
         if not "comment" in data:
             valid = False
-        elif len(data["comment"]) == 0:
-            valid = False
 
         if not "username" in data:
             valid = False
