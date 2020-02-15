@@ -31,6 +31,10 @@ import sys
 import numbers
 import json
 
+import logging
+
+LOG = logging.getLogger("tscharts")
+
 class ENTDiagnosisView(APIView):
 
     authentication_classes = (TokenAuthentication,)
@@ -174,51 +178,65 @@ class ENTDiagnosisView(APIView):
         else:
             return Response(ret)
 
+    def strToBoolean(self, val):
+        ret = False
+        if val == "true":
+            ret = True
+        return ret
+
     def validatePostArgs(self, data):
         valid = True
         kwargs = data
 
         if not "clinic" in data:
+            LOG.info(u'validatePostArgs valid False 1 {}'.format(data))
             valid = False
 
         if not "patient" in data:
+            LOG.info(u'validatePostArgs valid False 2 {}'.format(data))
             valid = False
 
         if not "comment" in data:
+            LOG.info(u'validatePostArgs valid False 3 {}'.format(data))
             valid = False
 
         if not "username" in data:
-            valid = False
-        elif len(data["username"]) == 0:
+            LOG.info(u'validatePostArgs valid False 4 {}'.format(data))
             valid = False
         
         for x in self.sideKeyNames:
             if not x in data:
+                LOG.info(u'validatePostArgs valid False 5 failed on {} {}'.format(x, data))
                 valid = False
                 break
             try:
                 val = self.stringToSide(data[x])
                 if val == None:
+                    LOG.info(u'validatePostArgs valid False 6 failed on {} {}'.format(x, data))
                     valid = False
                     break
                 else:
                     kwargs[x] = val
             except:
+                LOG.info(u'validatePostArgs valid False 6.1 failed on {} {}'.format(x, data))
                 valid = False
                 break
 
         for x in self.booleanKeyNames:
             if not x in data:
+                LOG.info(u'validatePostArgs valid False 7 failed on {} {}'.format(x, data))
                 valid = False
                 break
             try:
                 val = data[x]
-                if not val in [True, False]:
+                if not val in ["true", "false"]:
+                    LOG.info(u'validatePostArgs valid False 8 failed on {} {}'.format(x, data))
                     valid = False
                     break
                 else:
-                    kwargs[x] = val
+                    kwargs[x] = self.strToBoolean(val);
             except:
+                LOG.info(u'validatePostArgs valid False 9 failed on {} {}'.format(x, data))
                 valid = False
                 break
 
@@ -234,6 +252,7 @@ class ENTDiagnosisView(APIView):
             try:
                 val = self.stringToSide(data[x])
                 if val == None:
+                    LOG.info(u'validatePostArgs valid False 1 {}'.format(data))
                     valid = False
                     break
                 else:
@@ -292,6 +311,7 @@ class ENTDiagnosisView(APIView):
                         ent_diagnosis.syndromePierreRobin = val
                         foundOne = True
             except:
+                LOG.info(u'validatePostArgs valid False 2 {}'.format(data))
                 valid = False
                 break
 
@@ -299,64 +319,69 @@ class ENTDiagnosisView(APIView):
             if not x in data:
                 continue
             try:
+                #LOG.info(u'validatePutArgs valid False top of loop x {} data[x] {} data {}'.format(x, data[x], data))
                 val = data[x]
                 if val == None:
+                    LOG.info(u'validatePostArgs valid False 3 {}'.format(data))
                     valid = False
                     break
-                elif not val in [True, False]:
+                elif not val in ["true", "false"]:
+                    LOG.info(u'validatePostArgs valid False 4 {}'.format(data))
                     valid = False
                     break
                     
                 if x == "oralAnkyloglossia":
-                    ent_diagnosis.oralAnkyloglossia = val
+                    ent_diagnosis.oralAnkyloglossia = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralTonsilEnlarge":
-                    ent_diagnosis.oralTonsilEnlarge = val
+                    ent_diagnosis.oralTonsilEnlarge = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftLipRepairDeformity":
-                    ent_diagnosis.oralCleftLipRepairDeformity = val
+                    ent_diagnosis.oralCleftLipRepairDeformity = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftLipUnilateral":
-                    ent_diagnosis.oralCleftLipUnilateral = val
+                    ent_diagnosis.oralCleftLipUnilateral = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftLipBilateral":
-                    ent_diagnosis.oralCleftLipBilateral = val
+                    ent_diagnosis.oralCleftLipBilateral = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftLipUnrepaired":
-                    ent_diagnosis.oralCleftLipUnrepaired = val
+                    ent_diagnosis.oralCleftLipUnrepaired = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftLipRepaired":
-                    ent_diagnosis.oralCleftLipRepaired = val
+                    ent_diagnosis.oralCleftLipRepaired = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftPalateUnilateral":
-                    ent_diagnosis.oralCleftPalateUnilateral = val
+                    ent_diagnosis.oralCleftPalateUnilateral = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftPalateBilateral": 
-                    ent_diagnosis.oralCleftPalateBilateral = val
+                    ent_diagnosis.oralCleftPalateBilateral = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftPalateUnrepaired":
-                    ent_diagnosis.oralCleftPalateUnrepaired = val
+                    ent_diagnosis.oralCleftPalateUnrepaired = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralCleftPalateRepaired":
-                    ent_diagnosis.oralCleftPalateRepaired = val
+                    ent_diagnosis.oralCleftPalateRepaired = self.strToBoolean(val)
                     foundOne = True
                 elif x == "oralSpeechProblem":
-                    ent_diagnosis.oralSpeechProblem = val
+                    ent_diagnosis.oralSpeechProblem = self.strToBoolean(val)
                     foundOne = True
                 elif x == "noseDeviatedSeptum":
-                    ent_diagnosis.noseDeviatedSeptum = val
+                    ent_diagnosis.noseDeviatedSeptum = self.strToBoolean(val)
                     foundOne = True
                 elif x == "noseTurbinateHypertrophy":
-                    ent_diagnosis.noseTurbinateHypertrophy = val
+                    ent_diagnosis.noseTurbinateHypertrophy = self.strToBoolean(val)
                     foundOne = True
                 elif x == "noseDeformitySecondaryToCleftPalate":
-                    ent_diagnosis.noseDeformitySecondaryToCleftPalate = val
+                    ent_diagnosis.noseDeformitySecondaryToCleftPalate = self.strToBoolean(val)
                     foundOne = True
             except:
+                LOG.info(u'validatePostArgs valid False 5 {}'.format(data))
                 valid = False
                 break
 
         if foundOne == False:
+            LOG.info(u'validatePostArgs valid False 6 {}'.format(data))
             valid = False
 
         return valid, ent_diagnosis
