@@ -20,6 +20,8 @@ from django.db import models
 from patient.models import Patient
 from clinic.models import Clinic
 
+from enthistory.models import ENTHistory
+
 class ENTTreatment(models.Model):
     clinic = models.ForeignKey(Clinic)
     patient = models.ForeignKey(Patient)
@@ -27,80 +29,124 @@ class ENTTreatment(models.Model):
 
     time = models.DateTimeField(auto_now=True)
 
-    # if True, treatment is for a future clinic
+    # Ear cleaned [] AD [] AS
+    earCleanedSide = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    earCleanedComment = models.TextField(default = "")
+    # Audiogram [] AD [] AS [] AU
+    audiogramSide = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    audiogramComment = models.TextField(default = "")
+    # [] Right away and return to see me right afterwards. May need
+    # surgery tomorrow.
+    audiogramRightAway = models.BooleanField(default = False)
+    audiogramRightAwayComment = models.TextField(default = "")
+    # Tympanogram [] AD [] AS [] AU
+    tympanogramSide = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    tympanogramComment = models.TextField(default = "")
+    # [] Right away and return to see me right afterwards. May need
+    # surgery tomorrow.
+    tympanogramRightAway = models.BooleanField(default = False)
+    tympanogramRightAwayComment = models.TextField(default = "")
+    #Mastoid debrided [] AD [] AS [] Hearing aid evaluation
+    mastoidDebridedSide = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    mastoidDebridedComment = models.TextField(default = "")
+    mastoidDebridedHearingAidEval = models.BooleanField(default = False)
+    mastoidDebridedHearingAidEvalComment = models.TextField(default = "")
+    #Antibiotic [] drops [] orally [] for acute infection [] for after water exposure infection prevention
+    antibioticDrops = models.BooleanField(default = False)
+    antibioticDropsComment = models.TextField(default = "")
+    antibioticOrally = models.BooleanField(default = False)
+    antibioticOrallyComment = models.TextField(default = "")
+    antibioticAcuteInfection = models.BooleanField(default = False)
+    antibioticAcuteInfectionComment = models.TextField(default = "")
+    antibioticAfterWaterExposureInfectionPrevention = models.BooleanField(default = False)
+    antibioticAfterWaterExposureInfectionPreventionComment = models.TextField(default = "")
+    # Boric acid powder [] instilled today [] dispensed for home use Tube removed [] AD [] AS
+    boricAcidToday = models.BooleanField(default = False)
+    boricAcidTodayComment = models.TextField(default = "")
+    boricAcidForHomeUse = models.BooleanField(default = False)
+    boricAcidForHomeUseComment = models.TextField(default = "")
+    boricAcidSide = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    boricAcidSideComment = models.TextField(default = "")
+    #Foreign body removed [] AD []AS
+    foreignBodyRemoved = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    foreignBodyRemovedComment = models.TextField(default = "")
+    #Return [] 3 mos [] 6 mos [] prn
+    return3Months = models.BooleanField(default = False)
+    return6Months = models.BooleanField(default = False)
+    returnPrn = models.BooleanField(default = False)
+    returnComment = models.TextField(default = "")
+    # [] Referred to pvt ENT in Ensenada
+    referredPvtENTEnsenada = models.BooleanField(default = False)
+    referredPvtENTEnsenadaComment = models.TextField(default = "")
+    # [] Referred to Childrens Hospital in Tijuana
+    referredChildrensHospitalTJ = models.BooleanField(default = False)
+    referredChildrensHospitalTJComment = models.TextField(default = "")
 
-    future = models.BooleanField(default = False)
+    # tomorrow surgeries
 
-    ENT_TREATMENT_CLEANED = 'a'
-    ENT_TREATMENT_AUDIOGRAM = 'b'
-    ENT_TREATMENT_TYMPANOGRAM = 'c'
-    ENT_TREATMENT_MASTOID_DEBRIDED = 'd'
-    ENT_TREATMENT_HEARING_AID_EVAL = 'e'
-    ENT_TREATMENT_ANTIBIOTIC_DROPS = 'f'
-    ENT_TREATMENT_ANTIBIOTIC_ORALLY = 'g'
-    ENT_TREATMENT_ANTIBIOTIC_FOR_ACUTE_INFECTION = 'h'
-    ENT_TREATMENT_ANTIBIOTIC_FOR_AFTER_WATER_INFECTION_PROTECTION = 'i'
-    ENT_TREATMENT_BORIC_ACID_TODAY = 'j'
-    ENT_TREATMENT_BORIC_ACID_AT_HOME = 'k'
-    ENT_TREATMENT_TUBE_REMOVED = 'l'
-    ENT_TREATMENT_FOREIGN_BODY_REMOVED = 'm'
-    ENT_TREATMENT_REFERRED_PVT_ENSENADA = 'n'
-    ENT_TREATMENT_REFERRED_CHILDRENS_HOSP_TIJUANA = 'o'
-    ENT_TREATMENT_SURGERY_TUBES = 'p'
-    ENT_TREATMENT_SURGERY_TPLASTY = 'q'
-    ENT_TREATMENT_SURGERY_EUA = 'r'
-    ENT_TREATMENT_SURGERY_FB = 's'
-    ENT_TREATMENT_SURGERY_MIDDLE_EAR_MYRINGOTOMY = 't'
-    ENT_TREATMENT_SURGERY_CERUMEN_REMOVAL = 'u'
-    ENT_TREATMENT_SURGERY_GRANULOMA_REMOVAL = 'v'
-    ENT_TREATMENT_SURGERY_SEPTORHINOPLASTY = 'w'
-    ENT_TREATMENT_SURGERY_SCAR_REVISION_CLEFT_LIP = 'x'
-    ENT_TREATMENT_SURGERY_FRENULECTOMY = 'y'
-    ENT_TREATMENT_OTHER = 'z'
+    #Tubes [] AD [] AS [] AU
+    tubesTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    tubesTomorrowComment = models.TextField(default = "")
+    # T Plasty [] AD [] AS [] AU
+    tPlastyTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    tPlastyTomorrowComment = models.TextField(default = "")
+    # EUA (Examination under anesthesia) [] AD [] AS [] AU 
+    euaTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    euaTomorrowComment = models.TextField(default = "")
+    #FB (foreign body) removal [] AD [] AS [] AU
+    fbRemovalTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    fbRemovalTomorrowComment = models.TextField(default = "")
+    # Middle Ear Exploration via myringotomy [] AD [] AS [] AU 
+    middleEarExploreMyringotomyTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    middleEarExploreMyringotomyTomorrowComment = models.TextField(default = "")
+    # Cerumen removal [] AD [] AS [] AU
+    cerumenTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    cerumentTomorrowComment = models.TextField(default = "")
+    # Granuloma removal [] AD [] AS [] AU
+    granulomaTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    granulomaTomorrowComment = models.TextField(default = "")
+    #[] Septorhinoplasty
+    septorhinoplastyTomorrow = models.BooleanField(default = False)
+    septorhinoplastyTomorrowComment = models.TextField(default = "")
+    #[] Scar revision cleft lip
+    scarRevisionCleftLipTomorrow = models.BooleanField(default = False)
+    scarRevisionCleftLipTomorrowComment = models.TextField(default = "")
+    #[] Frenulectomy
+    frenulectomyTomorrow = models.BooleanField(default = False)
+    frenulectomyTomorrowComment = models.TextField(default = "")
 
-    ENT_TREATMENT_CHOICES = (
-        (ENT_TREATMENT_CLEANED, "cleaned"),
-        (ENT_TREATMENT_AUDIOGRAM, "audiogram"),
-        (ENT_TREATMENT_TYMPANOGRAM, "tympanogram"),
-        (ENT_TREATMENT_MASTOID_DEBRIDED, "mastoid debrided"),
-        (ENT_TREATMENT_HEARING_AID_EVAL, "hearing aid eval"),
-        (ENT_TREATMENT_ANTIBIOTIC_DROPS, "antibiotic drops"),
-        (ENT_TREATMENT_ANTIBIOTIC_ORALLY, "antibiotic orally"),
-        (ENT_TREATMENT_ANTIBIOTIC_FOR_ACUTE_INFECTION, "antibiotic acute"),
-        (ENT_TREATMENT_ANTIBIOTIC_FOR_AFTER_WATER_INFECTION_PROTECTION, "antibiotic water"),
-        (ENT_TREATMENT_BORIC_ACID_TODAY, "boric acid today"),
-        (ENT_TREATMENT_BORIC_ACID_AT_HOME, "boric acid home"),
-        (ENT_TREATMENT_TUBE_REMOVED, "tube removed"),
-        (ENT_TREATMENT_FOREIGN_BODY_REMOVED, "foreign body removed"),
-        (ENT_TREATMENT_REFERRED_PVT_ENSENADA, "referred ensenada"),
-        (ENT_TREATMENT_REFERRED_CHILDRENS_HOSP_TIJUANA, "referred childrens tijuana"),
-        (ENT_TREATMENT_SURGERY_TUBES, "surgery tubes"),
-        (ENT_TREATMENT_SURGERY_TPLASTY, "surgery tplasty"),
-        (ENT_TREATMENT_SURGERY_EUA, "surgery eua"),
-        (ENT_TREATMENT_SURGERY_FB, "surgery fb"),
-        (ENT_TREATMENT_SURGERY_MIDDLE_EAR_MYRINGOTOMY, "surgery myringotomy"),
-        (ENT_TREATMENT_SURGERY_CERUMEN_REMOVAL, "surgery cerumen removal"),
-        (ENT_TREATMENT_SURGERY_GRANULOMA_REMOVAL, "surgery granuloma removal"),
-        (ENT_TREATMENT_SURGERY_SEPTORHINOPLASTY, "surgery septorhinoplasty"),
-        (ENT_TREATMENT_SURGERY_SCAR_REVISION_CLEFT_LIP, "surgery scar revision cleft"),
-        (ENT_TREATMENT_SURGERY_FRENULECTOMY, "surgery frenulectomy"),
-        (ENT_TREATMENT_OTHER, "other")
-    )
+    # future surgeries
 
-    treatment = models.CharField(max_length = 1, choices = ENT_TREATMENT_CHOICES, default = ENT_TREATMENT_OTHER)
-
-    EAR_SIDE_LEFT = 'l'
-    EAR_SIDE_RIGHT = 'r'
-    EAR_SIDE_BOTH = 'b'
-    EAR_SIDE_NONE = 'n'
-    EAR_SIDE_CHOICES = ((EAR_SIDE_LEFT, "left"), (EAR_SIDE_RIGHT, "right"), (EAR_SIDE_BOTH, "both"), (EAR_SIDE_NONE, "none"))
-
-    side = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
-
-    '''
-    If treatment == ENT_TREATMENT_OTHER, comment holds mandatory details of 
-    the treatment which is not among the possible choices. Otherwise, comment 
-    contains an optional comment for the specified treatment.
-    '''
+    #Tubes [] AD [] AS [] AU
+    tubesFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    tubesFutureComment = models.TextField(default = "")
+    # T plasty [] AD [] AS [] AU
+    tPlastyFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    tPlastyFutureComment = models.TextField(default = "")
+    # EUA (Examination under anesthesia) [] AD [] AS [] AU 
+    euaFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    euaFutureComment = models.TextField(default = "")
+    #FB (foreign body) removal [] AD [] AS [] AU
+    fbRemovalFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    fbRemovalComment = models.TextField(default = "")
+    # Middle Ear Exploration via myringotomy [] AD [] AS [] AU 
+    middleEarExploreMyringotomyFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    middleEarExploreMyringotomyFutureComment = models.TextField(default = "")
+    # Cerumen removal [] AD [] AS [] AU
+    cerumenFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    cerumenFutureComment = models.TextField(default = "")
+    # Granuloma removal [] AD [] AS [] AU
+    granulomaFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
+    granulomaFutureComment = models.TextField(default = "")
+    #[] Septorhinoplasty
+    septorhinoplastyFuture = models.BooleanField(default = False)
+    septorhinoplastyFutureComment = models.TextField(default = "")
+    #[] Scar revision cleft lip
+    scarRevisionCleftLipFuture = models.BooleanField(default = False)
+    scarRevisionCleftLipFutureComment = models.TextField(default = "")
+    #[] Frenulectomy
+    frenulectomyFuture = models.BooleanField(default = False)
+    frenulectomyFutureComment = models.TextField(default = "")
 
     comment = models.TextField(default = "")
+
