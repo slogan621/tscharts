@@ -68,7 +68,6 @@
   "referredPvtENTEnsenadaComment" : text,<br />
   "referredChildrensHospitalTJ" : true | false,<br />
   "referredChildrensHospitalTJComment" : text,<br />
-<br />
   "tubesTomorrow" : "both" | "left" | "right" | "none",<br />
   "tubesTomorrowComment" : text,<br />
   "tPlastyTomorrow" : "both" | "left" | "right" | "none",<br />
@@ -89,7 +88,6 @@
   "scarRevisionCleftLipTomorrowComment" : text,<br />
   "frenulectomyTomorrow" : true | false, <br />
   "frenulectomyTomorrowComment" : text,<br />
-<br />
   "tubesFuture" : "both" | "left" | "right" | "none",<br />
   "tubesFutureComment" : text,<br />
   "tPlastyFuture" : "both" | "left" | "right" | "none",<br />

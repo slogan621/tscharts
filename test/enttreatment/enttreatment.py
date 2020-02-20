@@ -1,3 +1,18 @@
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#
+#You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 '''
 unit tests for ent treatment application. Assumes django server is up
 and running on the specified host and port
@@ -11,6 +26,173 @@ from service.serviceapi import ServiceAPI
 from test.tscharts.tscharts import Login, Logout
 from test.patient.patient import CreatePatient, DeletePatient
 from test.clinic.clinic import CreateClinic, DeleteClinic
+import random
+import string
+
+class ENTTreatmentGenerator():
+
+    sideFields = [
+        "earCleanedSide",
+        "audiogramSide",
+  	"tympanogramSide",
+  	"mastoidDebridedSide",
+  	"boricAcidSide",
+  	"foreignBodyRemoved",
+  	"tubesTomorrow",
+  	"tPlastyTomorrow",
+  	"euaTomorrow",
+  	"fbRemovalTomorrow",
+  	"middleEarExploreMyringotomyTomorrow",
+  	"cerumenTomorrow",
+  	"granulomaTomorrow",
+  	"tubesFuture",
+  	"tPlastyFuture",
+  	"euaFuture",
+  	"fbRemovalFuture",
+  	"middleEarExploreMyringotomyFuture",
+  	"cerumenFuture",
+  	"granulomaFuture"]
+
+    booleanFields = [
+  	"audiogramRightAway",
+  	"tympanogramRightAway",
+  	"mastoidDebridedHearingAidEval",
+  	"antibioticDrops",
+  	"antibioticOrally",
+  	"antibioticAcuteInfection",
+  	"antibioticAfterWaterExposureInfectionPrevention",
+  	"boricAcidToday",
+  	"boricAcidForHomeUse",
+  	"return3Months",
+  	"return6Months",
+  	"returnPrn",
+  	"referredPvtENTEnsenada",
+  	"referredChildrensHospitalTJ",
+  	"septorhinoplastyTomorrow",
+  	"scarRevisionCleftLipTomorrow",
+  	"frenulectomyTomorrow",
+  	"septorhinoplastyFuture",
+  	"scarRevisionCleftLipFuture",
+  	"frenulectomyFuture"]
+
+    textFields = [
+        "username",
+        "earCleanedComment",
+  	"audiogramComment",
+  	"tympanogramComment",
+  	"tympanogramRightAwayComment",
+  	"mastoidDebridedComment",
+  	"mastoidDebridedHearingAidEvalComment",
+  	"antibioticDropsComment",
+  	"antibioticOrallyComment",
+  	"antibioticAcuteInfectionComment",
+  	"antibioticAfterWaterExposureInfectionPreventionComment",
+  	"boricAcidTodayComment",
+  	"boricAcidForHomeUseComment",
+  	"boricAcidSideComment",
+  	"foreignBodyRemovedComment",
+  	"returnComment",
+  	"referredPvtENTEnsenadaComment",
+  	"referredChildrensHospitalTJComment",
+  	"tubesTomorrowComment",
+  	"tPlastyTomorrowComment",
+  	"euaTomorrowComment",
+  	"fbRemovalTomorrowComment",
+  	"middleEarExploreMyringotomyTomorrowComment",
+  	"cerumentTomorrowComment",
+  	"granulomaTomorrowComment",
+  	"septorhinoplastyTomorrowComment",
+  	"scarRevisionCleftLipTomorrowComment",
+  	"frenulectomyTomorrowComment",
+  	"tubesFutureComment",
+  	"tPlastyFutureComment",
+  	"euaFutureComment",
+  	"fbRemovalComment",
+  	"middleEarExploreMyringotomyFutureComment",
+  	"cerumenFutureComment",
+  	"granulomaFutureComment",
+  	"septorhinoplastyFutureComment",
+  	"scarRevisionCleftLipFutureComment",
+  	"frenulectomyFutureComment",
+  	"comment"]
+
+    booleanStrings = ["true", "false"]
+    sideStrings = ["none", "left", "right", "both"]
+
+    junkKeys = ["jadda", "fooboo", "yeehad"]
+
+    junkSideStrings = ["Both", "LEft", "RIGHT", "noNe", "", None]
+    junkBooleanStrings = ["True", "trUe", "FAlse", "faLSE", "", None]
+    junkTextStrings = [2654, None, 3.141592654]
+
+    def getRandomJunkKey(self):
+        i = random.randrange(len(self.junkKeys))
+        return self.junkKeys[i]
+
+    def getRandomJunkBoolean(self):
+        i = random.randrange(len(self.junkBooleanStrings))
+        return self.junkBooleanStrings[i]
+
+    def getRandomJunkText(self, size):
+        i = random.randrange(len(self.junkTextStrings))
+        return self.junkTextStrings[i]
+
+    def getRandomJunkSide(self):
+        i = random.randrange(len(self.junkSideStrings))
+        return self.junkSideStrings[i]
+
+    def getRandomBoolean(self):
+        i = random.randrange(len(self.booleanStrings))
+        return self.booleanStrings[i]
+
+    def getRandomText(self, size):
+        return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(size)])
+
+    def getRandomSide(self):
+        i = random.randrange(len(self.sideStrings))
+        return self.sideStrings[i]
+
+    def createPayloadBody(self, full):  # full True if POST, False for random PUT
+        payload = {}
+        for x in self.sideFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomSide()
+
+        for x in self.booleanFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomBoolean()
+
+        count = 0     # len 0, 1, 2, 3, ...
+        for x in self.textFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomText(count)
+                count += 1
+
+        return payload
+
+    def createJunkPayloadBody(self, full, junkKeys):  
+        payload = {}
+
+        if junkKeys:
+            for x in range(0, 100):
+                payload[self.getRandomText(10)] = self.getRandomJunkSide() 
+            for x in range(0, 100):
+                payload[self.getRandomText(10)] = self.getRandomJunkBoolean() 
+        else:
+            for x in self.sideFields:
+                if full or (not full and self.getRandomBoolean()):
+                    payload[x] = self.getRandomJunkSide()
+
+            for x in self.booleanFields:
+                if full or (not full and self.getRandomBoolean()):
+                    payload[x] = self.getRandomJunkBoolean()
+
+            count = 0     # len 0, 1, 2, 3, ...
+            for x in self.textFields:
+                if full or (not full and self.getRandomBoolean()):
+                    payload[x] = self.getRandomJunkText(count)
+                    count += 1
+        return payload
 
 class CreateENTTreatment(ServiceAPI):
     def __init__(self, host, port, token):
@@ -33,26 +215,24 @@ class CreateENTTreatment(ServiceAPI):
         self._payload["patient"] = val
         self.setPayload(self._payload)
     
-    def setTreatment(self, val):
-        self._payload["treatment"] = val 
-        self.setPayload(self._payload)
-    
-    def setFuture(self, val):
-        self._payload["future"] = val 
-        self.setPayload(self._payload)
-    
-    def setSide(self, val):
-        self._payload["side"] = val 
-        self.setPayload(self._payload)
-    
-    def setComment(self, val):
-        self._payload["comment"] = val 
-        self.setPayload(self._payload)
-    
     def setUsername(self, val):
-        self._payload["username"] = val 
+        self._payload["username"] = val
         self.setPayload(self._payload)
-    
+
+    def createPayloadBody(self):
+        generator = ENTTreatmentGenerator()
+        body = generator.createPayloadBody(True) 
+        self._payload = body
+        self.setPayload(self._payload)
+        return body
+
+    def createJunkPayloadBody(self, junkKeys):
+        generator = ENTTreatmentGenerator()
+        body = generator.createJunkPayloadBody(True, junkKeys) 
+        self._payload = body
+        self.setPayload(self._payload)
+        return body
+
 class GetENTTreatment(ServiceAPI):
     def makeURL(self):
         hasQArgs = False
@@ -103,18 +283,6 @@ class GetENTTreatment(ServiceAPI):
         self._patient = val
         self.makeURL()
 
-    def setTreatment(self, val):
-        self._treatment = val
-        self.makeURL()
-
-    def setSide(self, val):
-        self._side = val
-        self.makeURL()
-
-    def setFuture(self, val):
-        self._future = val
-        self.makeURL()
-
 class UpdateENTTreatment(ServiceAPI):
     def __init__(self, host, port, token, id):
         super(UpdateENTTreatment, self).__init__()
@@ -135,25 +303,19 @@ class UpdateENTTreatment(ServiceAPI):
         self._payload["patient"] = val
         self.setPayload(self._payload)
 
-    def setTreatment(self, val):
-        self._payload["treatment"] = val
+    def createPayloadBody(self):
+        generator = ENTTreatmentGenerator()
+        body = generator.createPayloadBody(False) 
+        self._payload = body
         self.setPayload(self._payload)
+        return body
 
-    def setFuture(self, val):
-        self._payload["future"] = val
+    def createJunkPayloadBody(self, junkKeys):
+        generator = ENTTreatmentGenerator()
+        body = generator.createJunkPayloadBody(False, junkKeys) 
+        self._payload = body
         self.setPayload(self._payload)
-
-    def setSide(self, val):
-        self._payload["side"] = val
-        self.setPayload(self._payload)
-
-    def setComment(self, val):
-        self._payload["comment"] = val
-        self.setPayload(self._payload)
-
-    def setUsername(self, val):
-        self._payload["username"] = val
-        self.setPayload(self._payload)
+        return body
 
 class DeleteENTTreatment(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -210,14 +372,11 @@ class TestTSENTTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setTreatment("mastoid debrided")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
-       
+
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -233,16 +392,9 @@ class TestTSENTTreatment(unittest.TestCase):
         self.assertTrue(patientId == patientid)
         data = ret[1]
 
-        self.assertTrue("treatment" in data)
-        self.assertTrue(data["treatment"] == "mastoid debrided")
-        self.assertTrue("side" in data)
-        self.assertTrue(data["side"] == "right")
-        self.assertTrue("future" in data)
-        self.assertTrue(data["future"] == "true")
-        self.assertTrue("comment" in data)
-        self.assertTrue(data["comment"] == "A comment")
-        self.assertTrue("username" in data)
-        self.assertTrue(data["username"] == "Gomez")
+        for x in body:
+            self.assertTrue(x in data)
+            self.assertTrue(body[x] == data[x])
 
         x = DeleteENTTreatment(host, port, token, id)
         ret = x.send(timeout=30)
@@ -256,6 +408,7 @@ class TestTSENTTreatment(unittest.TestCase):
         # non-existent clinic param
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setClinic(9999)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
@@ -264,6 +417,7 @@ class TestTSENTTreatment(unittest.TestCase):
         # non-existent patient param
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setClinic(clinicid)
         x.setPatient(9999)
         ret = x.send(timeout=30)
@@ -272,6 +426,7 @@ class TestTSENTTreatment(unittest.TestCase):
         # no data
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setClinic(clinicid)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
@@ -280,42 +435,25 @@ class TestTSENTTreatment(unittest.TestCase):
         # invalid data
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createJunkPayloadBody(False)
         x.setClinic(clinicid)
         x.setPatient(patientid)
-        x.setTreatment("foobar")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
 
-        # other requires a non-zero length name field
-
-        x.setTreatment("other")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
-
-        x.setTreatment("audiogram")
-        x.setSide("oooo")
-        x.setFuture("true")
-        x.setComment("A comment")
-        x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
        
-        x.setTreatment("boric acid today")
-        x.setSide("left")
-        x.setFuture("jjjj")
-        x.setComment("A comment")
-        x.setUsername("Gomez")
+        body = x.createJunkPayloadBody(True)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
       
         # missing username 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setClinic(clinicid)
         x.setPatient(patientid)
-        x.setTreatment("tube removed")
-        x.setSide("left")
-        x.setFuture("false")
-        x.setComment("A comment")
+        x.setUsername(None)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 400)
        
@@ -362,19 +500,19 @@ class TestTSENTTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setTreatment("antibiotic drops")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
        
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
+
+        x = GetENTTreatment(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200) 
 
         x = DeleteENTTreatment(host, port, token, id)
         ret = x.send(timeout=30)
@@ -444,12 +582,9 @@ class TestTSENTTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        body = x.createPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("false")
-        x.setComment("A comment")
         x.setUsername("Gomez")
 
         ret = x.send(timeout=30)
@@ -468,7 +603,8 @@ class TestTSENTTreatment(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         x = UpdateENTTreatment(host, port, token, id)
-        x.setTreatment("hearing aid eval")
+        body = x.createPayloadBody()
+
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -482,47 +618,64 @@ class TestTSENTTreatment(unittest.TestCase):
         self.assertTrue("patient" in ret[1])
         patientId = int(ret[1]["patient"])
         self.assertTrue(patientId == patientid)
-        self.assertTrue(ret[1]["treatment"] == "hearing aid eval")
 
-        x = UpdateENTTreatment(host, port, token, id)
-        x.setTreatment("other")
-        x.setComment("Itchy Scratchy")
-        x.setSide("both")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
+        for x in body:
+            self.assertTrue(x in ret[1])
+            self.assertTrue(body[x] == ret[1][x])
 
-        x = UpdateENTTreatment(host, port, token, id)
-        x.setClinic(clinicid)
-        x.setPatient(patientid)
-        x.setSide("both")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
+        for i in xrange(0, 500):
+            x = UpdateENTTreatment(host, port, token, id)
+            body = x.createPayloadBody()
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
 
-        x = GetENTTreatment(host, port, token)
-        x.setId(id)
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)  
-        self.assertTrue("clinic" in ret[1])
-        clinicId = int(ret[1]["clinic"])
-        self.assertTrue(clinicId == clinicid)
-        self.assertTrue("patient" in ret[1])
-        patientId = int(ret[1]["patient"])
-        self.assertTrue(patientId == patientid)
-        self.assertTrue(ret[1]["treatment"] == "other")
-        self.assertTrue(ret[1]["side"] == "both")
-        self.assertTrue(ret[1]["comment"] == "Itchy Scratchy")
+            x = GetENTTreatment(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            self.assertTrue("clinic" in ret[1])
+            clinicId = int(ret[1]["clinic"])
+            self.assertTrue(clinicId == clinicid)
+            self.assertTrue("patient" in ret[1])
+            patientId = int(ret[1]["patient"])
+            self.assertTrue(patientId == patientid)
 
-        x = UpdateENTTreatment(host, port, token, id)
-        x.setTreatment("other")
-        x.setComment("")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
+            for x in body:
+                self.assertTrue(x in ret[1])
+                self.assertTrue(body[x] == ret[1][x])
 
-        x = UpdateENTTreatment(host, port, token, id)
-        x.setTreatment("cleaned")
-        x.setSide("yadda")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 400)
+        for i in xrange(0, 500):
+            x = UpdateENTTreatment(host, port, token, id)
+            body = x.createJunkPayloadBody(True)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 400)
+
+        for i in xrange(0, 500):
+            x = UpdateENTTreatment(host, port, token, id)
+            body = x.createJunkPayloadBody(False)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 400)
+
+        for i in xrange(0, 500):
+            x = UpdateENTTreatment(host, port, token, id)
+            body = x.createPayloadBody()
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+            x = GetENTTreatment(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            self.assertTrue("clinic" in ret[1])
+            clinicId = int(ret[1]["clinic"])
+            self.assertTrue(clinicId == clinicid)
+            self.assertTrue("patient" in ret[1])
+            patientId = int(ret[1]["patient"])
+            self.assertTrue(patientId == patientid)
+
+            for x in body:
+                self.assertTrue(x in ret[1])
+                self.assertTrue(body[x] == ret[1][x])
 
         x = DeleteENTTreatment(host, port, token, id)
         ret = x.send(timeout=30)
@@ -536,7 +689,7 @@ class TestTSENTTreatment(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-    def testGetAllENTHistories(self):
+    def testGetAllENTTreatments(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -636,12 +789,9 @@ class TestTSENTTreatment(unittest.TestCase):
         delids = []
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid1)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
 
         ret = x.send(timeout=30)
@@ -649,12 +799,9 @@ class TestTSENTTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid1)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
 
         ret = x.send(timeout=30)
@@ -662,12 +809,9 @@ class TestTSENTTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid3)
         x.setClinic(clinicid1)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
 
         ret = x.send(timeout=30)
@@ -675,12 +819,9 @@ class TestTSENTTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
 
         ret = x.send(timeout=30)
@@ -688,60 +829,45 @@ class TestTSENTTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid2)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid3) 
         x.setClinic(clinicid2)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid3)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid3)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
 
         x = CreateENTTreatment(host, port, token)
+        x.createPayloadBody()
         x.setPatient(patientid3)
         x.setClinic(clinicid3)
-        x.setTreatment("cleaned")
-        x.setSide("right")
-        x.setFuture("true")
-        x.setComment("A comment")
         x.setUsername("Gomez")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)

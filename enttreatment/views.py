@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -21,40 +21,116 @@ from rest_framework.permissions import IsAuthenticated
 from clinic.models import *
 from patient.models import *
 from enttreatment.models import *
+from enthistory.models import *
 from datetime import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 
 from common.decorators import *
+#from collections import namedtuple
+
+import traceback
 
 import sys
-import numbers
 import json
+
+import logging
+
+LOG = logging.getLogger("tscharts")
 
 class ENTTreatmentView(APIView):
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def ENTTreatmentToString(self, val):
-        ret = None 
-        for x in ENTTreatment.ENT_TREATMENT_CHOICES:
-            if x[0] == val:
-                ret = x[1]
-                break
-        return ret
+    sideFields = [
+        "earCleanedSide",
+        "audiogramSide",
+  	"tympanogramSide",
+  	"mastoidDebridedSide",
+  	"boricAcidSide",
+  	"foreignBodyRemoved",
+  	"tubesTomorrow",
+  	"tPlastyTomorrow",
+  	"euaTomorrow",
+  	"fbRemovalTomorrow",
+  	"middleEarExploreMyringotomyTomorrow",
+  	"cerumenTomorrow",
+  	"granulomaTomorrow",
+  	"tubesFuture",
+  	"tPlastyFuture",
+  	"euaFuture",
+  	"fbRemovalFuture",
+  	"middleEarExploreMyringotomyFuture",
+  	"cerumenFuture",
+  	"granulomaFuture"]
 
-    def stringToENTTreatment(self, val):
-        ret = None
-        for x in ENTTreatment.ENT_TREATMENT_CHOICES:
-            if x[1] == val:
-                ret = x[0]
-                break
-        return ret
+    booleanFields = [
+  	"audiogramRightAway",
+  	"tympanogramRightAway",
+  	"mastoidDebridedHearingAidEval",
+  	"antibioticDrops",
+  	"antibioticOrally",
+  	"antibioticAcuteInfection",
+  	"antibioticAfterWaterExposureInfectionPrevention",
+  	"boricAcidToday",
+  	"boricAcidForHomeUse",
+  	"return3Months",
+  	"return6Months",
+  	"returnPrn",
+  	"referredPvtENTEnsenada",
+  	"referredChildrensHospitalTJ",
+  	"septorhinoplastyTomorrow",
+  	"scarRevisionCleftLipTomorrow",
+  	"frenulectomyTomorrow",
+  	"septorhinoplastyFuture",
+  	"scarRevisionCleftLipFuture",
+  	"frenulectomyFuture"]
+
+    textFields = [
+        "username",
+        "earCleanedComment",
+  	"audiogramComment",
+  	"tympanogramComment",
+  	"tympanogramRightAwayComment",
+  	"mastoidDebridedComment",
+  	"mastoidDebridedHearingAidEvalComment",
+  	"antibioticDropsComment",
+  	"antibioticOrallyComment",
+  	"antibioticAcuteInfectionComment",
+  	"antibioticAfterWaterExposureInfectionPreventionComment",
+  	"boricAcidTodayComment",
+  	"boricAcidForHomeUseComment",
+  	"boricAcidSideComment",
+  	"foreignBodyRemovedComment",
+  	"returnComment",
+  	"referredPvtENTEnsenadaComment",
+  	"referredChildrensHospitalTJComment",
+  	"tubesTomorrowComment",
+  	"tPlastyTomorrowComment",
+  	"euaTomorrowComment",
+  	"fbRemovalTomorrowComment",
+  	"middleEarExploreMyringotomyTomorrowComment",
+  	"cerumentTomorrowComment",
+  	"granulomaTomorrowComment",
+  	"septorhinoplastyTomorrowComment",
+  	"scarRevisionCleftLipTomorrowComment",
+  	"frenulectomyTomorrowComment",
+  	"tubesFutureComment",
+  	"tPlastyFutureComment",
+  	"euaFutureComment",
+  	"fbRemovalComment",
+  	"middleEarExploreMyringotomyFutureComment",
+  	"cerumenFutureComment",
+  	"granulomaFutureComment",
+  	"septorhinoplastyFutureComment",
+  	"scarRevisionCleftLipFutureComment",
+  	"frenulectomyFutureComment",
+  	"comment"]
 
     def sideToString(self, val):
         ret = None 
-        for x in ENTTreatment.EAR_SIDE_CHOICES:
+        for x in ENTHistory.EAR_SIDE_CHOICES:
             if x[0] == val:
                 ret = x[1]
                 break
@@ -62,7 +138,7 @@ class ENTTreatmentView(APIView):
 
     def stringToSide(self, val):
         ret = None 
-        for x in ENTTreatment.EAR_SIDE_CHOICES:
+        for x in ENTHistory.EAR_SIDE_CHOICES:
             if x[1] == val:
                 ret = x[0]
                 break
@@ -91,10 +167,85 @@ class ENTTreatmentView(APIView):
         m["patient"] = entry.patient_id
         m["username"] = entry.username
         m["time"] = entry.time
-        m["treatment"] = self.ENTTreatmentToString(entry.treatment)
-        m["future"] = self.booleanToString(entry.future)
-        m["side"] = self.sideToString(entry.side)
-        m["comment"] = entry.comment 
+        m["earCleanedSide"] = self.sideToString(entry.earCleanedSide)
+        m["earCleanedComment"] = entry.earCleanedComment
+        m["audiogramSide"] = self.sideToString(entry.audiogramSide)
+  	m["audiogramComment"] = entry.audiogramComment
+  	m["audiogramRightAway"] = self.booleanToString(entry.audiogramRightAway)
+  	m["tympanogramSide"] = self.sideToString(entry.tympanogramSide)
+  	m["tympanogramComment"] = entry.tympanogramComment
+  	m["tympanogramRightAway"] = self.booleanToString(entry.tympanogramRightAway)
+  	m["tympanogramRightAwayComment"] = entry.tympanogramRightAwayComment
+  	m["mastoidDebridedSide"] = self.sideToString(entry.mastoidDebridedSide)
+  	m["mastoidDebridedComment"] = entry.mastoidDebridedComment
+  	m["mastoidDebridedHearingAidEval"] = self.booleanToString(entry.mastoidDebridedHearingAidEval)
+  	m["mastoidDebridedHearingAidEvalComment"] = entry.mastoidDebridedHearingAidEvalComment
+  	m["antibioticDrops"] = self.booleanToString(entry.antibioticDrops)
+  	m["antibioticDropsComment"] = entry.antibioticDropsComment
+  	m["antibioticOrally"] = self.booleanToString(entry.antibioticOrally)
+  	m["antibioticOrallyComment"] = entry.antibioticOrallyComment
+  	m["antibioticAcuteInfection"] = self.booleanToString(entry.antibioticAcuteInfection)
+  	m["antibioticAcuteInfectionComment"] = entry.antibioticAcuteInfectionComment
+  	m["antibioticAfterWaterExposureInfectionPrevention"] = self.booleanToString(entry.antibioticAfterWaterExposureInfectionPrevention)
+  	m["antibioticAfterWaterExposureInfectionPreventionComment"] = entry.antibioticAfterWaterExposureInfectionPreventionComment
+  	m["boricAcidToday"] = self.booleanToString(entry.boricAcidToday)
+  	m["boricAcidTodayComment"] = entry.boricAcidTodayComment
+  	m["boricAcidForHomeUse"] = self.booleanToString(entry.boricAcidForHomeUse)
+  	m["boricAcidForHomeUseComment"] = entry.boricAcidForHomeUseComment
+  	m["boricAcidSide"] = self.sideToString(entry.boricAcidSide)
+  	m["boricAcidSideComment"] = entry.boricAcidSideComment
+  	m["foreignBodyRemoved"] = self.sideToString(entry.foreignBodyRemoved)
+  	m["foreignBodyRemovedComment"] = entry.foreignBodyRemovedComment
+  	m["return3Months"] = self.booleanToString(entry.return3Months)
+  	m["return6Months"] = self.booleanToString(entry.return6Months)
+  	m["returnPrn"] = self.booleanToString(entry.returnPrn)
+  	m["returnComment"] = entry.returnComment
+  	m["referredPvtENTEnsenada"] = self.booleanToString(entry.referredPvtENTEnsenada)
+  	m["referredPvtENTEnsenadaComment"] = entry.referredPvtENTEnsenadaComment
+  	m["referredChildrensHospitalTJ"] = self.booleanToString(entry.referredChildrensHospitalTJ)
+  	m["referredChildrensHospitalTJComment"] = entry.referredChildrensHospitalTJComment
+  	m["tubesTomorrow"] = self.sideToString(entry.tubesTomorrow)
+  	m["tubesTomorrowComment"] = entry.tubesTomorrowComment
+  	m["tPlastyTomorrow"] = self.sideToString(entry.tPlastyTomorrow)
+  	m["tPlastyTomorrowComment"] = entry.tPlastyTomorrowComment
+  	m["euaTomorrow"] = self.sideToString(entry.euaTomorrow)
+  	m["euaTomorrowComment"] = entry.euaTomorrowComment
+  	m["fbRemovalTomorrow"] = self.sideToString(entry.fbRemovalTomorrow)
+  	m["fbRemovalTomorrowComment"] = entry.fbRemovalTomorrowComment
+  	m["middleEarExploreMyringotomyTomorrow"] = self.sideToString(entry.middleEarExploreMyringotomyTomorrow)
+  	m["middleEarExploreMyringotomyTomorrowComment"] = entry.middleEarExploreMyringotomyTomorrowComment
+  	m["cerumenTomorrow"] = self.sideToString(entry.cerumenTomorrow)
+  	m["cerumentTomorrowComment"] = entry.cerumentTomorrowComment
+  	m["granulomaTomorrow"] = self.sideToString(entry.granulomaTomorrow)
+  	m["granulomaTomorrowComment"] = entry.granulomaTomorrowComment
+  	m["septorhinoplastyTomorrow"] = self.booleanToString(entry.septorhinoplastyTomorrow)
+  	m["septorhinoplastyTomorrowComment"] = entry.septorhinoplastyTomorrowComment
+  	m["scarRevisionCleftLipTomorrow"] = self.booleanToString(entry.scarRevisionCleftLipTomorrow)
+  	m["scarRevisionCleftLipTomorrowComment"] = entry.scarRevisionCleftLipTomorrowComment
+  	m["frenulectomyTomorrow"] = self.booleanToString(entry.frenulectomyTomorrow)
+  	m["frenulectomyTomorrowComment"] = entry.frenulectomyTomorrowComment
+
+  	m["tubesFuture"] = self.sideToString(entry.tubesFuture)
+  	m["tubesFutureComment"] = entry.tubesFutureComment
+  	m["tPlastyFuture"] = self.sideToString(entry.tPlastyFuture)
+  	m["tPlastyFutureComment"] = entry.tPlastyFutureComment
+  	m["euaFuture"] = self.sideToString(entry.euaFuture)
+  	m["euaFutureComment"] = entry.euaFutureComment
+  	m["fbRemovalFuture"] = self.sideToString(entry.fbRemovalFuture)
+  	m["fbRemovalComment"] = entry.fbRemovalComment
+  	m["middleEarExploreMyringotomyFuture"] = self.sideToString(entry.middleEarExploreMyringotomyFuture)
+  	m["middleEarExploreMyringotomyFutureComment"] = entry.middleEarExploreMyringotomyFutureComment
+  	m["cerumenFuture"] = self.sideToString(entry.cerumenFuture)
+  	m["cerumenFutureComment"] = entry.cerumenFutureComment
+  	m["granulomaFuture"] = self.sideToString(entry.granulomaFuture)
+  	m["granulomaFutureComment"] = entry.granulomaFutureComment
+  	m["septorhinoplastyFuture"] = self.booleanToString(entry.septorhinoplastyFuture)
+  	m["septorhinoplastyFutureComment"] = entry.septorhinoplastyFutureComment
+  	m["scarRevisionCleftLipFuture"] = self.booleanToString(entry.scarRevisionCleftLipFuture)
+  	m["scarRevisionCleftLipFutureComment"] = entry.scarRevisionCleftLipFutureComment
+  	m["frenulectomyFuture"] = self.booleanToString(entry.frenulectomyFuture)
+  	m["frenulectomyFutureComment"] = entry.frenulectomyFutureComment
+  	m["comment"] = entry.comment
 
         return m
 
@@ -141,45 +292,29 @@ class ENTTreatmentView(APIView):
             except:
                 pass # no clinic ID
 
-            try:
-                val = request.GET.get('treatment', '')
-                if val != '':
-                    val = self.stringToENTTreatment(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["treatment"] = val
-                        if val == ENT_TREATMENT_OTHER:
-                            # comment is required if treatment is "other"
-                            try:
-                                val = request.GET.get('comment', '')
-                                kwargs["comment"] = val
-                            except:
-                                badRequest = True
-            except:
-                pass
+            for x in self.sideFields:
+                try:
+                    val = request.GET.get(x, '')
+                    if val != '':
+                        val = self.stringToSide(val)
+                        if val == None:
+                            badRequest = True
+                        else:
+                            kwargs[x] = val
+                except:
+                    pass
 
-            try:
-                val = request.GET.get('future', '')
-                if val != '':
-                    val = self.stringToBoolean(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["future"] = val
-            except:
-                pass
-
-            try:
-                val = request.GET.get('side', '')
-                if val != '':
-                    val = self.stringToSide(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs["side"] = val
-            except:
-                pass
+            for x in self.booleanFields:
+                try:
+                    val = request.GET.get(x, '')
+                    if val != '':
+                        val = self.stringToBoolean(val)
+                        if val == None:
+                            badRequest = True
+                        else:
+                            kwargs[x] = val
+                except:
+                    pass
 
             if not badRequest:
                 try:
@@ -204,107 +339,290 @@ class ENTTreatmentView(APIView):
 
     def validatePostArgs(self, data):
         valid = True
+        kwargs = {}
         kwargs = data
 
-        if not "username" in data:
-            valid = False
-        elif len(data["username"]) == 0:
-            valid = False
-        else:
-            kwargs["username"] = data["username"]
+        for k, v in data.items():
+            if not k in self.sideFields and not k in self.booleanFields and not k in self.textFields and k != "patient" and k != "clinic":
+                valid = False
+                LOG.warning("validatePostArgs: Failed to validate key {} value {}".format(k, v))
+                break
 
         try:
-            val = self.stringToENTTreatment(data["treatment"])
-            if val == None:
+            if not ("username" in data and len(data["username"]) > 0):
                 valid = False
+                LOG.warning("validatePostArgs: Failed to validate key username")
             else:
-                kwargs["treatment"] = val
+                kwargs["username"] = data["username"]
         except:
+            LOG.warning("validatePostArgs: Exception: Failed to validate key username")
             valid = False
 
-        try:
-            val = self.stringToBoolean(data["future"])
-            if val == None:
+        for x in self.sideFields:
+            try: 
+                val = self.stringToSide(data[x])
+                if val == None:
+                    LOG.warning("validatePostArgs: Failed to validate key x {} val {}".format(x, data[x]))
+                    valid = False
+                    break
+                else:
+                    kwargs[x] = val
+            except:
+                LOG.warning("validatePostArgs: Failed to locate key {}".format(x))
                 valid = False
-            else:
-                kwargs["future"] = val
-        except:
-            valid = False
+ 
+        for x in self.booleanFields:
+            try: 
+                val = self.stringToBoolean(data[x])
+                if val == None:
+                    LOG.warning("validatePostArgs: Failed to validate key x {} val {}".format(x, data[x]))
+                    valid = False
+                    break
+                else:
+                    kwargs[x] = val
+            except:
+                LOG.warning("validatePostArgs: Failed to locate key x {}".format(x))
+                valid = False
 
-        try:
-            val = self.stringToSide(data["side"])
-            if val == None:
+        for x in self.textFields:
+            try: 
+                val = str(data[x])
+                if val == False:
+                    LOG.warning("validatePostArgs: Failed to validate key x {} val {}".format(x, data[x]))
+                    valid = False
+                    break
+                else:
+                    kwargs[x] = data[x]
+            except:
+                LOG.warning("validatePostArgs: Failed to locate key x {}".format(x))
                 valid = False
-            else:
-                kwargs["side"] = val
-        except:
-            valid = False
 
         return valid, kwargs
 
     def validatePutArgs(self, data, ent_treatment):
         valid = True
+        found = False
 
-        try:
-            if "treatment" in data:
-                val = self.stringToENTTreatment(data["treatment"])
-                if val == None:
+        # first check to see if we have at least one item, and what
+        # we have is paired with a valid value
+
+        for k, v in data.items():
+            LOG.warning("validatePutArgs: top loop k {} v {}".format(k, v))
+            if k in self.sideFields:
+                found = True
+                try:
+                    z = self.stringToSide(v)
+                    if z == None:
+                        LOG.warning("validatePutArgs: invalid k {} v {}".format(k, v))
+                        valid = False
+                except:
+                    LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
                     valid = False
-                else:
-                    ent_treatment.treatment = val
-                    if val == ENTTreatment.ENT_TREATMENT_OTHER:
-                        if not "comment" in data:
-                            valid = False
-                        elif len(data["comment"]) == 0:
-                            valid = False
-                        else:
-                            ent_treatment.comment = data["comment"]
-        except:
-            pass
 
-        try:
-            if "future" in data:
-                val = self.stringToBoolean(data["future"])
-                if val == None:
+            elif k in self.booleanFields:
+                found = True
+                try:
+                    z = self.stringToBoolean(v)
+                    if z == None:
+                        LOG.warning("validatePutArgs: invalid k {} v {}".format(k, v))
+                        valid = False
+                except:
+                    LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
                     valid = False
-                else:
-                    ent_treatment.future = val
-        except:
-            pass
 
-        try:
-            if "side" in data:
-                val = self.stringToSide(data["side"])
-                if val == None:
+            elif k in self.textFields:
+                found = True
+                try:
+                    x = str(v)
+                    if x == None:
+                        valid = False
+                except:
                     valid = False
-                else:
-                    ent_treatment.side = val
-        except:
-            pass
+            elif k in ["clinic", "patient"]:
+                found = True
+            else:
+                valid = False # unknown key
 
-        try:
-            if "clinic" in data:
-                aClinic = Clinic.objects.get(id=int(data["clinic"]))
-                ent_treatment.clinic = data["clinic"]
-        except:
-            pass
+        # now, build up the ent treatment object
 
-        try:
-            if "patient" in data:
-                aPatient = Patient.objects.get(id=int(data["patient"]))
-                ent_treatment.patient = aPatient
-        except:
-            pass
+        if found == True and valid == True:
+            for k, v in data.items():
+                LOG.warning("validatePutArgs: bottom loop k {} v {}".format(k, v))
+                if k == "earCleanedSide":
+                    ent_treatment.earCleanedSide = self.stringToSide(v)
+                elif k == "audiogramSide":
+                    ent_treatment.audiogramSide = self.stringToSide(v)
+  	        elif k == "tympanogramSide":
+                    ent_treatment.tympanogramSide = self.stringToSide(v)
+  	        elif k == "mastoidDebridedSide":
+                    ent_treatment.mastoidDebridedSide = self.stringToSide(v)
+  	        elif k == "boricAcidSide":
+                    ent_treatment.boricAcidSide = self.stringToSide(v)
+  	        elif k == "foreignBodyRemoved":
+                    ent_treatment.foreignBodyRemoved = self.stringToSide(v)
+  	        elif k == "tubesTomorrow":
+                    ent_treatment.tubesTomorrow = self.stringToSide(v)
+  	        elif k == "tPlastyTomorrow":
+                    ent_treatment.tPlastyTomorrow = self.stringToSide(v)
+  	        elif k == "euaTomorrow":
+                    ent_treatment.euaTomorrow = self.stringToSide(v)
+  	        elif k == "fbRemovalTomorrow":
+                    ent_treatment.fbRemovalTomorrow = self.stringToSide(v)
+  	        elif k == "middleEarExploreMyringotomyTomorrow":
+                    ent_treatment.middleEarExploreMyringotomyTomorrow = self.stringToSide(v)
+  	        elif k == "cerumenTomorrow":
+                    ent_treatment.cerumenTomorrow = self.stringToSide(v)
+  	        elif k == "granulomaTomorrow":
+                    ent_treatment.granulomaTomorrow = self.stringToSide(v)
+  	        elif k == "tubesFuture":
+                    ent_treatment.tubesFuture = self.stringToSide(v)
+  	        elif k == "tPlastyFuture":
+                    ent_treatment.tPlastyFuture = self.stringToSide(v)
+  	        elif k == "euaFuture":
+                    ent_treatment.euaFuture = self.stringToSide(v)
+  	        elif k == "fbRemovalFuture":
+                    ent_treatment.fbRemovalFuture = self.stringToSide(v)
+  	        elif k == "middleEarExploreMyringotomyFuture":
+                    ent_treatment.middleEarExploreMyringotomyFuture = self.stringToSide(v)
+  	        elif k == "cerumenFuture":
+                    ent_treatment.cerumenFuture = self.stringToSide(v)
+  	        elif k == "granulomaFuture":
+                    ent_treatment.granulomaFuture = self.stringToSide(v)
 
-        try:
-            if "comment" in data:
-                ent_treatment.comment = data["comment"]
-        except:
-            pass
+  	        elif k == "audiogramRightAway":
+                    ent_treatment.audiogramRightAway = self.stringToBoolean(v)
+  	        elif k == "tympanogramRightAway":
+                    ent_treatment.tympanogramRightAway = self.stringToBoolean(v)
+  	        elif k == "mastoidDebridedHearingAidEval":
+                    ent_treatment.mastoidDebridedHearingAidEval = self.stringToBoolean(v)
+  	        elif k == "antibioticDrops":
+                    ent_treatment.antibioticDrops = self.stringToBoolean(v)
+  	        elif k == "antibioticOrally":
+                    ent_treatment.antibioticOrally = self.stringToBoolean(v)
+  	        elif k == "antibioticAcuteInfection":
+                    ent_treatment.antibioticAcuteInfection = self.stringToBoolean(v)
+  	        elif k == "antibioticAfterWaterExposureInfectionPrevention":
+                    ent_treatment.antibioticAfterWaterExposureInfectionPrevention = self.stringToBoolean(v)
+  	        elif k == "boricAcidToday":
+                    ent_treatment.boricAcidToday = self.stringToBoolean(v)
+  	        elif k == "boricAcidForHomeUse":
+                    ent_treatment.boricAcidForHomeUse = self.stringToBoolean(v)
+  	        elif k == "return3Months":
+                    ent_treatment.return3Months = self.stringToBoolean(v)
+  	        elif k == "return6Months":
+                    ent_treatment.return6Months = self.stringToBoolean(v)
+  	        elif k == "returnPrn":
+                    ent_treatment.returnPrn = self.stringToBoolean(v)
+  	        elif k == "referredPvtENTEnsenada":
+                    ent_treatment.referredPvtENTEnsenada = self.stringToBoolean(v)
+  	        elif k == "referredChildrensHospitalTJ":
+                    ent_treatment.referredChildrensHospitalTJ = self.stringToBoolean(v)
+  	        elif k == "septorhinoplastyTomorrow":
+                    ent_treatment.septorhinoplastyTomorrow = self.stringToBoolean(v)
+  	        elif k == "scarRevisionCleftLipTomorrow":
+                    ent_treatment.scarRevisionCleftLipTomorrow = self.stringToBoolean(v)
+  	        elif k == "frenulectomyTomorrow":
+                    ent_treatment.frenulectomyTomorrow = self.stringToBoolean(v)
+  	        elif k == "septorhinoplastyFuture":
+                    ent_treatment.septorhinoplastyFuture = self.stringToBoolean(v)
+  	        elif k == "scarRevisionCleftLipFuture":
+                    ent_treatment.scarRevisionCleftLipFuture = self.stringToBoolean(v)
+  	        elif k == "frenulectomyFuture":
+                    ent_treatment.frenulectomyFuture = self.stringToBoolean(v)
 
-        val = "treatment" in data or "comment" in data or "future" in data or "side" in data or "comment" in data or "username" in data
-        if val == False:
-            valid = False
+                elif k == "username":
+                    ent_treatment.username = str(v)
+                elif k == "earCleanedComment":
+                    ent_treatment.earCleanedComment = str(v)
+  	        elif k == "audiogramComment":
+                    ent_treatment.audiogramComment = str(v)
+  	        elif k == "tympanogramComment":
+                    ent_treatment.tympanogramComment = str(v)
+  	        elif k == "tympanogramRightAwayComment":
+                    ent_treatment.tympanogramRightAwayComment = str(v)
+  	        elif k == "mastoidDebridedComment":
+                    ent_treatment.mastoidDebridedComment = str(v)
+  	        elif k == "mastoidDebridedHearingAidEvalComment":
+                    ent_treatment.mastoidDebridedHearingAidEvalComment = str(v)
+  	        elif k == "antibioticDropsComment":
+                    ent_treatment.antibioticDropsComment = str(v)
+  	        elif k == "antibioticOrallyComment":
+                    ent_treatment.antibioticOrallyComment = str(v)
+  	        elif k == "antibioticAcuteInfectionComment":
+                    ent_treatment.antibioticAcuteInfectionComment = str(v)
+  	        elif k == "antibioticAfterWaterExposureInfectionPreventionComment":
+                    ent_treatment.antibioticAfterWaterExposureInfectionPreventionComment = str(v)
+  	        elif k == "boricAcidTodayComment":
+                    ent_treatment.boricAcidTodayComment = str(v)
+  	        elif k == "boricAcidForHomeUseComment":
+                    ent_treatment.boricAcidForHomeUseComment = str(v)
+  	        elif k == "boricAcidSideComment":
+                    ent_treatment.boricAcidSideComment = str(v)
+  	        elif k == "foreignBodyRemovedComment":
+                    ent_treatment.foreignBodyRemovedComment = str(v)
+  	        elif k == "returnComment":
+                    ent_treatment.returnComment = str(v)
+  	        elif k == "referredPvtENTEnsenadaComment":
+                    ent_treatment.referredPvtENTEnsenadaComment = str(v)
+  	        elif k == "referredChildrensHospitalTJComment":
+                    ent_treatment.referredChildrensHospitalTJComment = str(v)
+  	        elif k == "tubesTomorrowComment":
+                    ent_treatment.tubesTomorrowComment = str(v)
+  	        elif k == "tPlastyTomorrowComment":
+                    ent_treatment.tPlastyTomorrowComment = str(v)
+  	        elif k == "euaTomorrowComment":
+                    ent_treatment.euaTomorrowComment = str(v)
+  	        elif k == "fbRemovalTomorrowComment":
+                    ent_treatment.fbRemovalTomorrowComment = str(v)
+  	        elif k == "middleEarExploreMyringotomyTomorrowComment":
+                    ent_treatment.middleEarExploreMyringotomyTomorrowComment = str(v)
+  	        elif k == "cerumentTomorrowComment":
+                    ent_treatment.cerumentTomorrowComment = str(v)
+  	        elif k == "granulomaTomorrowComment":
+                    ent_treatment.granulomaTomorrowComment = str(v)
+  	        elif k == "septorhinoplastyTomorrowComment":
+                    ent_treatment.septorhinoplastyTomorrowComment = str(v)
+  	        elif k == "scarRevisionCleftLipTomorrowComment":
+                    ent_treatment.scarRevisionCleftLipTomorrowComment = str(v)
+  	        elif k == "frenulectomyTomorrowComment":
+                    ent_treatment.frenulectomyTomorrowComment = str(v)
+  	        elif k == "tubesFutureComment":
+                    ent_treatment.tubesFutureComment = str(v)
+  	        elif k == "tPlastyFutureComment":
+                    ent_treatment.tPlastyFutureComment = str(v)
+  	        elif k == "euaFutureComment":
+                    ent_treatment.euaFutureComment = str(v)
+  	        elif k == "fbRemovalComment":
+                    ent_treatment.fbRemovalComment = str(v)
+  	        elif k == "middleEarExploreMyringotomyFutureComment":
+                    ent_treatment.middleEarExploreMyringotomyFutureComment = str(v)
+  	        elif k == "cerumenFutureComment":
+                    ent_treatment.cerumenFutureComment = str(v)
+  	        elif k == "granulomaFutureComment":
+                    ent_treatment.granulomaFutureComment = str(v)
+  	        elif k == "septorhinoplastyFutureComment":
+                    ent_treatment.septorhinoplastyFutureComment = str(v)
+  	        elif k == "scarRevisionCleftLipFutureComment":
+                    ent_treatment.scarRevisionCleftLipFutureComment = str(v)
+  	        elif k == "frenulectomyFutureComment":
+                    ent_treatment.frenulectomyFutureComment = str(v)
+  	        elif k == "comment":
+                    ent_treatment.comment = str(v)
+
+            #ent_treatment = namedtuple("Treatment", data.keys())(*data.values())
+            try:
+                if "clinic" in data:
+                    aClinic = Clinic.objects.get(id=int(data["clinic"]))
+                    ent_treatment.clinic = aClinic 
+            except:
+                valid = False
+
+            try:
+                if "patient" in data:
+                    aPatient = Patient.objects.get(id=int(data["patient"]))
+                    ent_treatment.patient = aPatient
+            except:
+                valid = False
 
         return valid, ent_treatment
 
@@ -384,9 +702,10 @@ class ENTTreatmentView(APIView):
             ent_treatment = None
 
             try:
+                LOG.warning("ENTTreatment put id is {}".format(ent_treatment_id))
                 ent_treatment = ENTTreatment.objects.get(id=ent_treatment_id)
             except:
-                pass
+                LOG.warning("ENTTreatment put exception!!")
 
             if not ent_treatment:
                 notFound = True 
@@ -401,6 +720,7 @@ class ENTTreatmentView(APIView):
                 except:
                     implError = True
                     implMsg = sys.exc_info()[0] 
+                    LOG.warning("ENTTreatment exception {}".format(implMsg))
         if badRequest:
             return HttpResponseBadRequest()
         if notFound:
@@ -409,7 +729,7 @@ class ENTTreatmentView(APIView):
             return HttpResponseServerError(implMsg) 
         else:
             return Response({})
-       
+
     @log_request 
     def delete(self, request, ent_treatment_id=None, format=None):
         ent_treatment = None
