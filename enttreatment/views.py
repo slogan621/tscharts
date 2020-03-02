@@ -91,6 +91,7 @@ class ENTTreatmentView(APIView):
         "username",
         "earCleanedComment",
   	"audiogramComment",
+  	"audiogramRightAwayComment",
   	"tympanogramComment",
   	"tympanogramRightAwayComment",
   	"mastoidDebridedComment",
@@ -111,7 +112,7 @@ class ENTTreatmentView(APIView):
   	"euaTomorrowComment",
   	"fbRemovalTomorrowComment",
   	"middleEarExploreMyringotomyTomorrowComment",
-  	"cerumentTomorrowComment",
+  	"cerumenTomorrowComment",
   	"granulomaTomorrowComment",
   	"septorhinoplastyTomorrowComment",
   	"scarRevisionCleftLipTomorrowComment",
@@ -119,7 +120,7 @@ class ENTTreatmentView(APIView):
   	"tubesFutureComment",
   	"tPlastyFutureComment",
   	"euaFutureComment",
-  	"fbRemovalComment",
+  	"fbRemovalFutureComment",
   	"middleEarExploreMyringotomyFutureComment",
   	"cerumenFutureComment",
   	"granulomaFutureComment",
@@ -172,6 +173,7 @@ class ENTTreatmentView(APIView):
         m["audiogramSide"] = self.sideToString(entry.audiogramSide)
   	m["audiogramComment"] = entry.audiogramComment
   	m["audiogramRightAway"] = self.booleanToString(entry.audiogramRightAway)
+  	m["audiogramRightAwayComment"] = entry.audiogramRightAwayComment
   	m["tympanogramSide"] = self.sideToString(entry.tympanogramSide)
   	m["tympanogramComment"] = entry.tympanogramComment
   	m["tympanogramRightAway"] = self.booleanToString(entry.tympanogramRightAway)
@@ -215,7 +217,7 @@ class ENTTreatmentView(APIView):
   	m["middleEarExploreMyringotomyTomorrow"] = self.sideToString(entry.middleEarExploreMyringotomyTomorrow)
   	m["middleEarExploreMyringotomyTomorrowComment"] = entry.middleEarExploreMyringotomyTomorrowComment
   	m["cerumenTomorrow"] = self.sideToString(entry.cerumenTomorrow)
-  	m["cerumentTomorrowComment"] = entry.cerumentTomorrowComment
+  	m["cerumenTomorrowComment"] = entry.cerumenTomorrowComment
   	m["granulomaTomorrow"] = self.sideToString(entry.granulomaTomorrow)
   	m["granulomaTomorrowComment"] = entry.granulomaTomorrowComment
   	m["septorhinoplastyTomorrow"] = self.booleanToString(entry.septorhinoplastyTomorrow)
@@ -232,7 +234,7 @@ class ENTTreatmentView(APIView):
   	m["euaFuture"] = self.sideToString(entry.euaFuture)
   	m["euaFutureComment"] = entry.euaFutureComment
   	m["fbRemovalFuture"] = self.sideToString(entry.fbRemovalFuture)
-  	m["fbRemovalComment"] = entry.fbRemovalComment
+  	m["fbRemovalFutureComment"] = entry.fbRemovalFutureComment
   	m["middleEarExploreMyringotomyFuture"] = self.sideToString(entry.middleEarExploreMyringotomyFuture)
   	m["middleEarExploreMyringotomyFutureComment"] = entry.middleEarExploreMyringotomyFutureComment
   	m["cerumenFuture"] = self.sideToString(entry.cerumenFuture)
@@ -435,12 +437,15 @@ class ENTTreatmentView(APIView):
                 try:
                     x = str(v)
                     if x == None:
+                        LOG.warning("validatePutArgs: invalid text field k {} v {}".format(k, v))
                         valid = False
                 except:
+                    LOG.warning("validatePutArgs: exception invalid text field k {} v {}".format(k, v))
                     valid = False
-            elif k in ["clinic", "patient"]:
+            elif k in ["clinic", "patient", "id"]:
                 found = True
             else:
+                LOG.warning("validatePutArgs: unknown key k {} v {}".format(k, v))
                 valid = False # unknown key
 
         # now, build up the ent treatment object
@@ -576,8 +581,8 @@ class ENTTreatmentView(APIView):
                     ent_treatment.fbRemovalTomorrowComment = str(v)
   	        elif k == "middleEarExploreMyringotomyTomorrowComment":
                     ent_treatment.middleEarExploreMyringotomyTomorrowComment = str(v)
-  	        elif k == "cerumentTomorrowComment":
-                    ent_treatment.cerumentTomorrowComment = str(v)
+  	        elif k == "cerumenTomorrowComment":
+                    ent_treatment.cerumenTomorrowComment = str(v)
   	        elif k == "granulomaTomorrowComment":
                     ent_treatment.granulomaTomorrowComment = str(v)
   	        elif k == "septorhinoplastyTomorrowComment":
@@ -592,8 +597,8 @@ class ENTTreatmentView(APIView):
                     ent_treatment.tPlastyFutureComment = str(v)
   	        elif k == "euaFutureComment":
                     ent_treatment.euaFutureComment = str(v)
-  	        elif k == "fbRemovalComment":
-                    ent_treatment.fbRemovalComment = str(v)
+  	        elif k == "fbRemovalFutureComment":
+                    ent_treatment.fbRemovalFutureComment = str(v)
   	        elif k == "middleEarExploreMyringotomyFutureComment":
                     ent_treatment.middleEarExploreMyringotomyFutureComment = str(v)
   	        elif k == "cerumenFutureComment":
@@ -615,6 +620,7 @@ class ENTTreatmentView(APIView):
                     aClinic = Clinic.objects.get(id=int(data["clinic"]))
                     ent_treatment.clinic = aClinic 
             except:
+                LOG.warning("validatePutArgs: invalid clinic {}".format(data["clinic"]))
                 valid = False
 
             try:
@@ -622,6 +628,7 @@ class ENTTreatmentView(APIView):
                     aPatient = Patient.objects.get(id=int(data["patient"]))
                     ent_treatment.patient = aPatient
             except:
+                LOG.warning("validatePutArgs: invalid patient {}".format(data["patient"]))
                 valid = False
 
         return valid, ent_treatment
@@ -650,6 +657,7 @@ class ENTTreatmentView(APIView):
         valid, kwargs = self.validatePostArgs(data)
 
         if not valid:
+            LOG.warning("post: Failed to validate!!")
             badRequest = True
 
         if not badRequest and not implError:
@@ -677,9 +685,11 @@ class ENTTreatmentView(APIView):
                 if ent_treatment:
                     ent_treatment.save()
                 else:
+                    LOG.warning("post: unable to create ENTTreatment object!!")
                     badRequest = True
             except Exception as e:
                 badRequest = True
+                LOG.warning("post: exception!! {}".format(traceback.format_exc()))
                 implMsg = sys.exc_info()[0] 
 
         if badRequest:
@@ -696,6 +706,7 @@ class ENTTreatmentView(APIView):
         notFound = False
 
         if not ent_treatment_id:
+            LOG.warning("put: missing ID arg")
             badRequest = True
 
         if not badRequest:
@@ -716,6 +727,7 @@ class ENTTreatmentView(APIView):
                     if valid: 
                         ent_treatment.save()
                     else:
+                        LOG.warning("put: validate put args failed")
                         badRequest = True
                 except:
                     implError = True

@@ -101,7 +101,7 @@ class ENTTreatment(models.Model):
     middleEarExploreMyringotomyTomorrowComment = models.TextField(default = "")
     # Cerumen removal [] AD [] AS [] AU
     cerumenTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
-    cerumentTomorrowComment = models.TextField(default = "")
+    cerumenTomorrowComment = models.TextField(default = "")
     # Granuloma removal [] AD [] AS [] AU
     granulomaTomorrow = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
     granulomaTomorrowComment = models.TextField(default = "")
@@ -128,7 +128,7 @@ class ENTTreatment(models.Model):
     euaFutureComment = models.TextField(default = "")
     #FB (foreign body) removal [] AD [] AS [] AU
     fbRemovalFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
-    fbRemovalComment = models.TextField(default = "")
+    fbRemovalFutureComment = models.TextField(default = "")
     # Middle Ear Exploration via myringotomy [] AD [] AS [] AU 
     middleEarExploreMyringotomyFuture = models.CharField(max_length = 1, choices = ENTHistory.EAR_SIDE_CHOICES, default = ENTHistory.EAR_SIDE_BOTH)
     middleEarExploreMyringotomyFutureComment = models.TextField(default = "")
