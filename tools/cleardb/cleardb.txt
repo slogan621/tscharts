@@ -2,6 +2,7 @@ use tscharts;
 truncate queue_queue; 
 truncate routingslip_routingslip; 
 truncate routingslip_routingslipentry; 
+truncate routingslip_routingslipcomment; 
 truncate clinicstation_clinicstation; 
 truncate clinic_clinic; 
 truncate register_register; 
