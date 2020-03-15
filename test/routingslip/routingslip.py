@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2019
-#(C) Copyright Thousand Smiles Foundation 2017-2019
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -80,6 +80,14 @@ class GetRoutingSlip(ServiceAPI):
             base += "clinic={}".format(self._clinic)
             hasQArgs = True
 
+        if not self._category == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "category={}".format(self._category)
+            hasQArgs = True
+
         self.setURL(base)
 
     def __init__(self, host, port, token):
@@ -95,7 +103,12 @@ class GetRoutingSlip(ServiceAPI):
     def clearArgs(self):
         self._patient = None
         self._clinic = None
+        self._category = None
         self._id = None
+
+    def setCategory(self, val):
+        self._category = val
+        self.makeURL()
 
     def setClinic(self, clinic):
         self._clinic = clinic
@@ -1215,7 +1228,6 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         x.setReturnToClinicStation(returntoclinicstationid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-        print("ret 1 is {}".format(ret[1]))
         self.assertTrue(len(ret[1]) == 1)
         self.assertTrue(ret[1][0] == routingslipentryid)
 
@@ -1697,6 +1709,173 @@ class TestTSRoutingSlipEntry(unittest.TestCase):
         self.assertEqual(ret[0], 200)
 
         x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testGetCategories(self):
+        categories = [{"name": "New Cleft", "count": 0}, {"name": "Dental", "count": 0}, {"name": "Returning Cleft", "count": 0}, {"name": "Ortho", "count": 0}, {"name": "Other", "count": 0}]
+        patients = []
+        routingslips = []
+
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        catidx = 0
+        numRoutingSlips = 0
+        for i in xrange(0, 100 * len(categories)):
+            data = {}
+            data["paternal_last"] = "{}abcd1234".format(i)
+            data["maternal_last"] = "yyyyyy"
+            data["first"] = "zzzzzzz"
+            data["middle"] = ""
+            data["suffix"] = "Jr."
+            data["prefix"] = ""
+            data["dob"] = "04/01/1962"
+            data["gender"] = "Female"
+            data["street1"] = "1234 First Ave"
+            data["street2"] = ""
+            data["city"] = "Ensenada"
+            data["colonia"] = ""
+            data["state"] = u"Baja California"
+            data["phone1"] = "1-111-111-1111"
+            data["phone2"] = ""
+            data["email"] = "patient@example.com"
+            data["emergencyfullname"] = "Maria Sanchez"
+            data["emergencyphone"] = "1-222-222-2222"
+            data["emergencyemail"] = "maria.sanchez@example.com"
+
+            x = CreatePatient(host, port, token, data)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            patientid = int(ret[1]["id"])
+            patients.append(patientid)
+
+            x = CreateRoutingSlip(host, port, token)
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setCategory(categories[catidx]["name"])
+            categories[catidx]["count"] += 1
+
+            catidx += 1
+            if catidx == len(categories):
+                catidx = 0
+    
+            numRoutingSlips += 1
+
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            routingslipid = int(ret[1]["id"])
+            routingslips.append(routingslipid)
+
+        # get all routing slips based on search terms
+
+        # search on clinic, returns array
+
+        x = GetRoutingSlip(host, port, token)
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        results = ret[1]
+        self.assertTrue(len(results) == numRoutingSlips)
+        for i in results:
+            self.assertTrue("id" in i)
+            self.assertTrue(i["clinic"] == clinicid)
+            pid = int(i["patient"])
+            self.assertTrue(pid in patients)
+
+        # search on patient, returns a single patient in an array
+
+        x = GetRoutingSlip(host, port, token)
+        x.setPatient(patients[17])
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue(len(ret[1]) == 1) 
+        ret = ret[1][0]
+        self.assertTrue("id" in ret)
+        self.assertTrue("clinic" in ret)
+        self.assertTrue(int(ret["clinic"] == clinicid))
+        pid = int(ret["patient"])
+        self.assertTrue(pid in patients)
+        self.assertTrue(pid == patients[17])
+
+        # search on categories
+
+        for cat in categories:
+            x = GetRoutingSlip(host, port, token)
+            x.setClinic(clinicid)
+            x.setCategory(cat["name"])
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            self.assertTrue(len(ret[1]) == cat["count"]) 
+            ret = ret[1][0]
+            self.assertTrue("category" in ret)
+            self.assertTrue(ret["category"] == cat["name"])
+            self.assertTrue("id" in ret)
+            self.assertTrue("clinic" in ret)
+            self.assertTrue(int(ret["clinic"] == clinicid))
+            pid = int(ret["patient"])
+            self.assertTrue(pid in patients)
+
+        # search on patient and clinic, returns a single routing slip
+
+        x = GetRoutingSlip(host, port, token)
+        x.setPatient(patients[50])
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        self.assertTrue(int(ret[1]["clinic"] == clinicid))
+        pid = int(ret[1]["patient"])
+        self.assertTrue(pid in patients)
+        self.assertTrue(pid == patients[50])
+
+        # search on bogus patient
+
+        x = GetRoutingSlip(host, port, token)
+        x.setPatient(9999)
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        # search on bogus clinic
+
+        x = GetRoutingSlip(host, port, token)
+        x.setPatient(patients[50])
+        x.setClinic(9999)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        x = GetRoutingSlip(host, port, token)
+        x.setClinic(9999)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        for i in routingslips:
+            x = GetRoutingSlip(host, port, token)
+            x.setId(i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            self.assertTrue("id" in ret[1])
+            self.assertTrue(int(ret[1]["id"]) == i)
+            self.assertTrue(int(ret[1]["clinic"] == clinicid))
+            pid = int(ret[1]["patient"])
+            self.assertTrue(pid in patients)
+
+        for i in routingslips:
+            x = DeleteRoutingSlip(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for i in patients:
+            x = DeletePatient(host, port, token, i)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        x = DeleteClinic(host, port, token, clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 

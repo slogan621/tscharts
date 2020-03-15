@@ -74,6 +74,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
    `patient` patient id. If specified with a clinic, a single routing slip is returned. Otherwise, all routing slips for the patient are returned in an array.<br />
    `clinic` clinic id. If specified alone, routing slips for all patients are returned for the clinic. If specified with patient, then a single routing slip is returned. <br />
+   `category` category name. return routing slips matching the category, one of 'New Cleft', 'Dental', 'Returning Cleft', 'Ortho', 'Other' <br />
 
 *  **URL Params**
 

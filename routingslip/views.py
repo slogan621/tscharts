@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2019
-#(C) Copyright Thousand Smiles Foundation 2017-2019
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -24,11 +24,17 @@ from returntoclinicstation.models import *
 from routingslip.models import *
 from datetime import *
 import sys
+from types import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, HttpResponseServerError, HttpResponseNotFound
 import urllib
+import traceback
 
 from common.decorators import *
+
+import logging
+
+LOG = logging.getLogger("tscharts")
 
 import json
 
@@ -98,11 +104,13 @@ class RoutingSlipView(APIView):
     @log_request
     def get(self, request, routing_slip_id=None, format=None):
         routing_slip = None
-        aClinic = None
         aPatient = None
+        aClinic = None
+        categoryString = None
         badRequest = False
         notFound = False
         ret = None
+        kwargs = {}
 
         if routing_slip_id:
             try:
@@ -121,6 +129,8 @@ class RoutingSlipView(APIView):
                         aClinic = Clinic.objects.get(id=clinicid)
                         if not aClinic:
                             notFound = True
+                        else:
+                            kwargs["clinic"] = aClinic
                     except:
                         notFound = True
             except:
@@ -133,20 +143,28 @@ class RoutingSlipView(APIView):
                         aPatient = Patient.objects.get(id=patientid)
                         if not aPatient:
                             notFound = True
+                        else:
+                            kwargs["patient"] = aPatient
                     except:
                         notFound = True
             except:
                 pass # no patient ID
 
+            try:
+                category = request.GET.get('category', '')
+                if category != '':
+                    categoryString = category
+                    kwargs["category"] = self.textToCats[category]
+            except:
+                pass # no category
+
             if not notFound:
-                if aPatient or aClinic:
+                if len(kwargs):
                     try:
                         if aPatient and aClinic:
-                            routing_slip = RoutingSlip.objects.get(patient=aPatient, clinic=aClinic)
-                        elif aPatient:
-                            routing_slip = RoutingSlip.objects.filter(patient=aPatient)
-                        elif aClinic:
-                            routing_slip = RoutingSlip.objects.filter(clinic=aClinic)
+                            routing_slip = RoutingSlip.objects.get(**kwargs)
+                        else:
+                            routing_slip = RoutingSlip.objects.filter(**kwargs)
                     except:
                         notFound = True
                         routing_slip = None
@@ -177,10 +195,13 @@ class RoutingSlipView(APIView):
                 if ret:
                     return Response(ret)
                 else:
+                    LOG.error("traceback 1 {}".format(traceback.print_stack()))
                     return HttpResponseServerError() 
             else:
+                LOG.error("traceback 2 {}".format(traceback.print_stack()))
                 return HttpResponseServerError() 
         except:
+            LOG.error("traceback 3 {}".format(traceback.print_exc()))
             return HttpResponseServerError()
 
     @log_request
