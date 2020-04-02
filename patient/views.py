@@ -19,6 +19,8 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from patient.models import *
+from clinic.models import *
+from routingslip.models import *
 from datetime import *
 from django.core import serializers
 from django.db.models import Q
@@ -78,6 +80,8 @@ class PatientView(APIView):
         badRequest = False
         notFound = False
         patient = None
+        byClinicId = None
+        aClinic = None
         
         if patient_id:
             try:
@@ -86,59 +90,66 @@ class PatientView(APIView):
                 patient = None
         else:
             # look for optional arguments for searching
-            kwargs = {}
-            name = request.GET.get('name', '')
-            if not name == '':
-                try:
-                    patient = Patient.objects.filter(Q(paternal_last__icontains=name) | Q(maternal_last__icontains=name) | Q(first__icontains=name) | Q(middle__icontains=name))
-                except:
-                    patient = None
-            else:
-                paternal_last = request.GET.get('paternal_last', '')
-                if not paternal_last == '':
-                    kwargs["paternal_last__icontains"] = paternal_last
-                maternal_last = request.GET.get('maternal_last', '')
-                if not maternal_last == '':
-                    kwargs["maternal_last__icontains"] = maternal_last
-                first = request.GET.get('first', '')
-                if not first == '':
-                    kwargs["first__icontains"] = first
-                dob = request.GET.get('dob', '')
-                if not dob == '':
-                    x = dob.split("/")
-                    if len(x) == 3:
-                        try:
-                            kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
-                        except:
-                            badRequest = True
-                    else:
-                        badRequest = True
+            byClinicId = request.GET.get("clinic", '')
+            if byClinicId != '':
+                aClinic = Clinic.objects.get(id=byClinicId)
+                if not aClinic:
+                    notFound = True
 
-                curp = request.GET.get('curp', '')
-                if not curp == '':
-                    kwargs["curp"] = curp
-                    
-                oldid = request.GET.get('oldid', '')
-                if not oldid == '':
+            if not notFound:
+                kwargs = {}
+                name = request.GET.get('name', '')
+                if not name == '':
                     try:
-                        kwargs["oldid"] = int(oldid)
-                    except:
-                        badRequest = True
-                    
-                gender = request.GET.get('gender', '')
-                if not gender == '':
-                    if gender == "Male":
-                        kwargs["gender"] = "m"
-                    elif gender == "Female":
-                        kwargs["gender"] = "f"
-                    else:
-                        badRequest = True
-
-                if not badRequest:
-                    try:
-                        patient = Patient.objects.filter(**kwargs)
+                        patient = Patient.objects.filter(Q(paternal_last__icontains=name) | Q(maternal_last__icontains=name) | Q(first__icontains=name) | Q(middle__icontains=name))
                     except:
                         patient = None
+                else:
+                    paternal_last = request.GET.get('paternal_last', '')
+                    if not paternal_last == '':
+                        kwargs["paternal_last__icontains"] = paternal_last
+                    maternal_last = request.GET.get('maternal_last', '')
+                    if not maternal_last == '':
+                        kwargs["maternal_last__icontains"] = maternal_last
+                    first = request.GET.get('first', '')
+                    if not first == '':
+                        kwargs["first__icontains"] = first
+                    dob = request.GET.get('dob', '')
+                    if not dob == '':
+                        x = dob.split("/")
+                        if len(x) == 3:
+                            try:
+                                kwargs["dob"] = datetime.strptime(dob, "%m/%d/%Y")
+                            except:
+                                badRequest = True
+                        else:
+                            badRequest = True
+
+                    curp = request.GET.get('curp', '')
+                    if not curp == '':
+                        kwargs["curp"] = curp
+                    
+                    oldid = request.GET.get('oldid', '')
+                    if not oldid == '':
+                        try:
+                            kwargs["oldid"] = int(oldid)
+                        except:
+                            badRequest = True
+                    
+                    gender = request.GET.get('gender', '')
+                    if not gender == '':
+                        if gender == "Male":
+                            kwargs["gender"] = "m"
+                        elif gender == "Female":
+                            kwargs["gender"] = "f"
+                        else:
+                            badRequest = True
+
+                    if not badRequest:
+                        try:
+                            patient = Patient.objects.filter(**kwargs)
+                        except:
+                            patient = None
 
         if not patient and not badRequest:
             notFound = True
@@ -148,7 +159,13 @@ class PatientView(APIView):
             else: 
                 ret = []
                 for x in patient:
-                    ret.append(x.id)
+                    if aClinic != None:
+                        routingSlip = RoutingSlip.objects.filter(patient=x.id, clinic=aClinic)
+                        if routingSlip != None and len(routingSlip) > 0:
+                            ret.append(x.id)
+                    else:
+                        ret.append(x.id)
+                            
         if badRequest:
             return HttpResponseBadRequest()
         elif notFound:

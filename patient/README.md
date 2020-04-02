@@ -82,6 +82,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `name` string<br/>
    `curp` string<br/>
    `oldid` string<br/>
+   `clinic` integer clinic ID that patient must have been registered for<br/>
 
    If name is specified, all other search terms are ignored, and name is
    used to search for a match against each of paternal_last, maternal_last, 
