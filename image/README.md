@@ -21,7 +21,7 @@
 * **Success Response:**
 
   * **Code:** 200 <br />
-    **Content:** `{"patient":id,"data":"base64","clinic":id,"station":id,"type":"Headshot|Xray|Surgery","id":id}`
+    **Content:** `{"patient":id,"data":"base64","clinic":id,"station":id,"type":"Headshot|Xray|Surgery|Audiogram","id":id}`
  
 * **Error Response:**
 
@@ -71,7 +71,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 
    **Optional:**
  
-   `type` case-sensitive string, one of  "Headshot", "Surgery", or "Xray"<br />
+   `type` case-sensitive string, one of  "Headshot", "Surgery", "Audiogram", or "Xray"<br />
    `clinic` clinic id<br />
    `station` station id<br />
    `sort` ["true" | "false"] -- sort by image timestamp<br /> 
@@ -140,7 +140,7 @@ Content-Type: application/json
 
    **Required:**
 
-   `type` case-sensitive string, one of  "Headshot", "Surgery", or "Xray"<br />
+   `type` case-sensitive string, one of  "Headshot", "Surgery", "Audiogram", or "Xray"<br />
    `clinic` clinic id<br />
    `station` station id<br />
    `patient` patient id<br />

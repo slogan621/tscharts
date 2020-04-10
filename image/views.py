@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2018
-#(C) Copyright Thousand Smiles Foundation 2017-2018
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ class ImageView(APIView):
             ret = 's'
         elif aType == "Headshot":
             ret = 'h'
+        elif aType == "Audiogram":
+            ret = 'a'
         return ret
 
     def typeToString(self, aType):
@@ -55,6 +57,8 @@ class ImageView(APIView):
             ret = 'Surgery'
         elif aType == "h":
             ret = 'Headshot'
+        elif aType == "a":
+            ret = 'Audiogram'
         return ret
     
     def getUUID(self):

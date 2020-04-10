@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ class Image(models.Model):
     station = models.ForeignKey(Station, null=True)
     patient = models.ForeignKey(Patient)
     XRAY = 'x'
+    AUDIOGRAM = 'a'
     HEADSHOT = 'h'
     SURGERY = 's'
     IMAGETYPE_CHOICES = ((XRAY, "Xray"), (HEADSHOT, "Headshot"),
+                         (AUDIOGRAM, "Audiogram"),
                          (SURGERY, "Surgery"))
     imagetype = models.CharField(
         max_length = 1,
