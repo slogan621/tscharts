@@ -27,4 +27,5 @@ truncate entsurgicalhistory_entsurgicalhistory;
 truncate enttreatment_enttreatment;
 truncate entdiagnosis_entdiagnosis;
 truncate entdiagnosisextra_entdiagnosisextra;
+truncate audiogram_audiogram;
 truncate requestlog_requestlog;

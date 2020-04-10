@@ -146,6 +146,10 @@ the current clinic to a station the patient has aleady visited after visiting an
 The remaining APIs are oriented towards storing clinic data related to a
 specialty.
 
+ * audiogram - records audiogram images organized by patient and clinic 
+    * [API](../master/audiogram/README.md)  
+    * [Unit Tests](../master/test/audiogram/audiogram.py)
+
  * medicalhistory - patient status recorded at the time the patient registers. Records the overall health of the patient. 
     * [API](../master/medicalhistory/README.md)  
     * [Unit Tests](../master/test/medicalhistory/medicalhistory.py)
