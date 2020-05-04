@@ -42,7 +42,8 @@ class ENTHistoryView(APIView):
                 ENTHistory.EAR_DURATION_DAYS:"days",
                 ENTHistory.EAR_DURATION_WEEKS:"weeks",
                 ENTHistory.EAR_DURATION_MONTHS:"months",
-                ENTHistory.EAR_DURATION_INTERMITTENT:"intermittent"}
+                ENTHistory.EAR_DURATION_INTERMITTENT:"intermittent",
+                ENTHistory.EAR_DURATION_PERMANENT:"permanent"}
 
         try:
             ret = data[val]
@@ -56,7 +57,8 @@ class ENTHistoryView(APIView):
                 "days":ENTHistory.EAR_DURATION_DAYS,
                 "weeks":ENTHistory.EAR_DURATION_WEEKS,
                 "months":ENTHistory.EAR_DURATION_MONTHS,
-                "intermittent":ENTHistory.EAR_DURATION_INTERMITTENT}
+                "intermittent":ENTHistory.EAR_DURATION_INTERMITTENT,
+                "permanent":ENTHistory.EAR_DURATION_PERMANENT}
 
         try:
             ret = data[val]
