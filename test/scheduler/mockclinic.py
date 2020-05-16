@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#(C) Copyright Syd Logan 2017-2019
-#(C) Copyright Thousand Smiles Foundation 2017-2019
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -288,7 +288,7 @@ class MockClinic:
         self._routingslipids = []
         self._routingslipentryids = []
 
-        self._categories = ["New Cleft", "Dental", "Returning Cleft", "Ortho", "Other"]
+        self._categories = ["New Cleft", "Dental", "Returning Cleft", "Ortho", "Hearing Aids", "Ears", "Other"]
         self._doReturnToClinicStation = False 
 
     def login(self):
@@ -628,6 +628,10 @@ class MockClinic:
             station = self.createStation(y["name"], y["level"])
             if y["name"] == "X-Ray":
                 self._xray = station
+            elif y["name"] == "Audiology":
+                self._audiology = station
+            elif y["name"] == "Speech":
+                self._speech = station
             elif y["name"] == "Dental":
                 self._dental = station
             elif y["name"] == "Ortho":
@@ -648,6 +652,9 @@ class MockClinic:
     def getENT(self):
         return self._ent
 
+    def getAudiology(self):
+        return self._audiology
+
     def getOrtho(self):
         return self._ortho
 
@@ -665,8 +672,8 @@ class MockClinic:
         self._ortho = self.createStation("Ortho", 1) 
         self._xray = self.createStation("X-Ray", 2) 
         self._surgery = self.createStation("Surgery Screening", 1) 
-        speech = self.createStation("Speech", 1) 
-        audiology = self.createStation("Audiology", 1) 
+        self._speech = self.createStation("Speech", 1) 
+        self._audiology = self.createStation("Audiology", 1) 
 
         dentalStations = []
         for x in [("Dental1","Dental1"), ("Dental2","Dental2"), ("Dental3", "Dental3"), ("Dental4","Dental4"), ("Dental5","Dental5")]:
@@ -811,6 +818,18 @@ def main():
                     st = mock.getSurgery()
                     print("Adding Surgery Screening")
                     mock.createRoutingSlipEntry(routingslip, st) 
+                elif cat == "Ortho":
+                    ortho = mock.getOrtho()
+                    print("Adding Ortho")
+                    mock.createRoutingSlipEntry(routingslip, ent) 
+                elif cat == "Hearing Aids":
+                    audiology = mock.getAudiology()
+                    print("Adding Audiology")
+                    mock.createRoutingSlipEntry(routingslip, audiology) 
+                elif cat == "Ears":
+                    ent = mock.getENT()
+                    print("Adding ENT")
+                    mock.createRoutingSlipEntry(routingslip, ent) 
                 elif cat == "Ortho":
                     ortho = mock.getOrtho()
                     print("Adding Ortho")

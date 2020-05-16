@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2019
-#(C) Copyright Thousand Smiles Foundation 2017-2019
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -33,12 +33,16 @@ class RoutingSlip(models.Model):
     clinic = models.ForeignKey(Clinic)
     NEWCLEFT = 'n'
     DENTAL = 'd'
+    HEARINGAIDS = 'h'
+    EARS = 'e'
     RETCLEFT = 'r'
     ORTHO = 'o'
     OTHER = 't'
     UNKNOWN = 'u'
     CATEGORY_CHOICES = ((NEWCLEFT, "New Cleft"), 
                         (DENTAL, "Dental"),
+                        (HEARINGAIDS, "Hearing Aids"), 
+                        (EARS, "Ears"),
                         (RETCLEFT, "Returning Cleft"),
                         (ORTHO, "Ortho"),
                         (OTHER, "Other"))

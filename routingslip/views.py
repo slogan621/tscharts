@@ -50,12 +50,16 @@ class RoutingSlipView(APIView):
         self.catsToText = {'n': "New Cleft",
                            'd': "Dental",
                            'r': "Returning Cleft",
+                           'h': "Hearing Aids",
+                           'e': "Ears",
                            'o': "Ortho",
                            't': "Other"}
 
         self.textToCats = {"New Cleft": 'n',
                            "Dental": 'd',
                            "Returning Cleft": 'r',
+                           "Hearing Aids": 'h',
+                           "Ears": 'e',
                            "Ortho": 'o',
                            "Other": 't'}
 
@@ -225,7 +229,7 @@ class RoutingSlipView(APIView):
         except:
             badParam = True
 
-        if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Other"]:
+        if not category in ["Dental", "Ortho", "New Cleft", "Hearing Aids", "Ears", "Returning Cleft", "Other"]:
             badParam = True
         else:
             category = self.textToCats[category]
@@ -292,7 +296,7 @@ class RoutingSlipView(APIView):
         data = json.loads(request.body)
         try:
             category = data["category"]
-            if not category in ["Dental", "Ortho", "New Cleft", "Returning Cleft", "Other"]:
+            if not category in ["Dental", "Ortho", "New Cleft", "Hearing Aids", "Ears", "Returning Cleft", "Other"]:
                 badParam = True
             else:
                 category = self.textToCats[category]
