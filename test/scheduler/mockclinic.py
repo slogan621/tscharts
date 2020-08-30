@@ -34,6 +34,7 @@ from test.patient.patient import CreatePatient, DeletePatient
 from test.returntoclinic.returntoclinic import CreateReturnToClinic
 from test.medicalhistory.medicalhistory import CreateMedicalHistory, DeleteMedicalHistory
 from test.xray.xray import CreateXRay, DeleteXRay
+from test.register.register import CreateRegistration
 from test.statechange.statechange import CreateStateChange
 from test.returntoclinicstation.returntoclinicstation import CreateReturnToClinicStation, GetReturnToClinicStation, UpdateReturnToClinicStation
 from test.clinicstation.clinicstation import CreateClinicStation, DeleteClinicStation, UpdateClinicStation, GetClinicStation
@@ -348,6 +349,12 @@ class MockClinic:
         
     def getQueue(self, clinicstationid):
         pass
+
+    def createRegistration(self, clinicid, patientid):
+        x = CreateRegistration(self._host, self._port, self._token, clinic=clinicid, patient=patientid)
+        ret = x.send(timeout=30)
+        if ret[0] != 200:
+            print("failed to create clinic {} registration for patient {} {}".format(clinicid, patientid, x))
 
     def createReturnToClinic(self, patientid, clinicid, stationid, interval):
         x = CreateReturnToClinic(self._host, self._port, self._token, patient=patientid, clinic=clinicid, station=stationid, interval=interval)
@@ -776,6 +783,8 @@ def main():
             mock.createClinicResources()
         clinic = mock.getClinic()
         if doPatients:
+            print("Sleeping for 20 seconds, please wait.")
+            time.sleep(20)
             lowerLimit = limit - 10;
             if lowerLimit < 0:
                 lowerLimit = 0;
@@ -802,6 +811,7 @@ def main():
             for x in mock.getPatients():
                 time.sleep(randint(1, 30))
                 cat = mock.getRandomCategory()
+                mock.createRegistration(clinic, x)
                 routingslip = mock.createRoutingSlip(x, clinic, cat)
                 print("\n\nCreating routingslip for {} patient {} at time {}".format(cat, x, datetime.now().strftime("%H:%M:%S")))
                 if cat == "Dental":
@@ -821,7 +831,7 @@ def main():
                 elif cat == "Ortho":
                     ortho = mock.getOrtho()
                     print("Adding Ortho")
-                    mock.createRoutingSlipEntry(routingslip, ent) 
+                    mock.createRoutingSlipEntry(routingslip, ortho) 
                 elif cat == "Hearing Aids":
                     audiology = mock.getAudiology()
                     print("Adding Audiology")
