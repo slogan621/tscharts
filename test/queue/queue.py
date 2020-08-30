@@ -160,7 +160,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:c:s:z:")
     except getopt.GetoptError as err:
-        print str(err) 
+        print(str(err))
         usage()
         sys.exit(2)
     global host
