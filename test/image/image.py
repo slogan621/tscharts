@@ -77,6 +77,7 @@ class GetImage(ServiceAPI):
         self._type = None
         self._id = None
         self._sort = None
+        self._newest = None
         self.makeURL();
 
     def makeURL(self):
@@ -118,6 +119,14 @@ class GetImage(ServiceAPI):
             base += "type={}".format(self._type)
             hasQArgs = True
 
+        if not self._newest == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "newest={}".format(self._newest)
+            hasQArgs = True
+
         if not self._sort == None:
             if not hasQArgs:
                 base += "?"
@@ -134,6 +143,10 @@ class GetImage(ServiceAPI):
 
     def setClinic(self, clinic):
         self._clinic = clinic
+        self.makeURL()
+
+    def setNewest(self, val):
+        self._newest = val
         self.makeURL()
 
     def setStation(self, station):
