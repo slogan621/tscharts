@@ -60,18 +60,21 @@ class RegularSearch(wx.Panel):
         main_sizer.Add(self.search_results_olv, 1, wx.EXPAND)
         self.update_search_results()
 
+        '''
         main_sizer.AddSpacer(30)
         self.title = wx.TextCtrl(self, style=wx.TE_READONLY)
         self.title.SetFont(font)
         main_sizer.Add(self.title, 0, wx.ALL|wx.EXPAND, 5)
+        '''
         img = wx.Image(240, 240)
         self.image_ctrl = wx.StaticBitmap(self,
                                           bitmap=wx.Bitmap(img))
-        main_sizer.Add(self.image_ctrl, 0, wx.CENTER|wx.ALL, 5
-                       )
+        main_sizer.Add(self.image_ctrl, 0, wx.LEFT|wx.ALL, 5)
+        '''
         download_btn = wx.Button(self, label='Download Image')
         download_btn.Bind(wx.EVT_BUTTON, self.on_download)
         main_sizer.Add(download_btn, 0, wx.ALL|wx.CENTER, 5)
+        '''
 
         self.SetSizer(main_sizer)
 

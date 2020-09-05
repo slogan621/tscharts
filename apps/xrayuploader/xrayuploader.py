@@ -188,14 +188,14 @@ class MainPanel(wx.Panel):
         self.search.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         search_sizer.Add(self.search, 1, wx.EXPAND)
 
-        self.main_sizer.Add(clinics_sizer, 1, wx.ALL|wx.EXPAND, 5)
+        self.main_sizer.Add(clinics_sizer, 0, wx.ALL|wx.EXPAND, 5)
         self.main_sizer.Add(search_sizer, 0, wx.EXPAND)
 
         self.search_panel = RegularSearch(self, sess)
-        self.advanced_search_panel = AdvancedSearch(self)
-        self.advanced_search_panel.Hide()
+        #self.advanced_search_panel = AdvancedSearch(self)
+        #self.advanced_search_panel.Hide()
         self.main_sizer.Add(self.search_panel, 1, wx.EXPAND)
-        self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
+        #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
 
         self.SetSizer(self.main_sizer)
 
