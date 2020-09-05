@@ -118,6 +118,7 @@ class MainPanel(wx.Panel):
 
     def __init__(self, parent, sess, clinics):
         super().__init__(parent)
+        self.sess = sess
         pub.subscribe(self.update_ui, 'update_ui')
 
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -130,10 +131,8 @@ class MainPanel(wx.Panel):
         self.clinicIds = []
         for x in clinics:
             self.clinicIds.append(x["id"])
-                #tmp.append((x["id"], "Clinic Number: {} Location: {} Start: {} End: {}".format(x["id"], x["location"], x["start"], x["end"])))
         self.clinics = wx.ListCtrl(self, size=(-1, -1), style=wx.LC_REPORT)
         
-        #tmp.append((x["id"], "Clinic Number: {} Location: {} Start: {} End: {}".format(x["id"], x["location"], x["start"], x["end"])))
         self.clinics.InsertColumn(0, "Clinic Number")
         self.clinics.InsertColumn(1, "Location")
         self.clinics.InsertColumn(2, "Start")
@@ -155,13 +154,6 @@ class MainPanel(wx.Panel):
         self.search.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         search_sizer.Add(self.search, 1, wx.EXPAND)
 
-        '''
-        self.advanced_search_btn = wx.Button(self, label='Advanced Search',
-                                    size=(-1, 25))
-        self.advanced_search_btn.Bind(wx.EVT_BUTTON, self.on_advanced_search)
-        search_sizer.Add(self.advanced_search_btn, 0, wx.ALL, 5)
-        '''
-
         self.main_sizer.Add(clinics_sizer, 1, wx.ALL|wx.EXPAND, 5)
         self.main_sizer.Add(search_sizer, 0, wx.EXPAND)
 
@@ -179,7 +171,10 @@ class MainPanel(wx.Panel):
     def on_clinic(self, event):
         ind = event.GetIndex()
         item = self.clinics.GetItem(ind, 0)
-        print("{}".format(item.GetText()))
+        clinic = int(item.GetText())
+        regs = Registrations()
+        patientsThisClinic = regs.getAllRegistrations(self.sess, clinic)
+        self.set_registrations(patientsThisClinic)
 
     def on_search(self, event):
         print("on search enter")
@@ -211,7 +206,7 @@ class MainPanel(wx.Panel):
 class SearchFrame(wx.Frame):
 
     def __init__(self, sess, clinics):
-        super().__init__(None, title='Select Patient',
+        super().__init__(None, title='X-Ray Uploader',
                          size=(1200, 800))
         panel = MainPanel(self, sess, clinics)
         self.Show()
