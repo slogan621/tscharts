@@ -11,6 +11,7 @@ from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 from urllib.parse import urlencode, quote_plus
 from test.image.image import GetImage
+from photoctrl import PhotoCtrl
 
 class Headshot():
     def getHeadshot(self, sess, patient):
@@ -70,19 +71,18 @@ class RegularSearch(wx.Panel):
         self.image_ctrl = wx.StaticBitmap(self,
                                           bitmap=wx.Bitmap(img))
         main_sizer.Add(self.image_ctrl, 0, wx.LEFT|wx.ALL, 5)
-        '''
-        download_btn = wx.Button(self, label='Download Image')
+        self.photo_ctrl = PhotoCtrl(parent=self, sess=self.sess)
+        main_sizer.Add(self.photo_ctrl, 0, wx.RIGHT|wx.ALL, 5)
+
+        download_btn = wx.Button(self, label='Upload X-Ray')
         download_btn.Bind(wx.EVT_BUTTON, self.on_download)
         main_sizer.Add(download_btn, 0, wx.ALL|wx.CENTER, 5)
-        '''
 
         self.SetSizer(main_sizer)
 
     def on_download(self, event):
-        selection = self.search_results_olv.GetSelectedObject()
-        if selection:
-            with DownloadDialog(selection) as dlg:
-                dlg.ShowModal()
+        filepath = self.photo_ctrl.get_image_path()
+        print(filepath)
 
     def on_selection(self, event):
         selection = self.search_results_olv.GetSelectedObject()

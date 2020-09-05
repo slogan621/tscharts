@@ -5,6 +5,7 @@ import wx
 
 from advanced_search import AdvancedSearch
 from regular_search import RegularSearch
+from photoctrl import PhotoCtrl
 from pubsub import pub
 
 from service.serviceapi import ServiceAPI
@@ -187,6 +188,7 @@ class MainPanel(wx.Panel):
         self.search.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.on_search)
         self.search.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         search_sizer.Add(self.search, 1, wx.EXPAND)
+        
 
         self.main_sizer.Add(clinics_sizer, 0, wx.ALL|wx.EXPAND, 5)
         self.main_sizer.Add(search_sizer, 0, wx.EXPAND)
