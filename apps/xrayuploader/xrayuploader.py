@@ -212,6 +212,8 @@ class MainPanel(wx.Panel):
         self.clinic = int(item.GetText())
         patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
         self.set_registrations(patientsThisClinic)
+        if len(patientsThisClinic):
+            self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
 
     def on_search(self, event):
         print("on search enter")
@@ -224,6 +226,8 @@ self.clinic, search_term)
         else:
             patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
         self.set_registrations(patientsThisClinic)
+        if len(patientsThisClinic):
+            self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
 
     def on_advanced_search(self, event):
         self.search.Hide()
