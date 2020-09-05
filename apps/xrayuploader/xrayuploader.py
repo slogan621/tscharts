@@ -90,6 +90,16 @@ class Registrations():
             ret = None
         return ret
 
+    def searchPatient(self, sess, pattern):
+        x = GetPatient(sess.getHost(), sess.getPort(), sess.getToken())
+        x.setPaternalLast(pattern)
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            ret = ret[1]
+        else:
+            ret = None
+        return ret
+
     def getAllRegistrations(self, sess, clinicid):
         patients = []
         x = GetAllRegistrations(sess.getHost(), sess.getPort(), sess.getToken())
@@ -109,6 +119,30 @@ class Registrations():
                     p["dob"] = y["dob"]
                     p["gender"] = y["gender"]
                     patients.append(p)
+        return patients
+
+    def searchAllRegistrations(self, sess, clinicid, pattern):
+        patients = []
+        matches = self.searchPatient(sess, pattern)
+        print("matches: {}", matches)
+        x = GetAllRegistrations(sess.getHost(), sess.getPort(), sess.getToken())
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            registrations = ret[1]
+            for x in registrations:
+                if x["patient"] in matches:
+                    y = self.getPatient(sess, x["patient"])
+                    if y:
+                        p = {}
+                        p["id"] = y["id"]
+                        p["first"] = y["first"]
+                        p["middle"] = y["middle"]
+                        p["paternal_last"] = y["paternal_last"]
+                        p["maternal_last"] = y["maternal_last"]
+                        p["dob"] = y["dob"]
+                        p["gender"] = y["gender"]
+                        patients.append(p)
         return patients
 
 def usage():
@@ -165,24 +199,31 @@ class MainPanel(wx.Panel):
 
         self.SetSizer(self.main_sizer)
 
+    def setClinic(self, id):
+        self.clinic = id
+
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
 
     def on_clinic(self, event):
         ind = event.GetIndex()
         item = self.clinics.GetItem(ind, 0)
-        clinic = int(item.GetText())
         regs = Registrations()
-        patientsThisClinic = regs.getAllRegistrations(self.sess, clinic)
+        self.clinic = int(item.GetText())
+        patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
         self.set_registrations(patientsThisClinic)
 
     def on_search(self, event):
         print("on search enter")
         search_results = []
         search_term = event.GetString()
-        if search_term:
-            query = {'q': search_term, 'media_type': 'image'}
-            pub.sendMessage('search_results', query=query)
+        regs = Registrations()
+        if search_term and len(search_term):
+            patientsThisClinic = regs.searchAllRegistrations(self.sess,
+self.clinic, search_term)
+        else:
+            patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
+        self.set_registrations(patientsThisClinic)
 
     def on_advanced_search(self, event):
         self.search.Hide()
@@ -213,6 +254,7 @@ class SearchFrame(wx.Frame):
         regs = Registrations()
         print("{}".format(clinics))
         patientsThisClinic = regs.getAllRegistrations(sess, clinics[0]["id"])
+        panel.setClinic(int(clinics[0]["id"]))
         panel.set_registrations(patientsThisClinic)
 
 def main():
