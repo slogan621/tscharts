@@ -5,6 +5,7 @@ import wx
 
 from advanced_search import AdvancedSearch
 from regular_search import RegularSearch
+from imagegrid import ImageGrid
 from photoctrl import PhotoCtrl
 from pubsub import pub
 
@@ -159,6 +160,7 @@ class MainPanel(wx.Panel):
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         search_sizer = wx.BoxSizer()
         clinics_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        image_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         txt = 'Select Clinic and Patient'
         label = wx.StaticText(self, label=txt)
@@ -189,20 +191,38 @@ class MainPanel(wx.Panel):
         self.search.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         search_sizer.Add(self.search, 1, wx.EXPAND)
         
-
         self.main_sizer.Add(clinics_sizer, 0, wx.ALL|wx.EXPAND, 5)
         self.main_sizer.Add(search_sizer, 0, wx.EXPAND)
 
         self.search_panel = RegularSearch(self, sess)
         #self.advanced_search_panel = AdvancedSearch(self)
         #self.advanced_search_panel.Hide()
-        self.main_sizer.Add(self.search_panel, 1, wx.EXPAND)
+        self.main_sizer.Add(self.search_panel, 1, wx.ALL | wx.EXPAND)
+
+        self.photo_ctrl = PhotoCtrl(parent=self, sess=self.sess)
+        image_sizer.Add(self.photo_ctrl, 0, wx.LEFT, 5)
+
+        upload_btn = wx.Button(self, label='Upload X-Ray')
+        upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
+        image_sizer.Add(upload_btn, 0, wx.LEFT, 5)
+
+        image_sizer.Add((20,-1), proportion=1)  # this is a spacer
+        self.imagegrid = ImageGrid(parent=self)
+        image_sizer.Add(self.imagegrid, 0, wx.ALL, 5)
+        self.main_sizer.Add(image_sizer, 0, wx.ALL)
+
         #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
 
         self.SetSizer(self.main_sizer)
 
     def setClinic(self, id):
         self.clinic = id
+
+    def on_upload(self, event):
+        filepath = self.photo_ctrl.get_image_path()
+        self.imagegrid.add(filepath)
+        self.main_sizer.Layout()
+        print(filepath)
 
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
@@ -220,11 +240,12 @@ class MainPanel(wx.Panel):
     def on_search(self, event):
         print("on search enter")
         search_results = []
-        search_term = event.GetString()
+        if event:
+            self.search_term = event.GetString()
         regs = Registrations()
-        if search_term and len(search_term):
+        if self.search_term and len(self.search_term):
             patientsThisClinic = regs.searchAllRegistrations(self.sess,
-self.clinic, search_term)
+self.clinic, self.search_term)
         else:
             patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
         self.set_registrations(patientsThisClinic)

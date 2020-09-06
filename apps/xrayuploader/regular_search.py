@@ -11,7 +11,6 @@ from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 from urllib.parse import urlencode, quote_plus
 from test.image.image import GetImage
-from photoctrl import PhotoCtrl
 
 class Headshot():
     def getHeadshot(self, sess, patient):
@@ -50,6 +49,8 @@ class RegularSearch(wx.Panel):
         self.max_size = 300
         font = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
+        sub_sizer1 = wx.BoxSizer(wx.HORIZONTAL)
+        sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.paths = wx.StandardPaths.Get()
         pub.subscribe(self.load_search_results, 'search_results')
 
@@ -58,7 +59,7 @@ class RegularSearch(wx.Panel):
         self.search_results_olv.SetEmptyListMsg("No Results Found")
         self.search_results_olv.Bind(wx.EVT_LIST_ITEM_SELECTED,
                                      self.on_selection)
-        main_sizer.Add(self.search_results_olv, 1, wx.EXPAND)
+        sub_sizer1.Add(self.search_results_olv, 1, wx.EXPAND)
         self.update_search_results()
 
         '''
@@ -70,19 +71,11 @@ class RegularSearch(wx.Panel):
         img = wx.Image(240, 240)
         self.image_ctrl = wx.StaticBitmap(self,
                                           bitmap=wx.Bitmap(img))
-        main_sizer.Add(self.image_ctrl, 0, wx.LEFT|wx.ALL, 5)
-        self.photo_ctrl = PhotoCtrl(parent=self, sess=self.sess)
-        main_sizer.Add(self.photo_ctrl, 0, wx.RIGHT|wx.ALL, 5)
-
-        download_btn = wx.Button(self, label='Upload X-Ray')
-        download_btn.Bind(wx.EVT_BUTTON, self.on_download)
-        main_sizer.Add(download_btn, 0, wx.ALL|wx.CENTER, 5)
+        sub_sizer1.Add(self.image_ctrl, 0, wx.LEFT|wx.ALL, 5)
 
         self.SetSizer(main_sizer)
-
-    def on_download(self, event):
-        filepath = self.photo_ctrl.get_image_path()
-        print(filepath)
+        main_sizer.Add(sub_sizer1, 0, wx.ALL, 5)
+        main_sizer.Add(sub_sizer, 1, wx.ALL, 5)
 
     def on_selection(self, event):
         selection = self.search_results_olv.GetSelectedObject()
@@ -105,6 +98,7 @@ class RegularSearch(wx.Panel):
         else:
             if os.path.exists(tmp_location):
                 img = wx.Image(tmp_location, wx.BITMAP_TYPE_ANY)
+                '''
                 W = img.GetWidth()
                 H = img.GetHeight()
                 if W > H:
@@ -114,6 +108,8 @@ class RegularSearch(wx.Panel):
                     NewH = self.max_size
                     NewW = self.max_size * W / H
                 img = img.Scale(NewW,NewH)
+                '''
+                img = img.Scale(240,240)
 
         self.image_ctrl.SetBitmap(wx.Bitmap(img))
         self.Refresh()
