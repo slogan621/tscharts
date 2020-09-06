@@ -214,6 +214,11 @@ class MainPanel(wx.Panel):
         #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
 
         self.SetSizer(self.main_sizer)
+        pub.subscribe(self.on_refresh_message, 'refresh')
+
+    def on_refresh_message(self):
+        print("on_refresh_message")
+        self.Layout()
 
     def setClinic(self, id):
         self.clinic = id
@@ -221,7 +226,7 @@ class MainPanel(wx.Panel):
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
         self.imagegrid.add(filepath)
-        self.main_sizer.Layout()
+        pub.sendMessage('refresh')
         print(filepath)
 
     def set_registrations(self, registrations):

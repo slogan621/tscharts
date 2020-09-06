@@ -27,6 +27,14 @@ class PhotoCtrl(wx.Panel):
         self.createWidgets()
         #self.frame.Show()
         self.filename = filename;
+        pub.subscribe(self.on_clear_message, 'clearxrays')
+
+    def on_clear_message(self):
+        img = wx.Image(240,240)
+        self.imageCtrl.SetBitmap(wx.Bitmap(img))
+        self.photoTxt.SetValue("")
+        self.Layout()
+        pub.sendMessage("refresh")
 
     def createWidgets(self):
         instructions = 'Browse for an image or Drag and Drop'

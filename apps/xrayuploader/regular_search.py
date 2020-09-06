@@ -82,6 +82,8 @@ class RegularSearch(wx.Panel):
         #patient_id = self.title.SetValue(f'{selection.id}')
         #self.title.SetValue(f'{selection.title}')
         self.update_image(f'{selection.id}')
+        pub.sendMessage('clearxrays')
+        #pub.sendMessage('refresh')
         '''
         else:
             img = wx.Image(240, 240)

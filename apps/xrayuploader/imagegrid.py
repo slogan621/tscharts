@@ -1,4 +1,5 @@
 import wx
+from pubsub import pub
 
 class ImageGrid(wx.Panel):
     def __init__(self, parent):
@@ -16,6 +17,7 @@ class ImageGrid(wx.Panel):
         self.SetSizer(self.grid)
         self.Layout()
         self.Show()
+        pub.subscribe(self.on_clear_message, 'clearxrays')      
 
     def add(self, path):
         photoMaxSize = 60
@@ -35,11 +37,19 @@ class ImageGrid(wx.Panel):
         img = img.Scale(NewW,NewH)
         imageCtrl.SetBitmap(wx.Bitmap(img))
         self.grid.Add(imageCtrl)
-        self.parent.Refresh()
-        
+        self.grid.ShowItems(True)
+        pub.sendMessage("refresh")
+        #self.parent.Refresh()
+
+    def on_clear_message(self):
+        self.grid.ShowItems(False)
+        self.clear();
+        self.Layout()
+        pub.sendMessage("refresh")
+ 
     def clear(self):
-        printf("clear")
-        children = self.grid.GetChildren()
-        for x in children:
-            printf("removing child")
-            self.grid.Remove(x)
+        print("clear")
+        try:
+            self.grid.Clear()
+        except:
+            pass
