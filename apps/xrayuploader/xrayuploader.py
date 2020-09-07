@@ -226,10 +226,10 @@ class MainPanel(wx.Panel):
         self.upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
         image_sizer.Add(self.upload_btn, 0, wx.LEFT, 5)
 
-        image_sizer.Add((20,-1), proportion=1)  # this is a spacer
+        #image_sizer.Add((20,-1), proportion=1)  # this is a spacer
         self.imagegrid = ImageGrid(parent=self)
-        image_sizer.Add(self.imagegrid, 0, wx.ALL, 5)
-        self.main_sizer.Add(image_sizer, 0, wx.ALL)
+        image_sizer.Add(self.imagegrid, 1, wx.ALL | wx.EXPAND, 5)
+        self.main_sizer.Add(image_sizer, 1, wx.ALL | wx.EXPAND)
 
         #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
 

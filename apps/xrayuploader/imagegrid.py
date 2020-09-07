@@ -19,11 +19,19 @@ from pubsub import pub
 class ImageGrid(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.parent = parent 
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        txt = 'X-Rays Uploaded for This Patient and Clinic'
+        label = wx.StaticText(self, label=txt)
+        sizer.Add(label, 1, wx.ALL | wx.CENTER, 5)
        
         self.grid = wx.GridSizer(5, 5, 5, 5)
-        self.parent = parent 
-        self.SetMinSize(wx.Size(300, 300))
-        self.SetSizer(self.grid)
+        self.SetBackgroundColour('light blue') 
+        self.SetMinSize(wx.Size(400, 300))
+        sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND, 5)
+
+        self.SetSizer(sizer)
         self.Layout()
         self.Show()
         pub.subscribe(self.on_clear_message, 'clearxrays')      
