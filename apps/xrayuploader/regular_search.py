@@ -84,10 +84,13 @@ class RegularSearch(wx.Panel):
         self.timer_update = True
         if self.selected_id:
             objs = self.search_results_olv.GetObjects()
+            count = 0
             for x in objs:
                 if x.id == self.selected_id:
                     self.search_results_olv.SelectObject(x)
+                    self.search_results_olv.EnsureCellVisible(count, 0)
                     break
+                count = count + 1
             self.update_image(f'{self.selected_id}')
             #pub.sendMessage('refresh')
         self.timer_update = False
