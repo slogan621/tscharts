@@ -82,6 +82,7 @@ class Clinics():
         return ret
 
 class Registrations():
+
     def getPatient(self, sess, id):
         x = GetPatient(sess.getHost(), sess.getPort(), sess.getToken())
         x.setId(id)
@@ -155,6 +156,7 @@ class MainPanel(wx.Panel):
     def __init__(self, parent, sess, clinics):
         super().__init__(parent)
         self.sess = sess
+        self.search_term = None
         pub.subscribe(self.update_ui, 'update_ui')
 
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -215,6 +217,18 @@ class MainPanel(wx.Panel):
 
         self.SetSizer(self.main_sizer)
         pub.subscribe(self.on_refresh_message, 'refresh')
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.timerHandler, self.timer)
+        self.timer.Start(60000)
+
+    def timerHandler(self, event):
+        print("updated: {}".format(time.ctime()))
+        self.on_search(None)
+        pub.sendMessage('patients_updated')
+        '''
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.timerHandler, self.timer)
+        '''
 
     def on_refresh_message(self):
         print("on_refresh_message")

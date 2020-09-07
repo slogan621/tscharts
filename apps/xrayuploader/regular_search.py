@@ -45,6 +45,8 @@ class RegularSearch(wx.Panel):
     def __init__(self, parent, sess):
         super().__init__(parent)
         self.sess = sess
+        self.selected_id = None
+        self.timer_update = False
         self.search_results = []
         self.max_size = 300
         font = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
@@ -53,6 +55,7 @@ class RegularSearch(wx.Panel):
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.paths = wx.StandardPaths.Get()
         pub.subscribe(self.load_search_results, 'search_results')
+        pub.subscribe(self.on_patients_updated, 'patients_updated')
 
         self.search_results_olv = ObjectListView(
             self, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
@@ -70,20 +73,34 @@ class RegularSearch(wx.Panel):
         '''
         img = wx.Image(240, 240)
         self.image_ctrl = wx.StaticBitmap(self,
-                                          bitmap=wx.Bitmap(img))
+                          bitmap=wx.Bitmap(img))
         sub_sizer1.Add(self.image_ctrl, 0, wx.LEFT|wx.ALL, 5)
 
         self.SetSizer(main_sizer)
         main_sizer.Add(sub_sizer1, 0, wx.ALL, 5)
         main_sizer.Add(sub_sizer, 1, wx.ALL, 5)
 
+    def on_patients_updated(self):
+        self.timer_update = True
+        if self.selected_id:
+            objs = self.search_results_olv.GetObjects()
+            for x in objs:
+                if x.id == self.selected_id:
+                    self.search_results_olv.SelectObject(x)
+                    break
+            self.update_image(f'{self.selected_id}')
+            #pub.sendMessage('refresh')
+        self.timer_update = False
+
     def on_selection(self, event):
         selection = self.search_results_olv.GetSelectedObject()
+        print("selected object {}".format(selection))
         #patient_id = self.title.SetValue(f'{selection.id}')
         #self.title.SetValue(f'{selection.title}')
+        self.selected_id = selection.id
         self.update_image(f'{selection.id}')
-        pub.sendMessage('clearxrays')
-        #pub.sendMessage('refresh')
+        if not self.timer_update:
+            pub.sendMessage('clearxrays')
         '''
         else:
             img = wx.Image(240, 240)
