@@ -117,6 +117,7 @@ class RegularSearch(wx.Panel):
         self.update_image(f'{selection.id}')
         if not self.timer_update:
             pub.sendMessage('clearxrays')
+            pub.sendMessage('clearxraycontrol')
         '''
         else:
             img = wx.Image(240, 240)

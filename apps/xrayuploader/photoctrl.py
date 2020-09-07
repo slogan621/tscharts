@@ -42,9 +42,9 @@ class PhotoCtrl(wx.Panel):
         self.createWidgets()
         #self.frame.Show()
         self.filename = filename;
-        pub.subscribe(self.on_clear_message, 'clearxrays')
+        pub.subscribe(self.on_clearxraycontrol_message, 'clearxraycontrol')
 
-    def on_clear_message(self):
+    def on_clearxraycontrol_message(self):
         img = wx.Image(240,240)
         self.imageCtrl.SetBitmap(wx.Bitmap(img))
         self.photoTxt.SetValue("")

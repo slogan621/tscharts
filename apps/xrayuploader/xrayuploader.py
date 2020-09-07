@@ -240,10 +240,6 @@ class MainPanel(wx.Panel):
         print("updated: {}".format(time.ctime()))
         self.on_search(None)
         pub.sendMessage('patients_updated')
-        '''
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.timerHandler, self.timer)
-        '''
 
     def on_refresh_message(self):
         print("on_refresh_message")
@@ -255,8 +251,8 @@ class MainPanel(wx.Panel):
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
         self.imagegrid.add(filepath)
+        pub.sendMessage("clearxraycontrol")
         pub.sendMessage('refresh')
-        print(filepath)
 
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
