@@ -113,4 +113,5 @@ class PhotoCtrl(wx.Panel):
             NewW = PhotoMaxSize * W / H
         img = img.Scale(NewW,NewH)
         self.imageCtrl.SetBitmap(wx.Bitmap(img))
+        pub.sendMessage('enableupload')
         self.Refresh()

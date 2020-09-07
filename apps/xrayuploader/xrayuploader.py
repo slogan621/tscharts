@@ -173,6 +173,8 @@ class MainPanel(wx.Panel):
         self.sess = sess
         self.search_term = None
         pub.subscribe(self.update_ui, 'update_ui')
+        pub.subscribe(self.on_disable_upload_message, 'disableupload')
+        pub.subscribe(self.on_enable_upload_message, 'enableupload')
 
         self.main_sizer = wx.BoxSizer(wx.VERTICAL)
         search_sizer = wx.BoxSizer()
@@ -219,9 +221,10 @@ class MainPanel(wx.Panel):
         self.photo_ctrl = PhotoCtrl(parent=self, sess=self.sess)
         image_sizer.Add(self.photo_ctrl, 0, wx.LEFT, 5)
 
-        upload_btn = wx.Button(self, label='Upload X-Ray')
-        upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
-        image_sizer.Add(upload_btn, 0, wx.LEFT, 5)
+        self.upload_btn = wx.Button(self, label='Upload X-Ray')
+        self.upload_btn.Disable()
+        self.upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
+        image_sizer.Add(self.upload_btn, 0, wx.LEFT, 5)
 
         image_sizer.Add((20,-1), proportion=1)  # this is a spacer
         self.imagegrid = ImageGrid(parent=self)
@@ -248,9 +251,16 @@ class MainPanel(wx.Panel):
     def setClinic(self, id):
         self.clinic = id
 
+    def on_disable_upload_message(self):
+        self.upload_btn.Disable()
+
+    def on_enable_upload_message(self):
+        self.upload_btn.Enable()
+
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
         self.imagegrid.add(filepath)
+        pub.sendMessage('disableupload')
         pub.sendMessage("clearxraycontrol")
         pub.sendMessage('refresh')
 
