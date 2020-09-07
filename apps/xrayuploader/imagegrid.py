@@ -1,3 +1,18 @@
+#(C) Copyright Syd Logan 2020
+#(C) Copyright Thousand Smiles Foundation 2020
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#
+#You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
 import wx
 from pubsub import pub
 
@@ -5,14 +20,8 @@ class ImageGrid(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
        
-        #self.grid = wx.GridSizer(5, 4, 5, 5)
         self.grid = wx.GridSizer(5, 5, 5, 5)
         self.parent = parent 
-        '''
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.grid, 1, wx.EXPAND)
-        self.SetSizer(sizer)
-        '''
         self.SetMinSize(wx.Size(300, 300))
         self.SetSizer(self.grid)
         self.Layout()
@@ -39,7 +48,6 @@ class ImageGrid(wx.Panel):
         self.grid.Add(imageCtrl)
         self.grid.ShowItems(True)
         pub.sendMessage("refresh")
-        #self.parent.Refresh()
 
     def on_clear_message(self):
         self.grid.ShowItems(False)
@@ -48,7 +56,6 @@ class ImageGrid(wx.Panel):
         pub.sendMessage("refresh")
  
     def clear(self):
-        print("clear")
         try:
             self.grid.Clear()
         except:
