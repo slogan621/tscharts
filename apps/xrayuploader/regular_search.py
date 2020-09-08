@@ -24,6 +24,7 @@ from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 from urllib.parse import urlencode, quote_plus
 from test.image.image import GetImage
+import wx.lib.agw.pyprogress as PP
 
 class Headshot():
     def getHeadshot(self, sess, patient):
@@ -64,6 +65,8 @@ class RegularSearch(wx.Panel):
         self.max_size = 300
         font = wx.Font(12, wx.SWISS, wx.NORMAL, wx.NORMAL)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
+        pub.subscribe(self.on_pulse_on_message, "pulseon")
+        pub.subscribe(self.on_pulse_off_message, "pulseoff")
         sub_sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         sub_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.paths = wx.StandardPaths.Get()
@@ -95,6 +98,7 @@ class RegularSearch(wx.Panel):
 
     def on_patients_updated(self):
         self.timer_update = True
+        self.on_pulse_on_message()
         if self.selected_id:
             objs = self.search_results_olv.GetObjects()
             count = 0
@@ -106,7 +110,34 @@ class RegularSearch(wx.Panel):
                 count = count + 1
             self.update_image(f'{self.selected_id}')
             #pub.sendMessage('refresh')
+        self.on_pulse_off_message()
         self.timer_update = False
+
+    # XXX this doesn't work as it should, likely because of
+    # wx main loop processing. Revisit
+
+    def pulseTimerHandler(self, event):
+        #self.gauge.Pulse()
+        #self.dlg.UpdatePulse()
+        self.dlg.Pulse()
+
+    def on_pulse_on_message(self):
+        print("on pulse on")
+        #self.gauge.Show()
+        self.pulsetimer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.pulseTimerHandler, self.pulsetimer)
+        style = wx.PD_APP_MODAL|wx.PD_ELAPSED_TIME
+        #self.dlg = PP.PyProgress(self, -1, "PyProgress Example",
+        #                    "An Informative Message", agwStyle=style)
+        self.dlg = wx.ProgressDialog("Clinic Loading", "Please Wait", 100,
+                            style=style)
+        self.pulsetimer.Start(500)
+
+    def on_pulse_off_message(self):
+        print("on pulse off")
+        self.pulsetimer.Stop()
+        #self.gauge.Hide()
+        self.dlg.Destroy()
 
     def on_selection(self, event):
         selection = self.search_results_olv.GetSelectedObject()
@@ -118,6 +149,8 @@ class RegularSearch(wx.Panel):
         if not self.timer_update:
             pub.sendMessage('clearxrays')
             pub.sendMessage('clearxraycontrol')
+            pub.sendMessage('patient_selected', patient=self.selected_id)
+            pub.sendMessage('loadxrays')
         '''
         else:
             img = wx.Image(240, 240)

@@ -96,6 +96,29 @@ class Clinics():
             ret = None
         return ret
 
+class XRays():
+
+    def getAllXRays(self, sess, clinicid, patientid):
+        xrays = []
+        x = GetImage(sess.getHost(), sess.getPort(), sess.getToken())
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        x.setType("Xray")
+        ret = x.send(timeout=30)
+        print("getAllXrays ret[0] {}".format(ret[0]))
+        if ret[0] == 200:
+            xraylist = ret[1]
+            for x in xraylist:
+                y = GetImage(sess.getHost(), sess.getPort(), sess.getToken())
+                y.setId(x)
+                ret = y.send(timeout=30)
+                if ret[0] == 200:
+                    xrays.append(y)
+        return xrays
+
+    def uploadXRay(self, sess, patientid, path):
+        pass
+
 class Registrations():
 
     def getPatient(self, sess, id):
@@ -171,6 +194,7 @@ class MainPanel(wx.Panel):
     def __init__(self, parent, sess, clinics):
         super().__init__(parent)
         self.sess = sess
+        self.patient = None
         self.search_term = None
         pub.subscribe(self.update_ui, 'update_ui')
         pub.subscribe(self.on_disable_upload_message, 'disableupload')
@@ -234,7 +258,9 @@ class MainPanel(wx.Panel):
         #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
 
         self.SetSizer(self.main_sizer)
+        pub.subscribe(self.on_patient_selected_message, 'patient_selected')
         pub.subscribe(self.on_refresh_message, 'refresh')
+        pub.subscribe(self.on_load_xrays, 'loadxrays')
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.timerHandler, self.timer)
         self.timer.Start(60000)
@@ -248,8 +274,22 @@ class MainPanel(wx.Panel):
         print("on_refresh_message")
         self.Layout()
 
+    def on_patient_selected_message(self, patient):
+        print("on_patient_selected_message {}".format(patient))
+        self.patient = patient
+
     def setClinic(self, id):
         self.clinic = id
+
+    def on_load_xrays(self):
+        print("on_load_xrays")
+        xrays = XRays()
+        patientXrays = xrays.getAllXRays(self.sess, self.clinic, self.patient)
+        for x in patientXrays:
+            print("{}".format(x))
+            #filepath = tmppath
+            #self.imagegrid.add(filepath)
+            #unlink tmppath
 
     def on_disable_upload_message(self):
         self.upload_btn.Disable()
@@ -260,6 +300,8 @@ class MainPanel(wx.Panel):
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
         self.imagegrid.add(filepath)
+        xrays = XRays()
+        xrays.uploadXRay(self.sess, self.patient, filepath)
         pub.sendMessage('disableupload')
         pub.sendMessage("clearxraycontrol")
         pub.sendMessage('refresh')
@@ -268,6 +310,7 @@ class MainPanel(wx.Panel):
         self.search_panel.load_search_results(registrations)
 
     def on_clinic(self, event):
+        pub.sendMessage("pulseon")
         ind = event.GetIndex()
         item = self.clinics.GetItem(ind, 0)
         regs = Registrations()
@@ -276,6 +319,7 @@ class MainPanel(wx.Panel):
         self.set_registrations(patientsThisClinic)
         if len(patientsThisClinic):
             self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
+        pub.sendMessage("pulseoff")
 
     def on_search(self, event):
         print("on search enter")
