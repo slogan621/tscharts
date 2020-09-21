@@ -72,8 +72,8 @@ class TSSession():
 
     def login(self):
         retval = True
-        login = Login(self.getHost(), self.getPort(), self.getUsername(),
-self.getPassword())
+        login = Login(self.getHost(), self.getPort(), 
+                      self.getUsername(), self.getPassword())
         ret = login.send(timeout=30)
         if ret[0] != 200:
             print("failed to login: {}".format(ret[1]))
@@ -157,10 +157,14 @@ class Registrations():
                     p["middle"] = y["middle"]
                     p["paternal_last"] = y["paternal_last"]
                     p["maternal_last"] = y["maternal_last"]
-                    p["dob"] = y["dob"]
+                    p["dob"] = self.orderByYearMonthDay(y["dob"])
                     p["gender"] = y["gender"]
                     patients.append(p)
         return patients
+
+    def orderByYearMonthDay(self, dob):
+        y = dob.split("/")
+        return "{}/{}/{}".format(y[2], y[0], y[1]) 
 
     def searchAllRegistrations(self, sess, clinicid, pattern):
         patients = []
@@ -181,7 +185,7 @@ class Registrations():
                         p["middle"] = y["middle"]
                         p["paternal_last"] = y["paternal_last"]
                         p["maternal_last"] = y["maternal_last"]
-                        p["dob"] = y["dob"]
+                        p["dob"] = self.orderByYearMonthDay(y["dob"])
                         p["gender"] = y["gender"]
                         patients.append(p)
         return patients
