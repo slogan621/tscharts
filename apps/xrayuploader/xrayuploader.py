@@ -17,6 +17,8 @@ import getopt, sys
 import json
 import time
 import wx
+import base64
+import tempfile
 
 from advanced_search import AdvancedSearch
 from regular_search import RegularSearch
@@ -29,7 +31,7 @@ from test.tscharts.tscharts import Login, Logout
 from test.register.register import GetAllRegistrations
 from test.patient.patient import GetPatient
 from test.clinic.clinic import GetAllClinics
-from test.image.image import GetImage
+from test.image.image import GetImage, CreateImage
 from collections import OrderedDict
 
 class TSSession():
@@ -108,16 +110,34 @@ class XRays():
         print("getAllXrays ret[0] {}".format(ret[0]))
         if ret[0] == 200:
             xraylist = ret[1]
+            print("getAllXRays for patient {} clinic {} {}".format(patientid,
+clinicid, xraylist))
             for x in xraylist:
                 y = GetImage(sess.getHost(), sess.getPort(), sess.getToken())
                 y.setId(x)
                 ret = y.send(timeout=30)
                 if ret[0] == 200:
-                    xrays.append(y)
+                    xrays.append(ret[1])
         return xrays
 
-    def uploadXRay(self, sess, patientid, path):
-        pass
+    def uploadXRay(self, sess, clinicid, patientid, path):
+        x = CreateImage(sess.getHost(), sess.getPort(), sess.getToken())
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        with open(path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read())
+        x.setData(str(encoded_string, 'utf-8'))
+        x.setType("Xray")
+        ret = x.send(timeout=30)
+        print("uploadXRay ret[0] {}".format(ret[0]))
+        '''
+        if ret[0] == 200:
+            dial = wx.MessageDialog(self, "X-Ray upload successful", "Success", wx.OK|wx.STAY_ON_TOP|wx.CENTRE)
+        else:
+            # fail dialog
+            dial = wx.MessageDialog(self, "X-Ray upload failed ({})".format(ret[0]), "Error", wx.OK|wx.STAY_ON_TOP|wx.CENTRE)
+        dial.ShowModal()
+        '''
 
 class Registrations():
 
@@ -286,14 +306,13 @@ class MainPanel(wx.Panel):
         self.clinic = id
 
     def on_load_xrays(self):
-        print("on_load_xrays")
         xrays = XRays()
         patientXrays = xrays.getAllXRays(self.sess, self.clinic, self.patient)
         for x in patientXrays:
-            print("{}".format(x))
-            #filepath = tmppath
-            #self.imagegrid.add(filepath)
-            #unlink tmppath
+            fp = tempfile.NamedTemporaryFile()
+            fp.write(base64.b64decode(x['data']))
+            self.imagegrid.add(fp.name)
+            fp.close()
 
     def on_disable_upload_message(self):
         self.upload_btn.Disable()
@@ -305,7 +324,7 @@ class MainPanel(wx.Panel):
         filepath = self.photo_ctrl.get_image_path()
         self.imagegrid.add(filepath)
         xrays = XRays()
-        xrays.uploadXRay(self.sess, self.patient, filepath)
+        xrays.uploadXRay(self.sess, self.clinic, self.patient, filepath)
         pub.sendMessage('disableupload')
         pub.sendMessage("clearxraycontrol")
         pub.sendMessage('refresh')
