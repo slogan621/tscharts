@@ -16,7 +16,8 @@
 import os
 import wx
 from PIL import Image
-from pubsub import pub 
+from pubsub import pub
+
 PhotoMaxSize = 240
 
 class DropTarget(wx.FileDropTarget):
@@ -66,11 +67,10 @@ class PhotoCtrl(wx.Panel):
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.mainSizer.Add(wx.StaticLine(self, wx.ID_ANY),
                            0, wx.ALL|wx.EXPAND, 5)
-        #self.mainSizer.Add(instructLbl, 0, wx.ALL, 5)
         self.mainSizer.Add(self.imageCtrl, 0, wx.ALL, 5)
         self.sizer.Add(self.photoTxt, 0, wx.ALL, 5)
         self.sizer.Add(browseBtn, 0, wx.ALL, 5)
-        self.mainSizer.Add(self.sizer, 0, wx.ALL, 5)
+        self.mainSizer.Add(self.sizer, 1, wx.ALL | wx.EXPAND, 5)
         #self.panel.SetSizer(self.mainSizer)
         self.SetSizer(self.mainSizer)
         self.mainSizer.Fit(self)
@@ -81,7 +81,7 @@ class PhotoCtrl(wx.Panel):
         """ 
         Browse for file
         """
-        wildcard = "JPEG files (*.jpg)|*.jpg|(*.png)|*.png"
+        wildcard = "JPEG files (*.jpg)|*.jpg| PNG Files (*.png)|*.png"
         dialog = wx.FileDialog(None, "Choose a file",
                                wildcard=wildcard,
                                style=wx.FD_OPEN)

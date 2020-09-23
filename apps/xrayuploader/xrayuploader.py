@@ -235,12 +235,17 @@ class MainPanel(wx.Panel):
         self.clinicIds = []
         for x in clinics:
             self.clinicIds.append(x["id"])
-        self.clinics = wx.ListCtrl(self, size=(-1, -1), style=wx.LC_REPORT)
+        self.clinics = wx.ListCtrl(self, style=wx.LC_REPORT)
+        #self.clinics = wx.ListCtrl(self, size=(-1, -1), style=wx.LC_REPORT)
         
         self.clinics.InsertColumn(0, "Clinic Number")
+        self.clinics.SetColumnWidth(0, wx.LIST_AUTOSIZE_USEHEADER)
         self.clinics.InsertColumn(1, "Location")
-        self.clinics.InsertColumn(2, "Start")
-        self.clinics.InsertColumn(3, "End")
+        self.clinics.SetColumnWidth(1, wx.LIST_AUTOSIZE_USEHEADER)
+        self.clinics.InsertColumn(2, "Start Date")
+        self.clinics.SetColumnWidth(2, wx.LIST_AUTOSIZE_USEHEADER)
+        self.clinics.InsertColumn(3, "End Date")
+        self.clinics.SetColumnWidth(3, wx.LIST_AUTOSIZE_USEHEADER)
 
         index = 0
         for i in clinics: 
@@ -251,15 +256,15 @@ class MainPanel(wx.Panel):
             index += 1
 
         self.clinics.Bind(wx.EVT_LIST_ITEM_SELECTED, self.on_clinic, self.clinics)
-        clinics_sizer.Add(self.clinics, 1, wx.EXPAND)
+        clinics_sizer.Add(self.clinics, 1, wx.ALL| wx.EXPAND)
         self.search = wx.SearchCtrl(
             self, style=wx.TE_PROCESS_ENTER, size=(-1, 25))
         self.search.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.on_search)
         self.search.Bind(wx.EVT_TEXT_ENTER, self.on_search)
         search_sizer.Add(self.search, 1, wx.EXPAND)
         
-        self.main_sizer.Add(clinics_sizer, 0, wx.ALL|wx.EXPAND, 5)
-        self.main_sizer.Add(search_sizer, 0, wx.EXPAND)
+        self.main_sizer.Add(clinics_sizer, 1, wx.ALL|wx.EXPAND, 5)
+        self.main_sizer.Add(search_sizer, 0, wx.ALL |wx.EXPAND)
 
         self.search_panel = RegularSearch(self, sess)
         #self.advanced_search_panel = AdvancedSearch(self)
@@ -267,14 +272,13 @@ class MainPanel(wx.Panel):
         self.main_sizer.Add(self.search_panel, 1, wx.ALL | wx.EXPAND)
 
         self.photo_ctrl = PhotoCtrl(parent=self, sess=self.sess)
-        image_sizer.Add(self.photo_ctrl, 0, wx.LEFT, 5)
+        image_sizer.Add(self.photo_ctrl, 0, wx.ALL | wx.EXPAND, 5)
 
         self.upload_btn = wx.Button(self, label='Upload X-Ray')
         self.upload_btn.Disable()
         self.upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
         image_sizer.Add(self.upload_btn, 0, wx.LEFT, 5)
 
-        #image_sizer.Add((20,-1), proportion=1)  # this is a spacer
         self.imagegrid = ImageGrid(parent=self)
         image_sizer.Add(self.imagegrid, 1, wx.ALL | wx.EXPAND, 5)
         self.main_sizer.Add(image_sizer, 1, wx.ALL | wx.EXPAND)
@@ -333,6 +337,7 @@ class MainPanel(wx.Panel):
         self.search_panel.load_search_results(registrations)
 
     def on_clinic(self, event):
+        pub.sendMessage("clearxrays")
         pub.sendMessage("pulseon")
         ind = event.GetIndex()
         item = self.clinics.GetItem(ind, 0)
