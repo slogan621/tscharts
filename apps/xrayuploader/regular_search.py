@@ -218,6 +218,7 @@ class RegularSearch(wx.Panel):
 
     def update_search_results(self):
         self.search_results_olv.SetColumns([
+            ColumnDefn("ID", "left", 250, "id"),
             ColumnDefn("Paternal Last", "left", 250, "paternal_last"),
             ColumnDefn("Maternal Last", "left", 350, "maternal_last"),
             ColumnDefn("First", "left", 100, "first"),
