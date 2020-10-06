@@ -1,8 +1,19 @@
 from distutils.core import setup
+import os
+
+def package_files(directory):
+    paths = []
+    for (path, directories, filenames) in os.walk(directory):
+        for filename in filenames:
+            paths.append(os.path.join('..', path, filename))
+    return paths
+
+extra_files = package_files('tschartslib') + package_files('service')
 
 setup(
   name = 'tschartslib',         
   packages = ['tschartslib'],   
+  package_data={'': extra_files},
   version = '{{VERSION}}',      
   license='apache-2.0',       
   description = 'Python API for calling tscharts REST API',  
@@ -15,7 +26,7 @@ setup(
           'requests',
       ],
   classifiers=[
-    'Development Status :: 5 - Productions/Stable',    
+    'Development Status :: 5 - Production/Stable',    
     'Intended Audience :: Developers',     
     'Topic :: Software Development :: Libraries',
     'License :: OSI Approved :: Apache Software License', 

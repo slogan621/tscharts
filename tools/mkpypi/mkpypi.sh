@@ -26,10 +26,14 @@ else
     cp setup_template.py setup.py 
     sed -i "s/{{VERSION}}/$version/g" setup.py 
     rm -rf test
+    rm -rf dist
     rm -rf tschartslib
     cp ../../README.md .
     cp -r ../../test .
     mv test tschartslib
+    cp -r ../../service tscharts 
+    find tschartslib -name "*.pyc" | xargs rm
+    find service -name "*.pyc" | xargs rm
 
     python setup.py sdist
 
