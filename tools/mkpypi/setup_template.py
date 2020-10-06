@@ -8,7 +8,7 @@ def package_files(directory):
             paths.append(os.path.join('..', path, filename))
     return paths
 
-extra_files = package_files('tschartslib') + package_files('service')
+extra_files = package_files('tschartslib')
 
 setup(
   name = 'tschartslib',         

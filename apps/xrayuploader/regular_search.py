@@ -23,7 +23,7 @@ from download_dialog import DownloadDialog
 from ObjectListView import ObjectListView, ColumnDefn
 from pubsub import pub
 from urllib.parse import urlencode, quote_plus
-from test.image.image import GetImage
+from tschartslib.image.image import GetImage
 import wx.lib.agw.pyprogress as PP
 
 class Headshot():

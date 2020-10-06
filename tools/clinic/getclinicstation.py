@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2018-2019
-#(C) Copyright Thousand Smiles Foundation 2018-2019
+#(C) Copyright Syd Logan 2018-2020
+#(C) Copyright Thousand Smiles Foundation 2018-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ import unittest
 import getopt, sys
 import json
 
-from service.serviceapi import ServiceAPI
-from test.tscharts.tscharts import Login, Logout
+from tschartslib.service.serviceapi import ServiceAPI
+from tschartslib.tscharts.tscharts import Login, Logout
 
 def setUp():
     login = Login(host, port, username, password)

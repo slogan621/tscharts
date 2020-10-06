@@ -26,12 +26,12 @@ from imagegrid import ImageGrid
 from photoctrl import PhotoCtrl
 from pubsub import pub
 
-from service.serviceapi import ServiceAPI
-from test.tscharts.tscharts import Login, Logout
-from test.register.register import GetAllRegistrations
-from test.patient.patient import GetPatient
-from test.clinic.clinic import GetAllClinics
-from test.image.image import GetImage, CreateImage
+from tschartslib.service.serviceapi import ServiceAPI
+from tschartslib.tscharts.tscharts import Login, Logout
+from tschartslib.register.register import GetAllRegistrations
+from tschartslib.patient.patient import GetPatient
+from tschartslib.clinic.clinic import GetAllClinics
+from tschartslib.image.image import GetImage, CreateImage
 from collections import OrderedDict
 
 class TSSession():

@@ -29,11 +29,8 @@ else
     rm -rf dist
     rm -rf tschartslib
     cp ../../README.md .
-    cp -r ../../test .
-    mv test tschartslib
-    cp -r ../../service tscharts 
+    cp -r ../../tschartslib .
     find tschartslib -name "*.pyc" | xargs rm
-    find service -name "*.pyc" | xargs rm
 
     python setup.py sdist
 
