@@ -19,6 +19,7 @@ import time
 import wx
 import base64
 import tempfile
+import os
 
 from advanced_search import AdvancedSearch
 from regular_search import RegularSearch
@@ -313,10 +314,12 @@ class MainPanel(wx.Panel):
         xrays = XRays()
         patientXrays = xrays.getAllXRays(self.sess, self.clinic, self.patient)
         for x in patientXrays:
-            fp = tempfile.NamedTemporaryFile()
+            fp = tempfile.NamedTemporaryFile(delete=False)
+            tmp_name = fp.name
             fp.write(base64.b64decode(x['data']))
+            fp.close() # on Windows, need to close before adding to grid
             self.imagegrid.add(fp.name)
-            fp.close()
+            os.unlink(tmp_name)
 
     def on_disable_upload_message(self):
         self.upload_btn.Disable()
