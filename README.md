@@ -81,9 +81,9 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 
 # Python library (tschartslib)
 
-The unit tests listed below all are based on a Python library that thinly
-wraps the tscharts REST API. This library is named tschartslib, and can be 
-installed using pip:
+The unit tests listed below are based on a Python library that thinly wraps 
+the tscharts REST API. This library is named tschartslib, and can be installed 
+using pip:
 
 ```
 sudo pip install tschartslib
