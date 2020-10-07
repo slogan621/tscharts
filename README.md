@@ -128,6 +128,7 @@ from tschartslib.patient.patient import GetPatient
         # get all patients registered for the clinic
 
         if ret[0] == 200:
+            clinicid = ret[1]["id"]
             x = GetAllRegistrations(host, port, token)
             x.setClinic(clinicid)
             ret = x.send(timeout=30)
