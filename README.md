@@ -79,6 +79,101 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 {"active":true,"clinic":1553,"station":653,"id":16,"level":1}
 ```
 
+# Python library (tschartslib)
+
+The unit tests listed below all are based on a Python library that thinly
+wraps the tscharts REST API. This library is named tschartslib, and can be 
+installed using pip:
+
+```
+sudo pip install tschartslib
+```
+
+We are working on documentation for this library, but note that each module
+includes unit tests that serve as examples for use. Here is a short example
+that illustrates how to obtain a list of patients registered for a clinic:
+
+```
+from tschartslib.clinic.clinic import GetClinic
+from tschartslib.register.register import GetAllRegistrations
+from tschartslib.patient.patient import GetPatient
+
+...
+
+    # login. API requires an authentication token. Auth is basic Django Auth
+    # username, password supplied by user. Check with system admin for host
+    # and port (host is a string, port is an integer)
+
+    token = None
+    login = Login(host, port, username, password)
+    ret = login.send(timeout=30)
+    if ret[0] == 200:
+        token = ret[1]["token"]
+    else:
+        print("Unable to get access token {}".format(ret[0]))
+
+    if token:
+        # get today's clinic 
+
+        x = GetClinic(host, port, token)
+        x.setDate(datetime.utcnow().strftime("%m/%d/%Y"))
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
+        elif ret[0] == 404:
+            print("no clinic found on {}".format(dateStr))
+        else:
+            print("Unable to get clinic error code {}".format(ret[0]))
+
+        # get all patients registered for the clinic
+
+        if ret[0] == 200:
+            x = GetAllRegistrations(host, port, token)
+            x.setClinic(clinicid)
+            ret = x.send(timeout=30)
+            if ret[0] == 200:
+
+                # now we have a list of registrations. Each includes
+                # an id for the patient registered. Walk this list
+                # and create an array of dicts with the patient details
+                # that we care about
+
+                registrations = ret[1]
+                patients = []
+
+                for x in registrations:
+                    y = GetPatient(host, port, token)
+                    y.setId(x["patient]")
+                    registrationid = x["id"]
+                    ret = y.send(timeout=30)
+                    if ret[0] == 200:
+
+                        # got the patient, extract details and add to list
+
+                        patient = ret[1] 
+
+                        p = {}
+                        p["id"] = patient["id"]
+                        p["registrationid"] = registrationid
+                        p["clinicid"] = clinicid 
+                        p["first"] = patient["first"]
+                        p["first"] = patient["first"]
+                        p["middle"] = patient["middle"]
+                        p["paternal_last"] = patient["paternal_last"]
+                        p["maternal_last"] = patient["maternal_last"]
+                        p["dob"] = patient["dob"]
+                        p["gender"] = patient["gender"]
+                        patients.append(p)
+
+        # list of patients registered for today's clinic
+
+        return patients
+```
+
+
+For more information, visit https://pypi.org/project/tschartslib/
+
+
 ## Registration and Routing API
 
 The following describes the registation and routing APIs. They are ordered in 
