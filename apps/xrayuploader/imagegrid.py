@@ -16,6 +16,8 @@
 import wx
 from pubsub import pub
 
+# https://wiki.wxpython.org/ScrolledWindows
+
 class ImageGrid(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -25,19 +27,32 @@ class ImageGrid(wx.Panel):
         txt = 'X-Rays Uploaded for This Patient and Clinic'
         label = wx.StaticText(self, label=txt)
         sizer.Add(label, 1, wx.ALL | wx.CENTER, 5)
-       
-        self.grid = wx.GridSizer(5, 5, 5, 5)
-        self.SetBackgroundColour('light blue') 
-        self.SetMinSize(wx.Size(400, 300))
-        sizer.Add(self.grid, 1, wx.ALL | wx.EXPAND, 5)
 
+        self.scroll = wx.ScrolledWindow(self, -1)
+        self.scroll.SetScrollRate(60, 60)
+        sizer.Add(self.scroll, 1, wx.ALL, 5)
+        self.frmPanel = wx.Panel(self.scroll, -1)
+     
+        self.grid = wx.FlexGridSizer(10, 5, 5, 5)   # rows, cols, hgap, vgap 
+        #self.grid = wx.GridSizer(5, 5, 5, 5)
+        self.SetBackgroundColour('light blue') 
+        self.SetMaxSize(wx.Size(-1, 300))
+        #sizer.Add(self.grid, 1, wx.ALL, 5)
+        #sizer.Add(self.scroll, 1, wx.ALL, 5)
+
+        frmPnlSizer = wx.BoxSizer(wx.VERTICAL)
+        frmPnlSizer.Add(self.grid, proportion=1, flag=wx.ALL, border=20 )
+        self.frmPanel.SetSizer(frmPnlSizer)
+        sizer.Add(frmPnlSizer, 1, wx.ALL, 5)
         self.SetSizer(sizer)
         self.Layout()
         self.Show()
-        pub.subscribe(self.on_clear_message, 'clearxrays')      
+        pub.subscribe(self.on_clear_message, 'clearxrays')
+        self.deleteList = []
 
-    def add(self, path):
+    def add(self, path, id):
         photoMaxSize = 60
+        sizer = wx.BoxSizer(wx.VERTICAL)
         img = wx.Image(photoMaxSize, photoMaxSize)
         imageCtrl = wx.StaticBitmap(self, wx.ID_ANY,
                                          wx.Bitmap(img))
@@ -53,9 +68,33 @@ class ImageGrid(wx.Panel):
             NewW = photoMaxSize * W / H
         img = img.Scale(NewW,NewH)
         imageCtrl.SetBitmap(wx.Bitmap(img))
-        self.grid.Add(imageCtrl)
+        checkBox = wx.CheckBox(self, label = 'Delete', pos = (10,10)) 
+
+        def onChecked(self, imageId=id, deleteList=self.deleteList): 
+            #cb = e.GetEventObject() 
+            #print(cb.GetLabel(),' is clicked', cb.GetValue())
+            print("onChecked: id is {}".format(imageId))
+            # XXX what about unchecked?
+            deleteList.append(imageId)
+   
+        checkBox.Bind(wx.EVT_CHECKBOX, onChecked)
+        #checkBox.Bind(wx.EVT_CHECKBOX, self.onChecked)
+        sizer.Add(imageCtrl, 1, wx.ALL | wx.CENTER, 5)
+        sizer.Add(checkBox, 1, wx.ALL | wx.CENTER, 5)
+        self.grid.Add(sizer, wx.ALL, border=5)
         self.grid.ShowItems(True)
         pub.sendMessage("refresh")
+        self.frmPanel.SetAutoLayout( True )
+        self.frmPanel.Layout()
+        self.frmPanel.Fit()
+
+        self.frmPanelWid, self.frmPanelHgt = self.frmPanel.GetSize()
+        print("frmPanelWid width {} height {}".format(self.frmPanelWid,
+self.frmPanelHgt))
+        self.unit = 60 
+        self.SetVirtualSize(self.frmPanelWid, self.frmPanelHgt)
+        self.scroll.SetScrollbars(self.unit, self.unit, self.frmPanelWid/self.unit, self.frmPanelHgt/self.unit)
+        self.scroll.EnableScrolling(True,True)
 
     def on_clear_message(self):
         self.grid.ShowItems(False)

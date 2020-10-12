@@ -108,7 +108,7 @@ class XRays():
         x.setPatient(patientid)
         x.setType("Xray")
         ret = x.send(timeout=30)
-        print("getAllXrays ret[0] {}".format(ret[0]))
+        print("getAllXRays ret[0] {}".format(ret[0]))
         if ret[0] == 200:
             xraylist = ret[1]
             print("getAllXRays for patient {} clinic {} {}".format(patientid,
@@ -130,7 +130,12 @@ clinicid, xraylist))
         x.setData(str(encoded_string, 'utf-8'))
         x.setType("Xray")
         ret = x.send(timeout=30)
-        print("uploadXRay ret[0] {}".format(ret[0]))
+        if ret[0] == 200:
+            print("uploadXRay success id is {}".format(ret[1]["id"]))
+            return ret[1]["id"]
+        else:
+            print("uploadXRay failed ret[0] {}".format(ret[0]))
+            return None
         '''
         if ret[0] == 200:
             dial = wx.MessageDialog(self, "X-Ray upload successful", "Success", wx.OK|wx.STAY_ON_TOP|wx.CENTRE)
@@ -318,7 +323,7 @@ class MainPanel(wx.Panel):
             tmp_name = fp.name
             fp.write(base64.b64decode(x['data']))
             fp.close() # on Windows, need to close before adding to grid
-            self.imagegrid.add(fp.name)
+            self.imagegrid.add(fp.name, x["id"])
             os.unlink(tmp_name)
 
     def on_disable_upload_message(self):
@@ -329,12 +334,13 @@ class MainPanel(wx.Panel):
 
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
-        self.imagegrid.add(filepath)
         xrays = XRays()
-        xrays.uploadXRay(self.sess, self.clinic, self.patient, filepath)
-        pub.sendMessage('disableupload')
-        pub.sendMessage("clearxraycontrol")
-        pub.sendMessage('refresh')
+        ret = xrays.uploadXRay(self.sess, self.clinic, self.patient, filepath)
+        if not ret == None:
+            self.imagegrid.add(filepath, id=ret)
+            pub.sendMessage('disableupload')
+            pub.sendMessage("clearxraycontrol")
+            pub.sendMessage('refresh')
 
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
