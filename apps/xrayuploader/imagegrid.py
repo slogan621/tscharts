@@ -15,6 +15,7 @@
 
 import wx
 from pubsub import pub
+import wx.lib.scrolledpanel as scrolled
 
 # https://wiki.wxpython.org/ScrolledWindows
 
@@ -28,22 +29,23 @@ class ImageGrid(wx.Panel):
         label = wx.StaticText(self, label=txt)
         sizer.Add(label, 1, wx.ALL | wx.CENTER, 5)
 
-        self.scroll = wx.ScrolledWindow(self, -1)
-        self.scroll.SetScrollRate(60, 60)
+        self.scroll = scrolled.ScrolledPanel(self, -1,
+            style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1")
+        self.scroll.SetAutoLayout(1)
+        self.scroll.SetupScrolling()
+        #self.scroll.SetScrollRate(60, 60)
         sizer.Add(self.scroll, 1, wx.ALL, 5)
-        self.frmPanel = wx.Panel(self.scroll, -1)
      
-        self.grid = wx.FlexGridSizer(10, 5, 5, 5)   # rows, cols, hgap, vgap 
+        self.grid = wx.FlexGridSizer(cols=8, hgap=5, vgap=5)   # rows, cols, hgap, vgap 
         #self.grid = wx.GridSizer(5, 5, 5, 5)
         self.SetBackgroundColour('light blue') 
-        self.SetMaxSize(wx.Size(-1, 300))
+        #self.SetMaxSize(wx.Size(-1, 300))
         #sizer.Add(self.grid, 1, wx.ALL, 5)
         #sizer.Add(self.scroll, 1, wx.ALL, 5)
 
-        frmPnlSizer = wx.BoxSizer(wx.VERTICAL)
-        frmPnlSizer.Add(self.grid, proportion=1, flag=wx.ALL, border=20 )
-        self.frmPanel.SetSizer(frmPnlSizer)
-        sizer.Add(frmPnlSizer, 1, wx.ALL, 5)
+        #self.scroll.Add(self.grid, proportion=1, flag=wx.ALL, border=20 )
+        #sizer.Add(frmPnlSizer, 1, wx.ALL, 5)
+        sizer.Add(self.grid, 1, wx.ALL, 5)
         self.SetSizer(sizer)
         self.Layout()
         self.Show()
@@ -81,13 +83,14 @@ class ImageGrid(wx.Panel):
         #checkBox.Bind(wx.EVT_CHECKBOX, self.onChecked)
         sizer.Add(imageCtrl, 1, wx.ALL | wx.CENTER, 5)
         sizer.Add(checkBox, 1, wx.ALL | wx.CENTER, 5)
-        self.grid.Add(sizer, wx.ALL, border=5)
+        self.grid.Add(sizer, wx.ALL, flag=wx.EXPAND, border=5)
         self.grid.ShowItems(True)
         pub.sendMessage("refresh")
-        self.frmPanel.SetAutoLayout( True )
-        self.frmPanel.Layout()
-        self.frmPanel.Fit()
+        #self.frmPanel.SetAutoLayout( True )
+        #self.frmPanel.Layout()
+        #self.frmPanel.Fit()
 
+        '''
         self.frmPanelWid, self.frmPanelHgt = self.frmPanel.GetSize()
         print("frmPanelWid width {} height {}".format(self.frmPanelWid,
 self.frmPanelHgt))
@@ -95,6 +98,10 @@ self.frmPanelHgt))
         self.SetVirtualSize(self.frmPanelWid, self.frmPanelHgt)
         self.scroll.SetScrollbars(self.unit, self.unit, self.frmPanelWid/self.unit, self.frmPanelHgt/self.unit)
         self.scroll.EnableScrolling(True,True)
+        '''
+        self.scroll.SetAutoLayout(True)
+        self.scroll.Layout()
+        self.scroll.SetupScrolling()
 
     def on_clear_message(self):
         self.grid.ShowItems(False)
