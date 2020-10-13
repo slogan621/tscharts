@@ -29,7 +29,7 @@ class ImageGrid(scrolled.ScrolledPanel):
         #label = wx.StaticText(self, label=txt)
         #sizer.Add(label, 1, wx.ALL | wx.CENTER, 5)
 
-        self.grid = wx.FlexGridSizer(cols=8, hgap=5, vgap=5)   # rows, cols, hgap, vgap 
+        self.grid = wx.FlexGridSizer(cols=6, hgap=5, vgap=5)   # rows, cols, hgap, vgap 
         self.SetBackgroundColour('light blue') 
         self.SetSizer(self.grid)
         self.Layout()
@@ -61,8 +61,6 @@ class ImageGrid(scrolled.ScrolledPanel):
             imageId = args[0]
             deleteList = args[1]
             checkBox = args[2]
-            #cb = e.GetEventObject() 
-            #print(cb.GetLabel(),' is clicked', cb.GetValue())
             print("onChecked: id is {} e is {} value {}".format(imageId, e,
 checkBox.GetValue()))
             if checkBox.GetValue() == True:

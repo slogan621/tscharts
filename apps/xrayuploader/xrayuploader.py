@@ -285,8 +285,19 @@ class MainPanel(wx.Panel):
         self.upload_btn.Bind(wx.EVT_BUTTON, self.on_upload)
         image_sizer.Add(self.upload_btn, 0, wx.LEFT, 5)
 
+        self.delete_btn = wx.Button(self, label='Delete Selected')
+        self.delete_btn.Disable()
+        self.delete_btn.Bind(wx.EVT_BUTTON, self.on_delete)
+        image_sizer.Add(self.delete_btn, 0, wx.LEFT, 5)
+
+        isizer = wx.BoxSizer(wx.VERTICAL)
+        txt = 'X-Rays Uploaded for This Patient and Clinic'
+        label = wx.StaticText(self, label=txt)
+        isizer.Add(label, 0, wx.ALL | wx.CENTER, 5)
+
         self.imagegrid = ImageGrid(parent=self)
-        image_sizer.Add(self.imagegrid, 1, wx.ALL | wx.EXPAND, 5)
+        isizer.Add(self.imagegrid, 1, wx.ALL | wx.EXPAND, 5)
+        image_sizer.Add(isizer, 1, wx.ALL | wx.EXPAND)
         self.main_sizer.Add(image_sizer, 1, wx.ALL | wx.EXPAND)
 
         #self.main_sizer.Add(self.advanced_search_panel, 1, wx.EXPAND)
@@ -331,6 +342,9 @@ class MainPanel(wx.Panel):
 
     def on_enable_upload_message(self):
         self.upload_btn.Enable()
+
+    def on_delete(self, event):
+        pass
 
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
