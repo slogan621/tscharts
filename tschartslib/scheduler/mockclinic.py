@@ -488,7 +488,7 @@ class MockClinic:
             print("addPhoto: unable to create photo, invalid clinic id")
             return
 
-        if clinicid == None:
+        if patientid == None:
             print("addPhoto: unable to create photo, invalid patient id")
             return
 
