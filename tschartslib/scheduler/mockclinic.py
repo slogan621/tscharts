@@ -484,6 +484,14 @@ class MockClinic:
         if ret == False: 
             return
 
+        if clinicid == None:
+            print("addPhoto: unable to create photo, invalid clinic id")
+            return
+
+        if clinicid == None:
+            print("addPhoto: unable to create photo, invalid patient id")
+            return
+
         imageid = patientid % 10
         if genderStr == "Female":
             image = "images/girlfront-{}.jpg".format(imageid);
