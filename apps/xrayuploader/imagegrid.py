@@ -57,17 +57,27 @@ class ImageGrid(scrolled.ScrolledPanel):
         imageCtrl.SetBitmap(wx.Bitmap(img))
         checkBox = wx.CheckBox(self, label = 'Delete', pos = (10,10)) 
 
-        def onChecked(self, imageId=id, deleteList=self.deleteList): 
+        def onChecked(self, e, args): 
+            imageId = args[0]
+            deleteList = args[1]
+            checkBox = args[2]
             #cb = e.GetEventObject() 
             #print(cb.GetLabel(),' is clicked', cb.GetValue())
-            print("onChecked: id is {}".format(imageId))
-            # XXX what about unchecked?
-            deleteList.append(imageId)
+            print("onChecked: id is {} e is {} value {}".format(imageId, e,
+checkBox.GetValue()))
+            if checkBox.GetValue() == True:
+                deleteList.append(imageId)
+            else:
+                try:
+                    deleteList.remove(imageId)
+                except:
+                    pass
    
-        checkBox.Bind(wx.EVT_CHECKBOX, onChecked)
+        checkBox.Bind(wx.EVT_CHECKBOX, lambda event: onChecked(self=self, e=event, args=(id,
+self.deleteList, checkBox)))
         sizer.Add(imageCtrl, 1, wx.ALL | wx.CENTER, 5)
         sizer.Add(checkBox, 1, wx.ALL | wx.CENTER, 5)
-        self.grid.Add(sizer, wx.ALL, flag=wx.EXPAND, border=5)
+        self.grid.Add(sizer, flag=wx.ALL | wx.EXPAND, border=5)
         self.grid.ShowItems(True)
         pub.sendMessage("refresh")
 
