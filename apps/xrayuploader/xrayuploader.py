@@ -32,7 +32,7 @@ from tschartslib.tscharts.tscharts import Login, Logout
 from tschartslib.register.register import GetAllRegistrations
 from tschartslib.patient.patient import GetPatient
 from tschartslib.clinic.clinic import GetAllClinics
-from tschartslib.image.image import GetImage, CreateImage
+from tschartslib.image.image import GetImage, CreateImage, DeleteImage
 from collections import OrderedDict
 
 class TSSession():
@@ -121,7 +121,7 @@ clinicid, xraylist))
                     xrays.append(ret[1])
         return xrays
 
-    def uploadXRay(self, sess, clinicid, patientid, path):
+    def uploadXRay(self, sess, imagegrid, clinicid, patientid, path):
         x = CreateImage(sess.getHost(), sess.getPort(), sess.getToken())
         x.setClinic(clinicid)
         x.setPatient(patientid)
@@ -132,18 +132,21 @@ clinicid, xraylist))
         ret = x.send(timeout=30)
         if ret[0] == 200:
             print("uploadXRay success id is {}".format(ret[1]["id"]))
+            imagegrid.toggleDeleteButtonState()
             return ret[1]["id"]
         else:
             print("uploadXRay failed ret[0] {}".format(ret[0]))
-            return None
-        '''
+
+    def removeXRay(self, sess, imagegrid, id):
+        ret = False
+        x = DeleteImage(sess.getHost(), sess.getPort(), sess.getToken(), id)
+        ret = x.send(timeout=30)
         if ret[0] == 200:
-            dial = wx.MessageDialog(self, "X-Ray upload successful", "Success", wx.OK|wx.STAY_ON_TOP|wx.CENTRE)
+            ret = True
+            print("deleted XRay image {}".format(id))
         else:
-            # fail dialog
-            dial = wx.MessageDialog(self, "X-Ray upload failed ({})".format(ret[0]), "Error", wx.OK|wx.STAY_ON_TOP|wx.CENTRE)
-        dial.ShowModal()
-        '''
+            print("XRay failed to delete XRay image {}".format(id))
+        return ret
 
 class Registrations():
 
@@ -226,6 +229,8 @@ class MainPanel(wx.Panel):
         self.sess = sess
         self.patient = None
         self.search_term = None
+        pub.subscribe(self.disable_delete, 'disable_delete')
+        pub.subscribe(self.enable_delete, 'enable_delete')
         pub.subscribe(self.update_ui, 'update_ui')
         pub.subscribe(self.on_disable_upload_message, 'disableupload')
         pub.subscribe(self.on_enable_upload_message, 'enableupload')
@@ -344,12 +349,33 @@ class MainPanel(wx.Panel):
         self.upload_btn.Enable()
 
     def on_delete(self, event):
-        pass
+        dlg = wx.MessageDialog(None, "Are you sure you want to delete the
+selected XRay(s)? This operation cannot be undone.",'Confirm Delete',wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+
+        if result == wx.ID_YES:
+            print( "Yes pressed")
+        else:
+            print( "No pressed")
+            return
+
+        deleteList = self.imagegrid.getDeleteList()
+        cleanup = []
+        if deleteList:
+            xrays = XRays()
+            for x in deleteList:
+                ret = xrays.removeXRay(self.sess, self.imagegrid, x)
+                if ret == True:
+                    cleanup.append(x)
+            for x in cleanup:
+                self.imagegrid.removeFromDeleteList(x)
+            pub.sendMessage('clearxrays')
+            pub.sendMessage('loadxrays')
 
     def on_upload(self, event):
         filepath = self.photo_ctrl.get_image_path()
         xrays = XRays()
-        ret = xrays.uploadXRay(self.sess, self.clinic, self.patient, filepath)
+        ret = xrays.uploadXRay(self.sess, self.imagegrid, self.clinic, self.patient, filepath)
         if not ret == None:
             self.imagegrid.add(filepath, id=ret)
             pub.sendMessage('disableupload')
@@ -393,6 +419,12 @@ self.clinic, self.search_term)
         self.advanced_search_btn.Hide()
         self.advanced_search_panel.Show()
         self.main_sizer.Layout()
+
+    def disable_delete(self):
+        self.delete_btn.Disable()
+
+    def enable_delete(self):
+        self.delete_btn.Enable()
 
     def update_ui(self):
         """

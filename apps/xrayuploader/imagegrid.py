@@ -37,6 +37,26 @@ class ImageGrid(scrolled.ScrolledPanel):
         pub.subscribe(self.on_clear_message, 'clearxrays')
         self.deleteList = []
 
+    def getDeleteList(self):
+        return self.deleteList;
+
+    def addToDeleteList(self, id):
+        self.deleteList.append(id)
+        self.toggleDeleteButtonState() 
+
+    def removeFromDeleteList(self, id):
+        self.deleteList.remove(id)
+        self.toggleDeleteButtonState() 
+
+    def toggleDeleteButtonState(self):
+        if self.getDeleteListSize() == 0:
+            pub.sendMessage("disable_delete")
+        else:
+            pub.sendMessage("enable_delete")
+   
+    def getDeleteListSize(self):
+        return len(self.deleteList)
+
     def add(self, path, id):
         photoMaxSize = 60
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -64,12 +84,17 @@ class ImageGrid(scrolled.ScrolledPanel):
             print("onChecked: id is {} e is {} value {}".format(imageId, e,
 checkBox.GetValue()))
             if checkBox.GetValue() == True:
-                deleteList.append(imageId)
+                self.addToDeleteList(imageId)
             else:
                 try:
-                    deleteList.remove(imageId)
+                    self.removeFromDeleteList(imageId)
                 except:
                     pass
+
+            if self.getDeleteListSize() == 0:
+                pub.sendMessage("disable_delete")
+            else:
+                pub.sendMessage("enable_delete")
    
         checkBox.Bind(wx.EVT_CHECKBOX, lambda event: onChecked(self=self, e=event, args=(id,
 self.deleteList, checkBox)))
