@@ -266,6 +266,10 @@ specialty.
     * [API](../master/xray/README.md)
     * [Unit Tests](../master/tschartslib/xray/xray.py)
 
+ * dentaltreatment - used to add, delete, modify and get dental treatment records from the database. 
+    * [API](../master/dentaltreatment/README.md)
+    * [Unit Tests](../master/tschartslib/dentaltreatment/dentaltreatment.py)
+
  * enthistory - used to add, delete, modify and get ENT medical history records from the database. 
     * [API](../master/enthistory/README.md)
     * [Unit Tests](../master/tschartslib/enthistory/enthistory.py)
