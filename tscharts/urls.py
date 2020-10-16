@@ -53,6 +53,7 @@ urlpatterns = [
     url(r'^tscharts/v1/enttreatment/', include('enttreatment.urls', namespace='enttreatment')),
     url(r'^tscharts/v1/entdiagnosis/', include('entdiagnosis.urls', namespace='entdiagnosis')),
     url(r'^tscharts/v1/entdiagnosisextra/', include('entdiagnosisextra.urls', namespace='entdiagnosisextra')),
+    url(r'^tscharts/v1/dentaltreatment/', include('dentaltreatment.urls', namespace='dentaltreatment')),
     url(r'^tscharts/v1/medicalhistory/', include('medicalhistory.urls', namespace='medicalhistory')),
     url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
     url(r'^tscharts/v1/mexicanstates/', include('mexicanstates.urls', namespace='mexicanstates')),
