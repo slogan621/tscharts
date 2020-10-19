@@ -349,8 +349,7 @@ class MainPanel(wx.Panel):
         self.upload_btn.Enable()
 
     def on_delete(self, event):
-        dlg = wx.MessageDialog(None, "Are you sure you want to delete the
-selected XRay(s)? This operation cannot be undone.",'Confirm Delete',wx.YES_NO | wx.ICON_QUESTION)
+        dlg = wx.MessageDialog(None, "Are you sure you want to delete the selected XRay(s)? This operation cannot be undone.",'Confirm Delete',wx.YES_NO | wx.ICON_QUESTION)
         result = dlg.ShowModal()
 
         if result == wx.ID_YES:
