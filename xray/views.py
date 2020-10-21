@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -60,7 +60,11 @@ class XRayView(APIView):
         return ret
 
     def xrayTypeToName(self, t):
-        xrayTypeToNameMap = {'f': "full", 'a': "anteriors_bitewings"}
+        xrayTypeToNameMap = {'f': "full", 
+                             'a': "anteriors_bitewings",
+                             'p': "panoramic_view",
+                             'c': "cephalometric",
+        }
 
         ret = None
         try:
@@ -70,7 +74,11 @@ class XRayView(APIView):
         return ret
 
     def nameToXrayType(self, name):
-        nameToXrayTypeMap = {"full": 'f', "anteriors_bitewings": 'a'}
+        nameToXrayTypeMap = {"full": 'f', 
+                             "anteriors_bitewings": 'a',
+                             "panoramic_view": 'p',
+                             "cephalometric": 'c',
+        }
 
         ret = None
         try:

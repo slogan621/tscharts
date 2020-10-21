@@ -143,7 +143,7 @@ Content-Type: application/json
  
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
-   `xray_type` "full" | "anteriors_bitewings"<br />
+   `xray_type` "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
    `mouth_type` "child" | "adult"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 
@@ -213,7 +213,7 @@ Content-Type: application/json
    One or more of the field/value pairs below:
 
    `mouth_type` "child" | "adult"<br />
-   `xray_type` "full" | "anteriors_bitewings"<br />
+   `xray_type` "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 
 * **Success Response:**

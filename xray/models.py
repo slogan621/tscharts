@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2020
+#(C) Copyright Thousand Smiles Foundation 2019-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -27,7 +27,13 @@ class XRay(models.Model):
 
     FULL = 'f'
     ANTERIORS_AND_BITEWINGS = 'a'
-    TYPE_CHOICES = ((FULL, "full"), (ANTERIORS_AND_BITEWINGS, "anteriors_bitewings"))
+    PANORAMIC_VIEW = 'p'
+    CEPHALOMETRIC = 'c'
+    TYPE_CHOICES = ((FULL, "full"), 
+                    (ANTERIORS_AND_BITEWINGS, "anteriors_bitewings"),
+                    (PANORAMIC_VIEW, "panoramic_view"),
+                    (CEPHALOMETRIC, "cephalometric"),
+    )
     type = models.CharField(
         max_length = 1,
         choices = TYPE_CHOICES,
