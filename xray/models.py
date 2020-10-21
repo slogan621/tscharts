@@ -35,7 +35,7 @@ class XRay(models.Model):
                     (CEPHALOMETRIC, "cephalometric"),
     )
     type = models.CharField(
-        max_length = 1,
+        max_length = 16,         # allow 16 types for possible expansion
         choices = TYPE_CHOICES,
         default = FULL,
     )

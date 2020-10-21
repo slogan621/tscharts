@@ -60,32 +60,64 @@ class XRayView(APIView):
         return ret
 
     def xrayTypeToName(self, t):
-        xrayTypeToNameMap = {'f': "full", 
-                             'a': "anteriors_bitewings",
-                             'p': "panoramic_view",
-                             'c': "cephalometric",
+        xrayTypeToNameMap = {'f': "full",
+                         'a': "anteriors_bitewings",
+                         'p': "panoramic_view",
+                         'c': "cephalometric",
         }
 
         ret = None
         try:
-            ret = xrayTypeToNameMap[t] 
+            ret = xrayTypeToNameMap[t]
         except:
             pass
         return ret
 
     def nameToXrayType(self, name):
-        nameToXrayTypeMap = {"full": 'f', 
-                             "anteriors_bitewings": 'a',
-                             "panoramic_view": 'p',
-                             "cephalometric": 'c',
+        nameToXrayTypeMap = {"full": 'f',
+                         "anteriors_bitewings": 'a',
+                         "panoramic_view": 'p',
+                         "cephalometric": 'c',
         }
 
         ret = None
         try:
-            ret = nameToXrayTypeMap[name] 
+            ret = nameToXrayTypeMap[name]
         except:
             pass
         return ret
+
+    def convertCSVToDBXrayType(self, val):
+        csv = val.replace(" ", "").split(',')
+        typestr = ""
+        try:
+            for x in csv:
+                typestr = typestr + self.nameToXrayType(x)
+        except:
+            typestr = ""
+
+        return typestr
+
+    def convertFromDBXrayTypeToCSV(self, val):
+
+        y = []
+
+        try:
+            for x in val:
+                y.append(self.xrayTypeToName(x))
+        except:
+            y = []
+
+        # create CSV
+
+        typestr = ""
+        for x in y:
+            typestr = typestr + x
+            typestr = typestr + " "
+
+        typestr = typestr.rstrip().replace(" ", ",")
+
+        return typestr
 
     def serialize(self, entry):
         
@@ -94,7 +126,8 @@ class XRayView(APIView):
         m["clinic"] = entry.clinic_id
         m["patient"] = entry.patient_id
         m["time"] = entry.time.strftime("%m/%d/%Y")
-        m["xray_type"] = self.xrayTypeToName(entry.type)
+        m["xray_type"] = self.convertFromDBXrayTypeToCSV(entry.type)
+        
         m["mouth_type"] = self.mouthTypeToName(entry.mouthtype)
         m["teeth"] = entry.teeth 
 
@@ -177,8 +210,9 @@ class XRayView(APIView):
             if kwargs["mouthtype"] == None:
                 valid = False
             val = data["xray_type"] 
-            kwargs["type"] = self.nameToXrayType(val)
-            if kwargs["type"] == None:
+            #kwargs["type"] = self.nameToXrayType(val)
+            kwargs["type"] = self.convertCSVToDBXrayType(val)
+            if kwargs["type"] == "":
                 valid = False
             if not "clinic" in data:
                 valid = False
@@ -206,8 +240,8 @@ class XRayView(APIView):
         try:
             if "xray_type" in data:
                 val = data["xray_type"] 
-                xray.type = self.nameToXrayType(val)
-                if xray.type == None:
+                xray.type = self.convertCSVToDBXrayType(val)
+                if xray.type == "":
                     valid = False
                 else:
                     sawType = True

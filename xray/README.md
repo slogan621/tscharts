@@ -23,7 +23,7 @@
   * **Code:** 200 <br />
     **Content:** 
 
-   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type" : "full" | "anteriors_bitewings", "mouth_type" : "child" | "adult", "teeth" : bitmask}
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "xray_type" : comma-separated set of strings including "full" | "anteriors_bitewings" |  "panoramic_view" | "cephatometric", "mouth_type" : "child" | "adult", "teeth" : bitmask}
  
 * **Error Response:**
 
@@ -52,7 +52,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 2c5
-{"xray_type":"full","mouth_type": "child", "teeth":234,"id":12,"patient":6,"clinic":11,"time":"2017-12-11T01:02:24"}
+{"xray_type":"full, cephatometric","mouth_type": "child", "teeth":234,"id":12,"patient":6,"clinic":11,"time":"2017-12-11T01:02:24"}
 0
 ```
   
@@ -143,7 +143,7 @@ Content-Type: application/json
  
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
-   `xray_type` "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
+   `xray_type` comma separated list of following strings: "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
    `mouth_type` "child" | "adult"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 
@@ -213,7 +213,7 @@ Content-Type: application/json
    One or more of the field/value pairs below:
 
    `mouth_type` "child" | "adult"<br />
-   `xray_type` "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
+   `xray_type` comma separate string consisting of one or more of the following: "panoramic_view" | "cephalometric" | "full" | "anteriors_bitewings"<br />
    `teeth` integer bitmask of which teeth were xrayed. Bit 0 == tooth 1, bit 1 == tooth 2, etc.<br />
 
 * **Success Response:**
