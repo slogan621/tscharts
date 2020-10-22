@@ -556,7 +556,7 @@ class TestTSXRay(unittest.TestCase):
 
         x = CreateXRay(host, port, token)
         x.setTeeth(5467)
-        x.setXRayType("full")
+        x.setXRayType("anteriors_bitewings,cephalometric")
         x.setMouthType("adult")
         x.setClinic(clinics[0])
         x.setPatient(patients[0])
@@ -571,7 +571,8 @@ class TestTSXRay(unittest.TestCase):
         ret = ret[1]
         self.assertEqual(int(ret["id"]), id)
         self.assertEqual(ret['teeth'], 5467)
-        self.assertEqual(ret['xray_type'], "full")
+        self.assertTrue("anteriors_bitewings" in ret['xray_type'])
+        self.assertTrue("cephalometric" in ret['xray_type'])
         self.assertEqual(ret['mouth_type'], "adult")
         self.assertEqual(ret['clinic'], clinics[0])
         self.assertEqual(ret['patient'], patients[0])
