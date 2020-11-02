@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'clinicstation.apps.ClinicstationConfig',
     'audiogram',
     'image',
+    'dentalcdt',
     'dentaltreatment',
     'entexam',
     'enthistory',

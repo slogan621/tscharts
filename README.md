@@ -266,6 +266,10 @@ specialty.
     * [API](../master/xray/README.md)
     * [Unit Tests](../master/tschartslib/xray/xray.py)
 
+ * dentalcdt - used to add, delete, modify and get dental cdt code records from the database. 
+    * [API](../master/dentalcdt/README.md)
+    * [Unit Tests](../master/tschartslib/dentalcdt/dentalcdt.py)
+
  * dentaltreatment - used to add, delete, modify and get dental treatment records from the database. 
     * [API](../master/dentaltreatment/README.md)
     * [Unit Tests](../master/tschartslib/dentaltreatment/dentaltreatment.py)
