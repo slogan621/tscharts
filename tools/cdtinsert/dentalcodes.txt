@@ -1,0 +1,269 @@
+Category=PERSONS SERVED (ENCOUNTER CODES) 
+
+D0000 First Visit (of fiscal year by the patient) 
+D0190 Dental Revisit (For Any Reason)
+D0003 BBTD/ECC Dental Patient
+D0004 Head Start Program Dental Patient
+D0007 High-risk Periodontal Patient
+D9320 Diabetic Screening Procedures
+D9321 Diabetic Referral Or Follow-up
+D9330 Hypertension Screening
+D9331 Hypertension Referral Or Follow-up
+D9340 Dental Visit, Pre-Natal Mother
+D9341 Dental Visit, Nursing Mother
+D9990 Planned Treatment Completed
+D9991 Patient Refuses Recommended Treatment
+
+Category=DIAGNOSTIC SERVICES
+
+D0120 Periodic Oral Evaluation (update existing chart) 
+D0140 Limited Evaluation-Problem Focused (Emerg. Exam) 
+D0145 Oral Evaluation for Patient under 3 years of age 
+D0150 Comprehensive Oral Evaluation (new chart made) 
+D0160 Extensive Oral Evaluation-Problem Focused
+D0180 Comprehensive Periodontal Evaluation
+D0210 Intraoral Complete Series
+D0220 Intraoral Periapical, Single Film
+D0230 Intraoral Periapical, Additional Film
+D0240 Intraoral Film
+D0270 Bitewings, Single Film
+D0272 Bitewings, Two Films
+D0273 Bitewings, Three Films
+D0274 Bitewings, Four Films
+D0330 Panoramic-Maxilla And Mandible Film 
+D0340 Cephalometric Film
+D0350 Oral/Facial Images
+D0425 Caries Susceptibility Test
+D0460 Pulp Vitality Tests (Per Quad)
+D0470 Diagnostic Casts (Per Set)
+D0471 Diagnostic Photographs
+
+Category=PREVENTIVE SERVICES
+
+D1110 Prophylaxis, Adult (Permanent Dentition) 
+D1120 Prophylaxis, Child (Primary or Mixed Dentition) 
+D1203 Topical Fluoride Not Including Prophy-Child 
+D1204 Topical Fluoride Not Including Prophy-Adult 
+D1206 Topical Fluoride Varnish (mod to high risk pts) 
+D1310 Nutritional Counseling For Oral Health
+D1320 Tobacco Use Counseling
+D1330 Oral Hygiene Instructions
+D1351 Sealant (per tooth)
+D1510 Space Maintainer, Fixed Unilateral
+D1515 Space Maintainer, Fixed Bilateral
+D1550 Space Maintainer, Recementation
+D1555 Removal of Fixed Space Maintainer
+
+Category=RESTORATIVE DENTISTRY
+
+D2140 Amalgam, One Surface (Perm or Primary) 
+D2150 Amalgam, Two Surface (Perm or Primary) 
+D2160 Amalgam, Three Surface (Perm or Primary) 
+D2161 Amalgam, Four+ Surfaces (Perm or Primary) 
+D2330 Composite Resin, One Surface, Anterior 
+D2331 Composite Resin, Two Surfaces, Anterior 
+D2332 Composite Resin, Three Surfaces, Anterior 
+D2335 Composite Resin, Four Surfaces or Incisal 
+D2390 Composite Resin Crown, Anterior
+D2391 Comp Resin, One Surf., Post., Perm or Prim (includes PRR) 
+D2392 Composite Resin, Two Surfaces, Post. (Perm or Primary) 
+D2393 Composite Resin, Three Surfaces, Post. (Perm or Primary) 
+D2394 Composite Resin, Four Surfaces, Post. (Perm or Primary) 
+D2740 Crown-Porcelain/Ceramic Substrate
+D2750 Crown-Porcelain Fused To High Noble Metal 
+D2751 Crown–Porcelain Fused to Base Metal 
+D2752 Crown-Porcelain Fused To Noble Metal 
+D2790 Crown- Full Cast High Noble Metal 
+D2791 Crown-Full Cast Base Metal
+D2792 Crown-Full Cast Noble Metal 
+D2799 Provisional Crown
+D2915 Recement Cast/Prefab Post and Core 
+D2920 Recement Crowns
+D2930 Crown-Stainless Steel, Primary Tooth 
+D2931 Crown-Stainless Steel, Perm. Tooth
+D2932 Crown-Prefab. Resin, Primary Tooth
+D2940 Sedative Filling
+D2950 Core Buildup, Including Any Pins
+D2951 Pin Retention (Per Tooth) Excludes Restoration 
+D2954 Post And Core (Prefab.), Excl Crown
+D2970 Temporary Crown (fractured tooth)
+
+Category=PERIODONTICS
+
+D4210 Gingivectomy Or Gingivoplasty (4 or more contig. teeth) 
+D4211 Gingivectomy Or Gingivoplasty (1 to 3 teeth)
+D4240 Gingival Flap Proc. w/ Root Planing (4 or more contig. teeth) 
+D4241 Gingival Flap Proc. w/ Root Planing (1 to 3 teeth)
+D4249 Crown Lengthening Proc. - Hard Tissue 
+D4260 Osseous Surgery (4 or more contig. teeth) 
+D4261 Osseous Surgery (1 to 3 teeth)
+D4263 Bone Replacement Graft, First Site In Quadrant 
+D4274 Distal Prox. Wedge Procedure (w/o other Surg) 
+D4341 Root Planing (4 or more contig. teeth)
+D4342 Root Planing (1 to 3 teeth)
+D4355 Full Mouth Debridement (For Perio. Evaluation) 
+D4381 Controlled Release Of Chemo. Agents, Per Site 
+D4910 Periodontal Maintenance After Therapy
+
+Category=ENDODONTICS
+
+D3110 Pulp Cap, Direct (Excluding Final Restoration) 
+D3220 Vital Pulpotomy, Primary or Perm. Tooth 
+D3221 Pulpal Debridement, Primary or Perm Tooth 
+D3230 Pulp Therapy, Primary Anterior
+D3240 Pulp Therapy, Primary Posterior 
+D3310 Endodontic Fill, Anterior
+D3320 Endodontic Fill, Bicuspid
+D3330 Endodontic Fill, Molar
+D3346 Retreat Previous Endo Fill - Anterior
+D3347 Retreat Previous Endo Fill -Bicuspid
+D3348 Retreat Previous Endo Fill -Molar
+D3351 Apexification/Recalcify, Initial Visit
+D3352 Apexification/Recalcify, Interim Visit
+D3353 Apexification/Recalcify, Final Visit
+D3410 Apicoectomy/Periradicular Surg., Ant. Tooth 
+D3430 Retrograde Filling, Per Root
+D3950 Fitting For Preformed Dowel
+D3960 Bleach Discolored Tooth (Vital or Non-Vital)
+
+Category=REMOVABLE PROSTHODONTICS
+
+D5110 Complete Denture - Maxillary 
+D5120 Complete Denture - Mandibular 
+D5130 Immediate Denture - Upper 
+D5140 Immediate Denture - Lower
+D5211 Upper Partial, Resin Base incl. Clasps
+D5212 Lower Partial, Resin Base Incl. Clasps
+D5213 Upper Partial, Cast Frame, Resin Bases, Clasps
+D5214 Lower Partial, Cast Frame, Resin Bases, Clasps
+D5410 Adjust Full Denture, Upper or Lower
+D5421 Adjust Partial Denture, Upper or Lower
+D5510 Repair Full Denture Base, Upper or Lower
+D5520 Replace Missing/Broken Denture Teeth (Per Tooth) 
+D5610 Repair Resin Partial Denture Base
+D5640 Replace Missing/Broken Denture Teeth (Per Tooth) 
+D5710 Rebase, Full Denture
+D5720 Rebase, Partial Denture
+D5750 Reline, Full Denture (Laboratory Procedure)
+D5760 Reline, Partial Denture (Laboratory Procedure) 
+D5850 Tissue Conditioning (Per Arch)
+D5860 Overdenture, Full
+
+Category=FIXED PROSTHODONTICS
+
+D6080 Implant Maintenance Procedures 
+D6210 Pontic – Cast High Noble Metal 
+D6211 Pontic – Cast Base Metal
+D6212 Pontic – Cast Noble Metal
+D6240 Pontic - Porcelain Fused To High Noble Metal 
+D6241 Pontic - Porcelain Fused To Base Metal 
+D6242 Pontic - Porcelain Fused To Noble Metal 
+D6545 Retainer-Cast Metal For Resin Bonded Pros. 
+D6740 Abutement-Porcelain/Ceramic
+D6750 Abutment – Porcelain Fused To High Noble Metal 
+D6751 Abutment – Porcelain Fused To Base Metal 
+D6752 Abutment – Porcelain Fused To Noble Metal 
+D6790 Abutment - Full Cast High Noble Metal
+D6791 Abutment - Full Cast Base Metal 
+D6792 Abutment - Full Cast Noble Metal 
+D6930 Recement Bridge
+D6972 Post and Core, (Prefab.) Excl. Retainer 
+D6973 Core Buildup For Retainer, Incl. Pins 
+D6980 Bridge Repair (By Report)
+
+Category=ORTHODONTICS
+
+D8010 Limited Ortho. TX, Primary Dentition
+D8020 Limited Ortho. TX, Transitional Dentition
+D8030 Limited Ortho. TX, Adolescent Dentition
+D8040 Limited Ortho. TX, Adult Dentition
+D8050 Interceptive Ortho. TX, Primary Dentition
+D8060 Interceptive Ortho. TX, Transitional Dentition 
+D8070 Comprehensive Ortho. TX, Transitional Dentition 
+D8080 Comprehensive Ortho. TX, Adolescent Dentition 
+D8090 Comprehensive Ortho. TX, Adult Dentition 
+D8210 Habit Control, Removable Appliance
+D8220 Habit Control , Fixed Appliance
+D8660 Pre-Orthodontic Treatment Visit
+D8670 Periodic Orthodontic Treatment Visit
+D8680 Ortho. Retention, Remove Appl. & Make Retainer 
+D8691 Repair of Orthodontic Appliance
+D8692 Replacement of Lost or Broken Retainer
+D8693 Rebond/Recement/Repar Fixed Retainer
+
+Category=ORAL SURGERY
+
+D7111 Coronal Remnants (Primary Tooth)
+D7140 Extraction (Erupted Tooth or Exposed Root) 
+D7210 Surgical Extraction, Erupted Tooth
+D7220 Surgical Extraction, Soft Tissue Impaction 
+D7230 Surgical Extraction, Bony Impaction
+D7240 Surgical Extract, Bony Impact.-Section Tooth
+D7241 Surgical Extract, Bony Impact-Section-Unusual
+D7250 Remove Residual Roots, Unexposed 
+D7270 Reimplant/Stabilize Avulsed Teeth
+D7280 Surgical Exposure to Attach Ortho Wire 
+D7283 Placement of Device to Facilitate Eruption 
+D7286 Biopsy of Oral Tissue (Soft or Hard Tissue) 
+D7288 Brush Biopsy
+D7291 Transeptal Fiberotomy
+D7310 Alveoloplasty w/Extractions (4 or more teeth/spaces) 
+D7311 Alveoloplasty w/Extractions (1-3 teeth/spaces)
+D7320 Alveoloplasty w/o Extractions (4 or more teeth/spaces) 
+D7321 Alveoloplasty w/oExtractions (1-3 teeth/spaces) 
+D7410 Excision of Benign Lesion (up to 1.25 cm)
+D7420 Excision of Benign Lesion (greater than 1.25 cm) 
+D7460 Remove Nonodontogenic Cyst
+D7465 Destroy Lesion by Physical or Chemical Means
+D7471 Removal of Exostosis, Maxilla or Mandible
+D7510 Incision And Drainage of Abscess, Intraoral
+D7520 Incision And Drainage of Abscess, Extraoral
+D7530 Removal Foreign Body
+D7620 Fracture, Closed Reduction - Maxilla
+D7630 Fracture, Open Reduction - Mandible
+D7640 Fracture, Closed Reduction - Mandible
+D7650 Fracture, Arch/Open - Malar/Zygomatic
+D7660 Fracture, Arch/Closed - Malar/Zygomatic
+D7670 Fracture, Alveolus Open Reduction
+D7830 Manipulation of TMJ Under Anesthesia
+D7880 Occlusal Orthotic Appliance
+D7899 Unspecified TMD Therapy
+D7910 Suture Traumatic Wounds (Any Size)
+D7960 Frenectomy, As Separate Procedure
+D7970 Excise Hyperplastic Tissue/Arch
+D7971 Excise Pericoronal Gingiva
+D7997 Appliance Removal (not by dentist who placed app)
+
+Category=ADJUNCTIVE GENERAL SERVICES
+
+D9110 Palliative TX of Dental Pain (Minor Procedure)
+D9130 Broken Appointment (No Show)
+D9140 Canceled Appointment
+D9170 Emerg. Encounter (Report w/ any exam code)
+D9210 Local Anesthesia, Not In Conjunction w/ Other Proc.
+D9211 Regional Block Anesthesia
+D9212 Trigeminal Division Block
+D9215 Local Anesthesia
+D9220 General Anesthesia
+D9221 General Anesthesia, Each Add. 15 Min.
+D9230 Analgesia, Includes Nitrous Oxide
+D9241 Intravenous Sedation (first 30 minutes)
+D9242 Intravenous Sedation (each additional 15 minutes)
+D9248 Non-intravenous Conscious Sedation (includes IM)
+D9260 Premedication, Oral Only
+D9310 Consultation Provided (Per Session)
+D9420 Hospital Call, Includes Admissions
+D9430 Office Visit, Observation Only (During Office Hours)
+D9440 Office Visit, After Office Hours
+D9610 Therapeutic Injection (Sedatives/Antibiotics)
+D9630 Other Drugs/Medicaments
+D9910 Apply Desensitizing Medicaments
+D9911 Application of Desensitizing Resin for Cervical/Root Surface 
+D9920 Behavior Management
+D9930 Treat Post-surgical Complications
+D9940 Occlusal Guard
+D9941 Athletic Mouth Guard
+D9942 Repair/reline Occlusal Guard
+D9951 Occlusal Adjustment, Limited
+D9973 External Bleaching (per tooth)
+D9974 Internal Bleaching (per tooth)

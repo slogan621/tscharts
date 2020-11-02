@@ -20,5 +20,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 class DentalCDT(models.Model):
+    category = models.CharField(max_length = 64)  
     code = models.CharField(max_length = 12)  # 5 digits + expansion
     desc = models.CharField(max_length = 500) # some descriptions are lengthy  

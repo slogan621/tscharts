@@ -46,6 +46,14 @@ class GetDentalCDT(ServiceAPI):
         else:
             base = "tscharts/v1/dentalcdt/"
     
+        if not self._category == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "category={}".format(self._category)
+            hasQArgs = True
+
         if not self._code == None:
             if not hasQArgs:
                 base += "?"
@@ -71,6 +79,7 @@ class GetDentalCDT(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
+        self._category = None
         self._code = None
         self._desc = None
         self._id = None
@@ -80,6 +89,10 @@ class GetDentalCDT(ServiceAPI):
         self._id = id;
         self.makeURL()
     
+    def setCategory(self,val):
+        self._category = val
+        self.makeURL()
+
     def setCode(self,val):
         self._code = val
         self.makeURL()
@@ -111,6 +124,7 @@ class TestTSDentalCDT(unittest.TestCase):
         data = {}
 
         data["code"] = "D0419"
+        data["category"] = "DIAGNOSTIC SERVICES"
         data["desc"] = "assessment of salivary flow by measurement"
 
         x = CreateDentalCDT(host, port, token, data)
@@ -124,6 +138,7 @@ class TestTSDentalCDT(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         ret = ret[1]
+        self.assertEqual(ret['category'], "DIAGNOSTIC SERVICES")
         self.assertEqual(ret['code'], "D0419")
         self.assertEqual(ret['desc'], "assessment of salivary flow by measurement")
 
@@ -166,12 +181,14 @@ class TestTSDentalCDT(unittest.TestCase):
         data = {}
         data["code"] = 123 # not a string
         data["desc"] = 123 # not a string
+        data["category"] = 123 # not a string
         x = CreateDentalCDT(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400)
      
     def testDeleteDentalCDT(self):
         data = {}
+        data["category"] = "DIAGNOSTIC SERVICES"
         data["code"] = "D9999"
         data["desc"] = "Some description"
 
@@ -186,6 +203,7 @@ class TestTSDentalCDT(unittest.TestCase):
         self.assertEqual(ret[0], 200)  
 
         ret = ret[1]
+        self.assertEqual(ret["category"], "DIAGNOSTIC SERVICES")
         self.assertEqual(ret["code"], "D9999")
         self.assertEqual(ret["desc"], "Some description")
         self.assertEqual(ret["id"], id)
@@ -205,6 +223,7 @@ class TestTSDentalCDT(unittest.TestCase):
 
     def testGetDentalCDT(self):
         data = {}
+        data["category"] = "DIAGNOSTIC SERVICES"
         data["code"] = "D1553"
         data["desc"] = "Some description"
          
@@ -219,6 +238,7 @@ class TestTSDentalCDT(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         ret = ret[1]
         id = int(ret["id"])
+        self.assertTrue(ret["category"] == "DIAGNOSTIC SERVICES")
         self.assertTrue(ret["code"] == "D1553")
         self.assertTrue(ret["desc"] == "Some description")
         
@@ -232,6 +252,7 @@ class TestTSDentalCDT(unittest.TestCase):
         self.assertEqual(ret[0], 404)
 
         data = {}
+        data["category"] = "DIAGNOSTIC SERVICES"
         data["code"] = "D1553"
         data["desc"] = "re-cement or re-bond unilateral space maintainer - per quadrant"
 
@@ -245,6 +266,7 @@ class TestTSDentalCDT(unittest.TestCase):
         x.setCode("D1553")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        self.assertTrue(ret[1][0]["category"] == "DIAGNOSTIC SERVICES")
         self.assertTrue(ret[1][0]["code"] == "D1553")
         self.assertTrue(ret[1][0]["desc"] == "re-cement or re-bond unilateral space maintainer - per quadrant")
         self.assertTrue(ret[1][0]["id"] == id)
@@ -253,6 +275,7 @@ class TestTSDentalCDT(unittest.TestCase):
         x.setDesc("re-cement or re-bond unilateral space maintainer - per quadrant")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+        self.assertTrue(ret[1][0]["category"] == "DIAGNOSTIC SERVICES")
         self.assertTrue(ret[1][0]["code"] == "D1553")
         self.assertTrue(ret[1][0]["desc"] == "re-cement or re-bond unilateral space maintainer - per quadrant")
         self.assertTrue(ret[1][0]["id"] == id)
@@ -280,6 +303,7 @@ class TestTSDentalCDT(unittest.TestCase):
             data = {}
             data["code"] = codelist[i] 
             data["desc"] = desclist[i] 
+            data["category"] = "DIAGNOSTIC SERVICES" 
             x = CreateDentalCDT(host, port, token, data)
             ret = x.send(timeout = 30)
             idlist.append(ret[1]["id"])

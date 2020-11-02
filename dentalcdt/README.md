@@ -48,7 +48,7 @@ X-Frame-Options: SAMEORIGIN
 Content-Length: 25
 Allow: GET, POST, DELETE, HEAD, OPTIONS
 
-{"id":185,"code":"D0220","desc":"Intraoral-periapical first radiographic image"}
+{"id":185,"category": "DIAGNOSTIC SERVICES", "code":"D0220","desc":"Intraoral-periapical first radiographic image"}
 ```
   
 **Get Multiple Dental CDT Codes**
@@ -71,6 +71,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
 
    One or more of the following can be specified to filter the search results.
 
+   `category` string<br/>
    `code` string<br/>
    `desc` string<br/>
 
@@ -120,7 +121,7 @@ Connection: Keep-Alive
 Content-Type: application/json
 
 
-[{"id" : 1, "code": "DO220", "desc":"Intraoral-periapical first radiographic image"}, {"id" : 2, "code": "D0230", "desc": "Intraoral-periapical each addition radiographic image"}]`
+[{"id" : 1, "category": "DIAGNOSTIC SERVICES", "code": "DO220", "desc":"Intraoral-periapical first radiographic image"}, {"id" : 2, "category": "DIAGNOSTIC SERVICES", "code": "D0230", "desc": "Intraoral-periapical each addition radiographic image"}]`
 
 ```
 
@@ -144,6 +145,7 @@ Content-Type: application/json
 
    **Required:**
  
+   `categort` string<br/>
    `code` string<br/>
    `desc` string<br/>
 
@@ -174,7 +176,7 @@ Content-Type: application/json
 Authorization: Token f029f2e53dd2c0ef685dcfd1ab8f53e410ccfede
 Content-Length: 17
 
-{"code": "D1320", "desc":"Tobacco counseling for control and prevention of oral disease"}HTTP/1.1 200 OK
+{"category": "DIAGNOSTIC SERVICES", "code": "D1320", "desc":"Tobacco counseling for control and prevention of oral disease"}HTTP/1.1 200 OK
 Date: Tue, 26 Dec 2017 20:40:57 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept

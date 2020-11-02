@@ -43,6 +43,7 @@ class DentalCDTView(APIView):
     def serialize(self, entry):
         m = {}
         m["id"] = entry.id
+        m["category"] = entry.category
         m["code"] = entry.code
         m["desc"] = entry.desc
         return m
@@ -64,6 +65,13 @@ class DentalCDTView(APIView):
                 code = request.GET.get('code','')
                 if not code == None and not code == '': 
                     kwargs['code'] = code
+            except:
+                pass
+                
+            try:
+                category = request.GET.get('category','')
+                if not category == None and not category == '': 
+                    kwargs['category'] = category
             except:
                 pass
                 
@@ -100,6 +108,13 @@ class DentalCDTView(APIView):
 
         data = json.loads(request.body)
         
+        try:
+            category = data['category']
+            if len(category) == 0:
+                badRequest = True
+        except:
+            badRequest = True
+
         try:
             code = data['code']
             if len(code) == 0:
