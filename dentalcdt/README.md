@@ -76,6 +76,7 @@ Allow: GET, POST, DELETE, HEAD, OPTIONS
    `desc` string<br/>
 
    If no filters are supplied, the entire list of CDT codes is returned.
+   Note, a case sensitive exact match is performed on each of these search strings.
 
    **Optional:**
 

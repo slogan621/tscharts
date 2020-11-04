@@ -27,16 +27,29 @@ from tschartslib.service.serviceapi import ServiceAPI
 from tschartslib.tscharts.tscharts import Login, Logout
 
 class CreateDentalCDT(ServiceAPI):
-    def __init__(self, host, port, token, payload):
+    def __init__(self, host, port, token, payload={}):
         super(CreateDentalCDT, self).__init__()
 
         self.setHttpMethod("POST")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
+        self._payload = payload
 
-        self.setPayload(payload)
+        self.setPayload(self._payload)
         self.setURL("tscharts/v1/dentalcdt/")
+
+    def setCategory(self,val):
+        self._payload["category"] = val
+        self.setPayload(self._payload)
+
+    def setCode(self,val):
+        self._payload["code"] = val
+        self.setPayload(self._payload)
+
+    def setDesc(self,val):
+        self._payload["desc"] = val
+        self.setPayload(self._payload)
 
 class GetDentalCDT(ServiceAPI):
     def makeURL(self):
@@ -130,7 +143,6 @@ class TestTSDentalCDT(unittest.TestCase):
         x = CreateDentalCDT(host, port, token, data)
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 200)
-   
  
         id = int(ret[1]["id"])
         x = GetDentalCDT(host, port, token)
@@ -143,6 +155,40 @@ class TestTSDentalCDT(unittest.TestCase):
         self.assertEqual(ret['desc'], "assessment of salivary flow by measurement")
 
         x = CreateDentalCDT(host, port, token, data)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 400) #bad request test uniqueness
+
+        x = DeleteDentalCDT(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+          
+        x = GetDentalCDT(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 404) # not found        
+        
+        x = CreateDentalCDT(host, port, token)
+        x.setCode("D8765")
+        x.setCategory("Some Category")
+        x.setDesc("Insert Description Here")
+
+        ret = x.send(timeout = 30)
+        self.assertEqual(ret[0], 200)
+ 
+        id = int(ret[1]["id"])
+        x = GetDentalCDT(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        ret = ret[1]
+        self.assertEqual(ret['category'], "Some Category")
+        self.assertEqual(ret['code'], "D8765")
+        self.assertEqual(ret['desc'], "Insert Description Here")
+
+        x = CreateDentalCDT(host, port, token)
+        x.setCode("D8765")
+        x.setCategory("Some Category")
+        x.setDesc("Insert Description Here")
         ret = x.send(timeout = 30)
         self.assertEqual(ret[0], 400) #bad request test uniqueness
 
