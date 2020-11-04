@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'audiogram',
     'image',
     'dentalcdt',
+    'dentalstate',
     'dentaltreatment',
     'entexam',
     'enthistory',

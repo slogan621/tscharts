@@ -270,6 +270,10 @@ specialty.
     * [API](../master/dentalcdt/README.md)
     * [Unit Tests](../master/tschartslib/dentalcdt/dentalcdt.py)
 
+ * dentalstate - used to add, delete, modify and get dental state records from the database. 
+    * [API](../master/dentalstate/README.md)
+    * [Unit Tests](../master/tschartslib/dentalstate/dentalstate.py)
+
  * dentaltreatment - used to add, delete, modify and get dental treatment records from the database. 
     * [API](../master/dentaltreatment/README.md)
     * [Unit Tests](../master/tschartslib/dentaltreatment/dentaltreatment.py)
