@@ -34,9 +34,10 @@
   "clinic" : id <br />
   "patient" : id <br />
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
-  "cdt" : id <br />
-  "altcode" : text <br />
+  "code" : id <br />
+  "username" : string <br />
   "state" : treated | untreated | none | other<br />
+  "time" : last modified datetime string for record<br />
   "comment" : text<br />
 
 * **Error Response:**
@@ -46,7 +47,7 @@
 * **Example:**
 
 ```
-GET /tscharts/v1/dentalstate/49/ HTTP/1.1
+GET /tscharts/v1/dentalstate/2/ HTTP/1.1
 Host: localhost
 Connection: keep-alive
 Accept-Encoding: gzip, deflate
@@ -57,7 +58,7 @@ Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
 Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Fri, 16 Oct 2020 18:17:25 GMT
+Date: Wed, 04 Nov 2020 02:28:46 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -67,8 +68,8 @@ Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-3a0
-{"comment":"JcOftkzh8smwa","oralSurgeryTxComment":"QuNhXvEbipit","srpUR":"true","srpLR":"true","xraysViewed":"true","clinic":25,"srpLL":"true","localAnestheticComment":"","prophy":"false","srpUL":"true","flourideTxVarnish":"false","id":49,"oralHygieneInstruction":"false","prophyComment":"eu","orthoEvaluation":"false","headNeckOralCancerExam":"false","xraysViewedComment":"BhU3","localAnestheticNumberCarps":23,"flourideTxVarnishComment":"zwbOrp5","oralSurgeryTx":"true","localAnesthetic":"none","username":"Gomez","patient":25,"exam":"false","examComment":"C","oralSurgeryEvaluation":"true","orthoEvaluationComment":"N1aQ7WP9u","oralHygieneInstructionComment":"XGj5zW","orthoTx":"true","oralSurgeryEvaluationComment":"T1VbX5eBwlr","orthoTxComment":"uUH9zq1rTU","nutritionalCounselingComment":"tCRBWNDy","headNeckOralCancerExamComment":"8Wp4j","srpComment":"Hqy","time":"2020-10-16T11:17:25.035","nutritionalCounseling":"true"}
+88
+{"username":"username","comment":"q","code":1,"patient":1,"state":"other","tooth":15,"clinic":1,"time":"2020-11-03T18:28:46.905","id":2}
 0
 ```
   
@@ -93,9 +94,10 @@ Content-Type: application/json
   "clinic" : id <br />
   "patient" : id <br />
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
-  "cdt" : id <br />
-  "altcode" : text <br />
+  "code" : id <br />
   "state" : treated | untreated | none | other<br />
+  "time" : last modified datetime string for record<br />
+  "username" : text string<br />
   "comment" : text<br />
 
 * **Data Params**
@@ -106,7 +108,16 @@ Content-Type: application/json
 
   * **Code:** 200 <br />
     **Content:** 
-    [{"comment":"GKMFolMzGN6i4","oralSurgeryTxComment":"BkXzPmHjOflU","srpUR":"false","srpLR":"true","xraysViewed":"false","clinic":28,"srpLL":"false","localAnestheticComment":"","prophy":"true","srpUL":"false","flourideTxVarnish":"false","id":54,"oralHygieneInstruction":"true","prophyComment":"IX","orthoEvaluation":"false","headNeckOralCancerExam":"true","xraysViewedComment":"8l28","localAnestheticNumberCarps":799,"flourideTxVarnishComment":"Jd2wvm1","oralSurgeryTx":"false","localAnesthetic":"lidocaine","username":"Gomez","patient":27,"exam":"false","examComment":"Y","oralSurgeryEvaluation":"true","orthoEvaluationComment":"qkRSIPV1g","oralHygieneInstructionComment":"kbKFtQ","orthoTx":"true","oralSurgeryEvaluationComment":"3EEcNdNlKZR","orthoTxComment":"24x1rXAAj3","nutritionalCounselingComment":"G974w63p","headNeckOralCancerExamComment":"MqKaU","srpComment":"HkL","time":"2020-10-16T11:17:25.422","nutritionalCounseling":"true"},{"comment":"sTVkdSU1sHgxe","oralSurgeryTxComment":"mq3ouDCvSFe6","srpUR":"true","srpLR":"false","xraysViewed":"false","clinic":28,"srpLL":"true","localAnestheticComment":"","prophy":"false","srpUL":"false","flourideTxVarnish":"true","id":55,"oralHygieneInstruction":"false","prophyComment":"DA","orthoEvaluation":"true","headNeckOralCancerExam":"true","xraysViewedComment":"qOcq","localAnestheticNumberCarps":19,"flourideTxVarnishComment":"SCutrSS","oralSurgeryTx":"true","localAnesthetic":"septocaine","username":"Gomez","patient":28,"exam":"true","examComment":"7","oralSurgeryEvaluation":"true","orthoEvaluationComment":"zyhjp770U","oralHygieneInstructionComment":"irhkWm","orthoTx":"true","oralSurgeryEvaluationComment":"dQ2eCpvJmVE","orthoTxComment":"thtLgc0MSF","nutritionalCounselingComment":"V3naVM1K","headNeckOralCancerExamComment":"mYxHH","srpComment":"Ou6","time":"2020-10-16T11:17:25.431","nutritionalCounseling":"true"},{"comment":"25sH6VnGDP3j3","oralSurgeryTxComment":"WZBiYHDG1HGz","srpUR":"false","srpLR":"true","xraysViewed":"true","clinic":28,"srpLL":"true","localAnestheticComment":"","prophy":"false","srpUL":"true","flourideTxVarnish":"true","id":56,"oralHygieneInstruction":"true","prophyComment":"gx","orthoEvaluation":"true","headNeckOralCancerExam":"false","xraysViewedComment":"nU8x","localAnestheticNumberCarps":-194,"flourideTxVarnishComment":"achuBBH","oralSurgeryTx":"false","localAnesthetic":"lidocaine","username":"Gomez","patient":29,"exam":"true","examComment":"h","oralSurgeryEvaluation":"false","orthoEvaluationComment":"ZLaINc2xY","oralHygieneInstructionComment":"W8iiYE","orthoTx":"true","oralSurgeryEvaluationComment":"X6ZOSD6Ju5O","orthoTxComment":"We8KmlkeQc","nutritionalCounselingComment":"agpPFTF2","headNeckOralCancerExamComment":"wBxf3","srpComment":"zZo","time":"2020-10-16T11:17:25.439","nutritionalCounseling":"true"}]
+
+  "id" : id <br />
+  "clinic" : id <br />
+  "patient" : id <br />
+  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "code" : id <br />
+  "state" : treated | untreated | none | other<br />
+  "time" : last modified datetime string for record<br />
+  "username" : text string<br />
+  "comment" : text<br />
 
 * **Error Response:**
 
@@ -117,7 +128,7 @@ Content-Type: application/json
 * **Example:**
 
 ```
-GET /tscharts/v1/dentalstate/?clinic=28 HTTP/1.1
+GET /tscharts/v1/dentalstate/?tooth=15 HTTP/1.1
 Host: localhost
 Connection: keep-alive
 Accept-Encoding: gzip, deflate
@@ -128,7 +139,7 @@ Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
 Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Fri, 16 Oct 2020 18:17:25 GMT
+Date: Wed, 04 Nov 2020 02:28:47 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -138,8 +149,8 @@ Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-af7
-[{"comment":"GKMFolMzGN6i4","oralSurgeryTxComment":"BkXzPmHjOflU","srpUR":"false","srpLR":"true","xraysViewed":"false","clinic":28,"srpLL":"false","localAnestheticComment":"","prophy":"true","srpUL":"false","flourideTxVarnish":"false","id":54,"oralHygieneInstruction":"true","prophyComment":"IX","orthoEvaluation":"false","headNeckOralCancerExam":"true","xraysViewedComment":"8l28","localAnestheticNumberCarps":799,"flourideTxVarnishComment":"Jd2wvm1","oralSurgeryTx":"false","localAnesthetic":"lidocaine","username":"Gomez","patient":27,"exam":"false","examComment":"Y","oralSurgeryEvaluation":"true","orthoEvaluationComment":"qkRSIPV1g","oralHygieneInstructionComment":"kbKFtQ","orthoTx":"true","oralSurgeryEvaluationComment":"3EEcNdNlKZR","orthoTxComment":"24x1rXAAj3","nutritionalCounselingComment":"G974w63p","headNeckOralCancerExamComment":"MqKaU","srpComment":"HkL","time":"2020-10-16T11:17:25.422","nutritionalCounseling":"true"},{"comment":"sTVkdSU1sHgxe","oralSurgeryTxComment":"mq3ouDCvSFe6","srpUR":"true","srpLR":"false","xraysViewed":"false","clinic":28,"srpLL":"true","localAnestheticComment":"","prophy":"false","srpUL":"false","flourideTxVarnish":"true","id":55,"oralHygieneInstruction":"false","prophyComment":"DA","orthoEvaluation":"true","headNeckOralCancerExam":"true","xraysViewedComment":"qOcq","localAnestheticNumberCarps":19,"flourideTxVarnishComment":"SCutrSS","oralSurgeryTx":"true","localAnesthetic":"septocaine","username":"Gomez","patient":28,"exam":"true","examComment":"7","oralSurgeryEvaluation":"true","orthoEvaluationComment":"zyhjp770U","oralHygieneInstructionComment":"irhkWm","orthoTx":"true","oralSurgeryEvaluationComment":"dQ2eCpvJmVE","orthoTxComment":"thtLgc0MSF","nutritionalCounselingComment":"V3naVM1K","headNeckOralCancerExamComment":"mYxHH","srpComment":"Ou6","time":"2020-10-16T11:17:25.431","nutritionalCounseling":"true"},{"comment":"25sH6VnGDP3j3","oralSurgeryTxComment":"WZBiYHDG1HGz","srpUR":"false","srpLR":"true","xraysViewed":"true","clinic":28,"srpLL":"true","localAnestheticComment":"","prophy":"false","srpUL":"true","flourideTxVarnish":"true","id":56,"oralHygieneInstruction":"true","prophyComment":"gx","orthoEvaluation":"true","headNeckOralCancerExam":"false","xraysViewedComment":"nU8x","localAnestheticNumberCarps":-194,"flourideTxVarnishComment":"achuBBH","oralSurgeryTx":"false","localAnesthetic":"lidocaine","username":"Gomez","patient":29,"exam":"true","examComment":"h","oralSurgeryEvaluation":"false","orthoEvaluationComment":"ZLaINc2xY","oralHygieneInstructionComment":"W8iiYE","orthoTx":"true","oralSurgeryEvaluationComment":"X6ZOSD6Ju5O","orthoTxComment":"We8KmlkeQc","nutritionalCounselingComment":"agpPFTF2","headNeckOralCancerExamComment":"wBxf3","srpComment":"zZo","time":"2020-10-16T11:17:25.439","nutritionalCounseling":"true"}]
+8e
+[{"username":"username","comment":"9","code":1,"patient":1,"state":"untreated","tooth":15,"clinic":1,"time":"2020-11-03T18:28:47.081","id":9}]
 0
 ```
   
@@ -166,8 +177,8 @@ af7
   "clinic" : id <br />
   "patient" : id <br />
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
-  "cdt" : id <br />
-  "altcode" : text <br />
+  "username" : string <br />
+  "code" : id <br />
   "state" : treated | untreated | none | other<br />
   "comment" : text<br />
 
@@ -197,10 +208,10 @@ Accept: */*
 User-Agent: python-requests/2.24.0
 Content-Type: application/json
 Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
-Content-Length: 932
+Content-Length: 112
 
-{"comment": "cZ7b3WziJBw7O", "oralSurgeryTxComment": "Us6vdlj7eF0A", "srpUR": "false", "srpLR": "false", "xraysViewed": "true", "clinic": 30, "srpLL": "true", "patient": 30, "srpUL": "false", "flourideTxVarnish": "true", "oralHygieneInstruction": "false", "prophyComment": "my", "orthoEvaluation": "false", "headNeckOralCancerExam": "true", "xraysViewedComment": "MMH2", "localAnestheticNumberCarps": 690, "flourideTxVarnishComment": "Q5Q8uel", "oralSurgeryTx": "false", "localAnesthetic": "benzocaine", "username": "Gomez", "prophy": "true", "exam": "true", "examComment": "M", "oralSurgeryEvaluation": "true", "orthoEvaluationComment": "DsKfpiVUV", "oralHygieneInstructionComment": "cXi9bj", "orthoTx": "false", "oralSurgeryEvaluationComment": "tuM29mZIMRn", "orthoTxComment": "ecVMvDeGab", "nutritionalCounselingComment": "TVEqrNJ7", "headNeckOralCancerExamComment": "HeBUP", "srpComment": "qgh", "nutritionalCounseling": "true"}HTTP/1.1 200 OK
-Date: Fri, 16 Oct 2020 18:17:25 GMT
+{"username": "Gomez", "comment": "z", "code": 1, "patient": 1, "clinic": 1, "tooth": -931, "state": "untreated"}HTTP/1.1 200 OK
+Date: Wed, 04 Nov 2020 02:28:46 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -210,8 +221,8 @@ Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-9
-{"id":60}
+8
+{"id":1}
 0
 ```
 
@@ -238,8 +249,8 @@ Content-Type: application/json
    One or more of the following field/value pairs
 
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
-  "cdt" : id <br />
-  "altcode" : text <br />
+  "code" : id <br />
+  "username" : string<br />
   "state" : treated | untreated | none | other<br />
   "comment" : text<br />
 
@@ -256,7 +267,7 @@ Content-Type: application/json
 * **Example:**
 
 ```
-PUT /tscharts/v1/dentalstate/60/ HTTP/1.1
+PUT /tscharts/v1/dentalstate/30/ HTTP/1.1
 Host: localhost
 Connection: keep-alive
 Accept-Encoding: gzip, deflate
@@ -264,10 +275,10 @@ Accept: */*
 User-Agent: python-requests/2.24.0
 Content-Type: application/json
 Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
-Content-Length: 905
+Content-Length: 74
 
-{"comment": "DpfDoaIzJEVrg", "oralSurgeryTxComment": "gm0Dw05BOcKT", "srpUR": "false", "srpLR": "false", "xraysViewed": "false", "srpLL": "true", "srpUL": "false", "flourideTxVarnish": "false", "oralHygieneInstruction": "true", "prophyComment": "Zk", "orthoEvaluation": "false", "headNeckOralCancerExam": "false", "xraysViewedComment": "CoDF", "localAnestheticNumberCarps": -67, "flourideTxVarnishComment": "e0WTaUR", "oralSurgeryTx": "false", "localAnesthetic": "none", "username": "username", "prophy": "true", "exam": "false", "examComment": "7", "oralSurgeryEvaluation": "false", "orthoEvaluationComment": "jhLh8xebG", "oralHygieneInstructionComment": "bvdNLm", "orthoTx": "false", "oralSurgeryEvaluationComment": "WFdn7YfzzoB", "orthoTxComment": "p0Ay7ovBk9", "nutritionalCounselingComment": "4s4BrhCz", "headNeckOralCancerExamComment": "2jp3i", "srpComment": "OkX", "nutritionalCounseling": "false"}HTTP/1.1 200 OK
-Date: Fri, 16 Oct 2020 18:17:26 GMT
+{"username": "username", "comment": "x", "state": "treated", "tooth": 980}HTTP/1.1 200 OK
+Date: Wed, 04 Nov 2020 02:28:48 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
@@ -314,7 +325,7 @@ Content-Type: application/json
 * **Example:**
 
 ```
-DELETE /tscharts/v1/dentalstate/60/ HTTP/1.1
+DELETE /tscharts/v1/dentalstate/1/ HTTP/1.1
 Host: localhost
 Connection: keep-alive
 Accept-Encoding: gzip, deflate
@@ -325,7 +336,7 @@ Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
 Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Fri, 16 Oct 2020 18:17:55 GMT
+Date: Wed, 04 Nov 2020 02:28:46 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
