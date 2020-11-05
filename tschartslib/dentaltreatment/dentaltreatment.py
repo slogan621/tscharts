@@ -29,6 +29,183 @@ from tschartslib.clinic.clinic import CreateClinic, DeleteClinic
 import random
 import string
 
+class DentalTreatmentSetter(object):
+
+    def __init__(self):
+        super(DentalTreatmentSetter, self).__init__()
+
+        self.setters = {
+            "localAnesthetic": self.setLocalAnesthetic,
+            "localAnestheticNumberCarps": self.setLocalAnestheticNumberCarps,
+            "exam": self.setExam,
+            "prophy": self.setProphy,
+            "srpUR": self.setSrpUR,
+            "srpLR": self.setSrpLR,
+            "srpUL": self.setSrpUL,
+            "srpLL": self.setSrpLL,
+            "xraysViewed": self.setXraysViewed,
+            "headNeckOralCancerExam": self.setHeadNeckOralCancerExam,
+            "oralHygieneInstruction": self.setOralHygieneInstruction,
+            "flourideTxVarnish": self.setFlourideTxVarnish,
+            "nutritionalCounseling": self.setNutritionalCounseling,
+            "orthoEvaluation": self.setOrthoEvaluation,
+            "orthoTx": self.setOrthoTx,
+            "oralSurgeryEvaluation": self.setOralSurgeryEvaluation,
+            "oralSurgeryTx": self.setOralSurgeryTx,
+            "username": self.setUsername,
+            "examComment": self.setExamComment,
+            "prophyComment": self.setProphyComment,
+            "srpComment": self.setSrpComment,
+            "xraysViewedComment": self.setXraysViewedComment,
+            "headNeckOralCancerExamComment": self.setHeadNeckOralCancerExamComment,
+            "oralHygieneInstructionComment": self.setOralHygieneInstructionComment,
+            "flourideTxVarnishComment": self.setFlourideTxVarnishComment,
+            "nutritionalCounselingComment": self.setNutritionalCounselingComment,
+            "orthoEvaluationComment": self.setOrthoEvaluationComment,
+            "orthoTxComment": self.setOrthoTxComment,
+            "oralSurgeryEvaluationComment": self.setOralSurgeryEvaluationComment,
+            "oralSurgeryTxComment": self.setOralSurgeryTxComment,
+            "comment": self.setComment,
+        }
+
+    def dispatchSetter(self, key, val):
+        try:
+            self.setters[key](val)
+        except:
+            print("dispatchSetter: unable to dispatch {} (val {}) self {} exc {}".format(key, val, self.__dict__, sys.exc_info()[0]))
+
+    def setClinic(self, val):
+        self._payload["clinic"] = val
+        self.setPayload(self._payload)
+    
+    def setPatient(self, val):
+        self._payload["patient"] = val
+        self.setPayload(self._payload)
+    
+    def setUsername(self, val):
+        self._payload["username"] = val
+        self.setPayload(self._payload)
+
+    def setLocalAnesthetic(self, val):
+        self._payload["localAnesthetic"] = val
+        self.setPayload(self._payload)
+
+    def setLocalAnestheticNumberCarps(self, val):
+        self._payload["localAnestheticNumberCarps"] = val
+        self.setPayload(self._payload)
+
+    def setExam(self, val):
+        self._payload["exam"] = val
+        self.setPayload(self._payload)
+
+    def setProphy(self, val):
+        self._payload["prophy"] = val
+        self.setPayload(self._payload)
+
+    def setSrpUR(self, val):
+        self._payload["srpUR"] = val
+        self.setPayload(self._payload)
+
+    def setSrpLR(self, val):
+        self._payload["srpLR"] = val
+        self.setPayload(self._payload)
+
+    def setSrpUL(self, val):
+        self._payload["srpUL"] = val
+        self.setPayload(self._payload)
+
+    def setSrpLL(self, val):
+        self._payload["srpLL"] = val
+        self.setPayload(self._payload)
+
+    def setXraysViewed(self, val):
+        self._payload["xraysViewed"] = val
+        self.setPayload(self._payload)
+
+    def setHeadNeckOralCancerExam(self, val):
+        self._payload["headNeckOralCancerExam"] = val
+        self.setPayload(self._payload)
+
+    def setOralHygieneInstruction(self, val):
+        self._payload["oralHygieneInstruction"] = val
+        self.setPayload(self._payload)
+
+    def setFlourideTxVarnish(self, val):
+        self._payload["flourideTxVarnish"] = val
+        self.setPayload(self._payload)
+
+    def setNutritionalCounseling(self, val):
+        self._payload["nutritionalCounseling"] = val
+        self.setPayload(self._payload)
+
+    def setOrthoEvaluation(self, val):
+        self._payload["orthoEvaluation"] = val
+        self.setPayload(self._payload)
+
+    def setOrthoTx(self, val):
+        self._payload["orthoTx"] = val
+        self.setPayload(self._payload)
+
+    def setOralSurgeryEvaluation(self, val):
+        self._payload["oralSurgeryEvaluation"] = val
+        self.setPayload(self._payload)
+
+    def setOralSurgeryTx(self, val):
+        self._payload["oralSurgeryTx"] = val
+        self.setPayload(self._payload)
+
+    def setExamComment(self, val):
+        self._payload["examComment"] = val
+        self.setPayload(self._payload)
+
+    def setProphyComment(self, val):
+        self._payload["prophyComment"] = val
+        self.setPayload(self._payload)
+
+    def setSrpComment(self, val):
+        self._payload["srpComment"] = val
+        self.setPayload(self._payload)
+
+    def setXraysViewedComment(self, val):
+        self._payload["xraysViewedComment"] = val
+        self.setPayload(self._payload)
+
+    def setHeadNeckOralCancerExamComment(self, val):
+        self._payload["headNeckOralCancerExamComment"] = val
+        self.setPayload(self._payload)
+
+    def setOralHygieneInstructionComment(self, val):
+        self._payload["oralHygieneInstructionComment"] = val
+        self.setPayload(self._payload)
+
+    def setFlourideTxVarnishComment(self, val):
+        self._payload["flourideTxVarnishComment"] = val
+        self.setPayload(self._payload)
+
+    def setNutritionalCounselingComment(self, val):
+        self._payload["nutritionalCounselingComment"] = val
+        self.setPayload(self._payload)
+
+    def setOrthoEvaluationComment(self, val):
+        self._payload["orthoEvaluationComment"] = val
+        self.setPayload(self._payload)
+
+    def setOrthoTxComment(self, val):
+        self._payload["orthoTxComment"] = val
+        self.setPayload(self._payload)
+
+    def setOralSurgeryEvaluationComment(self, val):
+        self._payload["oralSurgeryEvaluationComment"] = val
+        self.setPayload(self._payload)
+
+    def setOralSurgeryTxComment(self, val):
+        self._payload["oralSurgeryTxComment"] = val
+        self.setPayload(self._payload)
+
+    def setComment(self, val):
+        self._payload["comment"] = val
+        self.setPayload(self._payload)
+
 class DentalTreatmentGenerator():
 
     anestheticFields = [
@@ -114,6 +291,36 @@ class DentalTreatmentGenerator():
         i = random.randint(-999, 999)
         return i
 
+    def createAPIPayloadBody(self, api, full):  # full True if POST, False for random PUT
+        payload = {}
+
+        for x in self.integerFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomInteger()
+                api.dispatchSetter(x, payload[x])
+
+        for x in self.anestheticFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomAnesthetic()
+                api.dispatchSetter(x, payload[x])
+
+        for x in self.booleanFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomBoolean()
+                api.dispatchSetter(x, payload[x])
+
+        count = 0     # len 0, 1, 2, 3, ...
+        for x in self.textFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomText(count)
+                api.dispatchSetter(x, payload[x])
+                if x == "username" and len(payload[x]) == 0:
+                    payload[x] = "username" 
+                    api.dispatchSetter(x, payload[x])
+                count += 1
+
+        return payload
+
     def createPayloadBody(self, full):  # full True if POST, False for random PUT
         payload = {}
 
@@ -167,7 +374,7 @@ class DentalTreatmentGenerator():
                     count += 1
         return payload
 
-class CreateDentalTreatment(ServiceAPI):
+class CreateDentalTreatment(ServiceAPI, DentalTreatmentSetter):
     def __init__(self, host, port, token):
         super(CreateDentalTreatment, self).__init__()
         
@@ -180,19 +387,14 @@ class CreateDentalTreatment(ServiceAPI):
         self.setPayload(self._payload)
         self.setURL("tscharts/v1/dentaltreatment/")
 
-    def setClinic(self, val):
-        self._payload["clinic"] = val
+    def createAPIPayloadBody(self, x):
+        generator = DentalTreatmentGenerator()
+        body = generator.createAPIPayloadBody(x, True) 
+        self._payload = body
         self.setPayload(self._payload)
-    
-    def setPatient(self, val):
-        self._payload["patient"] = val
-        self.setPayload(self._payload)
-    
-    def setUsername(self, val):
-        self._payload["username"] = val
-        self.setPayload(self._payload)
+        return body
 
-    def createPayloadBody(self):
+    def createRandomPayloadBody(self):
         generator = DentalTreatmentGenerator()
         body = generator.createPayloadBody(True) 
         self._payload = body
@@ -256,7 +458,7 @@ class GetDentalTreatment(ServiceAPI):
         self._patient = val
         self.makeURL()
 
-class UpdateDentalTreatment(ServiceAPI):
+class UpdateDentalTreatment(ServiceAPI, DentalTreatmentSetter):
     def __init__(self, host, port, token, id):
         super(UpdateDentalTreatment, self).__init__()
         
@@ -276,7 +478,7 @@ class UpdateDentalTreatment(ServiceAPI):
         self._payload["patient"] = val
         self.setPayload(self._payload)
 
-    def createPayloadBody(self):
+    def createRandomPayloadBody(self):
         generator = DentalTreatmentGenerator()
         body = generator.createPayloadBody(False) 
         self._payload = body
@@ -345,7 +547,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
         x.setUsername("Gomez")
@@ -381,7 +583,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         # non-existent clinic param
 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
         x.setClinic(9999)
         x.setPatient(patientid)
         ret = x.send(timeout=30)
@@ -390,7 +592,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         # non-existent patient param
 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
         x.setClinic(clinicid)
         x.setPatient(9999)
         ret = x.send(timeout=30)
@@ -422,7 +624,118 @@ class TestTSDentalTreatment(unittest.TestCase):
       
         # missing username 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        x.setUsername(None)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+       
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testAPICreateDentalTreatment(self):
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        data = {}
+
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid = int(ret[1]["id"])
+
+        x = CreateDentalTreatment(host, port, token)
+        body = x.createAPIPayloadBody(x)
+        x.setPatient(patientid)
+        x.setClinic(clinicid)
+        x.setUsername("Gomez")
+
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id = int(ret[1]["id"])
+        x = GetDentalTreatment(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        data = ret[1]
+
+        for x in body:
+            self.assertTrue(x in data)
+            self.assertTrue(body[x] == data[x])
+
+        x = DeleteDentalTreatment(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetDentalTreatment(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)  # not found
+
+        # non-existent clinic param
+
+        x = CreateDentalTreatment(host, port, token)
+        body = x.createAPIPayloadBody(x)
+        x.setClinic(9999)
+        x.setPatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        # non-existent patient param
+
+        x = CreateDentalTreatment(host, port, token)
+        body = x.createAPIPayloadBody(x)
+        x.setClinic(clinicid)
+        x.setPatient(9999)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        # no data
+
+        x = CreateDentalTreatment(host, port, token)
+        x.setClinic(clinicid)
+        x.setPatient(patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        # missing username 
+        x = CreateDentalTreatment(host, port, token)
+        body = x.createAPIPayloadBody(x)
         x.setClinic(clinicid)
         x.setPatient(patientid)
         x.setUsername(None)
@@ -472,7 +785,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
         x.setUsername("Gomez")
@@ -554,7 +867,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         patientid = int(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
         x.setPatient(patientid)
         x.setClinic(clinicid)
         x.setUsername("Gomez")
@@ -575,7 +888,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         self.assertTrue(patientId == patientid)
 
         x = UpdateDentalTreatment(host, port, token, id)
-        body = x.createPayloadBody()
+        body = x.createRandomPayloadBody()
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -597,7 +910,7 @@ class TestTSDentalTreatment(unittest.TestCase):
 
         for i in xrange(0, 500):
             x = UpdateDentalTreatment(host, port, token, id)
-            body = x.createPayloadBody()
+            body = x.createRandomPayloadBody()
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
@@ -630,7 +943,7 @@ class TestTSDentalTreatment(unittest.TestCase):
 
         for i in xrange(0, 500):
             x = UpdateDentalTreatment(host, port, token, id)
-            body = x.createPayloadBody()
+            body = x.createRandomPayloadBody()
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
 
@@ -761,7 +1074,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids = []
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid1)
         x.setUsername("Gomez")
@@ -771,7 +1084,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid1)
         x.setUsername("Gomez")
@@ -781,7 +1094,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid3)
         x.setClinic(clinicid1)
         x.setUsername("Gomez")
@@ -791,7 +1104,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid2)
         x.setUsername("Gomez")
@@ -801,7 +1114,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid2)
         x.setUsername("Gomez")
@@ -810,7 +1123,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid3) 
         x.setClinic(clinicid2)
         x.setUsername("Gomez")
@@ -819,7 +1132,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid1)
         x.setClinic(clinicid3)
         x.setUsername("Gomez")
@@ -828,7 +1141,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid2)
         x.setClinic(clinicid3)
         x.setUsername("Gomez")
@@ -837,7 +1150,7 @@ class TestTSDentalTreatment(unittest.TestCase):
         delids.append(ret[1]["id"])
 
         x = CreateDentalTreatment(host, port, token)
-        x.createPayloadBody()
+        x.createRandomPayloadBody()
         x.setPatient(patientid3)
         x.setClinic(clinicid3)
         x.setUsername("Gomez")
