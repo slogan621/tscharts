@@ -37,6 +37,7 @@
   "code" : id <br />
   "username" : string <br />
   "state" : treated | untreated | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "time" : last modified datetime string for record<br />
   "comment" : text<br />
 
@@ -69,7 +70,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 88
-{"username":"username","comment":"q","code":1,"patient":1,"state":"other","tooth":15,"clinic":1,"time":"2020-11-03T18:28:46.905","id":2}
+{"username":"username","comment":"q","code":1,"patient":1,"surface":"buccal","state":"other","tooth":15,"clinic":1,"time":"2020-11-03T18:28:46.905","id":2}
 0
 ```
   
@@ -115,6 +116,7 @@ Content-Type: application/json
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "code" : id <br />
   "state" : treated | untreated | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "time" : last modified datetime string for record<br />
   "username" : text string<br />
   "comment" : text<br />
@@ -150,7 +152,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 8e
-[{"username":"username","comment":"9","code":1,"patient":1,"state":"untreated","tooth":15,"clinic":1,"time":"2020-11-03T18:28:47.081","id":9}]
+[{"username":"username","comment":"9","code":1,"patient":1,"surface": "buccal,labial","state":"untreated","tooth":15,"clinic":1,"time":"2020-11-03T18:28:47.081","id":9}]
 0
 ```
   
@@ -180,6 +182,7 @@ Content-Type: application/json
   "username" : string <br />
   "code" : id <br />
   "state" : treated | untreated | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "comment" : text<br />
 
    **Optional:**
@@ -210,7 +213,7 @@ Content-Type: application/json
 Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
 Content-Length: 112
 
-{"username": "Gomez", "comment": "z", "code": 1, "patient": 1, "clinic": 1, "tooth": -931, "state": "untreated"}HTTP/1.1 200 OK
+{"username": "Gomez", "comment": "z", "code": 1, "patient": 1, "clinic": 1, "tooth": -931, "state": "untreated", "surface": "occlusal, labial"}HTTP/1.1 200 OK
 Date: Wed, 04 Nov 2020 02:28:46 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
@@ -252,6 +255,7 @@ Content-Type: application/json
   "code" : id <br />
   "username" : string<br />
   "state" : treated | untreated | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "comment" : text<br />
 
 * **Success Response:**

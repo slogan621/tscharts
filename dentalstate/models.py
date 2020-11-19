@@ -38,4 +38,25 @@ class DentalState(models.Model):
 
     state = models.CharField(max_length = 1, choices = DENTAL_STATE_CHOICES, default = DENTAL_STATE_NONE)
 
+    DENTAL_SURFACE_NONE = 'n'
+    DENTAL_SURFACE_BUCCAL = 'b'
+    DENTAL_SURFACE_LINGUAL = 'u'
+    DENTAL_SURFACE_MESIAL = 'm'
+    DENTAL_SURFACE_OCCLUSAL = 'c'
+    DENTAL_SURFACE_LABIAL = 'a'
+    DENTAL_SURFACE_INCISAL = 'i'
+    DENTAL_SURFACE_WHOLE_MOUTH_OR_VISIT = 'w'
+    DENTAL_SURFACE_OTHER = 'o'
+
+    DENTAL_SURFACE_CHOICES = ((DENTAL_SURFACE_NONE, "none"), (DENTAL_SURFACE_BUCCAL, "buccal"), (DENTAL_SURFACE_LINGUAL, "lingual"), (DENTAL_SURFACE_MESIAL, "mesial"), (DENTAL_SURFACE_OCCLUSAL, 'occlusal'), (DENTAL_SURFACE_LABIAL, 'labial'), (DENTAL_SURFACE_INCISAL, 'incisal'), (DENTAL_SURFACE_WHOLE_MOUTH_OR_VISIT, 'whole_mouth_or_visit'), (DENTAL_SURFACE_OTHER, 'other'))
+
+    # here we define a charfield as a string to hold a set of surfaces
+    # this won't work with forms, but since we are just a REST API, doesn't
+    # matter much. The DENTAL_STATE_CHOICES tuple will be useful as we
+    # serialize/unserialize values between the client and the model. We
+    # could also have done this as an integer bitmask, but a string of chars
+    # facilitates debugging.
+
+    surface = models.CharField(max_length = 10, choices = DENTAL_SURFACE_CHOICES, default = DENTAL_SURFACE_NONE)
+
     comment = models.TextField(default = "")

@@ -57,6 +57,10 @@ class DentalStateView(APIView):
         "state",
     ]
 
+    surfaceFields = [
+        "surface",
+    ]
+
     def stateToString(self, val):
         ret = None
         for x in DentalState.DENTAL_STATE_CHOICES:
@@ -71,6 +75,51 @@ class DentalStateView(APIView):
             if x[1] == val:
                 ret = x[0]
                 break
+        return ret
+
+    def surfaceToString(self, val):
+        ret = None
+        for x in DentalState.DENTAL_SURFACE_CHOICES:
+            if x[0] == val:
+                ret = x[1]
+                break
+        return ret
+
+    def surfaceToCSV(self, val):
+        ret = None
+        s = ""
+        val = "".join(val.split())
+        for x in val:
+            v = self.surfaceToString(x)
+            if v == None:
+                s = None
+                break 
+            if s and len(s) > 0:
+                s += ","
+            s += v 
+        ret = s
+        return ret
+
+    def stringToSurface(self, val):
+        ret = None
+        for x in DentalState.DENTAL_SURFACE_CHOICES:
+            if x[1] == val:
+                ret = x[0]
+                break
+        return ret
+
+    def CSVToSurface(self, val):
+        ret = None
+        s = ""
+        x = val.split(',')
+        for y in x:
+            y = "".join(y.split())
+            v = self.stringToSurface(y)
+            if v == None:
+                s = None
+                break 
+            s += v
+        ret = s
         return ret
 
     def stringToBoolean(self, val):
@@ -101,6 +150,8 @@ class DentalStateView(APIView):
         m["code"] = entry.code_id
 
         m["state"] = self.stateToString(entry.state)
+
+        m["surface"] = self.surfaceToCSV(entry.surface)
 
         m["comment"] = entry.comment
 
@@ -176,6 +227,18 @@ class DentalStateView(APIView):
                 except:
                     pass
 
+            for x in self.surfaceFields:
+                try:
+                    val = request.GET.get(x, '')
+                    if val != '':
+                        val = self.stringToSurface(val)
+                        if val == None:
+                            badRequest = True
+                        else:
+                            kwargs[x] = val
+                except:
+                    pass
+
             for x in self.integerFields:
                 try:
                     val = request.GET.get(x, '')
@@ -226,7 +289,7 @@ class DentalStateView(APIView):
         kwargs = data
 
         for k, v in data.items():
-            if not k in self.stateFields and not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic" and k != "code":
+            if not k in self.surfaceFields and not k in self.stateFields and not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic" and k != "code":
                 valid = False
                 LOG.warning("validatePostArgs: Failed to validate key {} value {}".format(k, v))
                 break
@@ -238,6 +301,17 @@ class DentalStateView(APIView):
                 valid = False
             else:
                 kwargs["state"] = val
+        except:
+            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
+            valid = False
+
+        try:
+            val = self.CSVToSurface(data["surface"])
+            if val == None:
+                LOG.warning("validatePostArgs: Failed to validate key surface val {}".format(data["surface"]))
+                valid = False
+            else:
+                kwargs["surface"] = val
         except:
             LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
             valid = False
@@ -314,6 +388,17 @@ class DentalStateView(APIView):
                     LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
                     valid = False
 
+            elif k in self.surfaceFields:
+                found = True
+                try:
+                    z = self.CSVToSurface(v)
+                    if z == None:
+                        LOG.warning("validatePutArgs: invalid k {} v {}".format(k, v))
+                        valid = False
+                except:
+                    LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
+                    valid = False
+
             elif k in self.booleanFields:
                 found = True
                 try:
@@ -361,6 +446,8 @@ class DentalStateView(APIView):
                     dental_state.tooth = int(v)
                 elif k == "state":
                     dental_state.state = self.stringToState(v)
+                elif k == "surface":
+                    dental_state.surface = self.CSVToSurface(v)
                 elif k == "username":
                     dental_state.username = str(v)
   	        elif k == "comment":

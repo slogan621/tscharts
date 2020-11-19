@@ -29,6 +29,38 @@ from tschartslib.clinic.clinic import CreateClinic, DeleteClinic
 from tschartslib.dentalcdt.dentalcdt import CreateDentalCDT, DeleteDentalCDT
 import random
 import string
+import itertools
+
+def breakout(csv):
+    #print("breakout csv {}".format(csv))
+    ret = []
+    x = csv.split(",")
+    #print("breakout x {}".format(x))
+    for y in x:
+        ret.append(y.strip())
+    #print("breakout ret {}".format(ret))
+    ret.sort() 
+    #print("breakout sorted ret {}".format(ret))
+    return ret
+
+def permuteAsCSV(strs):
+    #print("permuteAsCSV strs {}".format(strs))
+    l = list(itertools.permutations(strs))
+    #print("permuteAsCSV l {}".format(l))
+    csvs = []
+    for x in l:
+        y = list(x)
+        ret = ""
+        for z in y:
+            if len(ret):
+                ret += ","
+            ret += z
+        csvs.append(ret)
+    #print("permuteAsCSV csvs {}".format(csvs))
+    return csvs 
+
+def equalSurfaces(a, b):
+    return a == b
 
 class DentalStateGenerator():
 
@@ -48,12 +80,18 @@ class DentalStateGenerator():
         "state",
     ]
 
+    surfaceFields = [
+        "surface",
+    ]
+
     booleanStrings = ["true", "false"]
     stateStrings = ["none", "untreated", "treated", "other"]
+    surfaceStrings = ["none", "buccal", "lingual", "mesial", "occlusal", "labial", "incisal", "other"]
 
     junkKeys = ["jadda", "fooboo", "yeehad"]
 
-    junkStateStrings = ["sdfsdf", "9999", "UnTrEaTeD", "TrEaTeD", "noNe", "", None]
+    junkStateStrings = ["sdfsdf", "9999", "UnTrEaTeD", "TrEaTeD", "noNe"]
+    junkSurfaceStrings = junkStateStrings
     junkBooleanStrings = ["True", "trUe", "FAlse", "faLSE", "", None]
     junkTextStrings = [2654, 3.141592654]
 
@@ -73,6 +111,10 @@ class DentalStateGenerator():
         i = random.randrange(len(self.junkStateStrings))
         return self.junkStateStrings[i]
 
+    def getRandomJunkSurface(self):
+        i = random.randrange(len(self.junkSurfaceStrings))
+        return self.junkSurfaceStrings[i]
+
     def getRandomBoolean(self):
         i = random.randrange(len(self.booleanStrings))
         return self.booleanStrings[i]
@@ -83,6 +125,10 @@ class DentalStateGenerator():
     def getRandomState(self):
         i = random.randrange(len(self.stateStrings))
         return self.stateStrings[i]
+
+    def getRandomSurface(self):
+        i = random.randrange(len(self.surfaceStrings))
+        return self.surfaceStrings[i]
 
     def getRandomInteger(self):
         i = random.randint(-999, 999)
@@ -98,6 +144,10 @@ class DentalStateGenerator():
         for x in self.stateFields:
             if full or (not full and self.getRandomBoolean()):
                 payload[x] = self.getRandomState()
+
+        for x in self.surfaceFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomSurface()
 
         for x in self.booleanFields:
             if full or (not full and self.getRandomBoolean()):
@@ -119,6 +169,8 @@ class DentalStateGenerator():
         if junkKeys:
             for x in range(0, 100):
                 payload[self.getRandomText(10)] = self.getRandomJunkState() 
+            for x in range(0, 100):
+                payload[self.getRandomText(10)] = self.getRandomJunkSurface() 
             for x in range(0, 100):
                 payload[self.getRandomText(10)] = self.getRandomJunkBoolean() 
         else:
@@ -176,6 +228,10 @@ class CreateDentalState(ServiceAPI):
     
     def setState(self, val):
         self._payload["state"] = val
+        self.setPayload(self._payload)
+    
+    def setSurface(self, val):
+        self._payload["surface"] = val
         self.setPayload(self._payload)
     
     def setComment(self, val):
@@ -252,6 +308,14 @@ class GetDentalState(ServiceAPI):
             base += "state={}".format(self._state)
             hasQArgs = True
 
+        if not self._surface == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "surface={}".format(self._surface)
+            hasQArgs = True
+
         if not self._comment == None:
             if not hasQArgs:
                 base += "?"
@@ -275,6 +339,7 @@ class GetDentalState(ServiceAPI):
         self._tooth = None
         self._code = None
         self._state = None
+        self._surface = None
         self._comment = None
         self._id = None
         self.makeURL()
@@ -305,6 +370,10 @@ class GetDentalState(ServiceAPI):
 
     def setState(self, val):
         self._state = val
+        self.makeURL()
+
+    def setSurface(self, val):
+        self._surface = val
         self.makeURL()
 
     def setComment(self, val):
@@ -345,6 +414,10 @@ class UpdateDentalState(ServiceAPI):
 
     def setState(self, val):
         self._payload["state"] = val
+        self.setPayload(self._payload)
+
+    def setSurface(self, val):
+        self._payload["surface"] = val
         self.setPayload(self._payload)
 
     def setComment(self, val):
@@ -584,13 +657,14 @@ class TestTSDentalState(unittest.TestCase):
 
         # state
 
-        states = ["none", "treated", "untreated", "other"]
+        states = DentalStateGenerator.stateStrings
 
         for state in states:
             x = CreateDentalState(host, port, token)
             body = x.createPayloadBody()
             x.setClinic(clinicid)
             x.setPatient(patientid)
+            x.setSurface("none")
             x.setState(state)
             x.setCode(codeid)
             ret = x.send(timeout=30)
@@ -602,6 +676,34 @@ class TestTSDentalState(unittest.TestCase):
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)  
             self.assertEqual(ret[1]["state"], state)
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        # surface
+
+        surfaces = permuteAsCSV(DentalStateGenerator.surfaceStrings)
+
+        for surface in surfaces:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setState("none")
+            x.setSurface(surface)
+            sf1 = breakout(surface)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            x = GetDentalState(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            sf2 = breakout(ret[1]["surface"]) 
+            self.assertTrue(equalSurfaces(sf1, sf2))
 
             x = DeleteDentalState(host, port, token, id)
             ret = x.send(timeout=30)
@@ -687,6 +789,7 @@ class TestTSDentalState(unittest.TestCase):
             x.setClinic(clinicid)
             x.setPatient(patientid)
             x.setState(state)
+            x.setSurface("none")
             x.setCode(codeid)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
@@ -708,6 +811,7 @@ class TestTSDentalState(unittest.TestCase):
             body = x.createPayloadBody()
             x.setClinic(clinicid)
             x.setPatient(patientid)
+            x.setSurface("none")
             x.setState(state)
             x.setCode(codeid)
             ret = x.send(timeout=30)
@@ -717,6 +821,60 @@ class TestTSDentalState(unittest.TestCase):
             for badstate in badstates:
                 x = GetDentalState(host, port, token)
                 x.setState(badstate)
+                ret = x.send(timeout=30)
+                self.assertEqual(ret[0], 400)  
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        # surface
+
+        surfaces = DentalStateGenerator.surfaceStrings
+        badsurfaces = DentalStateGenerator.junkSurfaceStrings
+
+        for surface in surfaces:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setState("none")
+            x.setSurface(surface)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            x = GetDentalState(host, port, token)
+            x.setSurface(surface)
+            ret = x.send(timeout=30)
+            #print("ret {}".format(ret))
+            #print("len of ret[1] {}".format(len(ret[1])))
+            #print("ret[1] {}".format(ret[1]))
+            self.assertEqual(ret[0], 200)  
+            self.assertEqual(ret[1][0]["state"], "none")
+            self.assertEqual(ret[1][0]["id"], id)
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for surface in surfaces:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setState("none")
+            x.setSurface(surface)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            for badsurface in badsurfaces:
+                x = GetDentalState(host, port, token)
+                x.setSurface(badsurface)
+                #print("getting badsurface {}".format(badsurface))
                 ret = x.send(timeout=30)
                 self.assertEqual(ret[0], 400)  
 
@@ -888,7 +1046,6 @@ class TestTSDentalState(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = DeletePatient(host, port, token, patientid)
         x = DeleteClinic(host, port, token, clinicid)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -990,11 +1147,8 @@ class TestTSDentalState(unittest.TestCase):
         codeId = int(ret[1]["code"])
         self.assertTrue(codeId == codeid)
 
-        print("body: {}".format(body))
-        print("ret[1]: {}".format(ret[1]))
         for x in body:
             self.assertTrue(x in ret[1])
-            print("body[x] {} ret[1][x] {}".format(body[x], ret[1][x]))
             self.assertTrue(body[x] == ret[1][x])
 
         for i in xrange(0, 500):
@@ -1020,11 +1174,8 @@ class TestTSDentalState(unittest.TestCase):
             codeId = int(ret[1]["code"])
             self.assertTrue(codeId == codeid)
 
-            print("body: {}".format(body))
-            print("ret[1]: {}".format(ret[1]))
             for x in body:
                 self.assertTrue(x in ret[1])
-                print("body[x] {} ret[1][x] {}".format(body[x], ret[1][x]))
                 self.assertTrue(body[x] == ret[1][x])
 
         for i in xrange(0, 500):
@@ -1062,11 +1213,8 @@ class TestTSDentalState(unittest.TestCase):
             codeId = int(ret[1]["code"])
             self.assertTrue(codeId == codeid)
 
-            print("body: {}".format(body))
-            print("ret[1]: {}".format(ret[1]))
             for x in body:
                 self.assertTrue(x in ret[1])
-                print("body[x] {} ret[1][x] {}".format(body[x], ret[1][x]))
                 self.assertTrue(body[x] == ret[1][x])
 
         # test each setter 
@@ -1120,6 +1268,24 @@ class TestTSDentalState(unittest.TestCase):
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)  
             self.assertEqual(ret[1]["state"], state)
+
+        # surfaces
+
+        surfaces = permuteAsCSV(DentalStateGenerator.surfaceStrings)
+
+        for surface in surfaces:
+            x = UpdateDentalState(host, port, token, id)
+            x.setSurface(surface)
+            sf1 = breakout(surface)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+            x = GetDentalState(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            sf2 = breakout(ret[1]["surface"])
+            self.assertTrue(equalSurfaces(sf1, sf2))
 
         # comment
 
