@@ -33,8 +33,9 @@ class DentalState(models.Model):
     DENTAL_STATE_UNTREATED = 'u'
     DENTAL_STATE_TREATED = 't'
     DENTAL_STATE_OTHER = 'o'
+    DENTAL_STATE_MISSING = 'm'
 
-    DENTAL_STATE_CHOICES = ((DENTAL_STATE_NONE, "none"), (DENTAL_STATE_UNTREATED, "untreated"), (DENTAL_STATE_TREATED, "treated"), (DENTAL_STATE_OTHER, "other"))
+    DENTAL_STATE_CHOICES = ((DENTAL_STATE_MISSING, "missing"), (DENTAL_STATE_NONE, "none"), (DENTAL_STATE_UNTREATED, "untreated"), (DENTAL_STATE_TREATED, "treated"), (DENTAL_STATE_OTHER, "other"))
 
     state = models.CharField(max_length = 1, choices = DENTAL_STATE_CHOICES, default = DENTAL_STATE_NONE)
 

@@ -85,7 +85,7 @@ class DentalStateGenerator():
     ]
 
     booleanStrings = ["true", "false"]
-    stateStrings = ["none", "untreated", "treated", "other"]
+    stateStrings = ["missing", "none", "untreated", "treated", "other"]
     surfaceStrings = ["none", "buccal", "lingual", "mesial", "occlusal", "labial", "incisal", "other"]
 
     junkKeys = ["jadda", "fooboo", "yeehad"]
@@ -780,7 +780,7 @@ class TestTSDentalState(unittest.TestCase):
 
         # state
 
-        states = ["none", "treated", "untreated", "other"]
+        states = ["missing", "none", "treated", "untreated", "other"]
         badstates = ["yabba", "dabba", "doo"] 
 
         for state in states:
@@ -1255,7 +1255,7 @@ class TestTSDentalState(unittest.TestCase):
 
         # state
 
-        states = ["none", "treated", "untreated", "other"]
+        states = ["missing", "none", "treated", "untreated", "other"]
 
         for state in states:
             x = UpdateDentalState(host, port, token, id)

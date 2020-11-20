@@ -36,7 +36,7 @@
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "code" : id <br />
   "username" : string <br />
-  "state" : treated | untreated | none | other<br />
+  "state" : missing | treated | untreated | none | other<br />
   "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "time" : last modified datetime string for record<br />
   "comment" : text<br />
@@ -96,7 +96,8 @@ Content-Type: application/json
   "patient" : id <br />
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "code" : id <br />
-  "state" : treated | untreated | none | other<br />
+  "state" : one of the following: missing | treated | untreated | none | other<br />
+  "surface" : one  of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "time" : last modified datetime string for record<br />
   "username" : text string<br />
   "comment" : text<br />
@@ -115,7 +116,7 @@ Content-Type: application/json
   "patient" : id <br />
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "code" : id <br />
-  "state" : treated | untreated | none | other<br />
+  "state" : missing | treated | untreated | none | other<br />
   "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "time" : last modified datetime string for record<br />
   "username" : text string<br />
@@ -181,7 +182,7 @@ Content-Type: application/json
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "username" : string <br />
   "code" : id <br />
-  "state" : treated | untreated | none | other<br />
+  "state" : missing | treated | untreated | none | other<br />
   "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "comment" : text<br />
 
@@ -254,7 +255,7 @@ Content-Type: application/json
   "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
   "code" : id <br />
   "username" : string<br />
-  "state" : treated | untreated | none | other<br />
+  "state" : missing | treated | untreated | none | other<br />
   "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
   "comment" : text<br />
 
