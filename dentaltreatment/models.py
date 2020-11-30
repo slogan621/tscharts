@@ -64,15 +64,10 @@ class DentalTreatment(models.Model):
     oralSurgeryTx = models.BooleanField(default = False) 
     oralSurgeryTxComment = models.TextField(default = "")
 
-    DENTAL_ANESTHETIC_NONE = 'n'
-    DENTAL_ANESTHETIC_BENZOCAINE_TOPICAL = 'b'
-    DENTAL_ANESTHETIC_LIDOCAINE = 'l'    
-    DENTAL_ANESTHETIC_SEPTOCAINE = 's'    
-    DENTAL_ANESTHETIC_OTHER = 'o'    
-
-    DENTAL_ANESTHETIC_CHOICES = ((DENTAL_ANESTHETIC_NONE, "none"), (DENTAL_ANESTHETIC_BENZOCAINE_TOPICAL, "benzocaine"), (DENTAL_ANESTHETIC_LIDOCAINE, "lidocaine"), (DENTAL_ANESTHETIC_SEPTOCAINE, "septocaine"), (DENTAL_ANESTHETIC_OTHER, "other"))
-
-    localAnesthetic = models.CharField(max_length = 1, choices = DENTAL_ANESTHETIC_CHOICES, default = DENTAL_ANESTHETIC_NONE)
+    localAnestheticBenzocaine = models.BooleanField(default = False) 
+    localAnestheticLidocaine = models.BooleanField(default = False) 
+    localAnestheticSeptocaine = models.BooleanField(default = False) 
+    localAnestheticOther = models.BooleanField(default = False) 
     localAnestheticNumberCarps = models.IntegerField(default = 0)
     localAnestheticComment = models.TextField(default = "")
 

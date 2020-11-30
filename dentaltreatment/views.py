@@ -42,10 +42,6 @@ class DentalTreatmentView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    anestheticFields = [
-        "localAnesthetic",
-    ]
-
     integerFields = [
         "localAnestheticNumberCarps",
     ]
@@ -66,6 +62,10 @@ class DentalTreatmentView(APIView):
   	"orthoTx",
   	"oralSurgeryEvaluation",
   	"oralSurgeryTx",
+        "localAnestheticBenzocaine",
+        "localAnestheticLidocaine",
+        "localAnestheticSeptocaine",
+        "localAnestheticOther",
     ]
 
     textFields = [
@@ -82,24 +82,9 @@ class DentalTreatmentView(APIView):
   	"orthoTxComment",
   	"oralSurgeryEvaluationComment",
   	"oralSurgeryTxComment",
+  	"localAnestheticComment",
   	"comment",
     ]
-
-    def anestheticToString(self, val):
-        ret = None
-        for x in DentalTreatment.DENTAL_ANESTHETIC_CHOICES:
-            if x[0] == val:
-                ret = x[1]
-                break
-        return ret
-
-    def stringToAnesthetic(self, val):
-        ret = None
-        for x in DentalTreatment.DENTAL_ANESTHETIC_CHOICES:
-            if x[1] == val:
-                ret = x[0]
-                break
-        return ret
 
     def stringToBoolean(self, val):
         ret = None 
@@ -163,7 +148,10 @@ class DentalTreatmentView(APIView):
         m["oralSurgeryTx"] = self.booleanToString(entry.oralSurgeryTx)
         m["oralSurgeryTxComment"] = entry.oralSurgeryTxComment
 
-        m["localAnesthetic"] = self.anestheticToString(entry.localAnesthetic)
+        m["localAnestheticBenzocaine"] = self.booleanToString(entry.localAnestheticBenzocaine)
+        m["localAnestheticLidocaine"] = self.booleanToString(entry.localAnestheticLidocaine)
+        m["localAnestheticSeptocaine"] = self.booleanToString(entry.localAnestheticSeptocaine)
+        m["localAnestheticOther"] = self.booleanToString(entry.localAnestheticOther)
         m["localAnestheticNumberCarps"] = entry.localAnestheticNumberCarps
         m["localAnestheticComment"] = entry.localAnestheticComment
 
@@ -215,17 +203,6 @@ class DentalTreatmentView(APIView):
                 pass # no clinic ID
 
             try:
-                val = request.GET.get("localAnesthetic", '')
-                if val != '':
-                    val = self.stringToAnesthetic(val)
-                    if val == None:
-                        badRequest = True
-                    else:
-                        kwargs[x] = val
-            except:
-                pass
-
-            try:
                 val = request.GET.get("localAnestheticNumberCarps", '')
                 if val != '':
                     val = int(val)
@@ -275,7 +252,7 @@ class DentalTreatmentView(APIView):
         kwargs = data
 
         for k, v in data.items():
-            if not k in self.anestheticFields and not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic":
+            if not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic":
                 valid = False
                 LOG.warning("validatePostArgs: Failed to validate key {} value {}".format(k, v))
                 break
@@ -290,17 +267,6 @@ class DentalTreatmentView(APIView):
             LOG.warning("validatePostArgs: Exception: Failed to validate key username")
             valid = False
 
-        try: 
-            val = self.stringToAnesthetic(data["localAnesthetic"])
-            if val == None:
-                LOG.warning("validatePostArgs: Failed to validate key localAnesthetic val {}".format(data["localAnesthetic"]))
-                valid = False
-            else:
-                kwargs["localAnesthetic"] = val
-        except:
-            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("localAnesthetic", sys.exc_info()[0]))
-            valid = False
- 
         try: 
             val = int(data["localAnestheticNumberCarps"])
             if val == None:
@@ -348,18 +314,7 @@ class DentalTreatmentView(APIView):
         # we have is paired with a valid value
 
         for k, v in data.items():
-            if k in self.anestheticFields:
-                found = True
-                try:
-                    z = self.stringToAnesthetic(v)
-                    if z == None:
-                        LOG.warning("validatePutArgs: invalid k {} v {}".format(k, v))
-                        valid = False
-                except:
-                    LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
-                    valid = False
-
-            elif k in self.booleanFields:
+            if k in self.booleanFields:
                 found = True
                 try:
                     z = self.stringToBoolean(v)
@@ -432,11 +387,16 @@ class DentalTreatmentView(APIView):
                     dental_treatment.oralSurgeryEvaluation = self.stringToBoolean(v)
   	        elif k == "oralSurgeryTx":
                     dental_treatment.oralSurgeryTx = self.stringToBoolean(v)
-  	        elif k == "localAnesthetic":
-                    dental_treatment.localAnesthetic = self.stringToAnesthetic(v)
+  	        elif k == "localAnestheticBenzocaine":
+                    dental_treatment.localAnestheticBenzocaine = self.stringToBoolean(v)
+  	        elif k == "localAnestheticLidocaine":
+                    dental_treatment.localAnestheticLidocaine = self.stringToBoolean(v)
+  	        elif k == "localAnestheticSeptocaine":
+                    dental_treatment.localAnestheticSeptocaine = self.stringToBoolean(v)
+  	        elif k == "localAnestheticOther":
+                    dental_treatment.localAnestheticOther = self.stringToBoolean(v)
   	        elif k == "localAnestheticNumberCarps":
                     dental_treatment.localAnestheticNumberCarps = int(v)
-
                 elif k == "examComment":
                     dental_treatment.examComment = str(v)
                 elif k == "prophyComment":

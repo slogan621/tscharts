@@ -35,7 +35,10 @@ class DentalTreatmentSetter(object):
         super(DentalTreatmentSetter, self).__init__()
 
         self.setters = {
-            "localAnesthetic": self.setLocalAnesthetic,
+            "localAnestheticBenzocaine": self.setLocalAnestheticBenzocaine,
+            "localAnestheticLidocaine": self.setLocalAnestheticLidocaine,
+            "localAnestheticSeptocaine": self.setLocalAnestheticSeptocaine,
+            "localAnestheticOther": self.setLocalAnestheticOther,
             "localAnestheticNumberCarps": self.setLocalAnestheticNumberCarps,
             "exam": self.setExam,
             "prophy": self.setProphy,
@@ -65,6 +68,7 @@ class DentalTreatmentSetter(object):
             "orthoTxComment": self.setOrthoTxComment,
             "oralSurgeryEvaluationComment": self.setOralSurgeryEvaluationComment,
             "oralSurgeryTxComment": self.setOralSurgeryTxComment,
+            "localAnestheticComment": self.setLocalAnestheticComment,
             "comment": self.setComment,
         }
 
@@ -86,8 +90,20 @@ class DentalTreatmentSetter(object):
         self._payload["username"] = val
         self.setPayload(self._payload)
 
-    def setLocalAnesthetic(self, val):
-        self._payload["localAnesthetic"] = val
+    def setLocalAnestheticBenzocaine(self, val):
+        self._payload["localAnestheticBenzocaine"] = val
+        self.setPayload(self._payload)
+
+    def setLocalAnestheticLidocaine(self, val):
+        self._payload["localAnestheticLidocaine"] = val
+        self.setPayload(self._payload)
+
+    def setLocalAnestheticOther(self, val):
+        self._payload["localAnestheticOther"] = val
+        self.setPayload(self._payload)
+
+    def setLocalAnestheticSeptocaine(self, val):
+        self._payload["localAnestheticSeptocaine"] = val
         self.setPayload(self._payload)
 
     def setLocalAnestheticNumberCarps(self, val):
@@ -202,15 +218,15 @@ class DentalTreatmentSetter(object):
         self._payload["oralSurgeryTxComment"] = val
         self.setPayload(self._payload)
 
+    def setLocalAnestheticComment(self, val):
+        self._payload["localAnestheticComment"] = val
+        self.setPayload(self._payload)
+
     def setComment(self, val):
         self._payload["comment"] = val
         self.setPayload(self._payload)
 
 class DentalTreatmentGenerator():
-
-    anestheticFields = [
-        "localAnesthetic",
-    ]
 
     integerFields = [
         "localAnestheticNumberCarps",
@@ -232,6 +248,10 @@ class DentalTreatmentGenerator():
         "orthoTx",
         "oralSurgeryEvaluation",
         "oralSurgeryTx",
+        "localAnestheticBenzocaine",
+        "localAnestheticLidocaine",
+        "localAnestheticSeptocaine",
+        "localAnestheticOther",
     ]
 
     textFields = [
@@ -248,6 +268,7 @@ class DentalTreatmentGenerator():
         "orthoTxComment",
         "oralSurgeryEvaluationComment",
         "oralSurgeryTxComment",
+        "localAnestheticComment",
         "comment",
     ]
 
@@ -283,10 +304,6 @@ class DentalTreatmentGenerator():
     def getRandomText(self, size):
         return ''.join([random.choice(string.ascii_letters + string.digits) for n in xrange(size)])
 
-    def getRandomAnesthetic(self):
-        i = random.randrange(len(self.anestheticStrings))
-        return self.anestheticStrings[i]
-
     def getRandomInteger(self):
         i = random.randint(-999, 999)
         return i
@@ -297,11 +314,6 @@ class DentalTreatmentGenerator():
         for x in self.integerFields:
             if full or (not full and self.getRandomBoolean()):
                 payload[x] = self.getRandomInteger()
-                api.dispatchSetter(x, payload[x])
-
-        for x in self.anestheticFields:
-            if full or (not full and self.getRandomBoolean()):
-                payload[x] = self.getRandomAnesthetic()
                 api.dispatchSetter(x, payload[x])
 
         for x in self.booleanFields:
@@ -328,10 +340,6 @@ class DentalTreatmentGenerator():
             if full or (not full and self.getRandomBoolean()):
                 payload[x] = self.getRandomInteger()
 
-        for x in self.anestheticFields:
-            if full or (not full and self.getRandomBoolean()):
-                payload[x] = self.getRandomAnesthetic()
-
         for x in self.booleanFields:
             if full or (not full and self.getRandomBoolean()):
                 payload[x] = self.getRandomBoolean()
@@ -351,17 +359,11 @@ class DentalTreatmentGenerator():
 
         if junkKeys:
             for x in range(0, 100):
-                payload[self.getRandomText(10)] = self.getRandomJunkAnesthetic() 
-            for x in range(0, 100):
                 payload[self.getRandomText(10)] = self.getRandomJunkBoolean() 
         else:
             for x in self.integerFields:
                 if full or (not full and self.getRandomBoolean()):
                     payload[x] = self.getRandomInteger()
-
-            for x in self.anestheticFields:
-                if full or (not full and self.getRandomBoolean()):
-                    payload[x] = self.getRandomJunkAnesthetic()
 
             for x in self.booleanFields:
                 if full or (not full and self.getRandomBoolean()):
