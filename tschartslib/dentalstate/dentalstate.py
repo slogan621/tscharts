@@ -84,7 +84,12 @@ class DentalStateGenerator():
         "surface",
     ]
 
+    locationFields = [
+        "location",
+    ]
+
     booleanStrings = ["true", "false"]
+    locationStrings = ["top", "bottom"]
     stateStrings = ["missing", "none", "untreated", "treated", "other"]
     surfaceStrings = ["none", "buccal", "lingual", "mesial", "occlusal", "labial", "incisal", "other"]
 
@@ -92,6 +97,7 @@ class DentalStateGenerator():
 
     junkStateStrings = ["sdfsdf", "9999", "UnTrEaTeD", "TrEaTeD", "noNe"]
     junkSurfaceStrings = junkStateStrings
+    junkLocationStrings = junkStateStrings
     junkBooleanStrings = ["True", "trUe", "FAlse", "faLSE", "", None]
     junkTextStrings = [2654, 3.141592654]
 
@@ -115,6 +121,10 @@ class DentalStateGenerator():
         i = random.randrange(len(self.junkSurfaceStrings))
         return self.junkSurfaceStrings[i]
 
+    def getRandomJunkLocation(self):
+        i = random.randrange(len(self.junkLocationStrings))
+        return self.junkLocationStrings[i]
+
     def getRandomBoolean(self):
         i = random.randrange(len(self.booleanStrings))
         return self.booleanStrings[i]
@@ -129,6 +139,10 @@ class DentalStateGenerator():
     def getRandomSurface(self):
         i = random.randrange(len(self.surfaceStrings))
         return self.surfaceStrings[i]
+
+    def getRandomLocation(self):
+        i = random.randrange(len(self.locationStrings))
+        return self.locationStrings[i]
 
     def getRandomInteger(self):
         i = random.randint(-999, 999)
@@ -148,6 +162,10 @@ class DentalStateGenerator():
         for x in self.surfaceFields:
             if full or (not full and self.getRandomBoolean()):
                 payload[x] = self.getRandomSurface()
+
+        for x in self.locationFields:
+            if full or (not full and self.getRandomBoolean()):
+                payload[x] = self.getRandomLocation()
 
         for x in self.booleanFields:
             if full or (not full and self.getRandomBoolean()):
@@ -221,6 +239,10 @@ class CreateDentalState(ServiceAPI):
     def setTooth(self, val):
         self._payload["tooth"] = val
         self.setPayload(self._payload)
+
+    def setLocation(self, val):
+        self._payload["location"] = val
+        self.setPayload(self._payload)
     
     def setCode(self, val):
         self._payload["code"] = val
@@ -292,6 +314,14 @@ class GetDentalState(ServiceAPI):
             base += "tooth={}".format(self._tooth)
             hasQArgs = True
 
+        if not self._location == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "location={}".format(self._location)
+            hasQArgs = True
+
         if not self._code == None:
             if not hasQArgs:
                 base += "?"
@@ -336,6 +366,7 @@ class GetDentalState(ServiceAPI):
         self._clinic = None
         self._patient = None
         self._username = None
+        self._location = None
         self._tooth = None
         self._code = None
         self._state = None
@@ -362,6 +393,10 @@ class GetDentalState(ServiceAPI):
 
     def setTooth(self, val):
         self._tooth = val
+        self.makeURL()
+
+    def setLocation(self, val):
+        self._location = val
         self.makeURL()
 
     def setCode(self, val):
@@ -406,6 +441,10 @@ class UpdateDentalState(ServiceAPI):
 
     def setTooth(self, val):
         self._payload["tooth"] = val
+        self.setPayload(self._payload)
+
+    def setLocation(self, val):
+        self._payload["location"] = val
         self.setPayload(self._payload)
 
     def setCode(self, val):
@@ -550,6 +589,7 @@ class TestTSDentalState(unittest.TestCase):
         x.setClinic(9999)
         x.setPatient(patientid)
         x.setCode(codeid)
+        x.setLocation("top")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
@@ -560,6 +600,7 @@ class TestTSDentalState(unittest.TestCase):
         x.setClinic(clinicid)
         x.setPatient(9999)
         x.setCode(codeid)
+        x.setLocation("top")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
 
@@ -569,6 +610,7 @@ class TestTSDentalState(unittest.TestCase):
         body = x.createPayloadBody()
         x.setClinic(clinicid)
         x.setPatient(patientid)
+        x.setLocation("top")
         x.setCode(9999)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
@@ -620,6 +662,7 @@ class TestTSDentalState(unittest.TestCase):
         x.setPatient(patientid)
         x.setCode(codeid)
         x.setTooth(15)
+        x.setLocation("top")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
@@ -666,6 +709,7 @@ class TestTSDentalState(unittest.TestCase):
             x.setPatient(patientid)
             x.setSurface("none")
             x.setState(state)
+            x.setLocation("top")
             x.setCode(codeid)
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)
@@ -676,6 +720,33 @@ class TestTSDentalState(unittest.TestCase):
             ret = x.send(timeout=30)
             self.assertEqual(ret[0], 200)  
             self.assertEqual(ret[1]["state"], state)
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        # location
+
+        locations = DentalStateGenerator.locationStrings
+
+        for location in locations:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setSurface("none")
+            x.setState("none")
+            x.setLocation(location)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            x = GetDentalState(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            self.assertEqual(ret[1]["location"], location)
 
             x = DeleteDentalState(host, port, token, id)
             ret = x.send(timeout=30)
@@ -692,6 +763,7 @@ class TestTSDentalState(unittest.TestCase):
             x.setPatient(patientid)
             x.setState("none")
             x.setSurface(surface)
+            x.setLocation("top")
             sf1 = breakout(surface)
             x.setCode(codeid)
             ret = x.send(timeout=30)
@@ -821,6 +893,60 @@ class TestTSDentalState(unittest.TestCase):
             for badstate in badstates:
                 x = GetDentalState(host, port, token)
                 x.setState(badstate)
+                ret = x.send(timeout=30)
+                self.assertEqual(ret[0], 400)  
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        # location
+
+        locations = DentalStateGenerator.locationStrings
+        badlocations = DentalStateGenerator.junkLocationStrings
+
+        for location in locations:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setState("none")
+            x.setLocation(location)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            x = GetDentalState(host, port, token)
+            x.setLocation(location)
+            ret = x.send(timeout=30)
+            #print("ret {}".format(ret))
+            #print("len of ret[1] {}".format(len(ret[1])))
+            #print("ret[1] {}".format(ret[1]))
+            self.assertEqual(ret[0], 200)  
+            self.assertEqual(ret[1][0]["location"], location)
+            self.assertEqual(ret[1][0]["id"], id)
+
+            x = DeleteDentalState(host, port, token, id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        for location in locations:
+            x = CreateDentalState(host, port, token)
+            body = x.createPayloadBody()
+            x.setClinic(clinicid)
+            x.setPatient(patientid)
+            x.setState("none")
+            x.setLocation(location)
+            x.setCode(codeid)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+            id = int(ret[1]["id"])
+
+            for badlocation in badlocations:
+                x = GetDentalState(host, port, token)
+                x.setLocation(badlocation)
+                #print("getting badsurface {}".format(badsurface))
                 ret = x.send(timeout=30)
                 self.assertEqual(ret[0], 400)  
 
@@ -1252,6 +1378,22 @@ class TestTSDentalState(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertEqual(ret[1]["code"], newcodeid)
+
+        # location
+
+        locations = ["top", "bottom"]
+
+        for location in locations:
+            x = UpdateDentalState(host, port, token, id)
+            x.setLocation(location)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+            x = GetDentalState(host, port, token)
+            x.setId(id)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)  
+            self.assertEqual(ret[1]["location"], location)
 
         # state
 

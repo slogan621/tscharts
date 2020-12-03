@@ -33,7 +33,8 @@
   "id" : id<br />
   "clinic" : id <br />
   "patient" : id <br />
-  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "tooth" : integer tooth number (0 if not related to a specific tooth) <br />
+  "location" : top | bottom <br />
   "code" : id <br />
   "username" : string <br />
   "state" : missing | treated | untreated | none | other<br />
@@ -70,7 +71,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 88
-{"username":"username","comment":"q","code":1,"patient":1,"surface":"buccal","state":"other","tooth":15,"clinic":1,"time":"2020-11-03T18:28:46.905","id":2}
+{"username":"username","comment":"q","code":1,"patient":1,"surface":"buccal","state":"other","tooth":15,"location": "top", "clinic":1,"time":"2020-11-03T18:28:46.905","id":2}
 0
 ```
   
@@ -94,7 +95,8 @@ Content-Type: application/json
 
   "clinic" : id <br />
   "patient" : id <br />
-  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "tooth" : integer tooth number (0 if not related to a specific tooth) <br />
+  "location" : top | bottom <br />
   "code" : id <br />
   "state" : one of the following: missing | treated | untreated | none | other<br />
   "surface" : one  of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
@@ -114,7 +116,8 @@ Content-Type: application/json
   "id" : id <br />
   "clinic" : id <br />
   "patient" : id <br />
-  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "tooth" : integer tooth number (0 if not related to a specific tooth) <br />
+  "location" : top | bottom <br />
   "code" : id <br />
   "state" : missing | treated | untreated | none | other<br />
   "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
@@ -153,7 +156,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 8e
-[{"username":"username","comment":"9","code":1,"patient":1,"surface": "buccal,labial","state":"untreated","tooth":15,"clinic":1,"time":"2020-11-03T18:28:47.081","id":9}]
+[{"username":"username","comment":"9","code":1,"patient":1,"surface": "buccal,labial","state":"untreated","location": "top", "tooth":15,"clinic":1,"time":"2020-11-03T18:28:47.081","id":9}]
 0
 ```
   
@@ -179,7 +182,8 @@ Content-Type: application/json
  
   "clinic" : id <br />
   "patient" : id <br />
-  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "tooth" : integer tooth number (0 if not related to a specific tooth) <br />
+  "location" : top | bottom <br />
   "username" : string <br />
   "code" : id <br />
   "state" : missing | treated | untreated | none | other<br />
@@ -214,7 +218,7 @@ Content-Type: application/json
 Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
 Content-Length: 112
 
-{"username": "Gomez", "comment": "z", "code": 1, "patient": 1, "clinic": 1, "tooth": -931, "state": "untreated", "surface": "occlusal, labial"}HTTP/1.1 200 OK
+{"username": "Gomez", "comment": "z", "code": 1, "patient": 1, "clinic": 1, "location": "top", "tooth": -931, "state": "untreated", "surface": "occlusal, labial"}HTTP/1.1 200 OK
 Date: Wed, 04 Nov 2020 02:28:46 GMT
 Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
@@ -252,7 +256,8 @@ Content-Type: application/json
 
    One or more of the following field/value pairs
 
-  "tooth" : integer tooth number (9999 if not related to a specific tooth) <br />
+  "tooth" : integer tooth number (0 if not related to a specific tooth) <br />
+  "location" : top | bottom <br />
   "code" : id <br />
   "username" : string<br />
   "state" : missing | treated | untreated | none | other<br />

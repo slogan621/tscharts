@@ -57,6 +57,10 @@ class DentalStateView(APIView):
         "state",
     ]
 
+    locationFields = [
+        "location",
+    ]
+
     surfaceFields = [
         "surface",
     ]
@@ -72,6 +76,22 @@ class DentalStateView(APIView):
     def stringToState(self, val):
         ret = None
         for x in DentalState.DENTAL_STATE_CHOICES:
+            if x[1] == val:
+                ret = x[0]
+                break
+        return ret
+
+    def locationToString(self, val):
+        ret = None
+        for x in DentalState.DENTAL_LOCATION_CHOICES:
+            if x[0] == val:
+                ret = x[1]
+                break
+        return ret
+
+    def stringToLocation(self, val):
+        ret = None
+        for x in DentalState.DENTAL_LOCATION_CHOICES:
             if x[1] == val:
                 ret = x[0]
                 break
@@ -150,6 +170,7 @@ class DentalStateView(APIView):
         m["code"] = entry.code_id
 
         m["state"] = self.stateToString(entry.state)
+        m["location"] = self.locationToString(entry.location)
 
         m["surface"] = self.surfaceToCSV(entry.surface)
 
@@ -214,6 +235,18 @@ class DentalStateView(APIView):
                         badRequest = True
             except:
                 pass # no code ID
+
+            for x in self.locationFields:
+                try:
+                    val = request.GET.get(x, '')
+                    if val != '':
+                        val = self.stringToLocation(val)
+                        if val == None:
+                            badRequest = True
+                        else:
+                            kwargs[x] = val
+                except:
+                    pass
 
             for x in self.stateFields:
                 try:
@@ -289,7 +322,7 @@ class DentalStateView(APIView):
         kwargs = data
 
         for k, v in data.items():
-            if not k in self.surfaceFields and not k in self.stateFields and not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic" and k != "code":
+            if not k in self.locationFields and not k in self.surfaceFields and not k in self.stateFields and not k in self.booleanFields and not k in self.textFields and not k in self.integerFields and k != "patient" and k != "clinic" and k != "code":
                 valid = False
                 LOG.warning("validatePostArgs: Failed to validate key {} value {}".format(k, v))
                 break
@@ -301,6 +334,17 @@ class DentalStateView(APIView):
                 valid = False
             else:
                 kwargs["state"] = val
+        except:
+            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
+            valid = False
+
+        try:
+            val = self.stringToLocation(data["location"])
+            if val == None:
+                LOG.warning("validatePostArgs: Failed to validate key location val {}".format(data["location"]))
+                valid = False
+            else:
+                kwargs["location"] = val
         except:
             LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
             valid = False
@@ -398,6 +442,16 @@ class DentalStateView(APIView):
                 except:
                     LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
                     valid = False
+            elif k in self.locationFields:
+                found = True
+                try:
+                    z = self.stringToLocation(v)
+                    if z == None:
+                        LOG.warning("validatePutArgs: invalid k {} v {}".format(k, v))
+                        valid = False
+                except:
+                    LOG.warning("validatePutArgs: exception invalid k {} v {}".format(k, v))
+                    valid = False
 
             elif k in self.booleanFields:
                 found = True
@@ -446,6 +500,8 @@ class DentalStateView(APIView):
                     dental_state.tooth = int(v)
                 elif k == "state":
                     dental_state.state = self.stringToState(v)
+                elif k == "location":
+                    dental_state.location = self.stringToLocation(v)
                 elif k == "surface":
                     dental_state.surface = self.CSVToSurface(v)
                 elif k == "username":

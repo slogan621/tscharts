@@ -26,7 +26,22 @@ class DentalState(models.Model):
     patient = models.ForeignKey(Patient)
     username = models.CharField(max_length=64, default = "")  # user supplied name
     time = models.DateTimeField(auto_now=True)
-    tooth = models.IntegerField(default = 9999)
+
+    '''
+    tooth location is relative to location (top or bottom). Zero
+    indicates the treatment applies to whole mouth (and location
+    is ignored
+    '''
+
+    tooth = models.IntegerField(default = 0)
+
+    DENTAL_LOCATION_TOP = 't'
+    DENTAL_LOCATION_BOTTOM = 'b'
+
+    DENTAL_LOCATION_CHOICES = ((DENTAL_LOCATION_TOP, "top"), (DENTAL_LOCATION_BOTTOM, "bottom"))
+
+    location = models.CharField(max_length = 1, choices = DENTAL_LOCATION_CHOICES, default = DENTAL_LOCATION_TOP)
+    
     code = models.ForeignKey(DentalCDT)
 
     DENTAL_STATE_NONE = 'n'
