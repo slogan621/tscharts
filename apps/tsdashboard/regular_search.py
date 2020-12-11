@@ -149,7 +149,9 @@ class RegularSearch(wx.Panel):
         if not self.timer_update:
             pub.sendMessage('clearxrays')
             pub.sendMessage('clearxraycontrol')
-            pub.sendMessage('patient_selected', patient=self.selected_id)
+            print("selection {} selected id {} search_results {}".format(selection, self.selected_id,
+self.search_results))
+            pub.sendMessage('patient_selected', data=selection, patient=self.selected_id)
             pub.sendMessage('loadxrays')
         '''
         else:

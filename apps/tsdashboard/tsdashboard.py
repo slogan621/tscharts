@@ -325,24 +325,110 @@ class PrintWristBandTab(wx.Panel):
     def getTitle(self):
         return "Wrist Band Printer"
 
+    def dobToMilitary(self, dob):
+        try :
+            parts = dob.split('/')
+            months = [
+                  "JAN",
+                  "FEB",
+                  "MAR",
+                  "ABR",
+                  "MAY",
+                  "JUN",
+                  "JUL",
+                  "AGO",
+                  "SEP",
+                  "OCT",
+                  "NOV",
+                  "DIC",
+                 ]
+            return "{}{}{}".format(parts[2], months[int(parts[1]) - 1], parts[0])
+        except:
+            return dob
+
+    def updatePrintStr(self):
+
+        val = "{} {} {} {} {} {} {}".format(
+            str(self.patientData.id) if self.idcb.GetValue() else "",
+            self.first.GetValue() if self.firstcb.GetValue() else "",
+            self.middle.GetValue() if self.middlecb.GetValue() else "",
+            self.father.GetValue().upper() if self.fathercb.GetValue() else "",
+            self.mother.GetValue().upper() if self.mothercb.GetValue() else "",
+            self.dobToMilitary(self.dob.GetValue()) if self.dobcb.GetValue() else "",
+            self.gender.GetValue() if self.gendercb.GetValue() else "")
+            
+        self.labelText.SetLabel(val)
+
+    def on_patient_selected_message(self, data, patient):
+        self.patientData = data
+
+        print("on_patient_selected {}".format(data))
+
+        self.id.SetValue(str(data.id))
+        self.first.SetValue(data.first)
+        self.middle.SetValue(data.middle)
+        self.father.SetValue(data.paternal_last)
+        self.mother.SetValue(data.maternal_last)
+        self.dob.SetValue(data.dob)
+        self.gender.SetValue(data.gender)
+        #self.curp.SetText(data.gender)
+
+        self.updatePrintStr()
+
+        '''
+        self.first = data['first']
+        self.middle = data['middle']
+        self.paternal_last = data['paternal_last']
+        self.maternal_last = data['maternal_last']
+        self.dob = data['dob']
+        self.gender = data['gender']
+        self.curp = data['curp']
+        '''
+
+        print("on_patient_selected_message {}".format(patient))
+        self.patient = patient
+
+    def onChecked(self, e):
+        self.updatePrintStr()
+
+    def onEnter(self, e):
+        self.updatePrintStr()
+
     def __init__(self, parent, main, sess):
         self.sess = sess
         self.main = main
         wx.Panel.__init__(self, parent)
 
+        pub.subscribe(self.on_patient_selected_message, 'patient_selected')
+
         container = wx.BoxSizer(wx.VERTICAL)
         hsizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # id 
+        vsizer = wx.BoxSizer(wx.VERTICAL)
+        lbl = wx.StaticText(self,
+                            label="ID")
+        vsizer.Add(lbl, 0, wx.ALL, 5)
+        self.id = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+                               size=(200, 30))
+        self.Bind(wx.EVT_TEXT, self.onEnter)
+        vsizer.Add(self.id, 0, wx.ALL, 5)
+        self.idcb = wx.CheckBox(self, label="")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        vsizer.Add(self.idcb, 0, wx.ALL, 5)
+        hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # first 
         vsizer = wx.BoxSizer(wx.VERTICAL)
         lbl = wx.StaticText(self,
                             label="First")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.first = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
+        vsizer.Add(self.first, 0, wx.ALL, 5)
         self.firstcb = wx.CheckBox(self, label="")
+        self.firstcb.SetValue(True)
         vsizer.Add(self.firstcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
@@ -351,12 +437,13 @@ class PrintWristBandTab(wx.Panel):
         lbl = wx.StaticText(self,
                             label="Middle")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.middle = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.middle, 0, wx.ALL, 5)
+        self.middlecb = wx.CheckBox(self, label="")
+        self.middlecb.SetValue(True)
+        vsizer.Add(self.middlecb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # father 
@@ -364,12 +451,13 @@ class PrintWristBandTab(wx.Panel):
         lbl = wx.StaticText(self,
                             label="Father's Last")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.father = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.father, 0, wx.ALL, 5)
+        self.fathercb = wx.CheckBox(self, label="")
+        self.fathercb.SetValue(True)
+        vsizer.Add(self.fathercb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # mother 
@@ -377,12 +465,13 @@ class PrintWristBandTab(wx.Panel):
         lbl = wx.StaticText(self,
                             label="Mather's Last")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.mother = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.mother, 0, wx.ALL, 5)
+        self.mothercb = wx.CheckBox(self, label="")
+        self.mothercb.SetValue(True)
+        vsizer.Add(self.mothercb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         container.Add(hsizer, 0, wx.ALL, 5)
@@ -394,12 +483,13 @@ class PrintWristBandTab(wx.Panel):
         lbl = wx.StaticText(self,
                             label="Gender")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.gender = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.gender, 0, wx.ALL, 5)
+        self.gendercb = wx.CheckBox(self, label="")
+        self.gendercb.SetValue(True)
+        vsizer.Add(self.gendercb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # dob 
@@ -407,28 +497,42 @@ class PrintWristBandTab(wx.Panel):
         lbl = wx.StaticText(self,
                             label="DOB")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.dob = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.dob, 0, wx.ALL, 5)
+        self.dobcb = wx.CheckBox(self, label="")
+        self.dobcb.SetValue(True)
+        vsizer.Add(self.dobcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
+        '''
         # curp 
         vsizer = wx.BoxSizer(wx.VERTICAL)
         lbl = wx.StaticText(self,
                             label="CURP")
         vsizer.Add(lbl, 0, wx.ALL, 5)
-        self.txt = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
+        self.curp = wx.TextCtrl(self, style=wx.TE_PROCESS_ENTER,
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
-        vsizer.Add(self.txt, 0, wx.ALL, 5)
-        self.firstcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        vsizer.Add(self.curp, 0, wx.ALL, 5)
+        self.curpcb = wx.CheckBox(self, label="")
+        vsizer.Add(self.curpcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
+        '''
 
         container.Add(hsizer, 0, wx.ALL, 5)
+
+        self.labelText = wx.StaticText(self,-1,style = wx.ALIGN_LEFT) 
+        font = wx.Font(24, wx.ROMAN, wx.ITALIC, wx.NORMAL) 
+        self.labelText.SetFont(font)
+        self.labelText.SetLabel("ipso facto absurdum")
+        container.Add(self.labelText, 0, wx.ALL, 5)
+
+        self.print_btn = wx.Button(self, label='Print')
+        #self.print_btn.Bind(wx.EVT_BUTTON, self.on_print)
+        container.Add(self.print_btn, 0, wx.ALL, 5)
+
         self.SetSizer(container)
 
 class TabThree(wx.Panel):
@@ -526,9 +630,10 @@ class MainPanel(wx.Panel):
         print("on_refresh_message")
         self.Layout()
 
-    def on_patient_selected_message(self, patient):
+    def on_patient_selected_message(self, data, patient):
         print("on_patient_selected_message {}".format(patient))
         self.patient = patient
+        self.patientData = data
 
     def setClinic(self, id):
         self.clinic = id
