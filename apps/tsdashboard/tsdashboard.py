@@ -362,7 +362,7 @@ class PrintWristBandTab(wx.Panel):
     def on_patient_selected_message(self, data, patient):
         self.patientData = data
 
-        print("on_patient_selected {}".format(data))
+        print("wristband printer on_patient_selected {}".format(data))
 
         self.id.SetValue(str(data.id))
         self.first.SetValue(data.first)

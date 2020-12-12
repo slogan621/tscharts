@@ -109,7 +109,23 @@ class RegularSearch(wx.Panel):
                     break
                 count = count + 1
             self.update_image(f'{self.selected_id}')
-            #pub.sendMessage('refresh')
+        else: 
+            try:
+                selection = self.search_results_olv.GetSelectedObject()
+            except:
+                selection = None
+
+            try:
+                if selection == None:
+                    obj = self.search_results_olv.GetObjectAt(0);
+                    if obj != None:
+                        self.search_results_olv.SelectObject(obj)
+                        self.selected_id = obj.id 
+                        pub.sendMessage('patient_selected', data=obj, patient=self.selected_id)
+            except:
+                pass
+           
+
         self.on_pulse_off_message()
         self.timer_update = False
 
@@ -141,7 +157,6 @@ class RegularSearch(wx.Panel):
 
     def on_selection(self, event):
         selection = self.search_results_olv.GetSelectedObject()
-        print("selected object {}".format(selection))
         #patient_id = self.title.SetValue(f'{selection.id}')
         #self.title.SetValue(f'{selection.title}')
         self.selected_id = selection.id
@@ -149,8 +164,6 @@ class RegularSearch(wx.Panel):
         if not self.timer_update:
             pub.sendMessage('clearxrays')
             pub.sendMessage('clearxraycontrol')
-            print("selection {} selected id {} search_results {}".format(selection, self.selected_id,
-self.search_results))
             pub.sendMessage('patient_selected', data=selection, patient=self.selected_id)
             pub.sendMessage('loadxrays')
         '''
@@ -229,6 +242,7 @@ self.search_results))
             ColumnDefn("Gender", "left", 150, "gender"),
         ])
         self.search_results_olv.SetObjects(self.search_results)
+        pub.sendMessage('patients_updated')
 
     def load_search_results(self, registrations):
         self.search_results = []
