@@ -33,6 +33,7 @@ from tschartslib.patient.patient import GetPatient
 from tschartslib.clinic.clinic import GetAllClinics
 from tschartslib.image.image import GetImage, CreateImage, DeleteImage
 from collections import OrderedDict
+import wristbandprinter
 
 class TSSession():
     def __init__(self):
@@ -350,25 +351,37 @@ class PrintWristBandTab(wx.Panel):
 
     def updatePrintStr(self):
 
-        val = "{}{} {}{} {}{} {}{} {}{} {}{} {}{} {}".format(
-            str(self.patientData.id) if self.idcb.GetValue() else "",
-            "\n" if self.idnlcb.GetValue() else "",
-            self.first.GetValue() if self.firstcb.GetValue() else "",
-            "\n" if self.firstnlcb.GetValue() else "",
-            self.middle.GetValue() if self.middlecb.GetValue() else "",
-            "\n" if self.middlenlcb.GetValue() else "",
-            self.father.GetValue().upper() if self.fathercb.GetValue() else "",
-            "\n" if self.fathernlcb.GetValue() else "",
-            self.mother.GetValue() if self.mothercb.GetValue() else "",
-            "\n" if self.mothernlcb.GetValue() else "",
-            self.gender.GetValue() if self.gendercb.GetValue() else "",
-            "\n" if self.gendernlcb.GetValue() else "",
-            self.dobToMilitary(self.dob.GetValue()) if self.dobcb.GetValue() else "",
-            "\n" if self.dobnlcb.GetValue() else "",
-            self.curp.GetValue() if self.curpcb.GetValue() else "")
-       
-        ' '.join(val.split()) 
-        self.labelText.SetLabel(val)
+        patientData = lambda: None
+        patientData.id = str(self.patientData.id)
+        patientData.first = self.first.GetValue() 
+        patientData.middle = self.middle.GetValue() 
+        patientData.father = self.father.GetValue().upper() 
+        patientData.mother = self.mother.GetValue() 
+        patientData.dob = self.dobToMilitary(self.dob.GetValue()) 
+        patientData.gender = self.gender.GetValue() 
+        patientData.curp = self.curp.GetValue() 
+
+        self._printer.setPatientData(patientData)
+
+        self._printer.setShowFlags(self.idcb.GetValue(), 
+            self.firstcb.GetValue(),
+            self.middlecb.GetValue(),
+            self.fathercb.GetValue(),
+            self.mothercb.GetValue(),
+            self.dobcb.GetValue(),
+            self.gendercb.GetValue(),
+            self.curpcb.GetValue())
+
+        self._printer.setNewlineFlags(self.idnlcb.GetValue(),
+            self.firstnlcb.GetValue(),
+            self.middlenlcb.GetValue(),
+            self.fathernlcb.GetValue(),
+            self.mothernlcb.GetValue(),
+            self.dobnlcb.GetValue(),
+            self.gendernlcb.GetValue(),
+            False)
+
+        self.labelText.SetLabel(self._printer.getUserFormattedWristband())
 
     def on_patient_selected_message(self, data, patient):
         self.patientData = data
@@ -405,10 +418,15 @@ class PrintWristBandTab(wx.Panel):
     def onEnter(self, e):
         self.updatePrintStr()
 
+    def onPrint(self, e):
+        self._printer.sendToPrinter()
+
     def __init__(self, parent, main, sess):
         self.sess = sess
         self.main = main
         wx.Panel.__init__(self, parent)
+
+        self._printer = wristbandprinter.WristBandPrinter()
 
         pub.subscribe(self.on_patient_selected_message, 'patient_selected')
 
@@ -579,7 +597,7 @@ class PrintWristBandTab(wx.Panel):
         hsizer.Add(self.labelText, 0, wx.ALL, 5)
 
         self.print_btn = wx.Button(self, label='Print')
-        #self.print_btn.Bind(wx.EVT_BUTTON, self.on_print)
+        self.print_btn.Bind(wx.EVT_BUTTON, self.onPrint)
         container.Add(self.print_btn, 0, wx.ALL, 5)
 
         self.SetSizer(container)
