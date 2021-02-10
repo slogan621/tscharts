@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2020
-#(C) Copyright Thousand Smiles Foundation 2020
+#(C) Copyright Syd Logan 2020-2021
+#(C) Copyright Thousand Smiles Foundation 2020-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -53,6 +53,7 @@ class Result:
         self.maternal_last = data['maternal_last']
         self.dob = data['dob']
         self.gender = data['gender']
+        self.curp = data['curp']
 
 class RegularSearch(wx.Panel):
 
@@ -234,6 +235,7 @@ class RegularSearch(wx.Panel):
     def update_search_results(self):
         self.search_results_olv.SetColumns([
             ColumnDefn("ID", "left", 250, "id"),
+            ColumnDefn("CURP", "left", 150, "curp"),
             ColumnDefn("Paternal Last", "left", 250, "paternal_last"),
             ColumnDefn("Maternal Last", "left", 350, "maternal_last"),
             ColumnDefn("First", "left", 100, "first"),

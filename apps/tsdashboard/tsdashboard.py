@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2020
-#(C) Copyright Thousand Smiles Foundation 2020
+#(C) Copyright Syd Logan 2020-2021
+#(C) Copyright Thousand Smiles Foundation 2020-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -187,6 +187,7 @@ class Registrations():
                     p["maternal_last"] = y["maternal_last"]
                     p["dob"] = self.orderByYearMonthDay(y["dob"])
                     p["gender"] = y["gender"]
+                    p["curp"] = y["curp"]
                     patients.append(p)
         return patients
 
@@ -215,6 +216,7 @@ class Registrations():
                         p["maternal_last"] = y["maternal_last"]
                         p["dob"] = self.orderByYearMonthDay(y["dob"])
                         p["gender"] = y["gender"]
+                        p["curp"] = y["curp"]
                         patients.append(p)
         return patients
 
@@ -348,15 +350,24 @@ class PrintWristBandTab(wx.Panel):
 
     def updatePrintStr(self):
 
-        val = "{} {} {} {} {} {} {}".format(
+        val = "{}{} {}{} {}{} {}{} {}{} {}{} {}{} {}".format(
             str(self.patientData.id) if self.idcb.GetValue() else "",
+            "\n" if self.idnlcb.GetValue() else "",
             self.first.GetValue() if self.firstcb.GetValue() else "",
+            "\n" if self.firstnlcb.GetValue() else "",
             self.middle.GetValue() if self.middlecb.GetValue() else "",
+            "\n" if self.middlenlcb.GetValue() else "",
             self.father.GetValue().upper() if self.fathercb.GetValue() else "",
-            self.mother.GetValue().upper() if self.mothercb.GetValue() else "",
+            "\n" if self.fathernlcb.GetValue() else "",
+            self.mother.GetValue() if self.mothercb.GetValue() else "",
+            "\n" if self.mothernlcb.GetValue() else "",
+            self.gender.GetValue() if self.gendercb.GetValue() else "",
+            "\n" if self.gendernlcb.GetValue() else "",
             self.dobToMilitary(self.dob.GetValue()) if self.dobcb.GetValue() else "",
-            self.gender.GetValue() if self.gendercb.GetValue() else "")
-            
+            "\n" if self.dobnlcb.GetValue() else "",
+            self.curp.GetValue() if self.curpcb.GetValue() else "")
+       
+        ' '.join(val.split()) 
         self.labelText.SetLabel(val)
 
     def on_patient_selected_message(self, data, patient):
@@ -371,7 +382,7 @@ class PrintWristBandTab(wx.Panel):
         self.mother.SetValue(data.maternal_last)
         self.dob.SetValue(data.dob)
         self.gender.SetValue(data.gender)
-        #self.curp.SetText(data.gender)
+        self.curp.SetValue(data.curp)
 
         self.updatePrintStr()
 
@@ -413,9 +424,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         self.Bind(wx.EVT_TEXT, self.onEnter)
         vsizer.Add(self.id, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.idcb = wx.CheckBox(self, label="")
         self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
-        vsizer.Add(self.idcb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.idcb, 0, wx.ALL, 5)
+        self.idnlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.idnlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # first 
@@ -427,9 +443,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.first, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.firstcb = wx.CheckBox(self, label="")
         self.firstcb.SetValue(True)
-        vsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.firstcb, 0, wx.ALL, 5)
+        self.firstnlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.firstnlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # middle 
@@ -441,9 +462,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.middle, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.middlecb = wx.CheckBox(self, label="")
         self.middlecb.SetValue(True)
-        vsizer.Add(self.middlecb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.middlecb, 0, wx.ALL, 5)
+        self.middlenlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.middlenlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # father 
@@ -455,9 +481,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.father, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.fathercb = wx.CheckBox(self, label="")
         self.fathercb.SetValue(True)
-        vsizer.Add(self.fathercb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.fathercb, 0, wx.ALL, 5)
+        self.fathernlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.fathernlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # mother 
@@ -469,9 +500,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.mother, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.mothercb = wx.CheckBox(self, label="")
         self.mothercb.SetValue(True)
-        vsizer.Add(self.mothercb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.mothercb, 0, wx.ALL, 5)
+        self.mothernlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.mothernlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         container.Add(hsizer, 0, wx.ALL, 5)
@@ -487,9 +523,14 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.gender, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.gendercb = wx.CheckBox(self, label="")
         self.gendercb.SetValue(True)
-        vsizer.Add(self.gendercb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.gendercb, 0, wx.ALL, 5)
+        self.gendernlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.gendernlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
         # dob 
@@ -501,12 +542,16 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.dob, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.dobcb = wx.CheckBox(self, label="")
         self.dobcb.SetValue(True)
-        vsizer.Add(self.dobcb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.dobcb, 0, wx.ALL, 5)
+        self.dobnlcb = wx.CheckBox(self, label="Newline")
+        self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        cbhsizer.Add(self.dobnlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
 
-        '''
         # curp 
         vsizer = wx.BoxSizer(wx.VERTICAL)
         lbl = wx.StaticText(self,
@@ -516,18 +561,22 @@ class PrintWristBandTab(wx.Panel):
                                size=(200, 30))
         #self.txt.Bind(wx.EVT_TEXT_ENTER, self.OnEnter)
         vsizer.Add(self.curp, 0, wx.ALL, 5)
+        cbhsizer = wx.BoxSizer(wx.HORIZONTAL)
+        vsizer.Add(cbhsizer, 0, wx.ALL, 5)
         self.curpcb = wx.CheckBox(self, label="")
-        vsizer.Add(self.curpcb, 0, wx.ALL, 5)
+        cbhsizer.Add(self.curpcb, 0, wx.ALL, 5)
+        #self.curpnlcb = wx.CheckBox(self, label="Newline")
+        #self.Bind(wx.EVT_CHECKBOX,self.onChecked) 
+        #cbhsizer.Add(self.curpnlcb, 0, wx.ALL, 5)
         hsizer.Add(vsizer, 0, wx.ALL, 5)
-        '''
 
         container.Add(hsizer, 0, wx.ALL, 5)
 
         self.labelText = wx.StaticText(self,-1,style = wx.ALIGN_LEFT) 
-        font = wx.Font(24, wx.ROMAN, wx.ITALIC, wx.NORMAL) 
+        font = wx.Font(9, wx.ROMAN, wx.ITALIC, wx.NORMAL) 
         self.labelText.SetFont(font)
         self.labelText.SetLabel("ipso facto absurdum")
-        container.Add(self.labelText, 0, wx.ALL, 5)
+        hsizer.Add(self.labelText, 0, wx.ALL, 5)
 
         self.print_btn = wx.Button(self, label='Print')
         #self.print_btn.Bind(wx.EVT_BUTTON, self.on_print)
