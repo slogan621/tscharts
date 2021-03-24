@@ -1,6 +1,6 @@
 {
 "name": "Thousand Smiles Ensenada",
-"duration": 1,
+"duration": 3,
 "categories": [
                 "Dental",
                 "Hearing Aids",
@@ -10,7 +10,7 @@
                 "Returning Cleft"
               ],
 "stations": [
-              {"name": "Dental", "level": 8,
+              {"name": "Dental", "name_es": "Dental", "level": 8,
                "stations": [
                    {"name": "Dental1", "name_es": "Dental1"},
                    {"name": "Dental2", "name_es": "Dental2"},
@@ -20,41 +20,41 @@
                    {"name": "Dental6", "name_es": "Dental6"}
                ]
               },
-              {"name": "Ortho", "level": 1,
+              {"name": "Ortho", "name_es": "Orto", "level": 1,
                "stations": [
                ]
               },
-              {"name": "Hygiene", "level": 4,
+              {"name": "Hygiene", "name_es": "Higiene", "level": 4,
                "stations": [
                    {"name": "Hygiene1", "name_es": "Higiene1"},
                    {"name": "Hygiene2", "name_es": "Higiene2"}
                ]
               },
-              {"name": "X-Ray", "level": 12,
+              {"name": "X-Ray", "name_es": "Rayos-X", "level": 12,
                "stations": [
                    {"name": "X-Ray1", "name_es": "Rayos-X1"},
                    {"name": "X-Ray2", "name_es": "Rayos-X2"}
                ]
               },
-              {"name": "ENT", "level": 12,
+              {"name": "ENT", "name_es": "ONG", "level": 12,
                "stations": [
                    {"name": "ENT1", "name_es": "ONG1"},
                    {"name": "ENT2", "name_es": "ONG2"},
                    {"name": "ENT3", "name_es": "ONG3"}
                ]
               },
-              {"name": "Speech", "level": 4,
+              {"name": "Speech", "name_es": "Logopeda", "level": 4,
                "stations": [
                    {"name": "Speech", "name_es": "Logopeda"}
                ]
               },
-              {"name": "Audiology", "level": 4,
+              {"name": "Audiology", "name_es": "Audiologia", "level": 4,
                "stations": [
                    {"name": "Audiology1", "name_es": "Audiologia1"},
                    {"name": "Audiology2", "name_es": "Audiologia2"}
                ]
               },
-              {"name": "Surgery Screening", "level": 12,
+              {"name": "Surgery Screening", "name_es": "Cirugia", "level": 12,
                "stations": [
                    {"name": "Surgery1", "name_es": "Cirugía1"},
                    {"name": "Surgery2", "name_es": "Cirugía2"},
