@@ -19,6 +19,7 @@ from tschartslib.service.serviceconnection import ServiceConnection
 
 class ServiceAPI(object):
     def __init__(self):
+        super(ServiceAPI, self).__init__()
         self._httpMethod = "POST"
         self._host = None
         self._port = None
