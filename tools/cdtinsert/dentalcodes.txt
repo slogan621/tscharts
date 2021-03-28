@@ -13,6 +13,8 @@ D9340 Dental Visit, Pre-Natal Mother
 D9341 Dental Visit, Nursing Mother
 D9990 Planned Treatment Completed
 D9991 Patient Refuses Recommended Treatment
+# following code is required to support missing tooth checkbox in tooth chart
+D1001 Missing Tooth
 
 Category=DIAGNOSTIC SERVICES
 
@@ -267,3 +269,4 @@ D9942 Repair/reline Occlusal Guard
 D9951 Occlusal Adjustment, Limited
 D9973 External Bleaching (per tooth)
 D9974 Internal Bleaching (per tooth)
+

@@ -346,7 +346,7 @@ class DentalStateView(APIView):
             else:
                 kwargs["location"] = val
         except:
-            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
+            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("location", sys.exc_info()[0]))
             valid = False
 
         try:
@@ -357,7 +357,7 @@ class DentalStateView(APIView):
             else:
                 kwargs["surface"] = val
         except:
-            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("state", sys.exc_info()[0]))
+            LOG.warning("validatePostArgs: Failed to locate key {}: {}".format("surface", sys.exc_info()[0]))
             valid = False
 
         try:

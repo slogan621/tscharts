@@ -94,6 +94,7 @@ class UpdateCDTList():
         for x in data:
             for y in x["values"]:
                 if self.getCDT(y["code"]) == 200:
+                    print("code {} already exists".format(y['code']))
                     continue
                 y["category"] = x["category"]
                 c = CreateDentalCDT(host, port, token, y)
