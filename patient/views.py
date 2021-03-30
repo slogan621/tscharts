@@ -13,6 +13,7 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import APIException, NotFound
 from rest_framework.response import Response
@@ -356,6 +357,7 @@ class PatientView(APIView):
     def post(self, request, format=None):
         badRequest = False
         implError = False
+        duplicatePatient = False
 
         data = json.loads(request.body)
         valid, kwargs = self.validatePostArgs(data)
@@ -374,7 +376,8 @@ class PatientView(APIView):
                                                  dob=kwargs["dob"],
                                                  gender=kwargs["gender"])
                 if patient and len(patient) > 0:
-                    badRequest = True;
+                    badRequest = True
+                    duplicatePatient = True
             except:
                 implMsg = "Patient.objects.filter {} {}".format(sys.exc_info()[0], data)
                 implError = True
@@ -382,6 +385,7 @@ class PatientView(APIView):
             if not badRequest and not implError:
                 try:
                     patient = Patient(**kwargs)
+
                     if patient:
                         patient.save()
                     else:
@@ -391,7 +395,11 @@ class PatientView(APIView):
                     implMsg = "Patient create {} {}".format(sys.exc_info()[0], data)
                     implError = True
         if badRequest:
-            return HttpResponseBadRequest()
+            if duplicatePatient:
+                r = HttpResponse(status=status.HTTP_409_CONFLICT, reason="Patient (%d) already exists".format(patient[0].id))
+                return r
+            else:
+                return HttpResponseBadRequest()
         if implError:
             return HttpResponseServerError(implMsg) 
         else:

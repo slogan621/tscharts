@@ -194,6 +194,7 @@ Content-Type: application/json
 * **Error Response:**
 
   * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 409 Patient already exists, request not processed<br />
   * **Code:** 500 SERVER ERROR
 
 * **Example:**
