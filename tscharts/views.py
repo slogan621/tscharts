@@ -106,6 +106,7 @@ class LogoutView(APIView):
         return HttpResponse()
 
 class CreateUserView(APIView):
+
     authentication_classes = ()
     permission_classes = ()
 
@@ -183,3 +184,118 @@ class CreateUserView(APIView):
             return HttpResponseServerError(implMsg)
         else:
             return Response({'id': user.id})
+
+class UpdatePINView(APIView):
+
+    '''
+    XXX in insecure deployments, like the web, the following lines should 
+    be commented out so that only an authenticated user can modify a PIN 
+
+    authentication_classes = ()
+    permission_classes = ()
+    '''
+
+    authentication_classes = ()
+    permission_classes = ()
+
+    @log_request
+    def put(self, request, format=None):
+        badRequest = False
+        notFound = False
+        implError = False
+
+        data = json.loads(request.body)
+
+        if not "username" in data:
+            badRequest = True
+        if not "pin" in data:
+            badRequest = True
+
+        if not badRequest:
+            pin = data['pin']
+            username = data['username']
+
+            try:
+                user = User.objects.get(username=username)
+            except:
+                user = None
+
+            if not user:
+                notFound = True
+
+        if not badRequest and not notFound:
+            try:
+                pinobj = PIN.objects.get_or_create(user=user)[0]
+            except:
+                pinobj = None
+            
+            if pinobj:
+                pinobj.pin = pin
+                pinobj.save()
+            else: 
+                implError = True
+                implMsg = "Unable to update PIN"
+
+        if badRequest:
+            return HttpResponseBadRequest()
+        elif implError:
+            return HttpResponseServerError(implMsg)
+        elif notFound:
+            return HttpResponseNotFound()
+        else:
+            return Response({})
+
+class UpdatePasswordView(APIView):
+
+    '''
+    XXX in insecure deployments, like the web, the following lines should 
+    be commented out so that only an authenticated user can modify a password 
+
+    authentication_classes = ()
+    permission_classes = ()
+    '''
+
+    authentication_classes = ()
+    permission_classes = ()
+
+    @log_request
+    def put(self, request, format=None):
+        badRequest = False
+        notFound = False
+        implError = False
+
+        data = json.loads(request.body)
+
+        if not "username" in data:
+            badRequest = True
+        if not "password" in data:
+            badRequest = True
+
+        if not badRequest:
+            password = data['password']
+            username = data['username']
+
+            try:
+                user = User.objects.get(username=username)
+            except:
+                user = None
+
+            if not user:
+                notFound = True
+        
+        if not badRequest and not notFound:
+            try:
+                user.set_password(password)
+                user.save()
+            except:
+                implError = True
+                implMsg = "Unable to update password"
+
+        if badRequest:
+            return HttpResponseBadRequest()
+        elif implError:
+            return HttpResponseServerError(implMsg)
+        elif notFound:
+            return HttpResponseNotFound()
+        else:
+            return Response({})

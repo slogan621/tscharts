@@ -74,6 +74,40 @@ class CreateUser(ServiceAPI):
 
         self.setURL("tscharts/v1/createuser/")
 
+class UpdatePIN(ServiceAPI):
+    def __init__(self, host, port, username=None, pin=None):
+        super(UpdatePIN, self).__init__()
+        self.setHttpMethod("PUT")
+        self.setHost(host)
+        self.setPort(port)
+
+        payload = {}
+        if username:
+            payload["username"] = username
+        if pin:
+            payload["pin"] = pin
+
+        self.setPayload(payload)
+
+        self.setURL("tscharts/v1/updatepin/")
+
+class UpdatePassword(ServiceAPI):
+    def __init__(self, host, port, username=None, password=None):
+        super(UpdatePassword, self).__init__()
+        self.setHttpMethod("PUT")
+        self.setHost(host)
+        self.setPort(port)
+
+        payload = {}
+        if username:
+            payload["username"] = username
+        if password:
+            payload["password"] = password
+
+        self.setPayload(payload)
+
+        self.setURL("tscharts/v1/updatepassword/")
+
 class TestTSCharts(unittest.TestCase):
 
     testhash = {}
@@ -82,6 +116,44 @@ class TestTSCharts(unittest.TestCase):
         pass
 
     # login tests
+
+    def testUpdatePIN(self):
+        r = random.randint(1000, 9999)
+        first = "test{}".format(r)
+        last = "tset{}".format(r)
+        email = "test{}@example.com".format(r)
+        pword = "testpassword{}".format(r)
+        pin = str(r)
+        cu = CreateUser(host, port, first, last, pword, email, pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        r = random.randint(1000, 9999)
+        pin = str(r)
+        cu = UpdatePIN(host, port, email, pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        login = Login(host, port, username=email, pin=pin)
+        ret = login.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testUpdatePassword(self):
+        r = random.randint(1000, 9999)
+        first = "test{}".format(r)
+        last = "tset{}".format(r)
+        email = "test{}@example.com".format(r)
+        pword = "testpassword{}".format(r)
+        pin = str(r)
+        cu = CreateUser(host, port, first, last, pword, email, pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        r = random.randint(1000, 9999)
+        pword = "testpassword{}".format(r)
+        cu = UpdatePassword(host, port, email, pword)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        login = Login(host, port, username=email, password=pword)
+        ret = login.send(timeout=30)
+        self.assertEqual(ret[0], 200)
 
     def testCreateUserValid(self):
         r = random.randint(1000, 9999)

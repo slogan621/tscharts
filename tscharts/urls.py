@@ -46,6 +46,8 @@ urlpatterns = [
     url(r'^tscharts/v1/login/$', LoginView.as_view()),
     url(r'^tscharts/v1/logout/$', LogoutView.as_view()),
     url(r'^tscharts/v1/createuser/$', CreateUserView.as_view()),
+    url(r'^tscharts/v1/updatepin/$', UpdatePINView.as_view()),
+    url(r'^tscharts/v1/updatepassword/$', UpdatePasswordView.as_view()),
     url(r'^tscharts/v1/audiogram/', include('audiogram.urls', namespace='audiogram')),
     url(r'^tscharts/v1/entexam/', include('entexam.urls', namespace='entexam')),
     url(r'^tscharts/v1/entsurgicalhistory/', include('entsurgicalhistory.urls', namespace='entsurgicalhistory')),
