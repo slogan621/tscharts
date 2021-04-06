@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2021
+#(C) Copyright Thousand Smiles Foundation 2017-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -21,17 +21,25 @@ and running on the specified host and port
 import unittest
 import getopt, sys
 import json
+import random
 
 from tschartslib.service.serviceapi import ServiceAPI
 
 class Login(ServiceAPI):
-    def __init__(self, host, port, username, password):
+    def __init__(self, host, port, username, password=None, pin=None):
         super(Login, self).__init__()
         self.setHttpMethod("POST")
         self.setHost(host)
         self.setPort(port)
 
-        payload = {"username": username, "password": password}
+        if pin and not password:
+            payload = {"username": username, "pin": pin}
+        elif password and not pin:
+            payload = {"username": username, "password": password}
+        elif password and pin:
+            payload = {"username": username, "password": password, "pin": pin}
+        else:
+            payload = {"username": username}
         self.setPayload(payload)
         self.setURL("tscharts/v1/login/")
 
@@ -43,12 +51,101 @@ class Logout(ServiceAPI):
         self.setPort(port)
         self.setURL("tscharts/v1/logout/")
 
+class CreateUser(ServiceAPI):
+    def __init__(self, host, port, first=None, last=None, password=None, email=None, pin=None):
+        super(CreateUser, self).__init__()
+        self.setHttpMethod("POST")
+        self.setHost(host)
+        self.setPort(port)
+
+        payload = {}
+        if first:
+            payload["first"] = first
+        if last:
+            payload["last"] = last
+        if password:
+            payload["password"] = password
+        if email:
+            payload["email"] = email
+        if pin:
+            payload["pin"] = pin
+
+        self.setPayload(payload)
+
+        self.setURL("tscharts/v1/createuser/")
+
 class TestTSCharts(unittest.TestCase):
+
+    testhash = {}
 
     def setUp(self):
         pass
 
     # login tests
+
+    def testCreateUserValid(self):
+        r = random.randint(1000, 9999)
+        first = "test{}".format(r)
+        last = "tset{}".format(r)
+        email = "test{}@example.com".format(r)
+        pword = "testpassword{}".format(r)
+        pin = str(r)
+        cu = CreateUser(host, port, first, last, pword, email, pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        cu = CreateUser(host, port, first, last, pword, email, pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 409)  # already exists
+
+        # try logging in with username and password
+
+        login = Login(host, port, username=email, password=pword)
+        ret = login.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        # try logging in with username and pin
+
+        login = Login(host, port, username=email, pin=pin)
+        ret = login.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        # try logging in with username, password and pin
+
+        login = Login(host, port, username=email, password=pword, pin=pin)
+        ret = login.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+    def testCreateUserInvalid(self):
+        r = random.randint(1000, 9999)
+        first = "test{}".format(r)
+        last = "tset{}".format(r)
+        email = "test{}@example.com".format(r)
+        pword = "testpassword{}".format(r)
+        pin = str(r)
+        cu = CreateUser(host, port, first=first)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        cu = CreateUser(host, port, last=last)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        cu = CreateUser(host, port, pin=pin)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        cu = CreateUser(host, port, first=first, password=pword)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        cu = CreateUser(host, port, last=last, password=pword)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        cu = CreateUser(host, port, pin=pin, password=pword)
+        ret = cu.send(timeout=30)
+        self.assertEqual(ret[0], 400)
 
     def testMissingUsernameWithPassword(self):
         login = Login(host, port, None, "abcdefg")
@@ -63,12 +160,12 @@ class TestTSCharts(unittest.TestCase):
     def testUnknownUsernameMissingPassword(self):
         login = Login(host, port, "sdfsfsfsd", None)
         ret = login.send(timeout=30)
-        self.assertEqual(ret[0], 403)
+        self.assertEqual(ret[0], 400)
 
     def testMissingUsernameMissingPassword(self):
         login = Login(host, port, None, None)
         ret = login.send(timeout=30)
-        self.assertEqual(ret[0], 403)
+        self.assertEqual(ret[0], 400)
 
     def testInvalidPassword(self):
         validUser = username
