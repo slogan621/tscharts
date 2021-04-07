@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016-2020
-#(C) Copyright Thousand Smiles Foundation 2016-2020
+#(C) Copyright Syd Logan 2016-2021
+#(C) Copyright Thousand Smiles Foundation 2016-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -45,6 +45,9 @@ urlpatterns = [
     url(r'^tscharts/v1/image/', include('image.urls', namespace='image')),
     url(r'^tscharts/v1/login/$', LoginView.as_view()),
     url(r'^tscharts/v1/logout/$', LogoutView.as_view()),
+    url(r'^tscharts/v1/createuser/$', CreateUserView.as_view()),
+    url(r'^tscharts/v1/updatepin/$', UpdatePINView.as_view()),
+    url(r'^tscharts/v1/updatepassword/$', UpdatePasswordView.as_view()),
     url(r'^tscharts/v1/audiogram/', include('audiogram.urls', namespace='audiogram')),
     url(r'^tscharts/v1/entexam/', include('entexam.urls', namespace='entexam')),
     url(r'^tscharts/v1/entsurgicalhistory/', include('entsurgicalhistory.urls', namespace='entsurgicalhistory')),

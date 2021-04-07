@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     'medicalhistory',
     'mexicanstates',
     'patient',
+    'pin',
     'queue',
     'register',
     'returntoclinic',
