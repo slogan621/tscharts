@@ -128,7 +128,7 @@ class PatientView(APIView):
 
                     curp = request.GET.get('curp', '')
                     if not curp == '':
-                        kwargs["curp"] = curp
+                        kwargs["curp__icontains"] = curp
                     
                     oldid = request.GET.get('oldid', '')
                     if not oldid == '':
