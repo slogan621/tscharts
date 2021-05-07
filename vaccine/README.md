@@ -94,27 +94,29 @@ is used to represent the following:
 * **Example:**
 
 ```
-GET /tscharts/v1/vaccine/12/ HTTP/1.1
+GET /tscharts/v1/vaccine/3/ HTTP/1.1
 Host: localhost
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
-
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:24 GMT
-Server: Apache/2.4.7 (Ubuntu)
+Date: Fri, 07 May 2021 04:44:29 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-2c5
-{"first_walk":13,"birth_weight_metric":true, "height_metric":true, "weight_metric":true, "hepititis":true,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":6,"pregnancy_complications":false,"pregnancy_duration":8,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":12,"meds":"","parents_cleft":true,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":6,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":true,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"}
+481
+{"ppsv23_date":"01/01/1915","tap":"false","hib_date":"01/01/1905","dtap_ipv_hib_hepb_date":"01/01/1924","dtap_date":"01/01/1903","dtap":"true","clinic":3,"iiv_date":"01/01/1909","ipv":"false","mmvr":"true","hepb_date":"01/01/1907","menb_date":"01/01/1913","id":3,"hepa_date":"01/01/1906","rv":"true","pcv13_date":"01/01/1914","hpv":"false","covid19":"true","var_date":"01/01/1920","var":"false","dt_date":"01/01/1904","td":"true","rv_date":"01/01/1917","menb":"true","hpv_date":"01/01/1908","pcv13":"false","iiv":"true","patient":3,"covid19_doses":1,"dtap_ipv_hib_hepb":"false","mmr":"true","hepa":"false","hib":"true","hepb":"true","ipv_date":"01/01/1916","dtap_ipv_hib_date":"01/01/1922","dtap_ipv_date":"01/01/1923","dt":"false","laiv4":"false","mmvr_date":"01/01/1925","covid19_booster_date":"01/01/1902","dtap_ipv":"true","tap_date":"01/01/1918","mmr_date":"01/01/1911","ppsv23":"true","td_date":"01/01/1919","dtap_hepb_ipv_date":"01/01/1921","menacwy":"false","covid19_date":"01/01/1901","dtap_ipv_hib":"false","dtap_hepb_ipv":"true","time":"2021-05-06T21:44:29.949","laiv4_date":"01/01/1910","covid19_booster":"false","menacwy_date":"01/01/1912"}
 0
 ```
   
@@ -162,28 +164,29 @@ Content-Type: application/json
 * **Example:**
 
 ```
-GET /tscharts/v1/vaccine/?clinic=3 HTTP/1.1
+GET /tscharts/v1/vaccine/?patient=11 HTTP/1.1
 Host: localhost
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
-
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:24 GMT
-Server: Apache/2.4.7 (Ubuntu)
+Date: Fri, 07 May 2021 15:43:42 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-
-859
-[{"birth_weight_metric":true, "height_metric":true, "weight_metric":true, "first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":3,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":3,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"},{"birth_weight_metric":true, "height_metric":true, "weight_metric":true, "first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":4,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":4,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"},{"birth_weight_metric":true, "height_metric":true, "weight_metric":true, "first_walk":13,"hepititis":false,"bleeding_problems":false,"first_crawl":8,"epilepsy":false,"clinic":3,"pregnancy_complications":false,"pregnancy_duration":9,"congenitalheartdefect_planforcare":false,"allergymeds":"","cancer":false,"first_sit":7,"relative_cleft":false,"id":5,"meds":"","parents_cleft":false,"athsma":false,"mother_alcohol":false,"troublespeaking":false,"anemia":false,"congenitalheartdefect":false,"pregnancy_smoke":false,"troublehearing":false,"patient":5,"troubleeating":false,"birth_complications":false,"hivaids":false,"tuberculosis":false,"siblings_cleft":false,"diabetes":false,"cold_cough_fever":false,"congenitalheartdefect_workup":false,"first_words":11,"time":"2017-12-11T01:02:24"}]
+d8f
+[{"ppsv23_date":"01/01/1915","tap":"false","hib_date":"01/01/1905","dtap_ipv_hib_hepb_date":"01/01/1924","dtap_date":"01/01/1903","dtap":"true","clinic":11,"iiv_date":"01/01/1909","ipv":"false","mmvr":"true","hepb_date":"01/01/1907","menb_date":"01/01/1913","id":23,"hepa_date":"01/01/1906","rv":"true","pcv13_date":"01/01/1914","hpv":"false","covid19":"true","var_date":"01/01/1920","var":"false","dt_date":"01/01/1904","td":"true","rv_date":"01/01/1917","menb":"true","hpv_date":"01/01/1908","pcv13":"false","iiv":"true","patient":11,"covid19_doses":1,"dtap_ipv_hib_hepb":"false","mmr":"true","hepa":"false","hib":"true","hepb":"true","ipv_date":"01/01/1916","dtap_ipv_hib_date":"01/01/1922","dtap_ipv_date":"01/01/1923","dt":"false","laiv4":"false","mmvr_date":"01/01/1925","covid19_booster_date":"01/01/1902","dtap_ipv":"true","tap_date":"01/01/1918","mmr_date":"01/01/1911","ppsv23":"true","td_date":"01/01/1919","dtap_hepb_ipv_date":"01/01/1921","menacwy":"false","covid19_date":"01/01/1901","dtap_ipv_hib":"false","dtap_hepb_ipv":"true","time":"2021-05-07T08:43:42.432","laiv4_date":"01/01/1910","covid19_booster":"false","menacwy_date":"01/01/1912"},{"ppsv23_date":"01/01/1915","tap":"false","hib_date":"01/01/1905","dtap_ipv_hib_hepb_date":"01/01/1924","dtap_date":"01/01/1903","dtap":"true","clinic":10,"iiv_date":"01/01/1909","ipv":"false","mmvr":"true","hepb_date":"01/01/1907","menb_date":"01/01/1913","id":20,"hepa_date":"01/01/1906","rv":"true","pcv13_date":"01/01/1914","hpv":"false","covid19":"true","var_date":"01/01/1920","var":"false","dt_date":"01/01/1904","td":"true","rv_date":"01/01/1917","menb":"true","hpv_date":"01/01/1908","pcv13":"false","iiv":"true","patient":11,"covid19_doses":1,"dtap_ipv_hib_hepb":"false","mmr":"true","hepa":"false","hib":"true","hepb":"true","ipv_date":"01/01/1916","dtap_ipv_hib_date":"01/01/1922","dtap_ipv_date":"01/01/1923","dt":"false","laiv4":"false","mmvr_date":"01/01/1925","covid19_booster_date":"01/01/1902","dtap_ipv":"true","tap_date":"01/01/1918","mmr_date":"01/01/1911","ppsv23":"true","td_date":"01/01/1919","dtap_hepb_ipv_date":"01/01/1921","menacwy":"false","covid19_date":"01/01/1901","dtap_ipv_hib":"false","dtap_hepb_ipv":"true","time":"2021-05-07T08:43:42.394","laiv4_date":"01/01/1910","covid19_booster":"false","menacwy_date":"01/01/1912"},{"ppsv23_date":"01/01/1915","tap":"false","hib_date":"01/01/1905","dtap_ipv_hib_hepb_date":"01/01/1924","dtap_date":"01/01/1903","dtap":"true","clinic":9,"iiv_date":"01/01/1909","ipv":"false","mmvr":"true","hepb_date":"01/01/1907","menb_date":"01/01/1913","id":17,"hepa_date":"01/01/1906","rv":"true","pcv13_date":"01/01/1914","hpv":"false","covid19":"true","var_date":"01/01/1920","var":"false","dt_date":"01/01/1904","td":"true","rv_date":"01/01/1917","menb":"true","hpv_date":"01/01/1908","pcv13":"false","iiv":"true","patient":11,"covid19_doses":1,"dtap_ipv_hib_hepb":"false","mmr":"true","hepa":"false","hib":"true","hepb":"true","ipv_date":"01/01/1916","dtap_ipv_hib_date":"01/01/1922","dtap_ipv_date":"01/01/1923","dt":"false","laiv4":"false","mmvr_date":"01/01/1925","covid19_booster_date":"01/01/1902","dtap_ipv":"true","tap_date":"01/01/1918","mmr_date":"01/01/1911","ppsv23":"true","td_date":"01/01/1919","dtap_hepb_ipv_date":"01/01/1921","menacwy":"false","covid19_date":"01/01/1901","dtap_ipv_hib":"false","dtap_hepb_ipv":"true","time":"2021-05-07T08:43:42.358","laiv4_date":"01/01/1910","covid19_booster":"false","menacwy_date":"01/01/1912"}]
 0
 ```
   
@@ -231,26 +234,27 @@ Content-Type: application/json
 ```
 POST /tscharts/v1/vaccine/ HTTP/1.1
 Host: localhost
-Content-Length: 738
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 1218
 
-
-{"birth_weight_metric":true, "height_metric":true, "weight_metric":true, "first_walk": 13, "tuberculosis": false, "pregnancy_duration": 9, "troublehearing": false, "epilepsy": false, "clinic": 2, "pregnancy_complications": false, "congenitalheartdefect_planforcare": false, "allergymeds": "", "bleeding_problems": false, "first_sit": 7, "relative_cleft": false, "meds": "", "parents_cleft": false, "athsma": false, "siblings_cleft": false, "mother_alcohol": false, "troublespeaking": false, "diabetes": false, "congenitalheartdefect": false, "pregnancy_smoke": false, "first_crawl": 8, "patient": 2, "troubleeating": false, "birth_complications": false, "hivaids": false, "hepititis": false, "cancer": false, "anemia": false, "cold_cough_fever": false, "congenitalheartdefect_workup": false, "first_words": 11}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:23 GMT
-Server: Apache/2.4.7 (Ubuntu)
+{"ppsv23_date": "01/01/1915", "tap": "false", "hib_date": "01/01/1905", "menb_date": "01/01/1913", "dtap": "true", "clinic": 3, "iiv_date": "01/01/1909", "ipv": "false", "covid19": "true", "hepb_date": "01/01/1907", "dtap_ipv_hib_hepb_date": "01/01/1924", "hepa_date": "01/01/1906", "rv": "true", "pcv13_date": "01/01/1914", "hpv": "false", "mmvr": "true", "var_date": "01/01/1920", "var": "false", "dtap_ipv_date": "01/01/1923", "td": "true", "rv_date": "01/01/1917", "menb": "true", "hpv_date": "01/01/1908", "pcv13": "false", "iiv": "true", "patient": 3, "covid19_doses": 1, "dtap_ipv_hib_hepb": "false", "mmr": "true", "hepa": "false", "hib": "true", "hepb": "true", "ipv_date": "01/01/1916", "laiv4_date": "01/01/1910", "dt": "false", "laiv4": "false", "mmvr_date": "01/01/1925", "dtap_date": "01/01/1903", "dtap_ipv": "true", "tap_date": "01/01/1918", "mmr_date": "01/01/1911", "ppsv23": "true", "td_date": "01/01/1919", "covid19_booster_date": "01/01/1902", "dtap_hepb_ipv_date": "01/01/1921", "menacwy": "false", "dt_date": "01/01/1904", "dtap_ipv_hib": "false", "dtap_hepb_ipv": "true", "dtap_ipv_hib_date": "01/01/1922", "covid19_booster": "false", "covid19_date": "01/01/1901", "menacwy_date": "01/01/1912"}HTTP/1.1 200 OK
+Date: Fri, 07 May 2021 04:44:29 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-
 8
-{"id":2}
+{"id":3}
 0
 ```
 
@@ -290,25 +294,29 @@ Content-Type: application/json
 
 ```
 PUT /tscharts/v1/vaccine/24/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 18
-Accept-Encoding: gzip, deflate, compress
+Host: localhost
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 1192
 
-
-{"relative_cleft": true}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 01:19:21 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{"ppsv23_date": "01/01/1915", "tap": "false", "hib_date": "01/01/1905", "dtap": "true", "iiv_date": "01/01/1909", "ipv": "false", "covid19": "true", "hepb_date": "01/01/1907", "dtap_ipv_hib_hepb_date": "01/01/1924", "hepa_date": "01/01/1906", "rv": "true", "pcv13_date": "01/01/1914", "hpv": "false", "mmvr": "false", "var_date": "01/01/1920", "var": "false", "dtap_ipv_date": "01/01/1923", "td": "true", "rv_date": "01/01/1917", "menb": "true", "hpv_date": "01/01/1908", "pcv13": "false", "iiv": "true", "menb_date": "01/01/1913", "covid19_doses": 1, "dtap_ipv_hib_hepb": "false", "mmr": "true", "hepa": "false", "hib": "true", "hepb": "true", "ipv_date": "01/01/1916", "laiv4_date": "01/01/1910", "dt": "false", "laiv4": "false", "mmvr_date": "01/01/1934", "dtap_date": "01/01/1903", "dtap_ipv": "true", "tap_date": "01/01/1918", "mmr_date": "01/01/1911", "ppsv23": "true", "td_date": "01/01/1919", "covid19_booster_date": "01/01/1902", "dtap_hepb_ipv_date": "01/01/1921", "menacwy": "false", "dt_date": "01/01/1904", "dtap_ipv_hib": "false", "dtap_hepb_ipv": "true", "dtap_ipv_hib_date": "01/01/1922", "covid19_booster": "false", "covid19_date": "01/01/1901", "menacwy_date": "01/01/1912"}HTTP/1.1 200 OK
+Date: Fri, 07 May 2021 15:43:43 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
+2
 {}
+0
 ```
 
 **Delete a Vaccine**
@@ -343,25 +351,29 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-DELETE /tscharts/v1/vaccine/140/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+DELETE /tscharts/v1/patient/12/ HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
-
-{}HTTP/1.0 200 OK
-Date: Fri, 21 Apr 2017 05:52:49 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Fri, 07 May 2021 15:43:43 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
+2
 {}
+0
 ```
 
