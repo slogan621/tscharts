@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     'requestlog',
     'consent',
     'xray',
+    'vaccine',
 ]
 
 MIDDLEWARE_CLASSES = [
