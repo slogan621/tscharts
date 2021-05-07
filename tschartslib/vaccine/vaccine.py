@@ -1385,7 +1385,6 @@ class TestTSVaccine(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-    '''
     def testGetAllVaccines(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
@@ -1485,46 +1484,63 @@ class TestTSVaccine(unittest.TestCase):
 
         delids = []
 
-        data = {}
-        data["cold_cough_fever"] = False
-        data["hivaids"] = False
-        data["anemia"] = False
-        data["athsma"] = False
-        data["cancer"] = False
-        data["congenitalheartdefect"] = False
-        data["congenitalheartdefect_workup"] = False
-        data["congenitalheartdefect_planforcare"] = False
-        data["diabetes"] = False
-        data["epilepsy"] = False
-        data["bleeding_problems"] = False
-        data["hepititis"] = False
-        data["tuberculosis"] = False
-        data["troublespeaking"] = False
-        data["troublehearing"] = False
-        data["troubleeating"] = False
-        data["pregnancy_duration"] = 9
-        data["pregnancy_smoke"] = False
-        data["birth_complications"] = False
-        data["pregnancy_complications"] = False
-        data["mother_alcohol"] = False
-        data["relative_cleft"] = False
-        data["parents_cleft"] = False
-        data["siblings_cleft"] = False
-        data["meds"] = ""
-        data["allergymeds"] = ""
-        data["first_crawl"] = 8
-        data["first_sit"] = 7
-        data["first_walk"] = 13
-        data["first_words"] = 11 
-        data["birth_weight"] = 3
-        data["height"] = 61
-        data["weight"] = 9
-        data["birth_weight_metric"] = True
-        data["height_metric"] = True
-        data["weight_metric"] = True
-
         x = CreateVaccine(host, port, token, patient=patientid1, clinic=clinicid1)
+        x._v.set_covid19(True)
+        x._v.set_covid19_doses(1)
+        x._v.set_covid19_date("01/01/1901")
+        x._v.set_covid19_booster(False)
+        x._v.set_covid19_booster_date("01/01/1902")
+        x._v.set_dtap(True)
+        x._v.set_dtap_date("01/01/1903")
+        x._v.set_dt(False)
+        x._v.set_dt_date("01/01/1904")
+        x._v.set_hib(True)
+        x._v.set_hib_date("01/01/1905")
+        x._v.set_hepa(False)
+        x._v.set_hepa_date("01/01/1906")
+        x._v.set_hepb(True)
+        x._v.set_hepb_date("01/01/1907")
+        x._v.set_hpv(False)
+        x._v.set_hpv_date("01/01/1908")
+        x._v.set_iiv(True)
+        x._v.set_iiv_date("01/01/1909")
+        x._v.set_laiv4(False)
+        x._v.set_laiv4_date("01/01/1910")
+        x._v.set_mmr(True)
+        x._v.set_mmr_date("01/01/1911")
+        x._v.set_menacwy(False)
+        x._v.set_menacwy_date("01/01/1912")
+        x._v.set_menb(True)
+        x._v.set_menb_date("01/01/1913")
+        x._v.set_pcv13(False)
+        x._v.set_pcv13_date("01/01/1914")
+        x._v.set_ppsv23(True)
+        x._v.set_ppsv23_date("01/01/1915")
+        x._v.set_ipv(False)
+        x._v.set_ipv_date("01/01/1916")
+        x._v.set_rv(True)
+        x._v.set_rv_date("01/01/1917")
+        x._v.set_tap(False)
+        x._v.set_tap_date("01/01/1918")
+        x._v.set_td(True)
+        x._v.set_td_date("01/01/1919")
+        x._v.set_var(False)
+        x._v.set_var_date("01/01/1920")
+        x._v.set_dtap_hepb_ipv(True)
+        x._v.set_dtap_hepb_ipv_date("01/01/1921")
+        x._v.set_dtap_ipv_hib(False)
+        x._v.set_dtap_ipv_hib_date("01/01/1922")
+        x._v.set_dtap_ipv(True)
+        x._v.set_dtap_ipv_date("01/01/1923")
+        x._v.set_dtap_ipv_hib_hepb(False)
+        x._v.set_dtap_ipv_hib_hepb_date("01/01/1924")
+        x._v.set_mmvr(True)
+        x._v.set_mmvr_date("01/01/1925")
+
+        data = x._v.toJSON()
+
         x.setVaccine(data)
+ 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1654,7 +1670,6 @@ class TestTSVaccine(unittest.TestCase):
         x = DeletePatient(host, port, token, patientid3)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
-    '''
 
 def usage():
     print("vaccine [-h host] [-p port] [-u username] [-w password]") 
