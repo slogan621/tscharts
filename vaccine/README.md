@@ -120,7 +120,7 @@ Content-Type: application/json
 0
 ```
   
-**Get Multiple Medical Histories**
+**Get Multiple Vaccines**
 ----
   Returns data about all matching vaccine resources.
 
