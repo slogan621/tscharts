@@ -306,6 +306,9 @@ specialty.
     * [API](../master/entdiagnosisextra/README.md)
     * [Unit Tests](../master/tschartslib/entdiagnosisextra/entdiagnosisextra.py)
 
+ * vaccine - vaccines based on United States CDC childhood vaccination schedule, obtained at the time the patient registers. https://www.cdc.gov/vaccines/schedules/hcp/imz/child-adolescent.html#vaccines-schedule 
+    * [API](../master/vaccine/README.md)  
+    * [Unit Tests](../master/tschartslib/vaccine/vaccine.py)
 
 # License
 
