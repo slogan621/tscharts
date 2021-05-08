@@ -2,7 +2,7 @@
 
 In the following, content returned by GET (both forms), and accepted as
 request data for both PUT and POST will be identified by the following 
-strings. Each virus has a name field, and a date field. The name of the
+strings. Each vaccination has a name field, and a date field. The name of the
 date field is the name of the vaccine concatenated with the string _date.
 For sake of brevity, in the remainder of this document, VACCINE_DATA 
 is used to represent the following:
