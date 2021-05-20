@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2021
+#(C) Copyright Thousand Smiles Foundation 2017-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -78,6 +78,8 @@ class MedicalHistoryView(APIView):
         m["height_metric"] = entry.height_metric  
         m["weight"] = entry.weight  
         m["weight_metric"] = entry.weight_metric  
+        m["born_with_cleft_lip"] = entry.born_with_cleft_lip  
+        m["born_with_cleft_palate"] = entry.born_with_cleft_palate  
 
         return m
 
@@ -296,6 +298,12 @@ class MedicalHistoryView(APIView):
             else:
                 kwargs["weight"] = val
             val = data["weight_metric"]
+            if not (val == True or val == False):
+                valid = False
+            val = data["born_with_cleft_lip"] 
+            if not (val == True or val == False):
+                valid = False
+            val = data["born_with_cleft_palate"] 
             if not (val == True or val == False):
                 valid = False
         except:
@@ -525,6 +533,18 @@ class MedicalHistoryView(APIView):
                     valid = False
                 else:
                     medical_history.weight_metric = val
+            if "born_with_cleft_lip" in data:
+                val = data["born_with_cleft_lip"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.born_with_cleft_lip = val
+            if "born_with_cleft_palate" in data:
+                val = data["born_with_cleft_palate"] 
+                if not (val == True or val == False):
+                    valid = False
+                else:
+                    medical_history.born_with_cleft_palate = val
         except:
             valid = False
 

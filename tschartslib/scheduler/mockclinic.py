@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2021
+#(C) Copyright Thousand Smiles Foundation 2017-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -567,6 +567,8 @@ class MockClinic:
         data["height_metric"] = self.randomBoolean()
         data["weight"] = 9
         data["weight_metric"] = self.randomBoolean()
+        data["born_with_cleft_lip"] = self.randomBoolean()
+        data["born_with_cleft_palate"] = self.randomBoolean()
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)

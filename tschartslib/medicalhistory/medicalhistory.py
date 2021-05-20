@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2021
+#(C) Copyright Thousand Smiles Foundation 2017-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -205,6 +205,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x.setMedicalHistory(data)
  
@@ -256,6 +258,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("birth_weight" in data)
         self.assertTrue("weight" in data)
         self.assertTrue("height" in data)
+        self.assertTrue("born_with_cleft_lip" in data)
+        self.assertTrue("born_with_cleft_palate" in data)
 
         self.assertTrue(data["cold_cough_fever"] == False)
         self.assertTrue(data["hivaids"] == False)
@@ -290,6 +294,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["birth_weight"] == 3)
         self.assertTrue(data["height"] == 61)
         self.assertTrue(data["weight"] == 9)
+        self.assertTrue(data["born_with_cleft_lip"] == True)
+        self.assertTrue(data["born_with_cleft_palate"] == True)
 
         x = GetMedicalHistory(host, port, token)
         x.setPatient(patientid)
@@ -337,6 +343,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue("birth_weight" in data)
         self.assertTrue("weight" in data)
         self.assertTrue("height" in data)
+        self.assertTrue("born_with_cleft_lip" in data)
+        self.assertTrue("born_with_cleft_palate" in data)
 
         self.assertTrue(data["cold_cough_fever"] == False)
         self.assertTrue(data["hivaids"] == False)
@@ -371,6 +379,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["birth_weight"] == 3)
         self.assertTrue(data["height"] == 61)
         self.assertTrue(data["weight"] == 9)
+        self.assertTrue(data["born_with_cleft_lip"] == True)
+        self.assertTrue(data["born_with_cleft_palate"] == True)
 
         x = DeleteMedicalHistory(host, port, token, id)
         ret = x.send(timeout=30)
@@ -438,6 +448,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x.setMedicalHistory(data)
 
@@ -484,6 +496,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x.setMedicalHistory(data)
 
@@ -571,6 +585,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x.setMedicalHistory(data)
 
@@ -683,6 +699,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x.setMedicalHistory(data)
         ret = x.send(timeout=30)
@@ -753,6 +771,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["birth_weight"] == 3)
         self.assertTrue(data["height"] == 61)
         self.assertTrue(data["weight"] == 9)
+        self.assertTrue(data["born_with_cleft_lip"] == True)
+        self.assertTrue(data["born_with_cleft_palate"] == True)
 
         data = {}
         data["hepititis"] = True 
@@ -811,6 +831,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         self.assertTrue(data["birth_weight"] == 3)
         self.assertTrue(data["height"] == 61)
         self.assertTrue(data["weight"] == 9)
+        self.assertTrue(data["born_with_cleft_lip"] == True)
+        self.assertTrue(data["born_with_cleft_palate"] == True)
 
         data = {}
         data["hepititis"] = "Hello" 
@@ -1018,6 +1040,8 @@ class TestTSMedicalHistory(unittest.TestCase):
         data["birth_weight_metric"] = True
         data["height_metric"] = True
         data["weight_metric"] = True
+        data["born_with_cleft_lip"] = True
+        data["born_with_cleft_palate"] = True
 
         x = CreateMedicalHistory(host, port, token, patient=patientid1, clinic=clinicid1)
         x.setMedicalHistory(data)
