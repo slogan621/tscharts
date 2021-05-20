@@ -7,7 +7,8 @@
                 "Ears",
                 "Ortho",
                 "New Cleft",
-                "Returning Cleft"
+                "Returning Cleft",
+                "Other"
               ],
 "stations": [
               {"name": "Dental", "name_es": "Dental", "level": 8,
