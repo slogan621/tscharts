@@ -144,6 +144,22 @@ class CreateENTExam(ServiceAPI):
         self._payload["middle_ear_infection"] = val 
         self.setPayload(self._payload)
     
+    def setCleftLip(self, val):
+        self._payload["cleft_lip"] = val 
+        self.setPayload(self._payload)
+    
+    def setCleftPalate(self, val):
+        self._payload["cleft_palate"] = val 
+        self.setPayload(self._payload)
+    
+    def setRepairedLip(self, val):
+        self._payload["repaired_lip"] = val 
+        self.setPayload(self._payload)
+    
+    def setRepairedPalate(self, val):
+        self._payload["repaired_palate"] = val 
+        self.setPayload(self._payload)
+    
 class GetENTExam(ServiceAPI):
     def makeURL(self):
         hasQArgs = False
@@ -310,6 +326,22 @@ class UpdateENTExam(ServiceAPI):
         self._payload["middle_ear_infection"] = val 
         self.setPayload(self._payload)
     
+    def setCleftLip(self, val):
+        self._payload["cleft_lip"] = val 
+        self.setPayload(self._payload)
+    
+    def setCleftPalate(self, val):
+        self._payload["cleft_palate"] = val 
+        self.setPayload(self._payload)
+    
+    def setRepairedLip(self, val):
+        self._payload["repaired_lip"] = val 
+        self.setPayload(self._payload)
+    
+    def setRepairedPalate(self, val):
+        self._payload["repaired_palate"] = val 
+        self.setPayload(self._payload)
+
 class DeleteENTExam(ServiceAPI):
     def __init__(self, host, port, token, id):
         super(DeleteENTExam, self).__init__()
@@ -391,6 +423,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("left")
         x.setMiddleEarInfection("both")
+        x.setCleftLip("true")
+        x.setCleftPalate("false")
+        x.setRepairedLip("yes")
+        x.setRepairedPalate("no")
        
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -414,7 +450,8 @@ class TestTSENTExam(unittest.TestCase):
                 "tmGranulations", "tmRetraction", "tmAtelectasis",
                 "perfRight", "perfLeft", "voiceTest", "forkAS",
                 "forkAD", "bc", "fork", "comment", "effusion", 
-                "middle_ear_infection"]
+                "middle_ear_infection","cleft_lip","cleft_palate",
+                "repaired_lip", "repaired_palate"]
 
         for x in keys:
             self.assertTrue(x in data)
@@ -445,6 +482,10 @@ class TestTSENTExam(unittest.TestCase):
         self.assertEqual(data["username"], "Gomez")
         self.assertEqual(data["effusion"], "left")
         self.assertEqual(data["middle_ear_infection"], "both")
+        self.assertEqual(data["cleft_lip"], "true")
+        self.assertEqual(data["cleft_palate"], "false")
+        self.assertEqual(data["repaired_lip"], "yes")
+        self.assertEqual(data["repaired_palate"], "no")
 
         x = DeleteENTExam(host, port, token, id)
         ret = x.send(timeout=30)
@@ -554,6 +595,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("right")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
        
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -655,6 +700,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("none")
         x.setMiddleEarInfection("left")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -755,6 +804,10 @@ class TestTSENTExam(unittest.TestCase):
 
         x = UpdateENTExam(host, port, token, id)
         x.setVoiceTest("abnormal")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("na")
+        x.setRepairedPalate("no")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
@@ -781,6 +834,10 @@ class TestTSENTExam(unittest.TestCase):
         self.assertTrue(ret[1]["voiceTest"] == "abnormal")
         self.assertTrue(ret[1]["tympanoLeft"] == "25 percent")
         self.assertTrue(ret[1]["tympanoRight"] == "total")
+        self.assertTrue(ret[1]["cleft_lip"] == "false")
+        self.assertTrue(ret[1]["cleft_palate"] == "true")
+        self.assertTrue(ret[1]["repaired_lip"] == "na")
+        self.assertTrue(ret[1]["repaired_palate"] == "no")
 
         x = DeleteENTExam(host, port, token, id)
         ret = x.send(timeout=30)
@@ -921,6 +978,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setComment("A comment")
         x.setEffusion("none")
         x.setMiddleEarInfection("left")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -953,6 +1014,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("left")
         x.setMiddleEarInfection("right")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -985,6 +1050,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -1017,6 +1086,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -1049,6 +1122,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1080,6 +1157,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1111,6 +1192,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1142,6 +1227,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1173,6 +1262,10 @@ class TestTSENTExam(unittest.TestCase):
         x.setUsername("Gomez")
         x.setEffusion("both")
         x.setMiddleEarInfection("none")
+        x.setCleftLip("false")
+        x.setCleftPalate("true")
+        x.setRepairedLip("no")
+        x.setRepairedPalate("na")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])

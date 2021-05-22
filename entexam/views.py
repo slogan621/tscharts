@@ -36,6 +36,44 @@ class ENTExamView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def stringToBoolean(self, val):
+        ret = None 
+        if val == "true" or val == "True":
+            ret = True
+        elif val == "false" or val == "False":
+            ret = False
+        return ret    
+
+    def booleanToString(self, val):
+        ret = None 
+        if val == True:
+            ret = "true"
+        elif val == False:
+            ret = "false"
+        return ret    
+
+    def tristateBooleanToString(self, val):
+        ret = None 
+        data = {ENTExam.EAR_TRI_STATE_BOOLEAN_YES:"yes",
+                ENTExam.EAR_TRI_STATE_BOOLEAN_NO:"no", 
+                ENTExam.EAR_TRI_STATE_BOOLEAN_NA:"na"}
+        try:
+            ret = data[val]
+        except:
+            pass
+        return ret
+
+    def stringToTristateBoolean(self, val):
+        ret = None
+        data = {"yes":ENTExam.EAR_TRI_STATE_BOOLEAN_YES,
+                "no":ENTExam.EAR_TRI_STATE_BOOLEAN_NO, 
+                "na":ENTExam.EAR_TRI_STATE_BOOLEAN_NA}
+        try:
+            ret = data[val]
+        except:
+            pass
+        return ret
+
     def tubeToString(self, val):
         ret = None 
         data = {ENTExam.ENT_TUBE_IN_PLACE:"in place",
@@ -285,6 +323,10 @@ class ENTExamView(APIView):
         m["fork"] = self.forkToString(entry.fork)
         m["effusion"] = self.sideToString(entry.effusion)
         m["middle_ear_infection"] = self.sideToString(entry.middle_ear_infection)
+        m["cleft_lip"] = self.booleanToString(entry.cleft_lip)
+        m["cleft_palate"] = self.booleanToString(entry.cleft_palate)
+        m["repaired_lip"] = self.tristateBooleanToString(entry.repaired_lip)
+        m["repaired_palate"] = self.tristateBooleanToString(entry.repaired_palate)
 
         return m
 
@@ -362,6 +404,39 @@ class ENTExamView(APIView):
         if not "username" in data:
             valid = False
         elif len(data["username"]) == 0:
+            valid = False
+
+        try:
+            val = self.stringToBoolean(data["cleft_lip"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["cleft_lip"] = val
+        except:
+            valid = False
+        try:
+            val = self.stringToBoolean(data["cleft_palate"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["cleft_palate"] = val
+        except:
+            valid = False
+        try:
+            val = self.stringToTristateBoolean(data["repaired_lip"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["repaired_lip"] = val
+        except:
+            valid = False
+        try:
+            val = self.stringToTristateBoolean(data["repaired_palate"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["repaired_palate"] = val
+        except:
             valid = False
 
         try:
@@ -560,6 +635,46 @@ class ENTExamView(APIView):
 
     def validatePutArgs(self, data, ent_exam):
         valid = True
+
+        try:
+            if "cleft_lip" in data:
+                val = self.stringToBoolean(data["cleft_lip"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.cleft_lip = val
+        except:
+            pass
+
+        try:
+            if "cleft_palate" in data:
+                val = self.stringToBoolean(data["cleft_palate"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.cleft_palate = val
+        except:
+            pass
+
+        try:
+            if "repaired_lip" in data:
+                val = self.stringToTristateBoolean(data["repaired_lip"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.repaired_lip = val
+        except:
+            pass
+
+        try:
+            if "repaired_palate" in data:
+                val = self.stringToTristateBoolean(data["repaired_palate"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.repaired_palate = val
+        except:
+            pass
 
         try:
             if "normal" in data:
@@ -802,7 +917,7 @@ class ENTExamView(APIView):
         except:
             pass
 
-        val = "normal" in data or "microtia" in data or "wax" in data or "drainage" in data or "externalOtitis" in data or "fb" in data or "tubeLeft" in data or "tubeRight" in data or "tympanoLeft" in data or "tympanoRight" in data or "tmGranulations" in data or "tmRetraction" in data or "tmAtelectasis" in data or "perfRight" in data or "perfLeft" in data or "voiceTest" in data or "forkAD" in data or "forkAS" in data or "bc" in data or "fork" in data or "comment" in data or "username" in data or "effusion" in data or "middle_ear_infection" in data
+        val = "normal" in data or "microtia" in data or "wax" in data or "drainage" in data or "externalOtitis" in data or "fb" in data or "tubeLeft" in data or "tubeRight" in data or "tympanoLeft" in data or "tympanoRight" in data or "tmGranulations" in data or "tmRetraction" in data or "tmAtelectasis" in data or "perfRight" in data or "perfLeft" in data or "voiceTest" in data or "forkAD" in data or "forkAS" in data or "bc" in data or "fork" in data or "comment" in data or "username" in data or "effusion" in data or "middle_ear_infection" in data or "cleft_lip" in data or "cleft_palate" in data or "repaired_lip" in data or "repaired_palate" in data
         if val == False:
             valid = False
 

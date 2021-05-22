@@ -24,7 +24,7 @@
   * **Code:** 200 <br />
     **Content:** 
 
-   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text, "cleft_lip": "true | false", "cleft_palate": "true | false", "repaired_lip": "yes | no | na", "repaired_palate": "yes | no | na"}
  
 * **Error Response:**
 
@@ -33,27 +33,30 @@
 * **Example:**
 
 ```
-GET /tscharts/v1/entexam/12/ HTTP/1.1
+GET /tscharts/v1/entexam/1/ HTTP/1.1
 Host: localhost
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
-
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:24 GMT
-Server: Apache/2.4.7 (Ubuntu)
+Date: Sat, 22 May 2021 20:30:22 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-2c5
-{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "effusion": "left", "middle_ear_infection": "both", "wax":  "both", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}
+28e
+{"comment":"A comment","fork":"512","tmAtelectasis":"both","voiceTest":"normal","clinic":1,"repaired_palate":"no","microtia":"right","id":1,"cleft_palate":"false","perfRight":"50 percent","forkAD":"a greater b","bc":"ad lat ad","repaired_lip":"yes","forkAS":"a equal b","cleft_lip":"true","tubeLeft":"in place","wax":"both","externalOtitis":"left","username":"Gomez","patient":1,"normal":"left","time":"2021-05-22T13:30:22.314","tubeRight":"extruding","fb":"none","effusion":"left","tmGranulations":"left","tympanoLeft":"posterior","perfLeft":"posterior","tmRetraction":"right","tympanoRight":"50 percent","drainage":"none","middle_ear_infection":"both"}
+0
 ```
   
 **Get Multiple ENT Exams**
@@ -85,7 +88,7 @@ Content-Type: application/json
 
   * **Code:** 200 <br />
     **Content:** 
-   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}, ...]
+   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text, "cleft_lip": "true | false", "cleft_palate": "true | false", "repaired_lip": "yes | no | na", "repaired_palate": "yes | no | na"}, ...]
  
 * **Error Response:**
 
@@ -98,27 +101,29 @@ Content-Type: application/json
 ```
 GET /tscharts/v1/entexam/?clinic=3 HTTP/1.1
 Host: localhost
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
-
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
 {}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:24 GMT
-Server: Apache/2.4.7 (Ubuntu)
+Date: Sat, 22 May 2021 20:30:23 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-
-859
-[{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "wax":  "both", "effusion": "both", "middle_ear_infection": "left", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}]
+7ac
+[{"comment":"A comment","fork":"512","tmAtelectasis":"both","voiceTest":"normal","clinic":3,"repaired_palate":"na","microtia":"right","id":4,"cleft_palate":"true","perfRight":"50 percent","forkAD":"a greater b","bc":"ad lat ad","repaired_lip":"no","forkAS":"a equal b","cleft_lip":"false","tubeLeft":"in place","wax":"both","externalOtitis":"left","username":"Gomez","patient":3,"normal":"left","time":"2021-05-22T13:30:23.343","tubeRight":"extruding","fb":"none","effusion":"none","tmGranulations":"left","tympanoLeft":"posterior","perfLeft":"posterior","tmRetraction":"right","tympanoRight":"50 percent","drainage":"none","middle_ear_infection":"left"},{"comment":"A comment","fork":"512","tmAtelectasis":"both","voiceTest":"normal","clinic":3,"repaired_palate":"na","microtia":"right","id":5,"cleft_palate":"true","perfRight":"50 percent","forkAD":"a greater b","bc":"ad lat ad","repaired_lip":"no","forkAS":"a equal b","cleft_lip":"false","tubeLeft":"in place","wax":"both","externalOtitis":"left","username":"Gomez","patient":4,"normal":"left","time":"2021-05-22T13:30:23.355","tubeRight":"extruding","fb":"none","effusion":"left","tmGranulations":"left","tympanoLeft":"posterior","perfLeft":"posterior","tmRetraction":"right","tympanoRight":"50 percent","drainage":"none","middle_ear_infection":"right"},{"comment":"A comment","fork":"512","tmAtelectasis":"both","voiceTest":"normal","clinic":3,"repaired_palate":"na","microtia":"right","id":6,"cleft_palate":"true","perfRight":"50 percent","forkAD":"a greater b","bc":"ad lat ad","repaired_lip":"no","forkAS":"a equal b","cleft_lip":"false","tubeLeft":"in place","wax":"both","externalOtitis":"left","username":"Gomez","patient":5,"normal":"left","time":"2021-05-22T13:30:23.365","tubeRight":"extruding","fb":"none","effusion":"both","tmGranulations":"left","tympanoLeft":"posterior","perfLeft":"posterior","tmRetraction":"right","tympanoRight":"50 percent","drainage":"none","middle_ear_infection":"none"}]
 0
+
 ```
   
 **Create an ENT Exam**
@@ -167,6 +172,10 @@ Content-Type: application/json
    `fork` one of the following: "256" | "512" | "none"<br/>
    `comment` comment supplied by the user for this exam item<br />
    `username` name of logged in user making this change <br />
+   `cleft_lip` one of the following: "true" | "false"<br />
+   `cleft_palate` one of the following: "true" | "false" <br />
+   `repaired_lip` one of the following: "yes" | "no" | "na" <br />
+   `repaired_palate` one of the following: "yes" | "no" | "na" <br />
 
    **Optional:**
 
@@ -188,26 +197,27 @@ Content-Type: application/json
 ```
 POST /tscharts/v1/entexam/ HTTP/1.1
 Host: localhost
-Content-Length: 738
-Accept-Encoding: gzip, deflate, compress
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 673
 
-
-{"clinic" : 9, "patient" : 6, "normal": "left", "microtia": "right", "wax": "both", "effusion": "right", "middle_ear_infection": "none", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}HTTP/1.1 200 OK
-Date: Mon, 11 Dec 2017 01:02:23 GMT
-Server: Apache/2.4.7 (Ubuntu)
+{"comment": "A comment", "username": "Gomez", "tmAtelectasis": "both", "voiceTest": "normal", "clinic": 1, "repaired_palate": "no", "microtia": "right", "cleft_palate": "false", "perfRight": "50 percent", "forkAD": "a greater b", "bc": "ad lat ad", "repaired_lip": "yes", "forkAS": "a equal b", "cleft_lip": "true", "tubeLeft": "in place", "wax": "both", "externalOtitis": "left", "fork": "512", "patient": 1, "normal": "left", "tubeRight": "extruding", "fb": "none", "effusion": "left", "tmGranulations": "left", "tympanoLeft": "posterior", "perfLeft": "posterior", "tmRetraction": "right", "tympanoRight": "50 percent", "drainage": "none", "middle_ear_infection": "both"}HTTP/1.1 200 OK
+Date: Sat, 22 May 2021 20:30:22 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
 Transfer-Encoding: chunked
 Content-Type: application/json
 
-
 8
-{"id":2}
+{"id":1}
 0
 ```
 
@@ -259,6 +269,10 @@ Content-Type: application/json
    `fork` one of the following: "256" | "512" | "none"<br/>
    `comment` comment supplied by the user for this exam item<br />
    `username` name of logged in user making this change <br />
+   `cleft_lip` one of the following: "true" | "false"<br />
+   `cleft_palate` one of the following: "true" | "false" <br />
+   `repaired_lip` one of the following: "yes" | "no" | "na" <br />
+   `repaired_palate` one of the following: "yes" | "no" | "na" <br />
 
 * **Success Response:**
 
@@ -273,26 +287,30 @@ Content-Type: application/json
 * **Example:**
 
 ```
-PUT /tscharts/v1/entexam/24/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 18
-Accept-Encoding: gzip, deflate, compress
+PUT /tscharts/v1/entexam/13/ HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token b4e9102f85686fda0239562e4c8f7d3773438dae
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 19
 
-
-{"forkAS": "a greater b"}HTTP/1.0 200 OK
-Date: Sun, 23 Apr 2017 01:19:21 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{"bc": "ad lat as"}HTTP/1.1 200 OK
+Date: Sat, 22 May 2021 20:30:23 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
+2
 {}
+0
 ```
 
 **Delete an ENT Exam**
@@ -327,25 +345,29 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-DELETE /tscharts/v1/entexam/140/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 2
-Accept-Encoding: gzip, deflate, compress
+DELETE /tscharts/v1/entexam/1/ HTTP/1.1
+Host: localhost
+Connection: keep-alive
+Accept-Encoding: gzip, deflate
 Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
+User-Agent: python-requests/2.24.0
 Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+Content-Length: 2
 
-
-{}HTTP/1.0 200 OK
-Date: Fri, 21 Apr 2017 05:52:49 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+{}HTTP/1.1 200 OK
+Date: Sat, 22 May 2021 20:30:22 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
+2
 {}
+0
 ```
 

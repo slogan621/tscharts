@@ -119,3 +119,14 @@ class ENTExam(models.Model):
     comment = models.TextField(default = "")
     effusion = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
     middle_ear_infection = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
+
+    # support yes, no, n/a (not applicable) options
+    EAR_TRI_STATE_BOOLEAN_YES = 'y'
+    EAR_TRI_STATE_BOOLEAN_NO = 'n'
+    EAR_TRI_STATE_BOOLEAN_NA = 'a' # not applicable
+    EAR_TRI_STATE_BOOLEAN_CHOICES = ((EAR_TRI_STATE_BOOLEAN_NA, "na"), (EAR_TRI_STATE_BOOLEAN_YES, "yes"), (EAR_TRI_STATE_BOOLEAN_NO, "no"))
+
+    cleft_lip = models.BooleanField(default = False)
+    cleft_palate = models.BooleanField(default = False)
+    repaired_lip = models.CharField(max_length = 1, choices = EAR_TRI_STATE_BOOLEAN_CHOICES, default = EAR_TRI_STATE_BOOLEAN_NA)
+    repaired_palate = models.CharField(max_length = 1, choices = EAR_TRI_STATE_BOOLEAN_CHOICES, default = EAR_TRI_STATE_BOOLEAN_NA)
