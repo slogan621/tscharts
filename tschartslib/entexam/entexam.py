@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019-2020
-#(C) Copyright Thousand Smiles Foundation 2019-2020
+#(C) Copyright Syd Logan 2019-2021
+#(C) Copyright Thousand Smiles Foundation 2019-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -134,6 +134,14 @@ class CreateENTExam(ServiceAPI):
     
     def setUsername(self, val):
         self._payload["username"] = val 
+        self.setPayload(self._payload)
+
+    def setEffusion(self, val):
+        self._payload["effusion"] = val 
+        self.setPayload(self._payload)
+    
+    def setMiddleEarInfection(self, val):
+        self._payload["middle_ear_infection"] = val 
         self.setPayload(self._payload)
     
 class GetENTExam(ServiceAPI):
@@ -293,6 +301,15 @@ class UpdateENTExam(ServiceAPI):
     def setUsername(self, val):
         self._payload["username"] = val 
         self.setPayload(self._payload)
+
+    def setEffusion(self, val):
+        self._payload["effusion"] = val 
+        self.setPayload(self._payload)
+    
+    def setMiddleEarInfection(self, val):
+        self._payload["middle_ear_infection"] = val 
+        self.setPayload(self._payload)
+    
 class DeleteENTExam(ServiceAPI):
     def __init__(self, host, port, token, id):
         super(DeleteENTExam, self).__init__()
@@ -372,6 +389,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("left")
+        x.setMiddleEarInfection("both")
        
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -394,7 +413,8 @@ class TestTSENTExam(unittest.TestCase):
                 "tubeRight", "tympanoLeft", "tympanoRight", 
                 "tmGranulations", "tmRetraction", "tmAtelectasis",
                 "perfRight", "perfLeft", "voiceTest", "forkAS",
-                "forkAD", "bc", "fork", "comment"]
+                "forkAD", "bc", "fork", "comment", "effusion", 
+                "middle_ear_infection"]
 
         for x in keys:
             self.assertTrue(x in data)
@@ -423,6 +443,8 @@ class TestTSENTExam(unittest.TestCase):
         self.assertEqual(data["fork"], "512")
         self.assertEqual(data["comment"], "A comment")
         self.assertEqual(data["username"], "Gomez")
+        self.assertEqual(data["effusion"], "left")
+        self.assertEqual(data["middle_ear_infection"], "both")
 
         x = DeleteENTExam(host, port, token, id)
         ret = x.send(timeout=30)
@@ -530,6 +552,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("right")
+        x.setMiddleEarInfection("none")
        
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -629,6 +653,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("none")
+        x.setMiddleEarInfection("left")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -893,6 +919,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setComment("A comment")
         x.setUsername("Gomez")
         x.setComment("A comment")
+        x.setEffusion("none")
+        x.setMiddleEarInfection("left")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -923,6 +951,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("left")
+        x.setMiddleEarInfection("right")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -953,6 +983,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -983,6 +1015,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
@@ -1013,6 +1047,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1042,6 +1078,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1071,6 +1109,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1100,6 +1140,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])
@@ -1129,6 +1171,8 @@ class TestTSENTExam(unittest.TestCase):
         x.setFork("512")
         x.setComment("A comment")
         x.setUsername("Gomez")
+        x.setEffusion("both")
+        x.setMiddleEarInfection("none")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         delids.append(ret[1]["id"])

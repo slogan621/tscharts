@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2021
+#(C) Copyright Thousand Smiles Foundation 2019-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -283,6 +283,8 @@ class ENTExamView(APIView):
         m["forkAS"] = self.forkTestToString(entry.forkAS)
         m["bc"] = self.bcToString(entry.bc)
         m["fork"] = self.forkToString(entry.fork)
+        m["effusion"] = self.sideToString(entry.effusion)
+        m["middle_ear_infection"] = self.sideToString(entry.middle_ear_infection)
 
         return m
 
@@ -536,6 +538,24 @@ class ENTExamView(APIView):
         except:
             valid = False
 
+        try:
+            val = self.stringToSide(data["effusion"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["effusion"] = val
+        except:
+            valid = False
+
+        try:
+            val = self.stringToSide(data["middle_ear_infection"])
+            if val == None:
+                valid = False
+            else:
+                kwargs["middle_ear_infection"] = val
+        except:
+            valid = False
+
         return valid, kwargs
 
     def validatePutArgs(self, data, ent_exam):
@@ -761,7 +781,28 @@ class ENTExamView(APIView):
         except:
             pass
 
-        val = "normal" in data or "microtia" in data or "wax" in data or "drainage" in data or "externalOtitis" in data or "fb" in data or "tubeLeft" in data or "tubeRight" in data or "tympanoLeft" in data or "tympanoRight" in data or "tmGranulations" in data or "tmRetraction" in data or "tmAtelectasis" in data or "perfRight" in data or "perfLeft" in data or "voiceTest" in data or "forkAD" in data or "forkAS" in data or "bc" in data or "fork" in data or "comment" in data or "username" in data
+        try:
+            if "effusion" in data:
+                val = self.stringToSide(data["effusion"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.effusion = val
+        except:
+            pass
+
+
+        try:
+            if "middle_ear_infection" in data:
+                val = self.stringToSide(data["middle_ear_infection"])
+                if val == None:
+                    valid = False
+                else:
+                    ent_exam.middle_ear_infection = val
+        except:
+            pass
+
+        val = "normal" in data or "microtia" in data or "wax" in data or "drainage" in data or "externalOtitis" in data or "fb" in data or "tubeLeft" in data or "tubeRight" in data or "tympanoLeft" in data or "tympanoRight" in data or "tmGranulations" in data or "tmRetraction" in data or "tmAtelectasis" in data or "perfRight" in data or "perfLeft" in data or "voiceTest" in data or "forkAD" in data or "forkAS" in data or "bc" in data or "fork" in data or "comment" in data or "username" in data or "effusion" in data or "middle_ear_infection" in data
         if val == False:
             valid = False
 

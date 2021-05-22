@@ -24,7 +24,7 @@
   * **Code:** 200 <br />
     **Content:** 
 
-   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}
+   {"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}
  
 * **Error Response:**
 
@@ -53,7 +53,7 @@ Transfer-Encoding: chunked
 Content-Type: application/json
 
 2c5
-{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "wax":  "both", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}
+{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "effusion": "left", "middle_ear_infection": "both", "wax":  "both", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}
 ```
   
 **Get Multiple ENT Exams**
@@ -85,7 +85,7 @@ Content-Type: application/json
 
   * **Code:** 200 <br />
     **Content:** 
-   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}, ...]
+   [{"id" : id, "clinic" : id, "patient" : id, "time" : UTC date time string, "normal": "left" | "right" | "both" | "none", "microtia":  "left" | "right" | "both" | "none", "wax":  "left" | "right" | "both" | "none", "effusion":  "left" | "right" | "both" | "none", "middle_ear_infection":  "left" | "right" | "both" | "none", "drainage":  "left" | "right" | "both" | "none", "externalOtitis":  "left" | "right" | "both" | "none", "fb":  "left" | "right" | "both" | "none", "tubeRight": "in place" | "extruding" | "in canal" | "none", "tubeLeft": "in place" | "extruding" | "in canal" | "none", "tympanoLeft": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tympanoRight": "anterior" | "posterior" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "tmGranulations":  "left" | "right" | "both" | "none", "tmRetraction":  "left" | "right" | "both" | "none", "tmAtelectasis":  "left" | "right" | "both" | "none", "perfLeft": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "perfRight": "anterior" | "posterior" | "marginal" | "25 percent" | "50 percent" | "75 percent" | "total" | "none", "voiceTest" : "normal" | "abnormal" | "none", "forkAD": "a greater b" | "b greater a" | "a equal b" | "none", "forkAS": "a greater b" | "b greater a" | "a equal b" | "none", "bc": "ad lat ad" | "ad lat as" | "as lat ad" | "as lat as", "fork": "256" | "512" | "none", "username" : text, "comment": text}, ...]
  
 * **Error Response:**
 
@@ -117,7 +117,7 @@ Content-Type: application/json
 
 
 859
-[{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "wax":  "both", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}]
+[{"id" : 27, "clinic" : 9, "patient" : 6, "time" : "2017-12-11T01:02:24", "normal": "left", "microtia":  "right", "wax":  "both", "effusion": "both", "middle_ear_infection": "left", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}]
 0
 ```
   
@@ -146,6 +146,8 @@ Content-Type: application/json
    'normal' one of the following:  "left" | "right" | "both" | "none" <br/>
    `microtia` one of the following:  "left" | "right" | "both" | "none"<br/>
    `wax` one of the following:  "left" | "right" | "both" | "none"<br/>
+   `effusion` one of the following:  "left" | "right" | "both" | "none"<br/>
+   `middle_ear_infection` one of the following:  "left" | "right" | "both" | "none"<br/>
    `drainage` one of the following:  "left" | "right" | "both" | "none"<br/>
    `externalOtitis` one of the following:  "left" | "right" | "both" | "none"<br/>
    `fb` one of the following:  "left" | "right" | "both" | "none"<br/>
@@ -194,7 +196,7 @@ Content-Type: application/json
 Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
 
 
-{"clinic" : 9, "patient" : 6, "normal": "left", "microtia": "right", "wax": "both", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}HTTP/1.1 200 OK
+{"clinic" : 9, "patient" : 6, "normal": "left", "microtia": "right", "wax": "both", "effusion": "right", "middle_ear_infection": "none", "drainage": "none", "externalOtitis": "both", "fb": "none", "tubeRight": "extruding", "tubeLeft": "none", "tympanoLeft": "anterior", "tympanoRight": "25 percent", "tmGranulations": "right", "tmRetraction": "none", "tmAtelectasis": "left", "perfLeft": "none", "perfRight": "marginal", "voiceTest" : "normal", "forkAD": "a greater b", "forkAS": "a greater b", "bc": "as lat as", "fork": "256", "username" : "a user", "comment": "some comment"}HTTP/1.1 200 OK
 Date: Mon, 11 Dec 2017 01:02:23 GMT
 Server: Apache/2.4.7 (Ubuntu)
 Vary: Accept
@@ -236,6 +238,8 @@ Content-Type: application/json
    'normal' one of the following:  "left" | "right" | "both" | "none" <br/>
    `microtia` one of the following:  "left" | "right" | "both" | "none"<br/>
    `wax` one of the following:  "left" | "right" | "both" | "none"<br/>
+   `effusion` one of the following:  "left" | "right" | "both" | "none"<br/>
+   `middle_ear_infection` one of the following:  "left" | "right" | "both" | "none"<br/>
    `drainage` one of the following:  "left" | "right" | "both" | "none"<br/>
    `externalOtitis` one of the following:  "left" | "right" | "both" | "none"<br/>
    `fb` one of the following:  "left" | "right" | "both" | "none"<br/>

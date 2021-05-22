@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2021
+#(C) Copyright Thousand Smiles Foundation 2019-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -117,3 +117,5 @@ class ENTExam(models.Model):
     fork = models.CharField(max_length = 1, choices = ENT_FORK_CHOICES, default = ENT_FORK_NONE)
 
     comment = models.TextField(default = "")
+    effusion = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
+    middle_ear_infection = models.CharField(max_length = 1, choices = EAR_SIDE_CHOICES, default = EAR_SIDE_NONE)
