@@ -25,6 +25,10 @@
                "stations": [
                ]
               },
+              {"name": "Anesthesiology", "name_es": "Anestesiología", "level": 1,
+               "stations": [
+               ]
+              },
               {"name": "Hygiene", "name_es": "Higiene", "level": 4,
                "stations": [
                    {"name": "Hygiene1", "name_es": "Higiene1"},
