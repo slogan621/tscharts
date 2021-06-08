@@ -45,13 +45,13 @@ class VaccineView(APIView):
         self._vaccNames = ["covid19", "covid19_booster", "dtap", "dt", "hib", 
                   "hepa", "hepb", "hpv", "iiv", "laiv4", "mmr", 
                   "menacwy", "menb", "pcv13", "ppsv23", "ipv", "rv", 
-                  "tap", "td", "var", "dtap_hepb_ipv", "dtap_ipv_hib", 
+                  "tap", "td", "varicella", "dtap_hepb_ipv", "dtap_ipv_hib", 
                   "dtap_ipv", "dtap_ipv_hib_hepb", "mmvr"]
 
         self._vaccDates = ["covid19_date", "covid19_booster_date", "dtap_date", "dt_date", "hib_date", 
                   "hepa_date", "hepb_date", "hpv_date", "iiv_date", "laiv4_date", "mmr_date", 
                   "menacwy_date", "menb_date", "pcv13_date", "ppsv23_date", "ipv_date", "rv_date", 
-                  "tap_date", "td_date", "var_date", "dtap_hepb_ipv_date", "dtap_ipv_hib_date", 
+                  "tap_date", "td_date", "varicella_date", "dtap_hepb_ipv_date", "dtap_ipv_hib_date", 
                   "dtap_ipv_date", "dtap_ipv_hib_hepb_date", "mmvr_date"]
 
         self._integerNames = ["covid19_doses"]
@@ -59,22 +59,6 @@ class VaccineView(APIView):
         self._integerFields = [("covid19_doses", [0, 1, 2])]
 
         self._otherFields = ["clinic", "patient"]
-
-    def booleanToText(self, val):
-        ret = "false"
-
-        if val == True:
-            ret = "true"
-
-        return ret
-
-    def textToBoolean(self, val):
-        ret = False
-
-        if val == "true":
-            ret = True
-
-        return ret
 
     def dateStrOrNone(self, val):
         ret = None
@@ -89,56 +73,56 @@ class VaccineView(APIView):
         m["patient"] = entry.patient_id
         m["time"] = entry.time
 
-        m["covid19"] = self.booleanToText(entry.covid19)
+        m["covid19"] = entry.covid19
         m["covid19_doses"] = entry.covid19_doses 
         m["covid19_date"] = self.dateStrOrNone(entry.covid19_date)
-        m["covid19_booster"] = self.booleanToText(entry.covid19_booster)
+        m["covid19_booster"] = entry.covid19_booster
         m["covid19_booster_date"] = self.dateStrOrNone(entry.covid19_booster_date)
-        m["dtap"] = self.booleanToText(entry.dtap)
+        m["dtap"] = entry.dtap
         m["dtap_date"] = self.dateStrOrNone(entry.dtap_date)
-        m["dt"] = self.booleanToText(entry.dt)
+        m["dt"] = entry.dt
         m["dt_date"] = self.dateStrOrNone(entry.dt_date)
-        m["hib"] = self.booleanToText(entry.hib)
+        m["hib"] = entry.hib
         m["hib_date"] = self.dateStrOrNone(entry.hib_date)
-        m["hepa"] = self.booleanToText(entry.hepa)
+        m["hepa"] = entry.hepa
         m["hepa_date"] = self.dateStrOrNone(entry.hepa_date)
-        m["hepb"] = self.booleanToText(entry.hepb)
+        m["hepb"] = entry.hepb
         m["hepb_date"] = self.dateStrOrNone(entry.hepb_date)
-        m["hpv"] = self.booleanToText(entry.hpv)
+        m["hpv"] = entry.hpv
         m["hpv_date"] = self.dateStrOrNone(entry.hpv_date)
-        m["iiv"] = self.booleanToText(entry.iiv)
+        m["iiv"] = entry.iiv
         m["iiv_date"] = self.dateStrOrNone(entry.iiv_date)
-        m["laiv4"] = self.booleanToText(entry.laiv4)
+        m["laiv4"] = entry.laiv4
         m["laiv4_date"] = self.dateStrOrNone(entry.laiv4_date)
-        m["mmr"] = self.booleanToText(entry.mmr)
+        m["mmr"] = entry.mmr
         m["mmr_date"] = self.dateStrOrNone(entry.mmr_date)
-        m["menacwy"] = self.booleanToText(entry.menacwy)
+        m["menacwy"] = entry.menacwy
         m["menacwy_date"] = self.dateStrOrNone(entry.menacwy_date)
-        m["menb"] = self.booleanToText(entry.menb)
+        m["menb"] = entry.menb
         m["menb_date"] = self.dateStrOrNone(entry.menb_date)
-        m["pcv13"] = self.booleanToText(entry.pcv13)
+        m["pcv13"] = entry.pcv13
         m["pcv13_date"] = self.dateStrOrNone(entry.pcv13_date)
-        m["ppsv23"] = self.booleanToText(entry.ppsv23)
+        m["ppsv23"] = entry.ppsv23
         m["ppsv23_date"] = self.dateStrOrNone(entry.ppsv23_date)
-        m["ipv"] = self.booleanToText(entry.ipv)
+        m["ipv"] = entry.ipv
         m["ipv_date"] = self.dateStrOrNone(entry.ipv_date)
-        m["rv"] = self.booleanToText(entry.rv)
+        m["rv"] = entry.rv
         m["rv_date"] = self.dateStrOrNone(entry.rv_date)
-        m["tap"] = self.booleanToText(entry.tap)
+        m["tap"] = entry.tap
         m["tap_date"] = self.dateStrOrNone(entry.tap_date)
-        m["td"] = self.booleanToText(entry.td)
+        m["td"] = entry.td
         m["td_date"] = self.dateStrOrNone(entry.td_date)
-        m["var"] = self.booleanToText(entry.var)
-        m["var_date"] = self.dateStrOrNone(entry.var_date)
-        m["dtap_hepb_ipv"] = self.booleanToText(entry.dtap_hepb_ipv)
+        m["varicella"] = entry.varicella
+        m["varicella_date"] = self.dateStrOrNone(entry.varicella_date)
+        m["dtap_hepb_ipv"] = entry.dtap_hepb_ipv
         m["dtap_hepb_ipv_date"] = self.dateStrOrNone(entry.dtap_hepb_ipv_date)
-        m["dtap_ipv_hib"] = self.booleanToText(entry.dtap_ipv_hib)
+        m["dtap_ipv_hib"] = entry.dtap_ipv_hib
         m["dtap_ipv_hib_date"] = self.dateStrOrNone(entry.dtap_ipv_hib_date)
-        m["dtap_ipv"] = self.booleanToText(entry.dtap_ipv)
+        m["dtap_ipv"] = entry.dtap_ipv
         m["dtap_ipv_date"] = self.dateStrOrNone(entry.dtap_ipv_date)
-        m["dtap_ipv_hib_hepb"] = self.booleanToText(entry.dtap_ipv_hib_hepb)
+        m["dtap_ipv_hib_hepb"] = entry.dtap_ipv_hib_hepb
         m["dtap_ipv_hib_hepb_date"] = self.dateStrOrNone(entry.dtap_ipv_hib_hepb_date)
-        m["mmvr"] = self.booleanToText(entry.mmvr)
+        m["mmvr"] = entry.mmvr
         m["mmvr_date"] = self.dateStrOrNone(entry.mmvr_date)
 
         return m
@@ -253,11 +237,11 @@ class VaccineView(APIView):
                     valid = False
                 else:
                     val = data[x] 
-                    if not (val == "true" or val == "false"):
+                    if not (val == True or val == False):
                         LOG.error("validatePostArgs val failed on {}".format(val))
                         valid = False
                     else:
-                        kwargs[x] = self.textToBoolean(data[x])
+                        kwargs[x] = data[x]
                 dateField = "{}_date".format(x)
                 if not dateField in data:
                     LOG.error("validatePostArgs datefield failed on {}".format(dateField))
@@ -309,11 +293,11 @@ class VaccineView(APIView):
             for x in self._vaccNames:
                 if x in data:
                     val = data[x]
-                    if not (val == "true" or val == "false"):
+                    if not (val == True or val == False):
                         LOG.error("validatePutArgs {} failed {}".format(x, val))
                         valid = False
                     else:
-                        setattr(vaccine, x, self.textToBoolean(val))
+                        setattr(vaccine, x, val)
                 dateField = "{}_date".format(x)
                 if dateField in data:
                     if data[dateField] != None:

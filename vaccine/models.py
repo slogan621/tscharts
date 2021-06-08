@@ -66,8 +66,8 @@ class Vaccine(models.Model):
     tap_date = models.DateTimeField(null=True)
     td = models.BooleanField(default = False) #Tetanus and diphtheria vaccine
     td_date = models.DateTimeField(null=True)
-    var = models.BooleanField(default = False) #Varicella vaccine
-    var_date = models.DateTimeField(null=True)
+    varicella = models.BooleanField(default = False) #Varicella vaccine
+    varicella_date = models.DateTimeField(null=True)
     dtap_hepb_ipv = models.BooleanField(default = False) #DTaP, hepatitis B, and inactivated poliovirus vaccine
     dtap_hepb_ipv_date = models.DateTimeField(null=True)
     dtap_ipv_hib = models.BooleanField(default = False) #DTaP, inactivated poliovirus, and Haemophilus influenzae type B vaccine

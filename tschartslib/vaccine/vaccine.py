@@ -68,8 +68,8 @@ class Vaccine:
         self._tap_date  = None
         self._td = False
         self._td_date  = None
-        self._var = False
-        self._var_date  = None
+        self._varicella = False
+        self._varicella_date  = None
         self._dtap_hepb_ipv = False
         self._dtap_hepb_ipv_date  = None
         self._dtap_ipv_hib = False
@@ -81,64 +81,58 @@ class Vaccine:
         self._mmvr = False
         self._mmvr_date  = None
 
-    def toStringFromBoolean(self, x):
-        return "true" if x else "false"
-
-    def toBooleanFromString(self, x):
-        return True if x == "true" else False
-
     def toJSON(self):
         ret = {}
-        ret["covid19"] = self.toStringFromBoolean(self._covid19)
+        ret["covid19"] = self._covid19
         ret["covid19_doses"] = self._covid19_doses 
         ret["covid19_date"] = self._covid19_date 
-        ret["covid19_booster"] = self.toStringFromBoolean(self._covid19_booster)
+        ret["covid19_booster"] = self._covid19_booster
         ret["covid19_booster_date"] = self._covid19_booster_date 
-        ret["dtap"] = self.toStringFromBoolean(self._dtap)
+        ret["dtap"] = self._dtap
         ret["dtap_date"] = self._dtap_date 
-        ret["dt"] = self.toStringFromBoolean(self._dt)
+        ret["dt"] = self._dt
         ret["dt_date"] = self._dt_date
-        ret["hib"] = self.toStringFromBoolean(self._hib)
+        ret["hib"] = self._hib
         ret["hib_date"] = self._hib_date
-        ret["hepa"] = self.toStringFromBoolean(self._hepa)
+        ret["hepa"] = self._hepa
         ret["hepa_date"] = self._hepa_date
-        ret["hepb"] = self.toStringFromBoolean(self._hepb)
+        ret["hepb"] = self._hepb
         ret["hepb_date"] = self._hepb_date
-        ret["hpv"] = self.toStringFromBoolean(self._hpv)
+        ret["hpv"] = self._hpv
         ret["hpv_date"] = self._hpv_date
-        ret["iiv"] = self.toStringFromBoolean(self._iiv )
+        ret["iiv"] = self._iiv
         ret["iiv_date"] = self._iiv_date
-        ret["laiv4"] = self.toStringFromBoolean(self._laiv4)
+        ret["laiv4"] = self._laiv4
         ret["laiv4_date"] = self._laiv4_date
-        ret["mmr"] = self.toStringFromBoolean(self._mmr)
+        ret["mmr"] = self._mmr
         ret["mmr_date"] = self._mmr_date
-        ret["menacwy"] = self.toStringFromBoolean(self._menacwy)
+        ret["menacwy"] = self._menacwy
         ret["menacwy_date"] = self._menacwy_date
-        ret["menb"] = self.toStringFromBoolean(self._menb)
+        ret["menb"] = self._menb
         ret["menb_date"] = self._menb_date 
-        ret["pcv13"] = self.toStringFromBoolean(self._pcv13)
+        ret["pcv13"] = self._pcv13
         ret["pcv13_date"] = self._pcv13_date
-        ret["ppsv23"] = self.toStringFromBoolean(self._ppsv23)
+        ret["ppsv23"] = self._ppsv23
         ret["ppsv23_date"] = self._ppsv23_date
-        ret["ipv"] = self.toStringFromBoolean(self._ipv)
+        ret["ipv"] = self._ipv
         ret["ipv_date"] = self._ipv_date
-        ret["rv"] = self.toStringFromBoolean(self._rv)
+        ret["rv"] = self._rv
         ret["rv_date"] = self._rv_date
-        ret["tap"] = self.toStringFromBoolean(self._tap)
+        ret["tap"] = self._tap
         ret["tap_date"] = self._tap_date
-        ret["td"] = self.toStringFromBoolean(self._td)
+        ret["td"] = self._td
         ret["td_date"] = self._td_date
-        ret["var"] = self.toStringFromBoolean(self._var)
-        ret["var_date"] = self._var_date 
-        ret["dtap_hepb_ipv"] = self.toStringFromBoolean(self._dtap_hepb_ipv)
+        ret["varicella"] = self._varicella
+        ret["varicella_date"] = self._varicella_date 
+        ret["dtap_hepb_ipv"] = self._dtap_hepb_ipv
         ret["dtap_hepb_ipv_date"] = self._dtap_hepb_ipv_date
-        ret["dtap_ipv_hib"] = self.toStringFromBoolean(self._dtap_ipv_hib)
+        ret["dtap_ipv_hib"] = self._dtap_ipv_hib
         ret["dtap_ipv_hib_date"] = self._dtap_ipv_hib_date
-        ret["dtap_ipv"] = self.toStringFromBoolean(self._dtap_ipv)
+        ret["dtap_ipv"] = self._dtap_ipv
         ret["dtap_ipv_date"] = self._dtap_ipv_date
-        ret["dtap_ipv_hib_hepb"] = self.toStringFromBoolean(self._dtap_ipv_hib_hepb)
+        ret["dtap_ipv_hib_hepb"] = self._dtap_ipv_hib_hepb
         ret["dtap_ipv_hib_hepb_date"] = self._dtap_ipv_hib_hepb_date
-        ret["mmvr"] = self.toStringFromBoolean(self._mmvr)
+        ret["mmvr"] = self._mmvr
         ret["mmvr_date"] = self._mmvr_date
         return ret
 
@@ -146,7 +140,7 @@ class Vaccine:
         ret = True
 
         try:
-            self.set_covid19(self.toBooleanFromString(data["covid19"]))
+            self.set_covid19(data["covid19"])
         except:
             if ignore: 
                 pass 
@@ -167,7 +161,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_covid19_booster(self.toBooleanFromString(data["covid19_booster"]))
+            self.set_covid19_booster(data["covid19_booster"])
         except:
             if ignore: 
                 pass 
@@ -181,7 +175,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_dtap(self.toBooleanFromString(data["dtap"]))
+            self.set_dtap(data["dtap"])
         except:
             if ignore: 
                 pass 
@@ -195,7 +189,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_dt(self.toBooleanFromString(data["dt"]))
+            self.set_dt(data["dt"])
         except:
             if ignore: 
                 pass 
@@ -209,7 +203,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_hib(self.toBooleanFromString(data["hib"]))
+            self.set_hib(data["hib"])
         except:
             if ignore: 
                 pass 
@@ -223,7 +217,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_hepa(self.toBooleanFromString(data["hepa"]))
+            self.set_hepa(data["hepa"])
         except:
             if ignore: 
                 pass 
@@ -237,7 +231,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_hepb(self.toBooleanFromString(data["hepb"]))
+            self.set_hepb(data["hepb"])
         except:
             if ignore: 
                 pass 
@@ -251,7 +245,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_hpv(self.toBooleanFromString(data["hpv"]))
+            self.set_hpv(data["hpv"])
         except:
             if ignore: 
                 pass 
@@ -265,7 +259,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_iiv(self.toBooleanFromString(data["iiv"]))
+            self.set_iiv(data["iiv"])
         except:
             if ignore: 
                 pass 
@@ -279,7 +273,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_laiv4(self.toBooleanFromString(data["laiv4"]))
+            self.set_laiv4(data["laiv4"])
         except:
             if ignore: 
                 pass 
@@ -293,7 +287,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_mmr(self.toBooleanFromString(data["mmr"]))
+            self.set_mmr(data["mmr"])
         except:
             if ignore: 
                 pass 
@@ -307,7 +301,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_menacwy(self.toBooleanFromString(data["menacwy"]))
+            self.set_menacwy(data["menacwy"])
         except:
             if ignore: 
                 pass 
@@ -321,7 +315,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_menb(self.toBooleanFromString(data["menb"]))
+            self.set_menb(data["menb"])
         except:
             if ignore: 
                 pass 
@@ -335,7 +329,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_pcv13(self.toBooleanFromString(data["pcv13"]))
+            self.set_pcv13(data["pcv13"])
         except:
             if ignore: 
                 pass 
@@ -349,7 +343,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_ppsv23(self.toBooleanFromString(data["ppsv23"]))
+            self.set_ppsv23(data["ppsv23"])
         except:
             if ignore: 
                 pass 
@@ -363,7 +357,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_ipv(self.toBooleanFromString(data["ipv"]))
+            self.set_ipv(data["ipv"])
         except:
             if ignore: 
                 pass 
@@ -377,7 +371,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_rv(self.toBooleanFromString(data["rv"]))
+            self.set_rv(data["rv"])
         except:
             if ignore: 
                 pass 
@@ -391,7 +385,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_tap(self.toBooleanFromString(data["tap"]))
+            self.set_tap(data["tap"])
         except:
             if ignore: 
                 pass 
@@ -405,7 +399,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_td(self.toBooleanFromString(data["td"]))
+            self.set_td(data["td"])
         except:
             if ignore: 
                 pass 
@@ -419,21 +413,21 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_var(self.toBooleanFromString(data["var"]))
+            self.set_varicella(data["varicella"])
         except:
             if ignore: 
                 pass 
             else: 
                 ret = False 
         try:
-            self.set_var_date(data["var_date"])
+            self.set_varicella_date(data["varicella_date"])
         except:
             if ignore: 
                 pass 
             else: 
                 ret = False 
         try:
-            self.set_dtap_hepb_ipv(self.toBooleanFromString(data["dtap_hepb_ipv"]))
+            self.set_dtap_hepb_ipv(data["dtap_hepb_ipv"])
         except:
             if ignore: 
                 pass 
@@ -447,7 +441,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_dtap_ipv_hib(self.toBooleanFromString(data["dtap_ipv_hib"]))
+            self.set_dtap_ipv_hib(data["dtap_ipv_hib"])
         except:
             if ignore: 
                 pass 
@@ -461,7 +455,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_dtap_ipv(self.toBooleanFromString(data["dtap_ipv"]))
+            self.set_dtap_ipv(data["dtap_ipv"])
         except:
             if ignore: 
                 pass 
@@ -475,7 +469,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_dtap_ipv_hib_hepb(self.toBooleanFromString(data["dtap_ipv_hib_hepb"]))
+            self.set_dtap_ipv_hib_hepb(data["dtap_ipv_hib_hepb"])
         except:
             if ignore: 
                 pass 
@@ -489,7 +483,7 @@ class Vaccine:
             else: 
                 ret = False 
         try:
-            self.set_mmvr(self.toBooleanFromString(data["mmvr"]))
+            self.set_mmvr(data["mmvr"])
         except:
             if ignore: 
                 pass 
@@ -621,11 +615,11 @@ class Vaccine:
     def set_td_date(self, val):
         self._td_date = val
 
-    def set_var(self, val):
-        self._var = val
+    def set_varicella(self, val):
+        self._varicella = val
 
-    def set_var_date(self, val):
-        self._var_date = val
+    def set_varicella_date(self, val):
+        self._varicella_date = val
 
     def set_dtap_hepb_ipv(self, val):
         self._dtap_hepb_ipv = val
@@ -774,11 +768,11 @@ class Vaccine:
     def get_td_date(self):
         return self._td_date 
 
-    def get_var(self):
-        return self._var 
+    def get_varicella(self):
+        return self._varicella 
 
-    def get_var_date(self):
-        return self._var_date 
+    def get_varicella_date(self):
+        return self._varicella_date 
 
     def get_dtap_hepb_ipv(self):
         return self._dtap_hepb_ipv 
@@ -994,8 +988,8 @@ class TestTSVaccine(unittest.TestCase):
         x._v.set_tap_date(None)
         x._v.set_td(True)
         x._v.set_td_date("01/01/1919")
-        x._v.set_var(False)
-        x._v.set_var_date(None)
+        x._v.set_varicella(False)
+        x._v.set_varicella_date(None)
         x._v.set_dtap_hepb_ipv(True)
         x._v.set_dtap_hepb_ipv_date("01/01/1921")
         x._v.set_dtap_ipv_hib(False)
@@ -1168,8 +1162,8 @@ class TestTSVaccine(unittest.TestCase):
         x._v.set_tap_date("01/01/1918")
         x._v.set_td(True)
         x._v.set_td_date("01/01/1919")
-        x._v.set_var(False)
-        x._v.set_var_date("01/01/1920")
+        x._v.set_varicella(False)
+        x._v.set_varicella_date("01/01/1920")
         x._v.set_dtap_hepb_ipv(True)
         x._v.set_dtap_hepb_ipv_date("01/01/1921")
         x._v.set_dtap_ipv_hib(False)
@@ -1341,8 +1335,8 @@ class TestTSVaccine(unittest.TestCase):
         x._v.set_tap_date("01/01/1918")
         x._v.set_td(True)
         x._v.set_td_date("01/01/1919")
-        x._v.set_var(False)
-        x._v.set_var_date("01/01/1920")
+        x._v.set_varicella(False)
+        x._v.set_varicella_date("01/01/1920")
         x._v.set_dtap_hepb_ipv(True)
         x._v.set_dtap_hepb_ipv_date("01/01/1921")
         x._v.set_dtap_ipv_hib(False)
@@ -1469,8 +1463,8 @@ class TestTSVaccine(unittest.TestCase):
         x._v.set_tap_date("01/01/1918")
         x._v.set_td(True)
         x._v.set_td_date("01/01/1919")
-        x._v.set_var(False)
-        x._v.set_var_date("01/01/1920")
+        x._v.set_varicella(False)
+        x._v.set_varicella_date("01/01/1920")
         x._v.set_dtap_hepb_ipv(True)
         x._v.set_dtap_hepb_ipv_date("01/01/1921")
         x._v.set_dtap_ipv_hib(False)
@@ -1507,7 +1501,7 @@ class TestTSVaccine(unittest.TestCase):
             self.assertTrue(data2[key] == data[key])
 
         data["mmvr_date"] = "01/01/1934"
-        data["mmvr"] = "false"
+        data["mmvr"] = False
 
         x = UpdateVaccine(host, port, token, id)
         x.setVaccine(data)
@@ -1533,7 +1527,7 @@ class TestTSVaccine(unittest.TestCase):
         # test update date to None
 
         data["mmvr_date"] = None 
-        data["mmvr"] = "false"
+        data["mmvr"] = False 
 
         x = UpdateVaccine(host, port, token, id)
         x.setVaccine(data)
@@ -1725,8 +1719,8 @@ class TestTSVaccine(unittest.TestCase):
         x._v.set_tap_date("01/01/1918")
         x._v.set_td(True)
         x._v.set_td_date("01/01/1919")
-        x._v.set_var(False)
-        x._v.set_var_date("01/01/1920")
+        x._v.set_varicella(False)
+        x._v.set_varicella_date("01/01/1920")
         x._v.set_dtap_hepb_ipv(True)
         x._v.set_dtap_hepb_ipv_date("01/01/1921")
         x._v.set_dtap_ipv_hib(False)
