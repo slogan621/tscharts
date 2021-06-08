@@ -919,6 +919,180 @@ class TestTSVaccine(unittest.TestCase):
         global token
         token = ret[1]["token"]
 
+    def testCreateVaccineNoneDate(self):
+        x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        clinicid = int(ret[1]["id"])
+
+        data = {}
+
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        patientid = int(ret[1]["id"])
+
+        x = CreateVaccine(host, port, token, patient=patientid, clinic=clinicid)
+
+        x._v.set_covid19(True)
+        x._v.set_covid19_doses(1)
+        x._v.set_covid19_date("01/01/1901")
+        x._v.set_covid19_booster(False)
+        x._v.set_covid19_booster_date(None)
+        x._v.set_dtap(True)
+        x._v.set_dtap_date("01/01/1903")
+        x._v.set_dt(False)
+        x._v.set_dt_date(None)
+        x._v.set_hib(True)
+        x._v.set_hib_date("01/01/1905")
+        x._v.set_hepa(False)
+        x._v.set_hepa_date(None)
+        x._v.set_hepb(True)
+        x._v.set_hepb_date("01/01/1907")
+        x._v.set_hpv(False)
+        x._v.set_hpv_date(None)
+        x._v.set_iiv(True)
+        x._v.set_iiv_date("01/01/1909")
+        x._v.set_laiv4(False)
+        x._v.set_laiv4_date(None)
+        x._v.set_mmr(True)
+        x._v.set_mmr_date("01/01/1911")
+        x._v.set_menacwy(False)
+        x._v.set_menacwy_date(None)
+        x._v.set_menb(True)
+        x._v.set_menb_date("01/01/1913")
+        x._v.set_pcv13(False)
+        x._v.set_pcv13_date(None)
+        x._v.set_ppsv23(True)
+        x._v.set_ppsv23_date("01/01/1915")
+        x._v.set_ipv(False)
+        x._v.set_ipv_date(None)
+        x._v.set_rv(True)
+        x._v.set_rv_date("01/01/1917")
+        x._v.set_tap(False)
+        x._v.set_tap_date(None)
+        x._v.set_td(True)
+        x._v.set_td_date("01/01/1919")
+        x._v.set_var(False)
+        x._v.set_var_date(None)
+        x._v.set_dtap_hepb_ipv(True)
+        x._v.set_dtap_hepb_ipv_date("01/01/1921")
+        x._v.set_dtap_ipv_hib(False)
+        x._v.set_dtap_ipv_hib_date(None)
+        x._v.set_dtap_ipv(True)
+        x._v.set_dtap_ipv_date("01/01/1923")
+        x._v.set_dtap_ipv_hib_hepb(False)
+        x._v.set_dtap_ipv_hib_hepb_date(None)
+        x._v.set_mmvr(True)
+        x._v.set_mmvr_date("01/01/1925")
+
+        data = x._v.toJSON()
+
+        x.setVaccine(data)
+ 
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id = int(ret[1]["id"])
+        x = GetVaccine(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        data2 = ret[1]
+
+        for key, value in data.items():
+            self.assertTrue(key in data2)
+            self.assertTrue(data2[key] == data[key])
+
+        x = GetVaccine(host, port, token)
+        x.setPatient(patientid)
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+        data2 = ret[1]
+
+        for key, value in data.items(): 
+            self.assertTrue(key in data2)
+            self.assertTrue(data2[key] == data[key])
+
+        x = DeleteVaccine(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetVaccine(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)  # not found
+
+        # non-existent clinic param
+
+        x = CreateVaccine(host, port, token, clinic=9999, patient=patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        # non-existent patient param
+
+        x = CreateVaccine(host, port, token, clinic=clinicid, patient=9999)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        # no data
+
+        x = CreateVaccine(host, port, token, clinic=clinicid, patient=patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        # invalid data, boolean arg
+
+        x._v._mmvr = 9999
+
+        data = x._v.toJSON()
+        x.setVaccine(data)
+
+        x = CreateVaccine(host, port, token, clinic=clinicid, patient=patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 400)
+
+        x = DeleteClinic(host, port, token, clinicid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, patientid)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testCreateVaccine(self):
         x = CreateClinic(host, port, token, "Ensenada", "02/05/2016", "02/06/2016")
         ret = x.send(timeout=30)
@@ -1355,6 +1529,33 @@ class TestTSVaccine(unittest.TestCase):
         for key, value in data.items(): 
             self.assertTrue(key in data2)
             self.assertTrue(data2[key] == data[key])
+
+        # test update date to None
+
+        data["mmvr_date"] = None 
+        data["mmvr"] = "false"
+
+        x = UpdateVaccine(host, port, token, id)
+        x.setVaccine(data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = GetVaccine(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+        self.assertTrue("clinic" in ret[1])
+        clinicId = int(ret[1]["clinic"])
+        self.assertTrue(clinicId == clinicid)
+        self.assertTrue("patient" in ret[1])
+        patientId = int(ret[1]["patient"])
+        self.assertTrue(patientId == patientid)
+
+        data2 = ret[1]
+        for key, value in data.items(): 
+            self.assertTrue(key in data2)
+            self.assertTrue(data2[key] == data[key])
+
 
         data["hepititis"] = "Hello" 
         data["pregnancy_duration"] = 8 

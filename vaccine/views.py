@@ -76,6 +76,12 @@ class VaccineView(APIView):
 
         return ret
 
+    def dateStrOrNone(self, val):
+        ret = None
+        if val != None:
+            ret = val.strftime("%m/%d/%Y")
+        return ret
+
     def serialize(self, entry):
         m = {}
         m["id"] = entry.id  
@@ -85,55 +91,55 @@ class VaccineView(APIView):
 
         m["covid19"] = self.booleanToText(entry.covid19)
         m["covid19_doses"] = entry.covid19_doses 
-        m["covid19_date"] = entry.covid19_date.strftime("%m/%d/%Y") 
+        m["covid19_date"] = self.dateStrOrNone(entry.covid19_date)
         m["covid19_booster"] = self.booleanToText(entry.covid19_booster)
-        m["covid19_booster_date"] = entry.covid19_booster_date.strftime("%m/%d/%Y") 
+        m["covid19_booster_date"] = self.dateStrOrNone(entry.covid19_booster_date)
         m["dtap"] = self.booleanToText(entry.dtap)
-        m["dtap_date"] = entry.dtap_date.strftime("%m/%d/%Y") 
+        m["dtap_date"] = self.dateStrOrNone(entry.dtap_date)
         m["dt"] = self.booleanToText(entry.dt)
-        m["dt_date"] = entry.dt_date.strftime("%m/%d/%Y") 
+        m["dt_date"] = self.dateStrOrNone(entry.dt_date)
         m["hib"] = self.booleanToText(entry.hib)
-        m["hib_date"] = entry.hib_date.strftime("%m/%d/%Y") 
+        m["hib_date"] = self.dateStrOrNone(entry.hib_date)
         m["hepa"] = self.booleanToText(entry.hepa)
-        m["hepa_date"] = entry.hepa_date.strftime("%m/%d/%Y") 
+        m["hepa_date"] = self.dateStrOrNone(entry.hepa_date)
         m["hepb"] = self.booleanToText(entry.hepb)
-        m["hepb_date"] = entry.hepb_date.strftime("%m/%d/%Y") 
+        m["hepb_date"] = self.dateStrOrNone(entry.hepb_date)
         m["hpv"] = self.booleanToText(entry.hpv)
-        m["hpv_date"] = entry.hpv_date.strftime("%m/%d/%Y") 
+        m["hpv_date"] = self.dateStrOrNone(entry.hpv_date)
         m["iiv"] = self.booleanToText(entry.iiv)
-        m["iiv_date"] = entry.iiv_date.strftime("%m/%d/%Y") 
+        m["iiv_date"] = self.dateStrOrNone(entry.iiv_date)
         m["laiv4"] = self.booleanToText(entry.laiv4)
-        m["laiv4_date"] = entry.laiv4_date.strftime("%m/%d/%Y") 
+        m["laiv4_date"] = self.dateStrOrNone(entry.laiv4_date)
         m["mmr"] = self.booleanToText(entry.mmr)
-        m["mmr_date"] = entry.mmr_date.strftime("%m/%d/%Y") 
+        m["mmr_date"] = self.dateStrOrNone(entry.mmr_date)
         m["menacwy"] = self.booleanToText(entry.menacwy)
-        m["menacwy_date"] = entry.menacwy_date.strftime("%m/%d/%Y") 
+        m["menacwy_date"] = self.dateStrOrNone(entry.menacwy_date)
         m["menb"] = self.booleanToText(entry.menb)
-        m["menb_date"] = entry.menb_date.strftime("%m/%d/%Y") 
+        m["menb_date"] = self.dateStrOrNone(entry.menb_date)
         m["pcv13"] = self.booleanToText(entry.pcv13)
-        m["pcv13_date"] = entry.pcv13_date.strftime("%m/%d/%Y") 
+        m["pcv13_date"] = self.dateStrOrNone(entry.pcv13_date)
         m["ppsv23"] = self.booleanToText(entry.ppsv23)
-        m["ppsv23_date"] = entry.ppsv23_date.strftime("%m/%d/%Y") 
+        m["ppsv23_date"] = self.dateStrOrNone(entry.ppsv23_date)
         m["ipv"] = self.booleanToText(entry.ipv)
-        m["ipv_date"] = entry.ipv_date.strftime("%m/%d/%Y") 
+        m["ipv_date"] = self.dateStrOrNone(entry.ipv_date)
         m["rv"] = self.booleanToText(entry.rv)
-        m["rv_date"] = entry.rv_date.strftime("%m/%d/%Y") 
+        m["rv_date"] = self.dateStrOrNone(entry.rv_date)
         m["tap"] = self.booleanToText(entry.tap)
-        m["tap_date"] = entry.tap_date.strftime("%m/%d/%Y") 
+        m["tap_date"] = self.dateStrOrNone(entry.tap_date)
         m["td"] = self.booleanToText(entry.td)
-        m["td_date"] = entry.td_date.strftime("%m/%d/%Y") 
+        m["td_date"] = self.dateStrOrNone(entry.td_date)
         m["var"] = self.booleanToText(entry.var)
-        m["var_date"] = entry.var_date.strftime("%m/%d/%Y") 
+        m["var_date"] = self.dateStrOrNone(entry.var_date)
         m["dtap_hepb_ipv"] = self.booleanToText(entry.dtap_hepb_ipv)
-        m["dtap_hepb_ipv_date"] = entry.dtap_hepb_ipv_date.strftime("%m/%d/%Y") 
+        m["dtap_hepb_ipv_date"] = self.dateStrOrNone(entry.dtap_hepb_ipv_date)
         m["dtap_ipv_hib"] = self.booleanToText(entry.dtap_ipv_hib)
-        m["dtap_ipv_hib_date"] = entry.dtap_ipv_hib_date.strftime("%m/%d/%Y") 
+        m["dtap_ipv_hib_date"] = self.dateStrOrNone(entry.dtap_ipv_hib_date)
         m["dtap_ipv"] = self.booleanToText(entry.dtap_ipv)
-        m["dtap_ipv_date"] = entry.dtap_ipv_date.strftime("%m/%d/%Y") 
+        m["dtap_ipv_date"] = self.dateStrOrNone(entry.dtap_ipv_date)
         m["dtap_ipv_hib_hepb"] = self.booleanToText(entry.dtap_ipv_hib_hepb)
-        m["dtap_ipv_hib_hepb_date"] = entry.dtap_ipv_hib_hepb_date.strftime("%m/%d/%Y") 
+        m["dtap_ipv_hib_hepb_date"] = self.dateStrOrNone(entry.dtap_ipv_hib_hepb_date)
         m["mmvr"] = self.booleanToText(entry.mmvr)
-        m["mmvr_date"] = entry.mmvr_date.strftime("%m/%d/%Y") 
+        m["mmvr_date"] = self.dateStrOrNone(entry.mmvr_date)
 
         return m
 
@@ -257,13 +263,14 @@ class VaccineView(APIView):
                     LOG.error("validatePostArgs datefield failed on {}".format(dateField))
                     valid = False
                 else:
-                    try:
-                        kwargs[dateField] = datetime.strptime(data[dateField], '%m/%d/%Y')
-                    except ValueError:
+                    if data[dateField] != None:
                         try:
-                            kwargs[dateField] = datetime.strptime(data[dateField], '%m-%d-%Y')
+                            kwargs[dateField] = datetime.strptime(data[dateField], '%m/%d/%Y')
                         except ValueError:
-                            valid = False
+                            try:
+                                kwargs[dateField] = datetime.strptime(data[dateField], '%m-%d-%Y')
+                            except ValueError:
+                                valid = False
 
             for x in self._integerFields:
                 LOG.error("validatePostArgs processing integer {}".format(x))
@@ -309,15 +316,18 @@ class VaccineView(APIView):
                         setattr(vaccine, x, self.textToBoolean(val))
                 dateField = "{}_date".format(x)
                 if dateField in data:
-                    try:
-                        setattr(vaccine, dateField, datetime.strptime(data[dateField], '%m/%d/%Y'))
-                    except ValueError:
-                        LOG.error("validatePutArgs {} failed {}".format(dateField, data[dateField]))
+                    if data[dateField] != None:
                         try:
-                            setattr(vaccine, dateField, datetime.strptime(data[dateField], '%m-%d-%Y'))
+                            setattr(vaccine, dateField, datetime.strptime(data[dateField], '%m/%d/%Y'))
                         except ValueError:
                             LOG.error("validatePutArgs {} failed {}".format(dateField, data[dateField]))
-                            valid = False
+                            try:
+                                setattr(vaccine, dateField, datetime.strptime(data[dateField], '%m-%d-%Y'))
+                            except ValueError:
+                                LOG.error("validatePutArgs {} failed {}".format(dateField, data[dateField]))
+                                valid = False
+                    else:
+                        setattr(vaccine, dateField, None)
 
             for x in self._integerFields:
                 name = x[0]

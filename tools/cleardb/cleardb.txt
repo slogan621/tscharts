@@ -11,7 +11,7 @@ truncate queue_queueentry;
 truncate queue_queuestatus; 
 truncate station_station; 
 truncate statechange_statechange; 
-truncate dentalcdt_dentalcdt; 
+#truncate dentalcdt_dentalcdt; 
 truncate medicalhistory_medicalhistory; 
 truncate category_category;
 truncate image_image;
