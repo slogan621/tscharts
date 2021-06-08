@@ -60,6 +60,8 @@ class VaccineView(APIView):
 
         self._otherFields = ["clinic", "patient"]
 
+        self._otherPutFields = ["id"]
+
     def dateStrOrNone(self, val):
         ret = None
         if val != None:
@@ -286,7 +288,7 @@ class VaccineView(APIView):
 
         try:
             for key, val in data.iteritems():
-                if not (key in self._vaccNames or key in self._vaccDates or key in self._integerNames or key in self._otherFields):
+                if not (key in self._vaccNames or key in self._vaccDates or key in self._integerNames or key in self._otherFields or key in self._otherPutFields):
                     LOG.error("validatePutArgs invalid key {}".format(key))
                     return False, vaccine
  
