@@ -310,6 +310,10 @@ specialty.
     * [API](../master/vaccine/README.md)  
     * [Unit Tests](../master/tschartslib/vaccine/vaccine.py)
 
+ * covidvac - used to add, delete, and get known list of COVID-19 vaccines 
+    * [API](../master/covidvac/README.md)  
+    * [Unit Tests](../master/tschartslib/covidvac/covidvac.py)
+
 # License
 
 ```
