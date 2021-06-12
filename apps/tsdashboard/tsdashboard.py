@@ -222,7 +222,7 @@ class Registrations():
         return patients
 
 def usage():
-    print("tsdashboard [-h host] [-p port] -u username -w password") 
+    print("tsdashboard [-v] [-h host] [-p port] -u username -w password") 
 
 class XRayTab(wx.Panel):
 
@@ -749,9 +749,14 @@ class SearchFrame(wx.Frame):
         panel.setClinic(int(clinics[0]["id"]))
         panel.set_registrations(patientsThisClinic)
 
+def printVersion():
+    print("tsdashboard version 1.0")
+    print("")
+    print("Please send comments, questions, and bug reports to thousandsmiles.chart@gmail.com")
+
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:")
+        opts, args = getopt.getopt(sys.argv[1:], "?vh:p:u:w:")
     except getopt.GetoptError as err:
         print(str(err))
         usage()
@@ -764,6 +769,12 @@ def main():
     for o, a in opts:
         if o == "-h":
             host = a
+        if o == "-v":
+            printVersion()
+            sys.exit(1)
+        if o == "-?":
+            usage()
+            sys.exit(1)
         elif o == "-p":
             port = int(a)
         elif o == "-u":
