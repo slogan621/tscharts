@@ -58,7 +58,7 @@ class VaccineView(APIView):
 
         self._integerFields = [("covid19_doses", [0, 1, 2])]
 
-        self._otherFields = ["clinic", "patient"]
+        self._otherFields = ["clinic", "patient", "covid19_type"]
 
         self._otherPutFields = ["id"]
 
@@ -76,6 +76,7 @@ class VaccineView(APIView):
         m["time"] = entry.time
 
         m["covid19"] = entry.covid19
+        m["covid19_type"] = entry.covid19_type 
         m["covid19_doses"] = entry.covid19_doses 
         m["covid19_date"] = self.dateStrOrNone(entry.covid19_date)
         m["covid19_booster"] = entry.covid19_booster
@@ -377,13 +378,9 @@ class VaccineView(APIView):
             try:
                 kwargs["patient"] = aPatient
                 kwargs["clinic"] = aClinic
-                LOG.error("POST before create kwargs {}".format(kwargs))
                 vaccine = Vaccine(**kwargs)
-                LOG.error("POST after create kwargs {}".format(kwargs))
                 if vaccine:
-                    LOG.error("POST before save")
                     vaccine.save()
-                    LOG.error("POST after save")
                 else:
                     implError = True
             except Exception as e:

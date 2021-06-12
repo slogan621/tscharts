@@ -10,6 +10,7 @@ is used to represent the following:
    `clinic` clinic resource id<br />
    `patient` patient resource id<br />
    `covid19` COVID-19<br />
+   `covid19_type` string (see covidvac API)<br />
    `covid19_doses` 0, 1 or 2<br />
    `covid_date` <br />
    `covid19_booster` COVID-19 booster<br />

@@ -28,6 +28,7 @@ class Vaccine(models.Model):
     time = models.DateTimeField(auto_now=True)
 
     covid19 = models.BooleanField(default = False) # COVID-19
+    covid19_type = models.CharField(max_length=64, null=True)
     covid19_doses = models.IntegerField(default=0) # 0, 1 or 2
     covid19_date = models.DateTimeField(null=True)
     covid19_booster = models.BooleanField(default = False) # COVID-19

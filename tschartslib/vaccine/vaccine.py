@@ -30,6 +30,7 @@ from tschartslib.clinic.clinic import CreateClinic, DeleteClinic
 class Vaccine:
     def __init__(self):
         self._covid19 = False
+        self._covid19_type = ""
         self._covid19_doses = 0
         self._covid19_date = None
         self._covid19_booster = False
@@ -85,6 +86,7 @@ class Vaccine:
         ret = {}
         ret["covid19"] = self._covid19
         ret["covid19_doses"] = self._covid19_doses 
+        ret["covid19_type"] = self._covid19_type 
         ret["covid19_date"] = self._covid19_date 
         ret["covid19_booster"] = self._covid19_booster
         ret["covid19_booster_date"] = self._covid19_booster_date 
@@ -141,6 +143,13 @@ class Vaccine:
 
         try:
             self.set_covid19(data["covid19"])
+        except:
+            if ignore: 
+                pass 
+            else: 
+                ret = False 
+        try:
+            self.set_covid19_type(data["covid19_type"])
         except:
             if ignore: 
                 pass 
@@ -504,6 +513,9 @@ class Vaccine:
     def set_covid19_doses(self, val):
         self._covid19_doses = val
 
+    def set_covid19_type(self, val):
+        self._covid19_type = val
+
     def set_covid19_date(self, val):
         self._covid19_date= val
 
@@ -653,6 +665,9 @@ class Vaccine:
 
     def get_covid19(self):
         return self._covid19
+
+    def get_covid19_type(self):
+        return self._covid19_type
 
     def get_covid19_doses(self):
         return self._covid19_doses
@@ -951,6 +966,7 @@ class TestTSVaccine(unittest.TestCase):
 
         x._v.set_covid19(True)
         x._v.set_covid19_doses(1)
+        x._v.set_covid19_type("Moderna")
         x._v.set_covid19_date("01/01/1901")
         x._v.set_covid19_booster(False)
         x._v.set_covid19_booster_date(None)
@@ -1125,6 +1141,7 @@ class TestTSVaccine(unittest.TestCase):
 
         x._v.set_covid19(True)
         x._v.set_covid19_doses(1)
+        x._v.set_covid19_type("Moderna")
         x._v.set_covid19_date("01/01/1901")
         x._v.set_covid19_booster(False)
         x._v.set_covid19_booster_date("01/01/1902")
@@ -1298,6 +1315,7 @@ class TestTSVaccine(unittest.TestCase):
         x = CreateVaccine(host, port, token, patient=patientid, clinic=clinicid)
         x._v.set_covid19(True)
         x._v.set_covid19_doses(1)
+        x._v.set_covid19_type("Moderna")
         x._v.set_covid19_date("01/01/1901")
         x._v.set_covid19_booster(False)
         x._v.set_covid19_booster_date("01/01/1902")
@@ -1426,6 +1444,7 @@ class TestTSVaccine(unittest.TestCase):
         x = CreateVaccine(host, port, token, patient=patientid, clinic=clinicid)
         x._v.set_covid19(True)
         x._v.set_covid19_doses(1)
+        x._v.set_covid19_type("Moderna")
         x._v.set_covid19_date("01/01/1901")
         x._v.set_covid19_booster(False)
         x._v.set_covid19_booster_date("01/01/1902")
@@ -1682,6 +1701,7 @@ class TestTSVaccine(unittest.TestCase):
         x = CreateVaccine(host, port, token, patient=patientid1, clinic=clinicid1)
         x._v.set_covid19(True)
         x._v.set_covid19_doses(1)
+        x._v.set_covid19_type("Moderna")
         x._v.set_covid19_date("01/01/1901")
         x._v.set_covid19_booster(False)
         x._v.set_covid19_booster_date("01/01/1902")
