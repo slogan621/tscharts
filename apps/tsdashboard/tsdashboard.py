@@ -769,10 +769,10 @@ def main():
     for o, a in opts:
         if o == "-h":
             host = a
-        if o == "-v":
+        elif o == "-v":
             printVersion()
             sys.exit(1)
-        if o == "-?":
+        elif o == "-?":
             usage()
             sys.exit(1)
         elif o == "-p":
