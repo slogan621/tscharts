@@ -11,4 +11,4 @@ type tsdashboard -h for more information.
 Release History
 ---------------
 
-06/11/2021 - initial release, replaces deprecated xrayuploader
+v1.0 06/11/2021 - initial release, replaces deprecated xrayuploader
