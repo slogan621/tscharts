@@ -80,8 +80,8 @@ curp):
 # Heigth = 7.024 (May need to change for different sizes.
 # Units: Inches
 # Resolution: 300dpi
-# Meadia Tracking: Non-continuous (Mark sensing)
-# Mesia Type: Printer default
+# Media Tracking: Non-continuous (Mark sensing)
+# Media Type: Printer default
 #
 # In my .bashrc file, I also set this:
 # export PRINTER="Zebra_Technologies_ZTC_ZD510-300dpi_ZPL"
