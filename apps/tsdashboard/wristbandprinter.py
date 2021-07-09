@@ -13,6 +13,19 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
+import platform
+
+class WristBandPrinterFactory:
+    def get(self):
+        ret = None
+        plat = platform.system()
+        if plat == "Linux":
+            print("Configuring wristband printing for Linux lpr")
+            ret = LPRTextWristBandPrinter()
+        else:
+            print("Wristband printing not supported on platform {}".format(plat))
+        return ret
+
 class WristBandPrinter:
     def __init__(self):
         pass
@@ -77,7 +90,7 @@ curp):
 # Once installed, the driver needs to be configured for this printer:
 # Size: custom
 # Width = 1
-# Heigth = 7.024 (May need to change for different sizes.
+# Height = 7.024 (May need to change for different sizes).
 # Units: Inches
 # Resolution: 300dpi
 # Media Tracking: Non-continuous (Mark sensing)

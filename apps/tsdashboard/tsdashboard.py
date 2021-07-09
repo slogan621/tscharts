@@ -426,7 +426,8 @@ class PrintWristBandTab(wx.Panel):
         self.main = main
         wx.Panel.__init__(self, parent)
 
-        self._printer = wristbandprinter.WristBandPrinter()
+        wristBandFactory = wristbandprinter.WristBandPrinterFactory()
+        self._printer = wristBandFactory.get()
 
         pub.subscribe(self.on_patient_selected_message, 'patient_selected')
 
