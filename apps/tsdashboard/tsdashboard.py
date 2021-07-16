@@ -712,15 +712,18 @@ class MainPanel(wx.Panel):
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
 
+    def completeRegistrationsThread(self, patientsThisClinic):
+        self.set_registrations(patientsThisClinic)
+        if len(patientsThisClinic):
+            self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
+        pub.sendMessage("pulseoff")
+
     def getRegistrationsThread(self, ind):
         item = self.clinics.GetItem(ind, 0)
         regs = Registrations()
         self.clinic = int(item.GetText())
         patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
-        self.set_registrations(patientsThisClinic)
-        if len(patientsThisClinic):
-            self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
-        pub.sendMessage("pulseoff")
+        wx.CallAfter(self.completeRegistrationsThread, patientsThisClinic)
 
     def on_clinic(self, event):
         pub.sendMessage("clearxrays")
