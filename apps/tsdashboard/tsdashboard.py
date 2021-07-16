@@ -20,6 +20,7 @@ import wx
 import base64
 import tempfile
 import os
+import threading
 
 from regular_search import RegularSearch
 from imagegrid import ImageGrid
@@ -711,10 +712,7 @@ class MainPanel(wx.Panel):
     def set_registrations(self, registrations):
         self.search_panel.load_search_results(registrations)
 
-    def on_clinic(self, event):
-        pub.sendMessage("clearxrays")
-        pub.sendMessage("pulseon")
-        ind = event.GetIndex()
+    def getRegistrationsThread(self, ind):
         item = self.clinics.GetItem(ind, 0)
         regs = Registrations()
         self.clinic = int(item.GetText())
@@ -723,6 +721,14 @@ class MainPanel(wx.Panel):
         if len(patientsThisClinic):
             self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
         pub.sendMessage("pulseoff")
+
+    def on_clinic(self, event):
+        pub.sendMessage("clearxrays")
+        pub.sendMessage("pulseon")
+        ind = event.GetIndex()
+        thread = threading.Thread(target=self.getRegistrationsThread,
+                 args=(ind,))
+        thread.start()
 
     def on_search(self, event):
         search_results = []
