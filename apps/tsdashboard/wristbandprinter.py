@@ -14,6 +14,7 @@
 #limitations under the License.
 
 import platform
+import os
 
 class WristBandPrinterFactory:
     def get(self):
@@ -105,6 +106,7 @@ class LPRTextWristBandPrinter(WristBandPrinter):
     
     def __init__(self):
         super().__init__()
+        self._nspaces = int(os.getenv("LPR_LEADING_SPACES", default=6))
 
     # Because the second line cut off the first few characters,
     # place six spaces after the "\n" on the beginning of each
@@ -113,7 +115,7 @@ class LPRTextWristBandPrinter(WristBandPrinter):
     def __str__(self):
 
         val = super().__str__()
-        val = val.replace("\n", "\n      ")
+        val = val.replace("\n", "\n{}".format(' ' * self._nspaces))
         return val
     #
     # This procedure actually sends the ASCII data to the printer using lpr.
@@ -135,10 +137,10 @@ class LPRTextWristBandPrinter(WristBandPrinter):
         # generate a temp file. lpr is a spooler, and if
         # a second print job comes in before lpr has queued
         # the file with same name, will overwrite.
- 
+
         path = tempfile.mkstemp(dir="/tmp", text=True)[1] 
         f = open(path, "w+")
-        f.write("\n      ")
+        f.write("\n{}".format(' ' * self._nspaces))
         f.write(wristbandStr)
         f.close()
         print("{}".format(wristbandStr))
