@@ -139,7 +139,6 @@ class RegularSearch(wx.Panel):
         self.dlg.Pulse()
 
     def on_pulse_on_message(self):
-        print("on pulse on")
         #self.gauge.Show()
         self.pulsetimer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.pulseTimerHandler, self.pulsetimer)
@@ -151,7 +150,6 @@ class RegularSearch(wx.Panel):
         self.pulsetimer.Start(500)
 
     def on_pulse_off_message(self):
-        print("on pulse off")
         self.pulsetimer.Stop()
         #self.gauge.Hide()
         self.dlg.Destroy()
@@ -160,13 +158,14 @@ class RegularSearch(wx.Panel):
         selection = self.search_results_olv.GetSelectedObject()
         #patient_id = self.title.SetValue(f'{selection.id}')
         #self.title.SetValue(f'{selection.title}')
-        self.selected_id = selection.id
-        self.update_image(f'{selection.id}')
-        if not self.timer_update:
-            pub.sendMessage('clearxrays')
-            pub.sendMessage('clearxraycontrol')
-            pub.sendMessage('patient_selected', data=selection, patient=self.selected_id)
-            pub.sendMessage('loadxrays')
+        if selection and selection.id:
+            self.selected_id = selection.id
+            self.update_image(f'{selection.id}')
+            if not self.timer_update:
+                pub.sendMessage('clearxrays')
+                pub.sendMessage('clearxraycontrol')
+                pub.sendMessage('patient_selected', data=selection, patient=self.selected_id)
+                pub.sendMessage('loadxrays')
         '''
         else:
             img = wx.Image(240, 240)

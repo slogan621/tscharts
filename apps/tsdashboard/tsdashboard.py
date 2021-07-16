@@ -108,11 +108,13 @@ class XRays():
         x.setPatient(patientid)
         x.setType("Xray")
         ret = x.send(timeout=30)
-        print("getAllXRays ret[0] {}".format(ret[0]))
+        #print("getAllXRays ret[0] {}".format(ret[0]))
         if ret[0] == 200:
             xraylist = ret[1]
+            '''
             print("getAllXRays for patient {} clinic {} {}".format(patientid,
 clinicid, xraylist))
+            '''
             for x in xraylist:
                 y = GetImage(sess.getHost(), sess.getPort(), sess.getToken())
                 y.setId(x)
@@ -199,7 +201,7 @@ class Registrations():
     def searchAllRegistrations(self, sess, clinicid, pattern):
         patients = []
         matches = self.searchPatient(sess, pattern)
-        print("matches: {}", matches)
+        #print("matches: {}", matches)
         x = GetAllRegistrations(sess.getHost(), sess.getPort(), sess.getToken())
         x.setClinic(clinicid)
         ret = x.send(timeout=30)
@@ -386,7 +388,7 @@ class PrintWristBandTab(wx.Panel):
     def on_patient_selected_message(self, data, patient):
         self.patientData = data
 
-        print("wristband printer on_patient_selected {}".format(data))
+        #print("wristband printer on_patient_selected {}".format(data))
 
         self.id.SetValue(str(data.id))
         self.first.SetValue(data.first)
@@ -409,7 +411,7 @@ class PrintWristBandTab(wx.Panel):
         self.curp = data['curp']
         '''
 
-        print("on_patient_selected_message {}".format(patient))
+        #print("on_patient_selected_message {}".format(patient))
         self.patient = patient
 
     def onChecked(self, e):
@@ -690,16 +692,16 @@ class MainPanel(wx.Panel):
         self.SetSizer(self.main_sizer)
 
     def timerHandler(self, event):
-        print("updated: {}".format(time.ctime()))
+        #print("updated: {}".format(time.ctime()))
         self.on_search(None)
         pub.sendMessage('patients_updated')
 
     def on_refresh_message(self):
-        print("on_refresh_message")
+        #print("on_refresh_message")
         self.Layout()
 
     def on_patient_selected_message(self, data, patient):
-        print("on_patient_selected_message {}".format(patient))
+        #print("on_patient_selected_message {}".format(patient))
         self.patient = patient
         self.patientData = data
 
@@ -723,7 +725,6 @@ class MainPanel(wx.Panel):
         pub.sendMessage("pulseoff")
 
     def on_search(self, event):
-        print("on search enter")
         search_results = []
         if event:
             self.search_term = event.GetString()
@@ -745,7 +746,7 @@ class SearchFrame(wx.Frame):
         panel = MainPanel(self, sess, clinics)
         self.Show()
         regs = Registrations()
-        print("{}".format(clinics))
+        #print("{}".format(clinics))
         patientsThisClinic = regs.getAllRegistrations(sess, clinics[0]["id"])
         panel.setClinic(int(clinics[0]["id"]))
         panel.set_registrations(patientsThisClinic)
@@ -793,8 +794,10 @@ def main():
     regs = Registrations()
     c = Clinics()
     clinics = c.getAllClinics(session)
+    '''
     for x in clinics:
         print("{}".format(x))   
+    '''
    
     clinicid = int(clinics[0]["id"])
 

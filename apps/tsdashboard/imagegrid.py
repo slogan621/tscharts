@@ -81,8 +81,10 @@ class ImageGrid(scrolled.ScrolledPanel):
             imageId = args[0]
             deleteList = args[1]
             checkBox = args[2]
+            '''
             print("onChecked: id is {} e is {} value {}".format(imageId, e,
 checkBox.GetValue()))
+            '''
             if checkBox.GetValue() == True:
                 self.addToDeleteList(imageId)
             else:
