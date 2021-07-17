@@ -28,6 +28,6 @@ the target Windows 10 machine. Example zip creation on linux:
 $ zip -r tsdashboardv1.1.zip dist/tsdashboard
 
 Finally, create a shortcut for the desktop:
-https://drive.google.com/drive/u/0/folders/1x9BHnvAm53Yq2QCbPqdBsMELS1oSaNNa
+https://drive.google.com/file/d/1Po3Z_JJJ4KarRQGCcVmf8j3zss7p83U4
 for detailed instructions.
 
