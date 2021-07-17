@@ -12,3 +12,4 @@ Release History
 ---------------
 
 v1.0 06/11/2021 - initial release, replaces deprecated xrayuploader
+v1.1 07/16/2021 - wristband printer, improvements to clinic loading response.
