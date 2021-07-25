@@ -242,8 +242,9 @@ class RegularSearch(wx.Panel):
             ColumnDefn("Date of Birth", "left", 150, "dob"),
             ColumnDefn("Gender", "left", 150, "gender"),
         ])
-        self.search_results_olv.SetObjects(self.search_results)
-        pub.sendMessage('patients_updated')
+        if len(self.search_results):
+            self.search_results_olv.SetObjects(self.search_results)
+            pub.sendMessage('patients_updated')
 
     def load_search_results(self, registrations):
         self.search_results = []

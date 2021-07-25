@@ -354,9 +354,6 @@ class PrintWristBandTab(wx.Panel):
 
     def updatePrintStr(self):
 
-        if not self._printer:
-            return
-
         patientData = lambda: None
         patientData.id = str(self.patientData.id)
         patientData.first = self.first.GetValue() 
@@ -366,6 +363,9 @@ class PrintWristBandTab(wx.Panel):
         patientData.dob = self.dobToMilitary(self.dob.GetValue()) 
         patientData.gender = self.gender.GetValue() 
         patientData.curp = self.curp.GetValue() 
+
+        if not self._printer:
+            return
 
         self._printer.setPatientData(patientData)
 
@@ -415,7 +415,7 @@ class PrintWristBandTab(wx.Panel):
         self.curp = data['curp']
         '''
 
-        #print("on_patient_selected_message {}".format(patient))
+        #print("wristband printer leave on_patient_selected_message {}".format(patient))
         self.patient = patient
 
     def onChecked(self, e):
@@ -431,6 +431,8 @@ class PrintWristBandTab(wx.Panel):
         self.sess = sess
         self.main = main
         wx.Panel.__init__(self, parent)
+
+        #print("wristabandprinter init enter")
 
         wristBandFactory = wristbandprinter.WristBandPrinterFactory()
         self._printer = wristBandFactory.get()
@@ -608,6 +610,7 @@ class PrintWristBandTab(wx.Panel):
         container.Add(self.print_btn, 0, wx.ALL, 5)
 
         self.SetSizer(container)
+        #print("wristabandprinter init exit")
 
 class TabThree(wx.Panel):
     def __init__(self, parent):
@@ -696,16 +699,15 @@ class MainPanel(wx.Panel):
         self.SetSizer(self.main_sizer)
 
     def timerHandler(self, event):
-        #print("updated: {}".format(time.ctime()))
+        #print("timerHandler enter updated: {}".format(time.ctime()))
         self.on_search(None)
         pub.sendMessage('patients_updated')
+        #print("timerHandler exit: {}".format(time.ctime()))
 
     def on_refresh_message(self):
-        #print("on_refresh_message")
         self.Layout()
 
     def on_patient_selected_message(self, data, patient):
-        #print("on_patient_selected_message {}".format(patient))
         self.patient = patient
         self.patientData = data
 
@@ -757,11 +759,13 @@ class SearchFrame(wx.Frame):
                          size=(1200, 800))
         panel = MainPanel(self, sess, clinics)
         self.Show()
+        '''
         regs = Registrations()
         #print("{}".format(clinics))
         patientsThisClinic = regs.getAllRegistrations(sess, clinics[0]["id"])
+        '''
         panel.setClinic(int(clinics[0]["id"]))
-        panel.set_registrations(patientsThisClinic)
+        #panel.set_registrations(patientsThisClinic)
 
 def printVersion():
     print("tsdashboard version 1.0")
