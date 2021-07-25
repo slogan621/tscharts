@@ -354,6 +354,9 @@ class PrintWristBandTab(wx.Panel):
 
     def updatePrintStr(self):
 
+        if not self._printer:
+            return
+
         patientData = lambda: None
         patientData.id = str(self.patientData.id)
         patientData.first = self.first.GetValue() 
