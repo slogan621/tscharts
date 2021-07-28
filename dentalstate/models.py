@@ -61,10 +61,11 @@ class DentalState(models.Model):
     DENTAL_SURFACE_OCCLUSAL = 'c'
     DENTAL_SURFACE_LABIAL = 'a'
     DENTAL_SURFACE_INCISAL = 'i'
+    DENTAL_SURFACE_DISTAL = 'd'
     DENTAL_SURFACE_WHOLE_MOUTH_OR_VISIT = 'w'
     DENTAL_SURFACE_OTHER = 'o'
 
-    DENTAL_SURFACE_CHOICES = ((DENTAL_SURFACE_NONE, "none"), (DENTAL_SURFACE_BUCCAL, "buccal"), (DENTAL_SURFACE_LINGUAL, "lingual"), (DENTAL_SURFACE_MESIAL, "mesial"), (DENTAL_SURFACE_OCCLUSAL, 'occlusal'), (DENTAL_SURFACE_LABIAL, 'labial'), (DENTAL_SURFACE_INCISAL, 'incisal'), (DENTAL_SURFACE_WHOLE_MOUTH_OR_VISIT, 'whole_mouth_or_visit'), (DENTAL_SURFACE_OTHER, 'other'))
+    DENTAL_SURFACE_CHOICES = ((DENTAL_SURFACE_NONE, "none"), (DENTAL_SURFACE_BUCCAL, "buccal"), (DENTAL_SURFACE_LINGUAL, "lingual"), (DENTAL_SURFACE_MESIAL, "mesial"), (DENTAL_SURFACE_OCCLUSAL, 'occlusal'), (DENTAL_SURFACE_LABIAL, 'labial'), (DENTAL_SURFACE_INCISAL, 'incisal'), (DENTAL_SURFACE_DISTAL, 'distal'), (DENTAL_SURFACE_WHOLE_MOUTH_OR_VISIT, 'whole_mouth_or_visit'), (DENTAL_SURFACE_OTHER, 'other'))
 
     # here we define a charfield as a string to hold a set of surfaces
     # this won't work with forms, but since we are just a REST API, doesn't

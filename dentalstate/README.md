@@ -38,7 +38,7 @@
   "code" : id <br />
   "username" : string <br />
   "state" : missing | treated | untreated | none | other<br />
-  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | distal | none | other<br />
   "time" : last modified datetime string for record<br />
   "comment" : text<br />
 
@@ -99,7 +99,7 @@ Content-Type: application/json
   "location" : top | bottom <br />
   "code" : id <br />
   "state" : one of the following: missing | treated | untreated | none | other<br />
-  "surface" : one  of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
+  "surface" : one  of the following: buccal | lingual | mesial | occlusal | labial | incisal | distal | none | other<br />
   "time" : last modified datetime string for record<br />
   "username" : text string<br />
   "comment" : text<br />
@@ -120,7 +120,7 @@ Content-Type: application/json
   "location" : top | bottom <br />
   "code" : id <br />
   "state" : missing | treated | untreated | none | other<br />
-  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | distal | none | other<br />
   "time" : last modified datetime string for record<br />
   "username" : text string<br />
   "comment" : text<br />
@@ -187,7 +187,7 @@ Content-Type: application/json
   "username" : string <br />
   "code" : id <br />
   "state" : missing | treated | untreated | none | other<br />
-  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | distal | none | other<br />
   "comment" : text<br />
 
    **Optional:**
@@ -261,7 +261,7 @@ Content-Type: application/json
   "code" : id <br />
   "username" : string<br />
   "state" : missing | treated | untreated | none | other<br />
-  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | none | other<br />
+  "surface" : csv consisting of one or more of the following: buccal | lingual | mesial | occlusal | labial | incisal | distal | none | other<br />
   "comment" : text<br />
 
 * **Success Response:**
