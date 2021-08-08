@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017
-#(C) Copyright Thousand Smiles Foundation 2017
+#(C) Copyright Syd Logan 2017-2020
+#(C) Copyright Thousand Smiles Foundation 2017-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -64,9 +64,8 @@ class RegisterView(APIView):
                 register = None
         else:
             # look for optional arguments
-            data = json.loads(request.body)
-            try:
-                patientid = int(data["patient"])
+            patientid = request.GET.get("patient", '')
+            if patientid and patientid != '':
                 try:
                     aPatient = Patient.objects.get(id=patientid)
                     if not aPatient:
@@ -75,11 +74,9 @@ class RegisterView(APIView):
                         kwargs["patient"] = aPatient
                 except:
                     badRequest = True
-            except:
-                pass # no patient ID
 
-            try:
-                clinicid = int(data["clinic"])
+            clinicid = request.GET.get("clinic", '')
+            if clinicid and clinicid != '':
                 try:
                     aClinic = Clinic.objects.get(id=clinicid)
                     if not aClinic:
@@ -88,8 +85,6 @@ class RegisterView(APIView):
                         kwargs["clinic"] = aClinic
                 except:
                     badRequest = True
-            except:
-                pass # no clinic ID
 
             try:
                 state = data["state"]

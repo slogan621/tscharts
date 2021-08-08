@@ -65,30 +65,15 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
   
 *  **URL Params**
 
-   None
+One or more of the following can be specified to filter the search results.
+
+   `clinic` id<br/>
+   `patient` id<br/>
 
 * **Data Params**
+
+    None
  
-   NOTE: this form of request is deprecated. It will be replaced by a
-   request using query args/URL params instead of JSON payload to 
-   specify search terms.
-
-   **Required:**
-
-   None
-
-   **Optional:**
- 
-   One or more of the following can be used to filter the results. For example
-   to get a count of how many clinics a patient has registered for, search 
-   by patient. Or to get the number of patients registered for a clinic, search
-   by clinic. To find out how many patients have been checked out of a clinic,
-   specify both clinic and state = "Checked Out".
-
-   `patient` patient id<br />
-   `clinic` clinic id<br />
-   `state` "Checked In" | "Checked Out", case sensitive<br />
-
 * **Success Response:**
 
   * **Code:** 200 <br />
@@ -103,26 +88,26 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
 * **Example:**
 
 ```
-GET /tscharts/v1/register/ HTTP/1.1
-Host: 127.0.0.1:8000
-Content-Length: 16
-Accept-Encoding: gzip, deflate, compress
-Accept: */*
-User-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic
-Content-Type: application/json
-Authorization: Token 53f29e4dfc917c28a0e71f26525307250f1f8101
+GET /tscharts/v1/register/?clinic=3 HTTP/1.1
+Authorization: Token adf8e350d1c01f22d2ea5d70f2599b40160fc473
+User-Agent: Dalvik/2.1.0 (Linux; U; Android 5.1.1; Android SDK built for x86 Build/LMY48X)
+Host: 192.168.0.122
+Connection: Keep-Alive
+Accept-Encoding: gzip
 
-
-{"patient": 354}HTTP/1.0 200 OK
-Date: Fri, 21 Apr 2017 05:52:48 GMT
-Server: WSGIServer/0.1 Python/2.7.6
+HTTP/1.1 200 OK
+Date: Sun, 08 Aug 2021 08:17:42 GMT
+Server: Apache/2.4.18 (Ubuntu)
 Vary: Accept
 X-Frame-Options: SAMEORIGIN
-Content-Type: application/json
 Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
+Keep-Alive: timeout=5, max=83
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: application/json
 
-
-[{"patient":354,"state":"Checked In","clinic":285,"timeout":"2017-04-21T05:52:48Z","timein":"2017-04-21T05:52:48Z","id":139},{"patient":354,"state":"Checked In","clinic":284,"timeout":"2017-04-21T05:52:48Z","timein":"2017-04-21T05:52:48Z","id":136},{"patient":354,"state":"Checked In","clinic":283,"timeout":"2017-04-21T05:52:48Z","timein":"2017-04-21T05:52:48Z","id":133}]
+18e8
+[{"patient":88,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:18:20.594","timein":"2021-08-06T10:18:20.594","id":88},{"patient":89,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:18:25.112","timein":"2021-08-06T10:18:25.112","id":89},{"patient":90,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:18:33.669","timein":"2021-08-06T10:18:33.669","id":90},{"patient":91,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:18:34.710","timein":"2021-08-06T10:18:34.710","id":91},{"patient":92,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:18:47.180","timein":"2021-08-06T10:18:47.180","id":92},{"patient":93,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:19:08.500","timein":"2021-08-06T10:19:08.500","id":93},{"patient":94,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:19:13.595","timein":"2021-08-06T10:19:13.595","id":94},{"patient":135,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:19:27.516","timein":"2021-08-06T10:19:27.516","id":95},{"patient":95,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:19:35.650","timein":"2021-08-06T10:19:35.650","id":96},{"patient":96,"state":"Checked In","clinic":3,"timeout":"2021-08-06T10:19:44.704","timein":"2021-08-06T10:19:44.704","id":97}]
 ```
   
 **Create a Registration**
