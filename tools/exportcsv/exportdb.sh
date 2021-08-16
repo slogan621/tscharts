@@ -61,7 +61,7 @@ sudo mkdir -p $target
 sudo chmod 777 $target
 for x in ${DBS[@]}
 do
-    sudo mysqldump -u root -p$dbpass -t -T$sqlfiles $db $x --fields-terminated-by=__,
+    sudo mysqldump -u root -p$dbpass -t -T$sqlfiles $db $x --fields-terminated-by=__
     mysql -u root -p$dbpass -e "use $db; describe $x;" > $target/$x-schema.txt
     python headers.py $target/$x-schema.txt > $target/$x-headers.txt
     sudo cat $target/$x-headers.txt $sqlfiles/$x.txt > $target/$x-final.txt
