@@ -22,6 +22,6 @@ for x in lines[1:]:
     f = x.split('\t')
     ret += f[0]
     if count < len(lines) - 2:
-        ret += ','
+        ret += '__'
     count = count + 1
 print(ret)
