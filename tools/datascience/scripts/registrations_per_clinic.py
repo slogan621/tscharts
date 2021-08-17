@@ -15,7 +15,7 @@ clinicdf = clinicdf.iloc[N: , :]
 
 df['clinic_id'] = df['clinic_id'].map(clinicdf.set_index('id')['start'])
 
-df['clinic_id'].value_counts().sort_index().plot(kind='bar')
+df['clinic_id'].value_counts().sort_index().plot(kind='bar', alpha=0.75, rot=0)
 plt.title("Registrations per Clinic")
 plt.xlabel("Clinic ID")
 plt.ylabel("Count")
