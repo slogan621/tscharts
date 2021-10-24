@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2021
+#(C) Copyright Thousand Smiles Foundation 2017-2021
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -46,31 +46,54 @@ class CreateRegistration(ServiceAPI):
         self.setPayload(self._payload)
 
 class GetRegistration(ServiceAPI):
-    def __init__(self, host, port, token, id=None):
+    def makeURL(self):
+        hasQArgs = False
+        if not self._id == None:
+            base = "tscharts/v1/register/{}/".format(self._id)
+        else:
+            base = "tscharts/v1/register/"
+        
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True 
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True 
+
+        self.setURL(base)
+
+    def __init__(self, host, port, token):
         super(GetRegistration, self).__init__()
         
         self.setHttpMethod("GET")
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        if id:
-            self.setURL("tscharts/v1/register/{}".format(id))
-        else:
-            self.setURL("tscharts/v1/register/")
+        self._id = None
+        self._clinic = None
+        self._patient = None
+        self.makeURL()
     
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
+
+    def setId(self, id):
+        self._id = id
+        self.makeURL()
 
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
-
-    def setState(self, state):
-        self._payload["state"] = state
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
 
 class UpdateRegistration(ServiceAPI):
     def __init__(self, host, port, token, id):
@@ -99,6 +122,28 @@ class DeleteRegistration(ServiceAPI):
         self.setURL("tscharts/v1/register/{}/".format(id))
 
 class GetAllRegistrations(ServiceAPI):
+    def makeURL(self):
+        hasQArgs = False
+        base = "tscharts/v1/register/"
+
+        if not self._clinic == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "clinic={}".format(self._clinic)
+            hasQArgs = True
+
+        if not self._patient == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "patient={}".format(self._patient)
+            hasQArgs = True
+
+        self.setURL(base)
+
     def __init__(self, host, port, token):
         super(GetAllRegistrations, self).__init__()
         
@@ -106,21 +151,17 @@ class GetAllRegistrations(ServiceAPI):
         self.setHost(host)
         self.setPort(port)
         self.setToken(token)
-        self._payload = {}
-        self.setPayload(self._payload)
-        self.setURL("tscharts/v1/register/")
+        self._clinic = None
+        self._patient = None
+        self.makeURL()
 
     def setClinic(self, clinic):
-        self._payload["clinic"] = clinic
-        self.setPayload(self._payload)
+        self._clinic = clinic
+        self.makeURL()
 
     def setPatient(self, patient):
-        self._payload["patient"] = patient
-        self.setPayload(self._payload)
-
-    def setState(self, state):
-        self._payload["state"] = state
-        self.setPayload(self._payload)
+        self._patient = patient
+        self.makeURL()
 
 class TestTSRegistration(unittest.TestCase):
 
@@ -141,6 +182,7 @@ class TestTSRegistration(unittest.TestCase):
 
         data = {}
 
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -170,7 +212,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -190,7 +233,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -240,6 +284,7 @@ class TestTSRegistration(unittest.TestCase):
 
         data = {}
 
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -274,7 +319,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)  # not found
 
@@ -311,6 +357,7 @@ class TestTSRegistration(unittest.TestCase):
 
         data = {}
 
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -341,7 +388,8 @@ class TestTSRegistration(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -356,7 +404,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -375,7 +424,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -429,6 +479,7 @@ class TestTSRegistration(unittest.TestCase):
 
         data = {}
 
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -459,7 +510,8 @@ class TestTSRegistration(unittest.TestCase):
         self.assertEqual(ret[0], 200)
         id = int(ret[1]["id"])
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -484,7 +536,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -514,7 +567,8 @@ class TestTSRegistration(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
-        x = GetRegistration(host, port, token, id)
+        x = GetRegistration(host, port, token)
+        x.setId(id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)  
         self.assertTrue("clinic" in ret[1])
@@ -570,6 +624,7 @@ class TestTSRegistration(unittest.TestCase):
         clinicid3 = int(ret[1]["id"])
 
         data = {}
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "3abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -596,6 +651,7 @@ class TestTSRegistration(unittest.TestCase):
         patientid1 = int(ret[1]["id"])
 
         data = {}
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "1abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
@@ -622,6 +678,7 @@ class TestTSRegistration(unittest.TestCase):
         patientid2 = int(ret[1]["id"])
 
         data = {}
+        data["curp"] = "123456abcdefg"
         data["paternal_last"] = "2abcd1234"
         data["maternal_last"] = "yyyyyy"
         data["first"] = "zzzzzzz"
