@@ -1,4 +1,4 @@
-#(C) Copyright Syd Logan 2018-2020
+#(C) Copyright Syd Logan 2018-2022
 #(C) Copyright Thousand Smiles Foundation 2018-2020
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,6 +62,16 @@ class GetClinic(ServiceAPI):
             print("no clinic found on {}".format(dateStr))
         else:
             print("Unable to get clinic error code {}".format(ret[0]))
+
+    def getClinic(self):
+        x = GetClinic(host, port, token)
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            print("{}".format(ret[1]))
+        elif ret[0] == 404:
+            print("no clinic found")
+        else:
+            print("Unable to get clinic error code {}".format(ret[0]))
     
 def setUp():
     login = Login(host, port, username, password)
@@ -77,7 +87,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:d:")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:d:n")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -91,6 +101,7 @@ def main():
     global password
     password = None
     dateStr = None
+    noDateStr = False
     for o, a in opts:
         if o == "-h":
             host = a
@@ -102,14 +113,20 @@ def main():
             password = a
         elif o == "-d":
             dateStr = a
+        elif o == "-n":
+            noDateStr = True
         else:   
             assert False, "unhandled option"
     if dateStr == None:
-        dateStr = datetime.utcnow().strftime("%m/%d/%Y") 
+        if noDateStr == False:
+            dateStr = datetime.utcnow().strftime("%m/%d/%Y") 
    
     setUp()
     gc = GetClinic(host, port, token)
-    gc.getClinicByDate(dateStr) 
+    if dateStr:
+        gc.getClinicByDate(dateStr) 
+    else:
+        gc.getClinic()
 
 if __name__ == "__main__":
     main()
