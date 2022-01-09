@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2018-2020
-#(C) Copyright Thousand Smiles Foundation 2018-2020
+#(C) Copyright Syd Logan 2018-2022
+#(C) Copyright Thousand Smiles Foundation 2018-2022
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ import unittest
 import getopt, sys
 from datetime import datetime, timedelta
 import json
+import dateinmonth
 
 from tschartslib.service.serviceapi import ServiceAPI
 from tschartslib.tscharts.tscharts import Login, Logout
@@ -44,12 +45,13 @@ def createClinic(location, clinicDate, duration):
         print("failed to create clinic")
 
 def usage():
-    print("createclinic [-h host] [-p port] [-u username] [-w password] [-d duration] [-l location] [-c clinicdate (MM/DD/YYYY)]") 
+    print("createclinic [-h host] [-p port] [-u username] [-w password] [-d duration] [-l location] [-c clinicdate (MM/DD/YYYY)] [-x]") 
+    print("specify either -c or -x. -x will create a clinic on the first Friday of each of the following months in the current calendar year: Feb, May, Aug, Nov");
     sys.exit(0)
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:c:s:d:l:c:")
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:c:s:d:l:c:x")
     except getopt.GetoptError as err:
         print str(err) 
         usage()
@@ -65,6 +67,7 @@ def main():
     duration = None
     location = None
     clinicDate = None
+    createNext = False
     for o, a in opts:
         if o == "-h":
             host = a
@@ -80,6 +83,8 @@ def main():
             location = a
         elif o == "-c":
             clinicDate = a
+        elif o == "-x":
+            createNext = True
         else:   
             assert False, "unhandled option"
     if duration == None:
@@ -88,10 +93,17 @@ def main():
     if location == None:
         print("location required")
         usage();
-    if clinicDate == None:
-        print("clinic date required")
+    if clinicDate == None and createNext == False:
+        print("clinic date or -x required")
         usage();
     setUp()
-    createClinic(location, clinicDate, int(duration))
+    if createNext == True:
+        year = datetime.now().year
+        for month in [2, 5, 8, 11]:
+            adate = dateinmonth.GetNthDateInMonth(year, month, 1, 6)
+            adate = adate.strftime("%m/%d/%Y")
+            createClinic(location, adate, int(duration))
+    else:
+        createClinic(location, clinicDate, int(duration))
 if __name__ == "__main__":
     main()
