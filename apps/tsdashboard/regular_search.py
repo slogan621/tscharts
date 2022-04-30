@@ -59,6 +59,7 @@ class RegularSearch(wx.Panel):
 
     def __init__(self, parent, sess):
         super().__init__(parent)
+        self.inited = False
         self.sess = sess
         self.selected_id = None
         self.timer_update = False
@@ -96,6 +97,10 @@ class RegularSearch(wx.Panel):
         self.SetSizer(main_sizer)
         main_sizer.Add(sub_sizer1, 0, wx.ALL, 5)
         main_sizer.Add(sub_sizer, 1, wx.ALL, 5)
+        self.inited = True
+
+    def setSelectedId(self, id):
+        self.selected_id = id
 
     def on_patients_updated(self):
         self.timer_update = True
@@ -227,9 +232,10 @@ class RegularSearch(wx.Panel):
     '''
 
     def reset_image(self):
-        img = wx.Image(240, 240)
-        self.image_ctrl.SetBitmap(wx.Bitmap(img))
-        self.Refresh()
+        if self.inited == True:
+            img = wx.Image(240, 240)
+            self.image_ctrl.SetBitmap(wx.Bitmap(img))
+            self.Refresh()
 
     def update_search_results(self):
         self.search_results_olv.SetColumns([
@@ -242,9 +248,10 @@ class RegularSearch(wx.Panel):
             ColumnDefn("Date of Birth", "left", 150, "dob"),
             ColumnDefn("Gender", "left", 150, "gender"),
         ])
-        if len(self.search_results):
-            self.search_results_olv.SetObjects(self.search_results)
-            pub.sendMessage('patients_updated')
+        if len(self.search_results) == 0:
+            self.reset_image()
+        self.search_results_olv.SetObjects(self.search_results)
+        pub.sendMessage('patients_updated')
 
     def load_search_results(self, registrations):
         self.search_results = []

@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2020-2021
-#(C) Copyright Thousand Smiles Foundation 2020-2021
+#(C) Copyright Syd Logan 2020-2022
+#(C) Copyright Thousand Smiles Foundation 2020-2022
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 import getopt, sys
 import json
 import time
+import datetime
 import wx
 import base64
 import tempfile
@@ -87,15 +88,27 @@ class TSSession():
         return retval
 
 class Clinics():
+    def isCurrentClinic(self, start, end):
+        ret = False
+        starttime = time.strptime(start, "%m/%d/%Y")
+        endtime = time.strptime(end, "%m/%d/%Y")
+        now = datetime.datetime.now()
+        if now.timetuple() >= starttime and now.timetuple() <= endtime:
+            ret = True
+        return ret
+        
     def getAllClinics(self, sess):
         x = GetAllClinics(sess.getHost(), sess.getPort(), sess.getToken())
         ret = x.send(timeout=30)
         if ret[0] == 200:
             tmp = []
             for x in ret[1]:
+                regs = Registrations()
+                registrations = regs.getRegistrationCount(sess, x["id"])
+                if registrations > 0 or self.isCurrentClinic(x["start"], x["end"]):
                 #tmp.append((x["id"], "Clinic Number: {} Location: {} Start: {} End: {}".format(x["id"], x["location"], x["start"], x["end"])))
-                tmp.append(x)
-            ret = sorted(tmp, key = lambda i: i['start'], reverse=True) 
+                    tmp.append(x)
+            ret = sorted(tmp, key = lambda i: i['id'], reverse=True) 
         else:
             ret = None
         return ret
@@ -152,7 +165,6 @@ clinicid, xraylist))
         return ret
 
 class Registrations():
-
     def getPatient(self, sess, id):
         x = GetPatient(sess.getHost(), sess.getPort(), sess.getToken())
         x.setId(id)
@@ -172,6 +184,15 @@ class Registrations():
         else:
             ret = None
         return ret
+
+    def getRegistrationCount(self, sess, clinicid):
+        count = 0
+        x = GetAllRegistrations(sess.getHost(), sess.getPort(), sess.getToken())
+        x.setClinic(clinicid)
+        ret = x.send(timeout=30)
+        if ret[0] == 200:
+            count = len(ret[1])
+        return count
 
     def getAllRegistrations(self, sess, clinicid):
         patients = []
@@ -639,6 +660,7 @@ class MainPanel(wx.Panel):
     def __init__(self, parent, sess, clinics):
         super().__init__(parent)
         self.sess = sess
+        self.count = 0
         self.patient = None
         self.search_term = None
 
@@ -695,7 +717,7 @@ class MainPanel(wx.Panel):
         pub.subscribe(self.on_refresh_message, 'refresh')
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.timerHandler, self.timer)
-        self.timer.Start(60000)
+        self.timer.Start(120000)
         self.SetSizer(self.main_sizer)
 
     def timerHandler(self, event):
@@ -721,18 +743,24 @@ class MainPanel(wx.Panel):
         self.set_registrations(patientsThisClinic)
         if len(patientsThisClinic):
             self.search_panel.update_image(int(patientsThisClinic[0]["id"]))
+            self.search_panel.setSelectedId(int(patientsThisClinic[0]["id"])) 
         pub.sendMessage("pulseoff")
 
     def getRegistrationsThread(self, ind):
         item = self.clinics.GetItem(ind, 0)
         regs = Registrations()
         self.clinic = int(item.GetText())
+        count = regs.getRegistrationCount(self.sess, self.clinic)
+        if count == self.count:
+            return
+        self.count = count
         patientsThisClinic = regs.getAllRegistrations(self.sess, self.clinic)
         wx.CallAfter(self.completeRegistrationsThread, patientsThisClinic)
 
     def on_clinic(self, event):
         pub.sendMessage("clearxrays")
         pub.sendMessage("pulseon")
+        self.count = 0
         ind = event.GetIndex()
         thread = threading.Thread(target=self.getRegistrationsThread,
                  args=(ind,))
