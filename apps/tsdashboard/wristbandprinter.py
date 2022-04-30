@@ -91,6 +91,7 @@ curp):
 # Once installed, the driver needs to be configured for this printer:
 # Size: custom
 # Width = 1
+
 # Height = 7.024 (May need to change for different sizes).
 # Units: Inches
 # Resolution: 300dpi
@@ -106,6 +107,7 @@ class LPRTextWristBandPrinter(WristBandPrinter):
     
     def __init__(self):
         super().__init__()
+
         self._nspaces = int(os.getenv("LPR_LEADING_SPACES", default=6))
 
     # Because the second line cut off the first few characters,
