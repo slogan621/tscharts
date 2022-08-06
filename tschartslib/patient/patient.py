@@ -115,6 +115,14 @@ class GetPatient(ServiceAPI):
             base += "dob={}".format(self._dob)
             hasQArgs = True 
 
+        if not self._gender == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "gender={}".format(self._gender)
+            hasQArgs = True 
+
         self.setURL(base)
 
     def __init__(self, host, port, token):
@@ -127,6 +135,7 @@ class GetPatient(ServiceAPI):
         self._paternalLast = None
         self._first = None
         self._name = None
+        self._gender = None
         self._dob = None
         self._id = None
         self._curp = None
@@ -155,6 +164,10 @@ class GetPatient(ServiceAPI):
 
     def setName(self, val):
         self._name = val;
+        self.makeURL()
+
+    def setGender(self, val):
+        self._gender = val;
         self.makeURL()
 
     def setDob(self, val):
@@ -546,6 +559,122 @@ class TestTSPatient(unittest.TestCase):
         x = DeletePatient(host, port, token, id)
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
+
+    def testSearchDupPatient(self):
+        ids = []
+
+        data = {}
+        data["paternal_last"] = "test1"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Male"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "1111"
+        data["oldid"] = 9999
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        self.assertTrue("id" in ret[1])
+        ids.append(ret[1]["id"])
+        test1id = ret[1]["id"]
+
+        # positive searches, these all should return 200
+
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        # negative searches, these all should return 404
+
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("tost1")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("yyyyyyyy")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        x.setDob("05/02/1962")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Female")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("tost1")
+        x.setFirstName("yyyyyyy")
+        x.setDob("05/02/1962")
+        x.setGender("Female")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        patients = ret[1]
+
+        for x in ids:
+            ids.remove(x)
+            x = DeletePatient(host, port, token, x)
+            ret = x.send(timeout=30)
+            self.assertEqual(ret[0], 200)
+
+        if len(ids):
+            self.assertTrue("failed to remove items {}".format(ids) == None)
 
     def testSearchPatient(self):
         ids = []
