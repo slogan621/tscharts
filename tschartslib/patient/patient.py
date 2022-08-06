@@ -219,6 +219,100 @@ class TestTSPatient(unittest.TestCase):
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
 
+    def testCreateDuplicatePatient(self):
+        data = {}
+
+        data["paternal_last"] = "abcd1234"
+        data["maternal_last"] = "yyyyyy"
+        data["first"] = "zzzzzzz"
+        data["middle"] = ""
+        data["suffix"] = "Jr."
+        data["prefix"] = ""
+        data["dob"] = "04/01/1962"
+        data["gender"] = "Female"
+        data["street1"] = "1234 First Ave"
+        data["street2"] = ""
+        data["city"] = "Ensenada"
+        data["colonia"] = ""
+        data["state"] = u"Baja California"
+        data["phone1"] = "1-111-111-1111"
+        data["phone2"] = ""
+        data["email"] = "patient@example.com"
+        data["emergencyfullname"] = "Maria Sanchez"
+        data["emergencyphone"] = "1-222-222-2222"
+        data["emergencyemail"] = "maria.sanchez@example.com"
+        data["curp"] = "1234"
+        data["oldid"] = 8888
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id = int(ret[1]["id"])
+        x = GetPatient(host, port, token)
+        x.setId(id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)  
+
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 409)
+
+        data["paternal_last"] = "undefined" # different father last
+        data["first"] = "zzzzzzz"
+        data["dob"] = "04/01/1962"         
+        data["gender"] = "Female"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id2 = int(ret[1]["id"])
+
+        data["paternal_last"] = "abcd1234"
+        data["first"] = "undefined" # different first
+        data["dob"] = "04/01/1962"         
+        data["gender"] = "Female"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id3 = int(ret[1]["id"])
+
+        data["paternal_last"] = "abcd1234"
+        data["first"] = "zzzzzzz"
+        data["dob"] = "05/01/2017" # different dob
+        data["gender"] = "Female"
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id4 = int(ret[1]["id"])
+
+        data["paternal_last"] = "abcd1234"
+        data["first"] = "zzzzzzz"
+        data["dob"] = "04/01/1962"         
+        data["gender"] = "Male" # different gender
+        x = CreatePatient(host, port, token, data)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        id5 = int(ret[1]["id"])
+
+        x = DeletePatient(host, port, token, id)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, id2)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, id3)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, id4)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
+        x = DeletePatient(host, port, token, id5)
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+
     def testDeletePatient(self):
         data = {}
 
