@@ -82,6 +82,7 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    `name` string<br/>
    `curp` string<br/>
    `oldid` string<br/>
+   `exact` "true" | "false"<br/>
    `clinic` integer clinic ID that patient must have been registered for<br/>
 
    If name is specified, all other search terms are ignored, and name is
@@ -92,6 +93,12 @@ Allow: GET, POST, PUT, DELETE, HEAD, OPTIONS
    to the patient in a previous system/database.
 
    Note that all name searches are case insensitive.
+
+   If exact is present and set to the string "true", a case-insensitive
+   exact match is performed on paternal_last, maternal_last, and first
+   fields. The name field is always checked case insensitive and partial
+   match - 'go' will match 'go', 'gomez', 'gonzales'. This makes the name
+   field suitable for patient record searches.
 
 * **Data Params**
 

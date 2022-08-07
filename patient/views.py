@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016-2019
-#(C) Copyright Thousand Smiles Foundation 2016-2019
+#(C) Copyright Syd Logan 2016-2022
+#(C) Copyright Thousand Smiles Foundation 2016-2022
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -106,15 +106,25 @@ class PatientView(APIView):
                     except:
                         patient = None
                 else:
+                    exact = request.GET.get('exact', "false")
                     paternal_last = request.GET.get('paternal_last', '')
                     if not paternal_last == '':
-                        kwargs["paternal_last__icontains"] = paternal_last
+                        if exact == "true": 
+                            kwargs["paternal_last__iexact"] = paternal_last
+                        else:
+                            kwargs["paternal_last__icontains"] = paternal_last
                     maternal_last = request.GET.get('maternal_last', '')
                     if not maternal_last == '':
-                        kwargs["maternal_last__icontains"] = maternal_last
+                        if exact == "true": 
+                            kwargs["maternal_last__iexact"] = maternal_last
+                        else:
+                            kwargs["maternal_last__icontains"] = maternal_last
                     first = request.GET.get('first', '')
                     if not first == '':
-                        kwargs["first__icontains"] = first
+                        if exact == "true": 
+                            kwargs["first__iexact"] = first
+                        else:
+                            kwargs["first__icontains"] = first
                     dob = request.GET.get('dob', '')
                     if not dob == '':
                         x = dob.split("/")
@@ -128,7 +138,10 @@ class PatientView(APIView):
 
                     curp = request.GET.get('curp', '')
                     if not curp == '':
-                        kwargs["curp__icontains"] = curp
+                        if exact == "true": 
+                            kwargs["curp__iexact"] = curp
+                        else:
+                            kwargs["curp__icontains"] = curp
                     
                     oldid = request.GET.get('oldid', '')
                     if not oldid == '':

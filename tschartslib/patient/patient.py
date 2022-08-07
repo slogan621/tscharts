@@ -74,6 +74,14 @@ class GetPatient(ServiceAPI):
                 base += "&"
             base += "name={}".format(self._name)
             hasQArgs = True 
+
+        if not self._exact == None:
+            if not hasQArgs:
+                base += "?"
+            else:
+                base += "&"
+            base += "exact={}".format("true" if self._exact else "false")
+            hasQArgs = True 
         
         if not self._curp == None:
             if not hasQArgs:
@@ -140,6 +148,7 @@ class GetPatient(ServiceAPI):
         self._id = None
         self._curp = None
         self._oldid = None
+        self._exact = None
         self.makeURL();
 
     def setId(self, id):
@@ -148,6 +157,10 @@ class GetPatient(ServiceAPI):
 
     def setCurp(self, curp):
         self._curp = curp;
+        self.makeURL()
+
+    def setExact(self, val):
+        self._exact = val;
         self.makeURL()
 
     def setOldid(self, val):
@@ -597,31 +610,27 @@ class TestTSPatient(unittest.TestCase):
 
         x = GetPatient(host, port, token)
         x.setPaternalLast("test1")
+        x.setExact(True) 
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("zzzzzzz")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         
         x = GetPatient(host, port, token)
-        x.setPaternalLast("test1")
-        x.setFirstName("zzzzzzz")
-        x.setDob("04/01/1962")
-        ret = x.send(timeout=30)
-        self.assertEqual(ret[0], 200)
-        
-        x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("zzzzzzz")
         x.setDob("04/01/1962")
-        x.setGender("Male")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 200)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("zzzzzzz")
         x.setDob("04/01/1962")
@@ -632,17 +641,20 @@ class TestTSPatient(unittest.TestCase):
         # negative searches, these all should return 404
 
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("tost1")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("yyyyyyyy")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("zzzzzzz")
         x.setDob("05/02/1962")
@@ -650,6 +662,7 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 404)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("test1")
         x.setFirstName("zzzzzzz")
         x.setDob("04/01/1962")
@@ -658,12 +671,80 @@ class TestTSPatient(unittest.TestCase):
         self.assertEqual(ret[0], 404)
         
         x = GetPatient(host, port, token)
+        x.setExact(True) 
         x.setPaternalLast("tost1")
         x.setFirstName("yyyyyyy")
         x.setDob("05/02/1962")
         x.setGender("Female")
         ret = x.send(timeout=30)
         self.assertEqual(ret[0], 404)
+
+        # substrings, exact
+        
+        x = GetPatient(host, port, token)
+        x.setExact(True) 
+        x.setPaternalLast("te")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setExact(True) 
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+        
+        x = GetPatient(host, port, token)
+        x.setExact(True) 
+        x.setPaternalLast("tt1")
+        x.setFirstName("zzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 404)
+
+        # substrings, not exact
+        
+        x = GetPatient(host, port, token)
+        x.setExact(False) 
+        x.setPaternalLast("te")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setExact(False) 
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        # substrings, not exact (default, no need to set)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("te")
+        x.setFirstName("zzzzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
+        
+        x = GetPatient(host, port, token)
+        x.setPaternalLast("test1")
+        x.setFirstName("zzzzz")
+        x.setDob("04/01/1962")
+        x.setGender("Male")
+        ret = x.send(timeout=30)
+        self.assertEqual(ret[0], 200)
         
         patients = ret[1]
 
