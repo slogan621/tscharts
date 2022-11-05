@@ -146,7 +146,10 @@ Content-Type: application/json
 * **Error Response:**
 
   * **Code:** 400 BAD REQUEST<br />
+  * **Code:** 409 CONFLICT<br />
   * **Code:** 500 SERVER ERROR
+
+Note: 409 Conflict means patient was already registered for a clinic
 
 * **Example:**
 

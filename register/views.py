@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2022
+#(C) Copyright Thousand Smiles Foundation 2017-2022
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ from common.decorators import *
 import sys
 import numbers
 import json
+
+class HttpResponseConflict(HttpResponse):
+    status_code = 409
 
 class RegisterView(APIView):
 
@@ -199,11 +202,19 @@ class RegisterView(APIView):
             try:
                 kwargs["clinic"] = aClinic
                 kwargs["patient"] = aPatient
-                register = Register(**kwargs)
+                try:
+                    register = Register.objects.filter(**kwargs)
+                except:
+                    pass
                 if register:
-                    register.save()
+                    # already registered
+                    return HttpResponseConflict()
                 else:
-                    implError = True
+                    register = Register(**kwargs)
+                    if register:
+                        register.save()
+                    else:
+                        implError = True
             except Exception as e:
                 implError = True
                 implMsg = sys.exc_info()[0] 
