@@ -206,15 +206,18 @@ class RegisterView(APIView):
                     register = Register.objects.filter(**kwargs)
                 except:
                     pass
+                if register and len(register) > 0:
+                    # check if already registered today
+                    todaydate = datetime.today().date()
+                    timeindate = register[0].timein
+                    timeoutdate = register[0].timeout
+                    if (todaydate.month == timeindate.month and todaydate.day == timeindate.day) or (todaydate.month == timeoutdate.month and todaydate.day == tineoutdate.day):
+                        return HttpResponseConflict()
+                register = Register(**kwargs)
                 if register:
-                    # already registered
-                    return HttpResponseConflict()
+                    register.save()
                 else:
-                    register = Register(**kwargs)
-                    if register:
-                        register.save()
-                    else:
-                        implError = True
+                    implError = True
             except Exception as e:
                 implError = True
                 implMsg = sys.exc_info()[0] 
