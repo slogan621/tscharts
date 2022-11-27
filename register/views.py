@@ -31,6 +31,10 @@ import sys
 import numbers
 import json
 
+import logging
+
+LOG = logging.getLogger("tscharts")
+
 class HttpResponseConflict(HttpResponse):
     status_code = 409
 
@@ -209,10 +213,12 @@ class RegisterView(APIView):
                 if register and len(register) > 0:
                     # check if already registered today
                     todaydate = datetime.today().date()
-                    timeindate = register[0].timein
-                    timeoutdate = register[0].timeout
-                    if (todaydate.month == timeindate.month and todaydate.day == timeindate.day) or (todaydate.month == timeoutdate.month and todaydate.day == tineoutdate.day):
-                        return HttpResponseConflict()
+                    for reg in register:
+                        timeindate = reg.timein
+                        timeoutdate = reg.timeout
+                        if (todaydate.month == timeindate.month and todaydate.day == timeindate.day) or (todaydate.month == timeoutdate.month and todaydate.day == timeoutdate.day):
+                            LOG.info("Patient {} already registered for this clinic {} timein mm/dd {}/{} timeout mm/dd {}/{}".format(patientid, clinicid, timeindate.month, timeindate.day, timeoutdate.month, timeoutdate.day))
+                            return HttpResponseConflict()
                 register = Register(**kwargs)
                 if register:
                     register.save()
