@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2020
-#(C) Copyright Thousand Smiles Foundation 2017-2020
+#(C) Copyright Syd Logan 2017-2022
+#(C) Copyright Thousand Smiles Foundation 2017-2022
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from image.models import *
 from patient.models import *
+from xray.models import *
 from station.models import *
 from clinic.models import *
 from datetime import *
@@ -29,6 +30,10 @@ import json
 import uuid
 import os
 import sys
+
+import logging
+
+LOG = logging.getLogger("tscharts")
 
 class ImageView(APIView):
 
@@ -249,12 +254,64 @@ class ImageView(APIView):
 
         return Response(ret)
 
+    def CreateXRayRecordIfMissing(self, clinicid, patientid):
+
+
+        kwargs = {}
+
+        try:
+            aClinic = Clinic.objects.get(id=clinicid)
+            if aClinic == None:
+                LOG.error("CreateXRayRecordIfMissing failed to read clinic {}".format(clinicid))
+                return False
+            kwargs["clinic"] = aClinic
+        except Exception as e:
+            LOG.error("CreateXRayRecordIfMissing failed to read clinic {}: {}".format(clinicid, sys.exc_info()[0]))
+            return False
+
+        try:
+            aPatient = Patient.objects.get(id=patientid)
+            if aPatient == None:
+                LOG.error("CreateXRayRecordIfMissing failed to read patient {}".format(patientid))
+                return False
+            kwargs["patient"] = aPatient
+        except Exception as e:
+            LOG.error("CreateXRayRecordIfMissing failed to read patient {}: {}".format(patientid, sys.exc_info()[0]))
+            return False
+
+        # Xray objects have a type, set of teeth, mouth type. Take the
+        # defaults when creating an X-ray record due to an upload. If
+        # the dentist, or x-ray technician chooses, they can provide this
+        # information at a later time. Our goal here is to make sure there
+        # is a record, even if somewhat incomplete, so that the tablets 
+        # can provide a list of xrays records based on clinic/patient in
+        # their UIs.
+
+        try:
+            xray = XRay.objects.filter(**kwargs)
+        except:
+            xray = None
+
+        if not xray:
+            try:
+                xray = XRay(**kwargs)
+                if xray:
+                    xray.save()
+                else:
+                    LOG.error("CreateXRayRecordIfMissing unable to create XRay record for clinic {} patient {}".format(clinicid, patientid))
+                    return False
+            except Exception as e:
+                LOG.error("CreateXRayRecordIfMissing unable to create XRay record for clinic {} patient {}: {}".format(clinicid, patientid, sys.exc_info()[0]))
+                return False
+        return True
+
     def post(self, request, format=None):
         badRequest = False
         implError = False
         clinicid = None
         stationid = None
         patientid = None
+        isXray = False
 
         kwargs = {}
 
@@ -284,6 +341,8 @@ class ImageView(APIView):
             if imagetype == None:
                 badRequest = True
             else:
+                if imagetype == 'x':
+                    isXray = True
                 kwargs["imagetype"] = imagetype
         except:
             badRequest = True
@@ -332,6 +391,10 @@ class ImageView(APIView):
                 image = Image(**kwargs)
                 if image:
                     image.save()
+                    if isXray == True:
+                        ret = self.CreateXRayRecordIfMissing(clinicid, patientid);
+                        if ret == False:
+                            LOG.error("XRay POST unable to create XRay record for clinic {} patient {}".format(clinicid, patientid))
                 else:
                     implError = True
                     implMsg = "Unable to create image object"
