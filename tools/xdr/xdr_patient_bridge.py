@@ -60,14 +60,15 @@ class XDRPatientRegistrationBridge:
         fd, path = tempfile.mkstemp()
         try:
             with os.fdopen(fd, 'w') as tmp:
+                tmp.write("{}-{}, - *{} ({})".format(patientData["paternal_last"], patientData["maternal_last"], patientData["dob"], patientData["id"]))
                 tmp.write("PN={}\n".format(patientData["id"]))
-                tmp.write("LN={}{}\n".format(patientData["paternal_last"],
+                tmp.write("LN={}-{}\n".format(patientData["paternal_last"],
                                         patientData["maternal_last"]))
                 tmp.write("FN={}\n".format(patientData["first"]))
                 tmp.write("BD={}\n".format(patientData["dob"]))
                 tmp.write("SX={}\n".format(patientData["gender"]))
             try:
-                ret = subprocess.check_output(['c:\XDRDemo\bin\XDR.exe', '{}'.format(path)])
+                ret = subprocess.check_output(['{}'.format(self.xdrbinpath), '{}'.format(path)])
                 print("XDR client output for patient {} is {}".format(patientData["id"], ret))
                 self.processed.append(patientData["id"])
             except subprocess.CalledProcessError as e:
@@ -146,7 +147,7 @@ def main():
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h:p:u:w:x:")
     except getopt.GetoptError as err:
-        print str(err)
+        print(str(err))
         usage(sys.argv[0])
     global host
     host = "127.0.0.1"
