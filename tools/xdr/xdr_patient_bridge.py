@@ -80,6 +80,7 @@ class XDRPatientRegistrationBridge:
             os.remove(path)
 
     def processNewRegistrations(self):
+        print("looking for new registrations")
         x = GetAllRegistrations(self.host, self.port, self.token)
         x.setClinic(self.clinic)
         ret = x.send(timeout=30)
@@ -97,7 +98,8 @@ class XDRPatientRegistrationBridge:
             # get list of new patients
 
             for x in registrations:
-                if not x["patient"] in self.processed:
+                patient_id = x["patient"]
+                if not patient_id in self.processed and not patient_id in new_patient_ids:
                     new_patient_ids.append(x["patient"])
 
             for x in new_patient_ids:
