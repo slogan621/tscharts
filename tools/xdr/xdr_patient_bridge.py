@@ -45,16 +45,24 @@ class XDRPatientRegistrationBridge:
         x = GetClinic(host, port, token)
         dateStr = datetime.utcnow().strftime("%m/%d/%Y")
         x.setDate(dateStr)
-        ret = x.send(timeout=30)
-        if ret[0] == 200:
-            print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
-            self.clinic = ret[1]["id"] 
-        elif ret[0] == 404:
-            print("no clinic found on {}".format(dateStr))
+        maxTries = 60
+        found = False
+        while maxTries > 0:
+            ret = x.send(timeout=30)
+            if ret[0] == 200:
+                print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
+                self.clinic = ret[1]["id"] 
+                found = True
+                break
+            elif ret[0] == 404:
+                print("no clinic found on {}".format(dateStr))
+            else:
+                print("Unable to get clinic, error code {}".format(ret[0]))
+            time.sleep(30)
+            maxTries = maxTries - 1
+        if found == False:
             sys.exit(2)
-        else:
-            print("Unable to get clinic, error code {}".format(ret[0]))
-            sys.exit(2)
+    
 
     def pushToXDR(self, patientData):
         fd, path = tempfile.mkstemp()
