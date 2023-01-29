@@ -38,22 +38,29 @@ class XDRXRayBridge:
         self._clinic = None
 
         if xdrexportpath is None:
-            self.xdrexportpath = "c:\XDRClient\exports"
+            self.xdrexportpath = "c:\\XDRClient\\exports"
         else:
             self.xdrexportpath = xdrexportpath 
 
         x = GetClinic(host, port, token)
         dateStr = datetime.utcnow().strftime("%m/%d/%Y")
         x.setDate(dateStr)
-        ret = x.send(timeout=30)
-        if ret[0] == 200:
-            print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
-            self._clinic = ret[1]["id"] 
-        elif ret[0] == 404:
-            print("no clinic found on {}".format(dateStr))
-            sys.exit(2)
-        else:
-            print("Unable to get clinic, error code {}".format(ret[0]))
+        maxTries = 60
+        found = False
+        while maxTries > 0:
+            ret = x.send(timeout=30)
+            if ret[0] == 200:
+                print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
+                self._clinic = ret[1]["id"]
+                found = True
+                break
+            elif ret[0] == 404:
+                print("no clinic found on {}".format(dateStr))
+            else:
+                print("Unable to get clinic, error code {}".format(ret[0]))
+            time.sleep(30)
+            maxTries = maxTries - 1
+        if found == False:
             sys.exit(2)
 
     def uploadXRayImage(self, clinicId, patientId, path):
@@ -98,14 +105,14 @@ class XDRXRayBridge:
         x.setXRayType("anteriors_bitewings")
         ret = x.send(timeout=30)
         if ret[0] != 200:
-            print("Unable to create XRay record clinic {} patient {} ret {}".format(clinicid, patientid, ret[0]))
+            print("Unable to create XRay record clinic {} patient {} ret {}".format(clinicId, patientId, ret[0]))
             return False
         else:
             print("Successfully created XRay record clinic {} patient {}".format(clinicId, patientId))
             return True
 
     def processNewXRayExports(self):
-        print("looking for new xray exports from XDR")
+        print("looking for new xray exports from XDR in {}".format(self.xdrexportpath))
         files = [f for f in listdir(self.xdrexportpath) if isfile(join(self.xdrexportpath, f))]
         for x in files:
             patientId = int(x.split('_')[0])
@@ -113,7 +120,9 @@ class XDRXRayBridge:
                 # skip already uploaded files
                 continue
             path = join(self.xdrexportpath, x)
+            print("Processing new xray {}".format(path))
             if self.createXRayRecord(self._clinic, patientId) and self.uploadXRayImage(self._clinic, patientId, path):
+                print("Uploaded {}. Renaming to {}.uploaded".format(path, path))
                 os.rename(path, "{}.uploaded".format(path))
 
 def setUp():
@@ -165,9 +174,9 @@ def main():
     bridge = XDRXRayBridge(host, port, token, xdrexportpath)
     while True:
         bridge.processNewXRayExports();
-        time.sleep(60)
+        delay = 60
+        print("Next scan in {} seconds".format(delay))
+        time.sleep(delay)
 
 if __name__ == "__main__":
     main()
-
-
