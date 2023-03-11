@@ -21,7 +21,6 @@ import wx.lib.scrolledpanel as scrolled
 
 class ImageGrid(scrolled.ScrolledPanel):
     def __init__(self, parent):
-        print("ImageGrid init enter")
         super().__init__(parent)
 
         self.parent = parent 
