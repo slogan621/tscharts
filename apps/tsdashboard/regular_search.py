@@ -103,6 +103,7 @@ class RegularSearch(wx.Panel):
         self.selected_id = id
 
     def on_patients_updated(self):
+        return
         self.timer_update = True
         self.on_pulse_on_message()
         if self.selected_id:

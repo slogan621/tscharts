@@ -71,7 +71,7 @@ class XDRXRayBridge:
         x.setPatient(patientId)
         x.setClinic(clinicId)
         x.setType("Xray")
-        x.setData(encoded_string)  
+        x.setData(str(encoded_string, 'utf-8'))  
         ret = x.send(timeout=30)
         if ret[0] != 200:
             print("Unable to create patient xray clinic {} patient {} path {} ret {}".format(clinicId, patientId, path, ret[0]))
