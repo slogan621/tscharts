@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2021
-#(C) Copyright Thousand Smiles Foundation 2021
+#(C) Copyright Syd Logan 2023
+#(C) Copyright Thousand Smiles Foundation 2023
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -16,18 +16,23 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-df = pd.read_csv('tscharts-output/routingslip_routingslip-final.txt', encoding="latin-1", sep="__")
+df = pd.read_csv('tscharts-output/image_image-final.txt', encoding="latin-1", sep="__")
+
+df = df[df['imagetype'] == 'x']
+
+# drop the first 11 rows, these were earlier clinics with restarts and
+# not worth displaying
 
 clinicdf = pd.read_csv('tscharts-output/clinic_clinic-final.txt', encoding="latin-1", sep="__")
 
-di = {'d': "Dental", 'r': "Returning Cleft", 'n': "New Cleft", 'o': "Ortho", 't': "Other", 'u': "Unknown", 'h': "Hearing Aids", 'e': "Ears"}
-df = df.replace({"category": di})
+N = 11
+clinicdf = clinicdf.iloc[N: , :]
 
 df['clinic_id'] = df['clinic_id'].map(clinicdf.set_index('id')['start'])
 
-df.groupby(["clinic_id", "category"]).size().unstack().plot(kind="bar", alpha=0.75, rot=0)
-
-plt.title("Routing Slips by Patient Category Per Clinic")
-plt.xlabel("Clinic")
+df['clinic_id'].value_counts().sort_index().plot(kind='bar', alpha=0.75, rot=0)
+plt.title("X-Rays Uploaded per Clinic")
+plt.xlabel("Clinic ID")
 plt.ylabel("Count")
 plt.show()
+
