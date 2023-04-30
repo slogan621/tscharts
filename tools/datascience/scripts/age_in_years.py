@@ -34,10 +34,7 @@ clinicdf = clinicdf.iloc[N: , :]
 
 registerdf = pd.read_csv('tscharts-output/register_register-final.txt', encoding="latin-1", sep="__")
 
-
 merged_df = pd.merge(registerdf, clinicdf, left_on="clinic_id", right_on="id")
-
-#df['clinic_id'] = df['clinic_id'].map(clinicdf.set_index('id')['start'])
 
 patientdf = pd.read_csv('tscharts-output/patient_massaged-final.txt', encoding="latin-1", sep="__")
 
@@ -49,16 +46,14 @@ merged_df["age_in_years"] = merged_df.apply(lambda row: compute_age(row), axis=1
 
 print(merged_df)
 
-#di = {'m': "Male", 'f': "Female"}
-#df = df.replace({"gender": di})
 merged_df['age_in_years'].value_counts().plot(kind='bar', alpha=0.75, rot=0)
-plt.title("Number of Patients By Age")
+plt.title("Number of Registrations By Age (freq)")
 plt.xlabel("Age")
 plt.ylabel("Count")
 plt.show()
 
 merged_df['age_in_years'].value_counts().sort_index().plot(kind='bar', alpha=0.75, rot=0)
-plt.title("Number of Patients By Age")
+plt.title("Number of Registrations By Age (age)")
 plt.xlabel("Age")
 plt.ylabel("Count")
 plt.show()
