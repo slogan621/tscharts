@@ -7,12 +7,13 @@ import pandas as pd
 #print(listdir(mypath))
 
 #centralized location for file paths
-file_prefix = '../../../../../1000_Smiles/Data/'
-file_loc = file_prefix+'tscharts-output/clinic_clinic-final.txt'
-file_loc2 = file_prefix+'tscharts-output/register_register-final.txt'
-file_loc3 = file_prefix+'tscharts-output/patient_massaged-final.txt'
-file_loc4 = file_prefix+'tscharts-output/image_image-final.txt'
-file_loc5 = file_prefix+'tscharts-output/medicalhistory_medicalhistory-final.txt'
+file_prefix = '../../../../../1000_Smiles/Data/tscharts-output/'
+file_loc = file_prefix+'clinic_clinic-final.txt'
+file_loc2 = file_prefix+'register_register-final.txt'
+file_loc3 = file_prefix+'patient_massaged-final.txt'
+file_loc4 = file_prefix+'image_image-final.txt'
+file_loc5 = file_prefix+'medicalhistory_medicalhistory-final.txt'
+file_loc6 = file_prefix+'routingslip_routingslip-final.txt'
 
 clinic_df = pd.read_csv(file_loc, encoding="latin-1", sep="__", engine ='python')
 N = 11 
@@ -28,9 +29,23 @@ merged_df = pd.merge(patient_df, merged_df, left_on="id", right_on="patient_id")
 
 
 #clinic dataframes
-headshot_df = pd.read_csv(file_loc4, encoding="latin-1", sep="__", engine="python")
+images_df = pd.read_csv(file_loc4, encoding="latin-1", sep="__", engine="python")
+headshot_df = images_df.copy(deep=True)
 headshot_df = headshot_df[headshot_df['imagetype'] == 'h']
 headshot_df['clinic_id'] = headshot_df['clinic_id'].map(clinic_df.set_index('id')['start'])
+
+xray_df = images_df.copy(deep=True)
+xray_df = xray_df[xray_df['imagetype'] == 'x']
+xray_df['clinic_id'] = xray_df['clinic_id'].map(clinic_df.set_index('id')['start'])
+
+
+
+
+routing_df = pd.read_csv(file_loc6, encoding="latin-1", sep="__", engine="python")
+di = {'d': "Dental", 'r': "Returning Cleft", 'n': "New Cleft", 'o': "Ortho", 't': "Other", 'u': "Unknown", 'h': "Hearing Aids", 'e': "Ears"}
+routing_df = routing_df.replace({"category": di})
+routing_df['clinic_id'] = routing_df['clinic_id'].map(clinic_df.set_index('id')['start'])
+
 
 #medical history
 medical_df = pd.read_csv(file_loc5, encoding="latin-1", sep="__", engine="python")
