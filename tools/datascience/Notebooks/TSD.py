@@ -12,7 +12,9 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-
+#TSD.py
+#Loads Thousand Smiles Data into Pandas Data Frames and
+#consolidates several files for easier access
 #DataFrames begin with prefix "df_" and can be found easily with Auto Complete
 #FileLocations bigeing with prefix "file_loc_"
 
@@ -25,7 +27,9 @@ import pandas as pd
 #print(listdir(mypath))
 
 #centralized location for file paths
-file_prefix = '../../../../../1000_Smiles/Data/tscharts-output/'
+file_prefix = '../../../../../1000_Smiles/Data/tscharts-output/' #change to match location of your data
+
+#individual data files in csv
 file_loc_clinic = file_prefix+'clinic_clinic-final.txt'
 file_loc_register = file_prefix+'register_register-final.txt'
 file_loc_patient = file_prefix+'patient_massaged-final.txt'
@@ -55,8 +59,6 @@ df_headshot['clinic_id'] = df_headshot['clinic_id'].map(df_clinic.set_index('id'
 df_xray = df_images.copy(deep=True)
 df_xray = df_xray[df_xray['imagetype'] == 'x']
 df_xray['clinic_id'] = df_xray['clinic_id'].map(df_clinic.set_index('id')['start'])
-
-
 
 
 df_routing = pd.read_csv(file_loc_routing, encoding="latin-1", sep="__", engine="python")
