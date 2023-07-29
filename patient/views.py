@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 #(C) Copyright Syd Logan 2016-2022
 #(C) Copyright Thousand Smiles Foundation 2016-2022
 #
@@ -31,6 +34,10 @@ from common.decorators import *
 
 import json
 import sys
+
+import logging
+
+LOG = logging.getLogger("tscharts")
 
 class PatientView(APIView):
 
@@ -83,6 +90,8 @@ class PatientView(APIView):
         patient = None
         byClinicId = None
         aClinic = None
+        exact = request.GET.get('exact', "false")
+        LOG.warning("patient get exact match {} request {}".format(exact, request.__dict__))
         
         if patient_id:
             try:
@@ -106,7 +115,6 @@ class PatientView(APIView):
                     except:
                         patient = None
                 else:
-                    exact = request.GET.get('exact', "false")
                     paternal_last = request.GET.get('paternal_last', '')
                     if not paternal_last == '':
                         if exact == "true": 
@@ -161,9 +169,20 @@ class PatientView(APIView):
 
                     if not badRequest:
                         try:
+                            if exact == "true" : 
+                                LOG.warning("Performing exact match with args {}".format(kwargs))
                             patient = Patient.objects.filter(**kwargs)
-                        except:
+                            if exact == "true" : 
+                                LOG.warning("Back from exact match with result {}".format(patient))
+                                if patient:
+                                    for x in patient:
+                                        LOG.warning("exact match patient data is {}".format(x.__dict__))
+                                        if x.id == 1:
+                                            LOG.error("Matched patient id 1!!! patient data is {}".format(x)) 
+                        except Exception as e:
                             patient = None
+                            if exact == "true" : 
+                                LOG.warning("Back from exact match with exception {}".format(repr(e)))
 
         if not patient and not badRequest:
             notFound = True
