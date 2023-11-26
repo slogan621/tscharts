@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016-2021
-#(C) Copyright Thousand Smiles Foundation 2016-2021
+#(C) Copyright Syd Logan 2016-2023
+#(C) Copyright Thousand Smiles Foundation 2016-2023
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ urlpatterns = [
     url(r'^tscharts/v1/login/$', LoginView.as_view()),
     url(r'^tscharts/v1/logout/$', LogoutView.as_view()),
     url(r'^tscharts/v1/createuser/$', CreateUserView.as_view()),
+    url(r'^tscharts/v1/createuser$', CreateUserView.as_view()),
     url(r'^tscharts/v1/updatepin/$', UpdatePINView.as_view()),
     url(r'^tscharts/v1/updatepassword/$', UpdatePasswordView.as_view()),
     url(r'^tscharts/v1/audiogram/', include('audiogram.urls', namespace='audiogram')),
@@ -63,6 +64,7 @@ urlpatterns = [
     url(r'^tscharts/v1/medications/', include('medications.urls', namespace='medications')),
     url(r'^tscharts/v1/mexicanstates/', include('mexicanstates.urls', namespace='mexicanstates')),
     url(r'^tscharts/v1/patient/', include('patient.urls', namespace='patient')),
+    url(r'^tscharts/v1/patient', include('patient.urls', namespace='patient')),
     url(r'^tscharts/v1/queue/', include('queue.urls', namespace='queue')),
     url(r'^tscharts/v1/queueentry/', include('queue.queueentryurls', namespace='queueentry')),
     url(r'^tscharts/v1/register/', include('register.urls', namespace='register')),
