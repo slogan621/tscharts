@@ -18,6 +18,7 @@ import getopt, sys
 from datetime import datetime, timedelta
 import json
 import dateinmonth
+from getclinic import GetClinic
 
 from tschartslib.service.serviceapi import ServiceAPI
 from tschartslib.tscharts.tscharts import Login, Logout
@@ -99,10 +100,15 @@ def main():
     setUp()
     if createNext == True:
         year = datetime.now().year
+        gc = GetClinic(host, port, token)
         for month in [2, 5, 8, 11]:
             adate = dateinmonth.GetNthDateInMonth(year, month, 1, 6)
             adate = adate.strftime("%m/%d/%Y")
-            createClinic(location, adate, int(duration))
+            ret = gc.getClinicByDate(adate, host, port, token)
+            if ret == False:
+                createClinic(location, adate, int(duration))
+            else:
+                print("Clinic {} already exists".format(adate))
     else:
         createClinic(location, clinicDate, int(duration))
 if __name__ == "__main__":

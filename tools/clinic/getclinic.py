@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2018-2022
-#(C) Copyright Thousand Smiles Foundation 2018-2020
+#(C) Copyright Syd Logan 2018-2024
+#(C) Copyright Thousand Smiles Foundation 2018-2024
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -52,26 +52,30 @@ class GetClinic(ServiceAPI):
         self._date = date
         self.makeURL()
 
-    def getClinicByDate(self, dateStr):
+    def getClinicByDate(self, dateStr, host, port, token):
         x = GetClinic(host, port, token)
         x.setDate(dateStr)
         ret = x.send(timeout=30)
         if ret[0] == 200:
             print("clinic {} on {} exists".format(ret[1]["id"], dateStr))
+            return True
         elif ret[0] == 404:
             print("no clinic found on {}".format(dateStr))
         else:
             print("Unable to get clinic error code {}".format(ret[0]))
+        return False
 
     def getClinic(self):
         x = GetClinic(host, port, token)
         ret = x.send(timeout=30)
         if ret[0] == 200:
             print("{}".format(ret[1]))
+            return True
         elif ret[0] == 404:
             print("no clinic found")
         else:
             print("Unable to get clinic error code {}".format(ret[0]))
+        return False
     
 def setUp():
     login = Login(host, port, username, password)
@@ -124,9 +128,13 @@ def main():
     setUp()
     gc = GetClinic(host, port, token)
     if dateStr:
-        gc.getClinicByDate(dateStr) 
+        ret = gc.getClinicByDate(dateStr, host, port, token) 
     else:
-        gc.getClinic()
+        ret = gc.getClinic()
+    if ret == True:
+       sys.exit(0)
+    else:
+       sys.exit(1)
 
 if __name__ == "__main__":
     main()
