@@ -28,7 +28,7 @@ import datetime
 # data about all queues in clinic
 
 class QueueStatus(models.Model):
-    clinic = models.ForeignKey(Clinic)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
     numwaiting = models.IntegerField()
     minq = models.IntegerField()
     maxq = models.IntegerField()
@@ -40,18 +40,18 @@ class QueueStatus(models.Model):
 # a specific queue 
 
 class Queue(models.Model):
-    clinic = models.ForeignKey(Clinic) 
-    station = models.ForeignKey(Station) 
-    clinicstation = models.ForeignKey(ClinicStation) 
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE) 
+    station = models.ForeignKey(Station, on_delete=models.CASCADE) 
+    clinicstation = models.ForeignKey(ClinicStation, on_delete=models.CASCADE)
     avgservicetime = models.TimeField(default=datetime.time(0,0))
 
 # a specific queue entry
 
 class QueueEntry(models.Model):
-    queue = models.ForeignKey(Queue)
-    patient = models.ForeignKey(Patient)
+    queue = models.ForeignKey(Queue, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     timein = models.DateTimeField()
     waittime = models.TimeField(default=datetime.time(0,0)) # timenow - timein
-    routingslip = models.ForeignKey(RoutingSlip)
-    routingslipentry = models.ForeignKey(RoutingSlipEntry)
+    routingslip = models.ForeignKey(RoutingSlip, on_delete=models.CASCADE)
+    routingslipentry = models.ForeignKey(RoutingSlipEntry, on_delete=models.CASCADE)
     estwaittime = models.TimeField(default=datetime.time(0,0)) # queue average service time * (number of patients ahead of this patient in the queue)

@@ -52,14 +52,14 @@ lunch).
 
 class ClinicStation(models.Model):
     name = models.CharField(max_length=64)
-    station = models.ForeignKey(Station)
-    clinic = models.ForeignKey(Clinic)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
     active = models.BooleanField(default=False)  # set to True if a patient is being seen
     level = models.IntegerField(default=1)  # relative importance to scheduler
     away = models.BooleanField(default=True)  # set to True when station is out to lunch
     awaytime = models.IntegerField(default=30) # default minutes when station goes to away state before clinic is returned to (informational only) 
     willreturn = models.DateTimeField(auto_now_add=True) # estimated time of returen, computed when away is set to True, using the awaytime value
-    activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient') # if active, patient or null
-    nextpatient = models.ForeignKey(Patient, null=True, related_name="activepatient") # next patient to be seen or null
+    activepatient = models.ForeignKey(Patient, null=True, related_name='nextpatient', on_delete=models.CASCADE) # if active, patient or null
+    nextpatient = models.ForeignKey(Patient, null=True, related_name="activepatient", on_delete=models.CASCADE) # next patient to be seen or null
     name_es = models.CharField(max_length=64)
     finished = models.BooleanField(default=False)  # set to True if station finished for the day 

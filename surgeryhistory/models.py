@@ -8,8 +8,8 @@ from patient.models import Patient
 from surgerytype.models import SurgeryType
 
 class SurgeryHistory(models.Model):
-    patient = models.ForeignKey(Patient)
-    surgery = models.ForeignKey(SurgeryType)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    surgery = models.ForeignKey(SurgeryType, on_delete=models.CASCADE)
     surgeryyear = models.IntegerField(default = 0)
     surgerymonth = models.IntegerField(default = 0)
     surgerylocation =  models.CharField(max_length = 300)

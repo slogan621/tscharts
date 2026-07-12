@@ -23,8 +23,8 @@ from clinic.models import Clinic
 # Treatment completed today
 
 class DentalTreatment(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     username = models.CharField(max_length=64, default = "")  # user supplied name
 
     time = models.DateTimeField(auto_now=True)

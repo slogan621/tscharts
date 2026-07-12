@@ -17,5 +17,5 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class PIN(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     pin = models.CharField(max_length=16) # typically only 4 chars

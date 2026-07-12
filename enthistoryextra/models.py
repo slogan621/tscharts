@@ -25,7 +25,7 @@ from enthistory.models import ENTHistory
 # the design of the database, but which needs to be recorded nonetheless.
 
 class ENTHistoryExtra(models.Model):
-    enthistory = models.ForeignKey(ENTHistory)
+    enthistory = models.ForeignKey(ENTHistory, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=64, default = "")  # name of condition 
     duration = models.CharField(max_length = 1, choices = ENTHistory.EAR_DURATION_CHOICES, default = ENTHistory.EAR_DURATION_NONE)

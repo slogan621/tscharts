@@ -24,8 +24,8 @@ from patient.models import Patient
 from station.models import Station
 
 class ReturnToClinic(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
-    station = models.ForeignKey(Station)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
     interval = models.IntegerField()
     comment = models.TextField()

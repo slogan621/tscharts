@@ -22,9 +22,9 @@ from station.models import Station
 from patient.models import Patient
 
 class Image(models.Model):
-    clinic = models.ForeignKey(Clinic, null=True)
-    station = models.ForeignKey(Station, null=True)
-    patient = models.ForeignKey(Patient)
+    clinic = models.ForeignKey(Clinic, null=True, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, null=True, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     XRAY = 'x'
     AUDIOGRAM = 'a'
     HEADSHOT = 'h'

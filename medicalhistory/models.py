@@ -21,8 +21,8 @@ from patient.models import Patient
 from clinic.models import Clinic
 
 class MedicalHistory(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now=True)
     cold_cough_fever = models.BooleanField(default = False)
     hivaids = models.BooleanField(default = False)

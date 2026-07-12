@@ -40,9 +40,9 @@ class ReturnToClinicStation(models.Model):
         choices = STATE_CHOICES,
         default = CREATED,
     )
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
-    station = models.ForeignKey(Station, related_name="stations")
-    requestingclinicstation = models.ForeignKey(ClinicStation, related_name="requestingclinicstations")
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, related_name="stations", on_delete=models.CASCADE)
+    requestingclinicstation = models.ForeignKey(ClinicStation, related_name="requestingclinicstations", on_delete=models.CASCADE)
     createtime = models.DateTimeField(auto_now_add=True)
     statechangetime = models.DateTimeField(auto_now=True)

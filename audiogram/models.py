@@ -24,8 +24,8 @@ from patient.models import Patient
 from image.models import Image
 
 class Audiogram(models.Model):
-    clinic = models.ForeignKey(Clinic)
-    patient = models.ForeignKey(Patient)
-    image = models.ForeignKey(Image)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    image = models.ForeignKey(Image, on_delete=models.CASCADE)
     comment = models.TextField()
     time = models.DateTimeField(auto_now=True)

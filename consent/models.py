@@ -8,8 +8,8 @@ from patient.models import Patient
 from clinic.models import Clinic
 
 class Consent(models.Model):
-    registration = models.ForeignKey(Register)
-    patient = models.ForeignKey(Patient)
-    clinic = models.ForeignKey(Clinic)
+    registration = models.ForeignKey(Register, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
     general_consent = models.BooleanField(default = False)
     photo_consent = models.BooleanField(default = False)

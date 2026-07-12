@@ -29,8 +29,8 @@ The category may change from clinic to clinic based on care given.
 '''
 
 class RoutingSlip(models.Model):
-    patient = models.ForeignKey(Patient)
-    clinic = models.ForeignKey(Clinic)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE)
     NEWCLEFT = 'n'
     DENTAL = 'd'
     HEARINGAIDS = 'h'
@@ -81,8 +81,8 @@ x-rays are available, but it can be used in other circumstances as well.
 '''
  
 class RoutingSlipEntry(models.Model):
-    routingslip = models.ForeignKey(RoutingSlip)
-    station = models.ForeignKey(Station)
+    routingslip = models.ForeignKey(RoutingSlip, on_delete=models.CASCADE)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
     order = models.IntegerField(default=0)   
     NEW = 'n'           # newly created, needs to be placed in a queue
     SCHEDULED = 's'     # is sitting in a queue
@@ -103,12 +103,12 @@ class RoutingSlipEntry(models.Model):
         choices = STATE_CHOICES,
         default = NEW,
     )
-    returntoclinicstation = models.ForeignKey(ReturnToClinicStation, null=True)
+    returntoclinicstation = models.ForeignKey(ReturnToClinicStation, null=True, on_delete=models.CASCADE)
     createtime = models.DateTimeField(auto_now_add=True)
     statechangetime = models.DateTimeField(auto_now=True)
 
 class RoutingSlipComment(models.Model):
-    routingslip = models.ForeignKey(RoutingSlip)
+    routingslip = models.ForeignKey(RoutingSlip, on_delete=models.CASCADE)
     comment = models.TextField()
-    author = models.ForeignKey(User)    # logged in user that added the comment
+    author = models.ForeignKey(User, on_delete=models.CASCADE)    # logged in user that added the comment
     updatetime = models.DateTimeField(auto_now=True)

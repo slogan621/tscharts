@@ -6,8 +6,8 @@ from patient.models import Patient
 from clinicstation.models import ClinicStation
 
 class StateChange(models.Model):
-    clinicstation = models.ForeignKey(ClinicStation)
-    patient = models.ForeignKey(Patient)
+    clinicstation = models.ForeignKey(ClinicStation, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now_add=True)
 
     IN = 'i'

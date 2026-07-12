@@ -25,7 +25,7 @@ from entdiagnosis.models import ENTDiagnosis
 # the design of the database but which needed to be recorded nonetheless.
 
 class ENTDiagnosisExtra(models.Model):
-    entdiagnosis = models.ForeignKey(ENTDiagnosis)
+    entdiagnosis = models.ForeignKey(ENTDiagnosis, on_delete=models.CASCADE)
     time = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=64, default = "")  # name of condition 
     value = models.TextField(default = "")                # condition details
