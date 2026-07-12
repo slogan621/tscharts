@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2019
-#(C) Copyright Thousand Smiles Foundation 2019
+#(C) Copyright Syd Logan 2019-2026
+#(C) Copyright Thousand Smiles Foundation 2019-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-from django.conf.urls import url
+from django.urls import re_path
 from enttreatment.views import ENTTreatmentView
 
 urlpatterns = [
-    url(r'^$', ENTTreatmentView.as_view()),
-    url(r'^([0-9]+)/$', ENTTreatmentView.as_view()),
+    re_path(r'^$', ENTTreatmentView.as_view()),
+    re_path(r'^([0-9]+)/$', ENTTreatmentView.as_view()),
 ]

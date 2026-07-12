@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2026
+#(C) Copyright Thousand Smiles Foundation 2016-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-from django.conf.urls import url
+from django.urls import re_path
 from queue.views import QueueView
 
 urlpatterns = [
-    url(r'^$', QueueView.as_view()),
+    re_path(r'^$', QueueView.as_view()),
 ]
 

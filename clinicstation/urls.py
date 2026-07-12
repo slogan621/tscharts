@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2016
-#(C) Copyright Thousand Smiles Foundation 2016
+#(C) Copyright Syd Logan 2016-2026
+#(C) Copyright Thousand Smiles Foundation 2016-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -13,11 +13,11 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-from django.conf.urls import url
+from django.urls import re_path
 from clinicstation.views import ClinicStationView
 
 urlpatterns = [
-    url(r'^$', ClinicStationView.as_view()),
-    url(r'^([0-9]+)/$', ClinicStationView.as_view()),
+    re_path(r'^$', ClinicStationView.as_view()),
+    re_path(r'^([0-9]+)/$', ClinicStationView.as_view()),
 ]
 
