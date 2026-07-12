@@ -47,21 +47,21 @@ class DentalTreatmentView(APIView):
     ]
 
     booleanFields = [
-  	"exam",
-  	"prophy",
-  	"srpUR",
-  	"srpLR",
-  	"srpUL",
-  	"srpLL",
-  	"xraysViewed",
-  	"headNeckOralCancerExam",
-  	"oralHygieneInstruction",
-  	"flourideTxVarnish",
-  	"nutritionalCounseling",
-  	"orthoEvaluation",
-  	"orthoTx",
-  	"oralSurgeryEvaluation",
-  	"oralSurgeryTx",
+        "exam",
+        "prophy",
+        "srpUR",
+        "srpLR",
+        "srpUL",
+        "srpLL",
+        "xraysViewed",
+        "headNeckOralCancerExam",
+        "oralHygieneInstruction",
+        "flourideTxVarnish",
+        "nutritionalCounseling",
+        "orthoEvaluation",
+        "orthoTx",
+        "oralSurgeryEvaluation",
+        "oralSurgeryTx",
         "localAnestheticBenzocaine",
         "localAnestheticLidocaine",
         "localAnestheticSeptocaine",
@@ -70,20 +70,20 @@ class DentalTreatmentView(APIView):
 
     textFields = [
         "username",
-  	"examComment",
-  	"prophyComment",
-  	"srpComment",
-  	"xraysViewedComment",
-  	"headNeckOralCancerExamComment",
-  	"oralHygieneInstructionComment",
-  	"flourideTxVarnishComment",
-  	"nutritionalCounselingComment",
-  	"orthoEvaluationComment",
-  	"orthoTxComment",
-  	"oralSurgeryEvaluationComment",
-  	"oralSurgeryTxComment",
-  	"localAnestheticComment",
-  	"comment",
+        "examComment",
+        "prophyComment",
+        "srpComment",
+        "xraysViewedComment",
+        "headNeckOralCancerExamComment",
+        "oralHygieneInstructionComment",
+        "flourideTxVarnishComment",
+        "nutritionalCounselingComment",
+        "orthoEvaluationComment",
+        "orthoTxComment",
+        "oralSurgeryEvaluationComment",
+        "oralSurgeryTxComment",
+        "localAnestheticComment",
+        "comment",
     ]
 
     def stringToBoolean(self, val):
@@ -361,73 +361,73 @@ class DentalTreatmentView(APIView):
                     dental_treatment.exam = self.stringToBoolean(v)
                 elif k == "prophy":
                     dental_treatment.prophy = self.stringToBoolean(v)
-  	        elif k == "srpUR":
+                elif k == "srpUR":
                     dental_treatment.srpUR = self.stringToBoolean(v)
-  	        elif k == "srpLR":
+                elif k == "srpLR":
                     dental_treatment.srpLR = self.stringToBoolean(v)
-  	        elif k == "srpUL":
+                elif k == "srpUL":
                     dental_treatment.srpUL = self.stringToBoolean(v)
-  	        elif k == "srpLL":
+                elif k == "srpLL":
                     dental_treatment.srpLL = self.stringToBoolean(v)
-  	        elif k == "xraysViewed":
+                elif k == "xraysViewed":
                     dental_treatment.xraysViewed = self.stringToBoolean(v)
-  	        elif k == "headNeckOralCancerExam":
+                elif k == "headNeckOralCancerExam":
                     dental_treatment.headNeckOralCancerExam = self.stringToBoolean(v)
-  	        elif k == "oralHygieneInstruction":
+                elif k == "oralHygieneInstruction":
                     dental_treatment.oralHygieneInstruction = self.stringToBoolean(v)
-  	        elif k == "flourideTxVarnish":
+                elif k == "flourideTxVarnish":
                     dental_treatment.flourideTxVarnish = self.stringToBoolean(v)
-  	        elif k == "nutritionalCounseling":
+                elif k == "nutritionalCounseling":
                     dental_treatment.nutritionalCounseling = self.stringToBoolean(v)
-  	        elif k == "orthoEvaluation":
+                elif k == "orthoEvaluation":
                     dental_treatment.orthoEvaluation = self.stringToBoolean(v)
-  	        elif k == "orthoTx":
+                elif k == "orthoTx":
                     dental_treatment.orthoTx = self.stringToBoolean(v)
-  	        elif k == "oralSurgeryEvaluation":
+                elif k == "oralSurgeryEvaluation":
                     dental_treatment.oralSurgeryEvaluation = self.stringToBoolean(v)
-  	        elif k == "oralSurgeryTx":
+                elif k == "oralSurgeryTx":
                     dental_treatment.oralSurgeryTx = self.stringToBoolean(v)
-  	        elif k == "localAnestheticBenzocaine":
+                elif k == "localAnestheticBenzocaine":
                     dental_treatment.localAnestheticBenzocaine = self.stringToBoolean(v)
-  	        elif k == "localAnestheticLidocaine":
+                elif k == "localAnestheticLidocaine":
                     dental_treatment.localAnestheticLidocaine = self.stringToBoolean(v)
-  	        elif k == "localAnestheticSeptocaine":
+                elif k == "localAnestheticSeptocaine":
                     dental_treatment.localAnestheticSeptocaine = self.stringToBoolean(v)
-  	        elif k == "localAnestheticOther":
+                elif k == "localAnestheticOther":
                     dental_treatment.localAnestheticOther = self.stringToBoolean(v)
-  	        elif k == "localAnestheticNumberCarps":
+                elif k == "localAnestheticNumberCarps":
                     dental_treatment.localAnestheticNumberCarps = int(v)
                 elif k == "examComment":
                     dental_treatment.examComment = str(v)
                 elif k == "prophyComment":
                     dental_treatment.prophyComment = str(v)
-  	        elif k == "srpComment":
+                elif k == "srpComment":
                     dental_treatment.srpComment = str(v)
-  	        elif k == "xraysViewedComment":
+                elif k == "xraysViewedComment":
                     dental_treatment.xraysViewedComment = str(v)
-  	        elif k == "headNeckOralCancerExamComment":
+                elif k == "headNeckOralCancerExamComment":
                     dental_treatment.headNeckOralCancerExamComment = str(v)
-  	        elif k == "oralHygieneInstructionComment":
+                elif k == "oralHygieneInstructionComment":
                     dental_treatment.oralHygieneInstructionComment = str(v)
-  	        elif k == "flourideTxVarnishComment":
+                elif k == "flourideTxVarnishComment":
                     dental_treatment.flourideTxVarnishComment = str(v)
-  	        elif k == "nutritionalCounselingComment":
+                elif k == "nutritionalCounselingComment":
                     dental_treatment.nutritionalCounselingComment = str(v)
-  	        elif k == "orthoEvaluationComment":
+                elif k == "orthoEvaluationComment":
                     dental_treatment.orthoEvaluationComment = str(v)
-  	        elif k == "orthoTxComment":
+                elif k == "orthoTxComment":
                     dental_treatment.orthoTxComment = str(v)
-  	        elif k == "oralSurgeryEvaluationComment":
+                elif k == "oralSurgeryEvaluationComment":
                     dental_treatment.oralSurgeryEvaluationComment = str(v)
-  	        elif k == "oralSurgeryTxComment":
+                elif k == "oralSurgeryTxComment":
                     dental_treatment.oralSurgeryTxComment = str(v)
-  	        elif k == "localAnestheticComment":
+                elif k == "localAnestheticComment":
                     dental_treatment.localAnestheticComment = str(v)
-  	        elif k == "localAnestheticNumberCarpsComment":
+                elif k == "localAnestheticNumberCarpsComment":
                     dental_treatment.localAnestheticNumberCarpsComment = str(v)
                 elif k == "username":
                     dental_treatment.username = str(v)
-  	        elif k == "comment":
+                elif k == "comment":
                     dental_treatment.comment = str(v)
 
             try:

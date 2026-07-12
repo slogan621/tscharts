@@ -46,88 +46,88 @@ class ENTTreatmentView(APIView):
     sideFields = [
         "earCleanedSide",
         "audiogramSide",
-  	"tympanogramSide",
-  	"mastoidDebridedSide",
-  	"boricAcidSide",
-  	"foreignBodyRemoved",
-  	"tubesTomorrow",
-  	"tPlastyTomorrow",
-  	"euaTomorrow",
-  	"fbRemovalTomorrow",
-  	"middleEarExploreMyringotomyTomorrow",
-  	"cerumenTomorrow",
-  	"granulomaTomorrow",
-  	"tubesFuture",
-  	"tPlastyFuture",
-  	"euaFuture",
-  	"fbRemovalFuture",
-  	"middleEarExploreMyringotomyFuture",
-  	"cerumenFuture",
-  	"granulomaFuture"]
+        "tympanogramSide",
+        "mastoidDebridedSide",
+        "boricAcidSide",
+        "foreignBodyRemoved",
+        "tubesTomorrow",
+        "tPlastyTomorrow",
+        "euaTomorrow",
+        "fbRemovalTomorrow",
+        "middleEarExploreMyringotomyTomorrow",
+        "cerumenTomorrow",
+        "granulomaTomorrow",
+        "tubesFuture",
+        "tPlastyFuture",
+        "euaFuture",
+        "fbRemovalFuture",
+        "middleEarExploreMyringotomyFuture",
+        "cerumenFuture",
+        "granulomaFuture"]
 
     booleanFields = [
-  	"audiogramRightAway",
-  	"tympanogramRightAway",
-  	"mastoidDebridedHearingAidEval",
-  	"antibioticDrops",
-  	"antibioticOrally",
-  	"antibioticAcuteInfection",
-  	"antibioticAfterWaterExposureInfectionPrevention",
-  	"boricAcidToday",
-  	"boricAcidForHomeUse",
-  	"return3Months",
-  	"return6Months",
-  	"returnPrn",
-  	"referredPvtENTEnsenada",
-  	"referredChildrensHospitalTJ",
-  	"septorhinoplastyTomorrow",
-  	"scarRevisionCleftLipTomorrow",
-  	"frenulectomyTomorrow",
-  	"septorhinoplastyFuture",
-  	"scarRevisionCleftLipFuture",
-  	"frenulectomyFuture"]
+        "audiogramRightAway",
+        "tympanogramRightAway",
+        "mastoidDebridedHearingAidEval",
+        "antibioticDrops",
+        "antibioticOrally",
+        "antibioticAcuteInfection",
+        "antibioticAfterWaterExposureInfectionPrevention",
+        "boricAcidToday",
+        "boricAcidForHomeUse",
+        "return3Months",
+        "return6Months",
+        "returnPrn",
+        "referredPvtENTEnsenada",
+        "referredChildrensHospitalTJ",
+        "septorhinoplastyTomorrow",
+        "scarRevisionCleftLipTomorrow",
+        "frenulectomyTomorrow",
+        "septorhinoplastyFuture",
+        "scarRevisionCleftLipFuture",
+        "frenulectomyFuture"]
 
     textFields = [
         "username",
         "earCleanedComment",
-  	"audiogramComment",
-  	"audiogramRightAwayComment",
-  	"tympanogramComment",
-  	"tympanogramRightAwayComment",
-  	"mastoidDebridedComment",
-  	"mastoidDebridedHearingAidEvalComment",
-  	"antibioticDropsComment",
-  	"antibioticOrallyComment",
-  	"antibioticAcuteInfectionComment",
-  	"antibioticAfterWaterExposureInfectionPreventionComment",
-  	"boricAcidTodayComment",
-  	"boricAcidForHomeUseComment",
-  	"boricAcidSideComment",
-  	"foreignBodyRemovedComment",
-  	"returnComment",
-  	"referredPvtENTEnsenadaComment",
-  	"referredChildrensHospitalTJComment",
-  	"tubesTomorrowComment",
-  	"tPlastyTomorrowComment",
-  	"euaTomorrowComment",
-  	"fbRemovalTomorrowComment",
-  	"middleEarExploreMyringotomyTomorrowComment",
-  	"cerumenTomorrowComment",
-  	"granulomaTomorrowComment",
-  	"septorhinoplastyTomorrowComment",
-  	"scarRevisionCleftLipTomorrowComment",
-  	"frenulectomyTomorrowComment",
-  	"tubesFutureComment",
-  	"tPlastyFutureComment",
-  	"euaFutureComment",
-  	"fbRemovalFutureComment",
-  	"middleEarExploreMyringotomyFutureComment",
-  	"cerumenFutureComment",
-  	"granulomaFutureComment",
-  	"septorhinoplastyFutureComment",
-  	"scarRevisionCleftLipFutureComment",
-  	"frenulectomyFutureComment",
-  	"comment"]
+        "audiogramComment",
+        "audiogramRightAwayComment",
+        "tympanogramComment",
+        "tympanogramRightAwayComment",
+        "mastoidDebridedComment",
+        "mastoidDebridedHearingAidEvalComment",
+        "antibioticDropsComment",
+        "antibioticOrallyComment",
+        "antibioticAcuteInfectionComment",
+        "antibioticAfterWaterExposureInfectionPreventionComment",
+        "boricAcidTodayComment",
+        "boricAcidForHomeUseComment",
+        "boricAcidSideComment",
+        "foreignBodyRemovedComment",
+        "returnComment",
+        "referredPvtENTEnsenadaComment",
+        "referredChildrensHospitalTJComment",
+        "tubesTomorrowComment",
+        "tPlastyTomorrowComment",
+        "euaTomorrowComment",
+        "fbRemovalTomorrowComment",
+        "middleEarExploreMyringotomyTomorrowComment",
+        "cerumenTomorrowComment",
+        "granulomaTomorrowComment",
+        "septorhinoplastyTomorrowComment",
+        "scarRevisionCleftLipTomorrowComment",
+        "frenulectomyTomorrowComment",
+        "tubesFutureComment",
+        "tPlastyFutureComment",
+        "euaFutureComment",
+        "fbRemovalFutureComment",
+        "middleEarExploreMyringotomyFutureComment",
+        "cerumenFutureComment",
+        "granulomaFutureComment",
+        "septorhinoplastyFutureComment",
+        "scarRevisionCleftLipFutureComment",
+        "frenulectomyFutureComment",
+        "comment"]
 
     def sideToString(self, val):
         ret = None 
@@ -171,83 +171,83 @@ class ENTTreatmentView(APIView):
         m["earCleanedSide"] = self.sideToString(entry.earCleanedSide)
         m["earCleanedComment"] = entry.earCleanedComment
         m["audiogramSide"] = self.sideToString(entry.audiogramSide)
-  	m["audiogramComment"] = entry.audiogramComment
-  	m["audiogramRightAway"] = self.booleanToString(entry.audiogramRightAway)
-  	m["audiogramRightAwayComment"] = entry.audiogramRightAwayComment
-  	m["tympanogramSide"] = self.sideToString(entry.tympanogramSide)
-  	m["tympanogramComment"] = entry.tympanogramComment
-  	m["tympanogramRightAway"] = self.booleanToString(entry.tympanogramRightAway)
-  	m["tympanogramRightAwayComment"] = entry.tympanogramRightAwayComment
-  	m["mastoidDebridedSide"] = self.sideToString(entry.mastoidDebridedSide)
-  	m["mastoidDebridedComment"] = entry.mastoidDebridedComment
-  	m["mastoidDebridedHearingAidEval"] = self.booleanToString(entry.mastoidDebridedHearingAidEval)
-  	m["mastoidDebridedHearingAidEvalComment"] = entry.mastoidDebridedHearingAidEvalComment
-  	m["antibioticDrops"] = self.booleanToString(entry.antibioticDrops)
-  	m["antibioticDropsComment"] = entry.antibioticDropsComment
-  	m["antibioticOrally"] = self.booleanToString(entry.antibioticOrally)
-  	m["antibioticOrallyComment"] = entry.antibioticOrallyComment
-  	m["antibioticAcuteInfection"] = self.booleanToString(entry.antibioticAcuteInfection)
-  	m["antibioticAcuteInfectionComment"] = entry.antibioticAcuteInfectionComment
-  	m["antibioticAfterWaterExposureInfectionPrevention"] = self.booleanToString(entry.antibioticAfterWaterExposureInfectionPrevention)
-  	m["antibioticAfterWaterExposureInfectionPreventionComment"] = entry.antibioticAfterWaterExposureInfectionPreventionComment
-  	m["boricAcidToday"] = self.booleanToString(entry.boricAcidToday)
-  	m["boricAcidTodayComment"] = entry.boricAcidTodayComment
-  	m["boricAcidForHomeUse"] = self.booleanToString(entry.boricAcidForHomeUse)
-  	m["boricAcidForHomeUseComment"] = entry.boricAcidForHomeUseComment
-  	m["boricAcidSide"] = self.sideToString(entry.boricAcidSide)
-  	m["boricAcidSideComment"] = entry.boricAcidSideComment
-  	m["foreignBodyRemoved"] = self.sideToString(entry.foreignBodyRemoved)
-  	m["foreignBodyRemovedComment"] = entry.foreignBodyRemovedComment
-  	m["return3Months"] = self.booleanToString(entry.return3Months)
-  	m["return6Months"] = self.booleanToString(entry.return6Months)
-  	m["returnPrn"] = self.booleanToString(entry.returnPrn)
-  	m["returnComment"] = entry.returnComment
-  	m["referredPvtENTEnsenada"] = self.booleanToString(entry.referredPvtENTEnsenada)
-  	m["referredPvtENTEnsenadaComment"] = entry.referredPvtENTEnsenadaComment
-  	m["referredChildrensHospitalTJ"] = self.booleanToString(entry.referredChildrensHospitalTJ)
-  	m["referredChildrensHospitalTJComment"] = entry.referredChildrensHospitalTJComment
-  	m["tubesTomorrow"] = self.sideToString(entry.tubesTomorrow)
-  	m["tubesTomorrowComment"] = entry.tubesTomorrowComment
-  	m["tPlastyTomorrow"] = self.sideToString(entry.tPlastyTomorrow)
-  	m["tPlastyTomorrowComment"] = entry.tPlastyTomorrowComment
-  	m["euaTomorrow"] = self.sideToString(entry.euaTomorrow)
-  	m["euaTomorrowComment"] = entry.euaTomorrowComment
-  	m["fbRemovalTomorrow"] = self.sideToString(entry.fbRemovalTomorrow)
-  	m["fbRemovalTomorrowComment"] = entry.fbRemovalTomorrowComment
-  	m["middleEarExploreMyringotomyTomorrow"] = self.sideToString(entry.middleEarExploreMyringotomyTomorrow)
-  	m["middleEarExploreMyringotomyTomorrowComment"] = entry.middleEarExploreMyringotomyTomorrowComment
-  	m["cerumenTomorrow"] = self.sideToString(entry.cerumenTomorrow)
-  	m["cerumenTomorrowComment"] = entry.cerumenTomorrowComment
-  	m["granulomaTomorrow"] = self.sideToString(entry.granulomaTomorrow)
-  	m["granulomaTomorrowComment"] = entry.granulomaTomorrowComment
-  	m["septorhinoplastyTomorrow"] = self.booleanToString(entry.septorhinoplastyTomorrow)
-  	m["septorhinoplastyTomorrowComment"] = entry.septorhinoplastyTomorrowComment
-  	m["scarRevisionCleftLipTomorrow"] = self.booleanToString(entry.scarRevisionCleftLipTomorrow)
-  	m["scarRevisionCleftLipTomorrowComment"] = entry.scarRevisionCleftLipTomorrowComment
-  	m["frenulectomyTomorrow"] = self.booleanToString(entry.frenulectomyTomorrow)
-  	m["frenulectomyTomorrowComment"] = entry.frenulectomyTomorrowComment
+        m["audiogramComment"] = entry.audiogramComment
+        m["audiogramRightAway"] = self.booleanToString(entry.audiogramRightAway)
+        m["audiogramRightAwayComment"] = entry.audiogramRightAwayComment
+        m["tympanogramSide"] = self.sideToString(entry.tympanogramSide)
+        m["tympanogramComment"] = entry.tympanogramComment
+        m["tympanogramRightAway"] = self.booleanToString(entry.tympanogramRightAway)
+        m["tympanogramRightAwayComment"] = entry.tympanogramRightAwayComment
+        m["mastoidDebridedSide"] = self.sideToString(entry.mastoidDebridedSide)
+        m["mastoidDebridedComment"] = entry.mastoidDebridedComment
+        m["mastoidDebridedHearingAidEval"] = self.booleanToString(entry.mastoidDebridedHearingAidEval)
+        m["mastoidDebridedHearingAidEvalComment"] = entry.mastoidDebridedHearingAidEvalComment
+        m["antibioticDrops"] = self.booleanToString(entry.antibioticDrops)
+        m["antibioticDropsComment"] = entry.antibioticDropsComment
+        m["antibioticOrally"] = self.booleanToString(entry.antibioticOrally)
+        m["antibioticOrallyComment"] = entry.antibioticOrallyComment
+        m["antibioticAcuteInfection"] = self.booleanToString(entry.antibioticAcuteInfection)
+        m["antibioticAcuteInfectionComment"] = entry.antibioticAcuteInfectionComment
+        m["antibioticAfterWaterExposureInfectionPrevention"] = self.booleanToString(entry.antibioticAfterWaterExposureInfectionPrevention)
+        m["antibioticAfterWaterExposureInfectionPreventionComment"] = entry.antibioticAfterWaterExposureInfectionPreventionComment
+        m["boricAcidToday"] = self.booleanToString(entry.boricAcidToday)
+        m["boricAcidTodayComment"] = entry.boricAcidTodayComment
+        m["boricAcidForHomeUse"] = self.booleanToString(entry.boricAcidForHomeUse)
+        m["boricAcidForHomeUseComment"] = entry.boricAcidForHomeUseComment
+        m["boricAcidSide"] = self.sideToString(entry.boricAcidSide)
+        m["boricAcidSideComment"] = entry.boricAcidSideComment
+        m["foreignBodyRemoved"] = self.sideToString(entry.foreignBodyRemoved)
+        m["foreignBodyRemovedComment"] = entry.foreignBodyRemovedComment
+        m["return3Months"] = self.booleanToString(entry.return3Months)
+        m["return6Months"] = self.booleanToString(entry.return6Months)
+        m["returnPrn"] = self.booleanToString(entry.returnPrn)
+        m["returnComment"] = entry.returnComment
+        m["referredPvtENTEnsenada"] = self.booleanToString(entry.referredPvtENTEnsenada)
+        m["referredPvtENTEnsenadaComment"] = entry.referredPvtENTEnsenadaComment
+        m["referredChildrensHospitalTJ"] = self.booleanToString(entry.referredChildrensHospitalTJ)
+        m["referredChildrensHospitalTJComment"] = entry.referredChildrensHospitalTJComment
+        m["tubesTomorrow"] = self.sideToString(entry.tubesTomorrow)
+        m["tubesTomorrowComment"] = entry.tubesTomorrowComment
+        m["tPlastyTomorrow"] = self.sideToString(entry.tPlastyTomorrow)
+        m["tPlastyTomorrowComment"] = entry.tPlastyTomorrowComment
+        m["euaTomorrow"] = self.sideToString(entry.euaTomorrow)
+        m["euaTomorrowComment"] = entry.euaTomorrowComment
+        m["fbRemovalTomorrow"] = self.sideToString(entry.fbRemovalTomorrow)
+        m["fbRemovalTomorrowComment"] = entry.fbRemovalTomorrowComment
+        m["middleEarExploreMyringotomyTomorrow"] = self.sideToString(entry.middleEarExploreMyringotomyTomorrow)
+        m["middleEarExploreMyringotomyTomorrowComment"] = entry.middleEarExploreMyringotomyTomorrowComment
+        m["cerumenTomorrow"] = self.sideToString(entry.cerumenTomorrow)
+        m["cerumenTomorrowComment"] = entry.cerumenTomorrowComment
+        m["granulomaTomorrow"] = self.sideToString(entry.granulomaTomorrow)
+        m["granulomaTomorrowComment"] = entry.granulomaTomorrowComment
+        m["septorhinoplastyTomorrow"] = self.booleanToString(entry.septorhinoplastyTomorrow)
+        m["septorhinoplastyTomorrowComment"] = entry.septorhinoplastyTomorrowComment
+        m["scarRevisionCleftLipTomorrow"] = self.booleanToString(entry.scarRevisionCleftLipTomorrow)
+        m["scarRevisionCleftLipTomorrowComment"] = entry.scarRevisionCleftLipTomorrowComment
+        m["frenulectomyTomorrow"] = self.booleanToString(entry.frenulectomyTomorrow)
+        m["frenulectomyTomorrowComment"] = entry.frenulectomyTomorrowComment
 
-  	m["tubesFuture"] = self.sideToString(entry.tubesFuture)
-  	m["tubesFutureComment"] = entry.tubesFutureComment
-  	m["tPlastyFuture"] = self.sideToString(entry.tPlastyFuture)
-  	m["tPlastyFutureComment"] = entry.tPlastyFutureComment
-  	m["euaFuture"] = self.sideToString(entry.euaFuture)
-  	m["euaFutureComment"] = entry.euaFutureComment
-  	m["fbRemovalFuture"] = self.sideToString(entry.fbRemovalFuture)
-  	m["fbRemovalFutureComment"] = entry.fbRemovalFutureComment
-  	m["middleEarExploreMyringotomyFuture"] = self.sideToString(entry.middleEarExploreMyringotomyFuture)
-  	m["middleEarExploreMyringotomyFutureComment"] = entry.middleEarExploreMyringotomyFutureComment
-  	m["cerumenFuture"] = self.sideToString(entry.cerumenFuture)
-  	m["cerumenFutureComment"] = entry.cerumenFutureComment
-  	m["granulomaFuture"] = self.sideToString(entry.granulomaFuture)
-  	m["granulomaFutureComment"] = entry.granulomaFutureComment
-  	m["septorhinoplastyFuture"] = self.booleanToString(entry.septorhinoplastyFuture)
-  	m["septorhinoplastyFutureComment"] = entry.septorhinoplastyFutureComment
-  	m["scarRevisionCleftLipFuture"] = self.booleanToString(entry.scarRevisionCleftLipFuture)
-  	m["scarRevisionCleftLipFutureComment"] = entry.scarRevisionCleftLipFutureComment
-  	m["frenulectomyFuture"] = self.booleanToString(entry.frenulectomyFuture)
-  	m["frenulectomyFutureComment"] = entry.frenulectomyFutureComment
-  	m["comment"] = entry.comment
+        m["tubesFuture"] = self.sideToString(entry.tubesFuture)
+        m["tubesFutureComment"] = entry.tubesFutureComment
+        m["tPlastyFuture"] = self.sideToString(entry.tPlastyFuture)
+        m["tPlastyFutureComment"] = entry.tPlastyFutureComment
+        m["euaFuture"] = self.sideToString(entry.euaFuture)
+        m["euaFutureComment"] = entry.euaFutureComment
+        m["fbRemovalFuture"] = self.sideToString(entry.fbRemovalFuture)
+        m["fbRemovalFutureComment"] = entry.fbRemovalFutureComment
+        m["middleEarExploreMyringotomyFuture"] = self.sideToString(entry.middleEarExploreMyringotomyFuture)
+        m["middleEarExploreMyringotomyFutureComment"] = entry.middleEarExploreMyringotomyFutureComment
+        m["cerumenFuture"] = self.sideToString(entry.cerumenFuture)
+        m["cerumenFutureComment"] = entry.cerumenFutureComment
+        m["granulomaFuture"] = self.sideToString(entry.granulomaFuture)
+        m["granulomaFutureComment"] = entry.granulomaFutureComment
+        m["septorhinoplastyFuture"] = self.booleanToString(entry.septorhinoplastyFuture)
+        m["septorhinoplastyFutureComment"] = entry.septorhinoplastyFutureComment
+        m["scarRevisionCleftLipFuture"] = self.booleanToString(entry.scarRevisionCleftLipFuture)
+        m["scarRevisionCleftLipFutureComment"] = entry.scarRevisionCleftLipFutureComment
+        m["frenulectomyFuture"] = self.booleanToString(entry.frenulectomyFuture)
+        m["frenulectomyFutureComment"] = entry.frenulectomyFutureComment
+        m["comment"] = entry.comment
 
         return m
 
@@ -457,161 +457,161 @@ class ENTTreatmentView(APIView):
                     ent_treatment.earCleanedSide = self.stringToSide(v)
                 elif k == "audiogramSide":
                     ent_treatment.audiogramSide = self.stringToSide(v)
-  	        elif k == "tympanogramSide":
+                elif k == "tympanogramSide":
                     ent_treatment.tympanogramSide = self.stringToSide(v)
-  	        elif k == "mastoidDebridedSide":
+                elif k == "mastoidDebridedSide":
                     ent_treatment.mastoidDebridedSide = self.stringToSide(v)
-  	        elif k == "boricAcidSide":
+                elif k == "boricAcidSide":
                     ent_treatment.boricAcidSide = self.stringToSide(v)
-  	        elif k == "foreignBodyRemoved":
+                elif k == "foreignBodyRemoved":
                     ent_treatment.foreignBodyRemoved = self.stringToSide(v)
-  	        elif k == "tubesTomorrow":
+                elif k == "tubesTomorrow":
                     ent_treatment.tubesTomorrow = self.stringToSide(v)
-  	        elif k == "tPlastyTomorrow":
+                elif k == "tPlastyTomorrow":
                     ent_treatment.tPlastyTomorrow = self.stringToSide(v)
-  	        elif k == "euaTomorrow":
+                elif k == "euaTomorrow":
                     ent_treatment.euaTomorrow = self.stringToSide(v)
-  	        elif k == "fbRemovalTomorrow":
+                elif k == "fbRemovalTomorrow":
                     ent_treatment.fbRemovalTomorrow = self.stringToSide(v)
-  	        elif k == "middleEarExploreMyringotomyTomorrow":
+                elif k == "middleEarExploreMyringotomyTomorrow":
                     ent_treatment.middleEarExploreMyringotomyTomorrow = self.stringToSide(v)
-  	        elif k == "cerumenTomorrow":
+                elif k == "cerumenTomorrow":
                     ent_treatment.cerumenTomorrow = self.stringToSide(v)
-  	        elif k == "granulomaTomorrow":
+                elif k == "granulomaTomorrow":
                     ent_treatment.granulomaTomorrow = self.stringToSide(v)
-  	        elif k == "tubesFuture":
+                elif k == "tubesFuture":
                     ent_treatment.tubesFuture = self.stringToSide(v)
-  	        elif k == "tPlastyFuture":
+                elif k == "tPlastyFuture":
                     ent_treatment.tPlastyFuture = self.stringToSide(v)
-  	        elif k == "euaFuture":
+                elif k == "euaFuture":
                     ent_treatment.euaFuture = self.stringToSide(v)
-  	        elif k == "fbRemovalFuture":
+                elif k == "fbRemovalFuture":
                     ent_treatment.fbRemovalFuture = self.stringToSide(v)
-  	        elif k == "middleEarExploreMyringotomyFuture":
+                elif k == "middleEarExploreMyringotomyFuture":
                     ent_treatment.middleEarExploreMyringotomyFuture = self.stringToSide(v)
-  	        elif k == "cerumenFuture":
+                elif k == "cerumenFuture":
                     ent_treatment.cerumenFuture = self.stringToSide(v)
-  	        elif k == "granulomaFuture":
+                elif k == "granulomaFuture":
                     ent_treatment.granulomaFuture = self.stringToSide(v)
 
-  	        elif k == "audiogramRightAway":
+                elif k == "audiogramRightAway":
                     ent_treatment.audiogramRightAway = self.stringToBoolean(v)
-  	        elif k == "tympanogramRightAway":
+                elif k == "tympanogramRightAway":
                     ent_treatment.tympanogramRightAway = self.stringToBoolean(v)
-  	        elif k == "mastoidDebridedHearingAidEval":
+                elif k == "mastoidDebridedHearingAidEval":
                     ent_treatment.mastoidDebridedHearingAidEval = self.stringToBoolean(v)
-  	        elif k == "antibioticDrops":
+                elif k == "antibioticDrops":
                     ent_treatment.antibioticDrops = self.stringToBoolean(v)
-  	        elif k == "antibioticOrally":
+                elif k == "antibioticOrally":
                     ent_treatment.antibioticOrally = self.stringToBoolean(v)
-  	        elif k == "antibioticAcuteInfection":
+                elif k == "antibioticAcuteInfection":
                     ent_treatment.antibioticAcuteInfection = self.stringToBoolean(v)
-  	        elif k == "antibioticAfterWaterExposureInfectionPrevention":
+                elif k == "antibioticAfterWaterExposureInfectionPrevention":
                     ent_treatment.antibioticAfterWaterExposureInfectionPrevention = self.stringToBoolean(v)
-  	        elif k == "boricAcidToday":
+                elif k == "boricAcidToday":
                     ent_treatment.boricAcidToday = self.stringToBoolean(v)
-  	        elif k == "boricAcidForHomeUse":
+                elif k == "boricAcidForHomeUse":
                     ent_treatment.boricAcidForHomeUse = self.stringToBoolean(v)
-  	        elif k == "return3Months":
+                elif k == "return3Months":
                     ent_treatment.return3Months = self.stringToBoolean(v)
-  	        elif k == "return6Months":
+                elif k == "return6Months":
                     ent_treatment.return6Months = self.stringToBoolean(v)
-  	        elif k == "returnPrn":
+                elif k == "returnPrn":
                     ent_treatment.returnPrn = self.stringToBoolean(v)
-  	        elif k == "referredPvtENTEnsenada":
+                elif k == "referredPvtENTEnsenada":
                     ent_treatment.referredPvtENTEnsenada = self.stringToBoolean(v)
-  	        elif k == "referredChildrensHospitalTJ":
+                elif k == "referredChildrensHospitalTJ":
                     ent_treatment.referredChildrensHospitalTJ = self.stringToBoolean(v)
-  	        elif k == "septorhinoplastyTomorrow":
+                elif k == "septorhinoplastyTomorrow":
                     ent_treatment.septorhinoplastyTomorrow = self.stringToBoolean(v)
-  	        elif k == "scarRevisionCleftLipTomorrow":
+                elif k == "scarRevisionCleftLipTomorrow":
                     ent_treatment.scarRevisionCleftLipTomorrow = self.stringToBoolean(v)
-  	        elif k == "frenulectomyTomorrow":
+                elif k == "frenulectomyTomorrow":
                     ent_treatment.frenulectomyTomorrow = self.stringToBoolean(v)
-  	        elif k == "septorhinoplastyFuture":
+                elif k == "septorhinoplastyFuture":
                     ent_treatment.septorhinoplastyFuture = self.stringToBoolean(v)
-  	        elif k == "scarRevisionCleftLipFuture":
+                elif k == "scarRevisionCleftLipFuture":
                     ent_treatment.scarRevisionCleftLipFuture = self.stringToBoolean(v)
-  	        elif k == "frenulectomyFuture":
+                elif k == "frenulectomyFuture":
                     ent_treatment.frenulectomyFuture = self.stringToBoolean(v)
 
                 elif k == "username":
                     ent_treatment.username = str(v)
                 elif k == "earCleanedComment":
                     ent_treatment.earCleanedComment = str(v)
-  	        elif k == "audiogramComment":
+                elif k == "audiogramComment":
                     ent_treatment.audiogramComment = str(v)
-  	        elif k == "tympanogramComment":
+                elif k == "tympanogramComment":
                     ent_treatment.tympanogramComment = str(v)
-  	        elif k == "tympanogramRightAwayComment":
+                elif k == "tympanogramRightAwayComment":
                     ent_treatment.tympanogramRightAwayComment = str(v)
-  	        elif k == "mastoidDebridedComment":
+                elif k == "mastoidDebridedComment":
                     ent_treatment.mastoidDebridedComment = str(v)
-  	        elif k == "mastoidDebridedHearingAidEvalComment":
+                elif k == "mastoidDebridedHearingAidEvalComment":
                     ent_treatment.mastoidDebridedHearingAidEvalComment = str(v)
-  	        elif k == "antibioticDropsComment":
+                elif k == "antibioticDropsComment":
                     ent_treatment.antibioticDropsComment = str(v)
-  	        elif k == "antibioticOrallyComment":
+                elif k == "antibioticOrallyComment":
                     ent_treatment.antibioticOrallyComment = str(v)
-  	        elif k == "antibioticAcuteInfectionComment":
+                elif k == "antibioticAcuteInfectionComment":
                     ent_treatment.antibioticAcuteInfectionComment = str(v)
-  	        elif k == "antibioticAfterWaterExposureInfectionPreventionComment":
+                elif k == "antibioticAfterWaterExposureInfectionPreventionComment":
                     ent_treatment.antibioticAfterWaterExposureInfectionPreventionComment = str(v)
-  	        elif k == "boricAcidTodayComment":
+                elif k == "boricAcidTodayComment":
                     ent_treatment.boricAcidTodayComment = str(v)
-  	        elif k == "boricAcidForHomeUseComment":
+                elif k == "boricAcidForHomeUseComment":
                     ent_treatment.boricAcidForHomeUseComment = str(v)
-  	        elif k == "boricAcidSideComment":
+                elif k == "boricAcidSideComment":
                     ent_treatment.boricAcidSideComment = str(v)
-  	        elif k == "foreignBodyRemovedComment":
+                elif k == "foreignBodyRemovedComment":
                     ent_treatment.foreignBodyRemovedComment = str(v)
-  	        elif k == "returnComment":
+                elif k == "returnComment":
                     ent_treatment.returnComment = str(v)
-  	        elif k == "referredPvtENTEnsenadaComment":
+                elif k == "referredPvtENTEnsenadaComment":
                     ent_treatment.referredPvtENTEnsenadaComment = str(v)
-  	        elif k == "referredChildrensHospitalTJComment":
+                elif k == "referredChildrensHospitalTJComment":
                     ent_treatment.referredChildrensHospitalTJComment = str(v)
-  	        elif k == "tubesTomorrowComment":
+                elif k == "tubesTomorrowComment":
                     ent_treatment.tubesTomorrowComment = str(v)
-  	        elif k == "tPlastyTomorrowComment":
+                elif k == "tPlastyTomorrowComment":
                     ent_treatment.tPlastyTomorrowComment = str(v)
-  	        elif k == "euaTomorrowComment":
+                elif k == "euaTomorrowComment":
                     ent_treatment.euaTomorrowComment = str(v)
-  	        elif k == "fbRemovalTomorrowComment":
+                elif k == "fbRemovalTomorrowComment":
                     ent_treatment.fbRemovalTomorrowComment = str(v)
-  	        elif k == "middleEarExploreMyringotomyTomorrowComment":
+                elif k == "middleEarExploreMyringotomyTomorrowComment":
                     ent_treatment.middleEarExploreMyringotomyTomorrowComment = str(v)
-  	        elif k == "cerumenTomorrowComment":
+                elif k == "cerumenTomorrowComment":
                     ent_treatment.cerumenTomorrowComment = str(v)
-  	        elif k == "granulomaTomorrowComment":
+                elif k == "granulomaTomorrowComment":
                     ent_treatment.granulomaTomorrowComment = str(v)
-  	        elif k == "septorhinoplastyTomorrowComment":
+                elif k == "septorhinoplastyTomorrowComment":
                     ent_treatment.septorhinoplastyTomorrowComment = str(v)
-  	        elif k == "scarRevisionCleftLipTomorrowComment":
+                elif k == "scarRevisionCleftLipTomorrowComment":
                     ent_treatment.scarRevisionCleftLipTomorrowComment = str(v)
-  	        elif k == "frenulectomyTomorrowComment":
+                elif k == "frenulectomyTomorrowComment":
                     ent_treatment.frenulectomyTomorrowComment = str(v)
-  	        elif k == "tubesFutureComment":
+                elif k == "tubesFutureComment":
                     ent_treatment.tubesFutureComment = str(v)
-  	        elif k == "tPlastyFutureComment":
+                elif k == "tPlastyFutureComment":
                     ent_treatment.tPlastyFutureComment = str(v)
-  	        elif k == "euaFutureComment":
+                elif k == "euaFutureComment":
                     ent_treatment.euaFutureComment = str(v)
-  	        elif k == "fbRemovalFutureComment":
+                elif k == "fbRemovalFutureComment":
                     ent_treatment.fbRemovalFutureComment = str(v)
-  	        elif k == "middleEarExploreMyringotomyFutureComment":
+                elif k == "middleEarExploreMyringotomyFutureComment":
                     ent_treatment.middleEarExploreMyringotomyFutureComment = str(v)
-  	        elif k == "cerumenFutureComment":
+                elif k == "cerumenFutureComment":
                     ent_treatment.cerumenFutureComment = str(v)
-  	        elif k == "granulomaFutureComment":
+                elif k == "granulomaFutureComment":
                     ent_treatment.granulomaFutureComment = str(v)
-  	        elif k == "septorhinoplastyFutureComment":
+                elif k == "septorhinoplastyFutureComment":
                     ent_treatment.septorhinoplastyFutureComment = str(v)
-  	        elif k == "scarRevisionCleftLipFutureComment":
+                elif k == "scarRevisionCleftLipFutureComment":
                     ent_treatment.scarRevisionCleftLipFutureComment = str(v)
-  	        elif k == "frenulectomyFutureComment":
+                elif k == "frenulectomyFutureComment":
                     ent_treatment.frenulectomyFutureComment = str(v)
-  	        elif k == "comment":
+                elif k == "comment":
                     ent_treatment.comment = str(v)
 
             #ent_treatment = namedtuple("Treatment", data.keys())(*data.values())

@@ -50,7 +50,7 @@ class DentalStateView(APIView):
 
     textFields = [
         "username",
-  	"comment",
+        "comment",
     ]
 
     stateFields = [
@@ -506,7 +506,7 @@ class DentalStateView(APIView):
                     dental_state.surface = self.CSVToSurface(v)
                 elif k == "username":
                     dental_state.username = str(v)
-  	        elif k == "comment":
+                elif k == "comment":
                     dental_state.comment = str(v)
 
             try:
