@@ -1,0 +1,7 @@
+Django>=5.2
+gunicorn
+mysqlclient
+django-registration-redux
+djangorestframework
+requests
+dj-database-url

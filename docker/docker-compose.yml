@@ -1,0 +1,99 @@
+services:
+  traffic-monitor:
+    profiles: ["debug"]
+    image: kaazing/tcpdump
+    container_name: traffic_monitor
+    network_mode: "host"
+    volumes:
+      - ./tcpdump_data:/tcpdump_data
+    command: -i any -w /tcpdump_data/capture.pcap -C 10
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --skip-log-bin --binlog-error-action=IGNORE_ERROR
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 55
+
+  django:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: django_app
+    command: sh -c "python manage.py collectstatic --noinput && gunicorn --timeout 120 --bind 0.0.0.0:8000 tscharts.wsgi:application"
+    volumes:
+      - ..:/app
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: ${MYSQL_DATABASE}
+      DATABASE_USER: ${MYSQL_USER}
+      DATABASE_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_container
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    restart: always
+    networks:
+      - app-network
+    depends_on:
+      - db
+
+  nginx_django:
+    image: nginx:alpine
+    container_name: nginx_django_reverse_proxy
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginxdjangoconfig/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginxdjangocerts/certs/ssl:/etc/nginx/ssl:ro
+      - ..:/app
+    networks:
+      - app-network
+    depends_on:
+      - django
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_reverse_proxy
+    ports:
+      - "8443:443"
+    volumes:
+      - ./nginxconfig/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginxcerts/certs/ssl:/etc/nginx/ssl:ro
+    networks:
+      - app-network
+    depends_on:
+      - phpmyadmin
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge
