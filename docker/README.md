@@ -118,3 +118,10 @@ docker exec django_app python -c "import django; print(django.get_version())"
 
 - Docker and Docker Compose
 - ~25 GB free disk space if restoring a large production dump locally
+
+## License
+
+(C) Copyright Syd Logan 2026  
+(C) Copyright Thousand Smiles Foundation 2026  
+
+Licensed under the Apache License, Version 2.0. See [LICENSE.md](../LICENSE.md).
