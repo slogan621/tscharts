@@ -1,1 +1,22 @@
+# Python
 *.pyc
+__pycache__/
+.venv/
+
+# Local credentials (docker/README: cp .env.example .env)
+.env
+.env.*
+!.env.example
+
+# Database dumps — private data; never commit
+*.sql
+
+# docker compose up --profile debug (traffic-monitor)
+docker/tcpdump_data/*
+!docker/tcpdump_data/.gitkeep
+
+# collectstatic output (STATIC_ROOT)
+static/
+
+# Editor temporaries
+*.swp
