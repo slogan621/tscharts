@@ -26,9 +26,51 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def print_directory_recursive_os_walk(start_path):
+    """
+    Recursively prints all directories and files starting from start_path
+    using os.walk().
+    """
+    print(f"--- Directory tree starting from: {start_path} ---")
+    for root, dirs, files in os.walk(start_path):
+        # Calculate the current indentation level for a tree-like view
+        level = root.replace(start_path, '').count(os.sep)
+        indent = ' ' * 4 * level
+        print(f'{indent}[{os.path.basename(root)}/]')
+
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print(f'{subindent}{f}')
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_ROOT = BASE_DIR / 'static'
+
+import sys
+
+# Define the path to your 'apps' directory
+#APPS_DIR = BASE_DIR / 'app'
+#
+## Insert it into the Python system path
+#sys.path.insert(0, str(APPS_DIR))
+#
+#APPS_DIR = BASE_DIR / 'app/tscharts/'
+#
+## Insert it into the Python system path
+#sys.path.insert(0, str(APPS_DIR))
+
+# Define the path to your 'apps' directory
+APPS_DIR = BASE_DIR / 'tscharts'
+
+# Insert it into the Python system path
+sys.path.insert(0, str(APPS_DIR))
+
+#print_directory_recursive_os_walk(str(BASE_DIR));
 
 CHART_IMAGES_DIR = "/opt/thousandsmiles/images"
 
@@ -36,12 +78,21 @@ CHART_IMAGES_DIR = "/opt/thousandsmiles/images"
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+
 SECRET_KEY = 'rzu40a5v2wc#39&x-959)abrps2w+vb#kq8^m&s=-i%sl2ja0a'
+ROOT_URLCONF = 'tscharts.urls'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+#BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = True
+
+#ALLOWED_HOSTS = ["*"]
 
 REGISTRATION_OPEN = True        # If True, users can register
 ACCOUNT_ACTIVATION_DAYS = 7     # One-week activation window; you may, of course, use a different value.
@@ -50,14 +101,16 @@ LOGIN_REDIRECT_URL = '/'  # The page you want users to arrive at after they succ
 LOGIN_URL = '/accounts/login/'  # The page users are directed to if they are not logged in,
                                 # and are trying to access pages requiring authentication
 # Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'registration',
+    #'django_registration',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'registration',
     'rest_framework',
     'rest_framework.authtoken',
     'clinic.apps.ClinicConfig',
@@ -79,7 +132,7 @@ INSTALLED_APPS = [
     'mexicanstates',
     'patient',
     'pin',
-    'queue',
+    #'queue',  # legacy scheduling — no longer supported
     'register',
     'returntoclinic',
     'returntoclinicstation',
@@ -97,25 +150,43 @@ INSTALLED_APPS = [
     'vaccine',
 ]
 
-MIDDLEWARE_CLASSES = [
+#MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tscharts.urls'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+#CSRF_COOKIE_SECURE = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost",
+    "https://localhost:8000",
+    "http://localhost",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+    # Add other trusted origins here if necessary
+]
+
+#CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    # Add your production domain names here later
+]
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(SITE_ROOT, 'templates'),],
+        #'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,14 +204,29 @@ WSGI_APPLICATION = 'tscharts.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'tscharts',
+#        'USER': 'root',
+#        'PASSWORD': 'tscharts',
+#        'HOST': '',
+#        'PORT': '',
+#        'OPTIONS': {
+#           "init_command": "SET default_storage_engine=MyISAM",
+#           'sql_mode': 'traditional',
+#        }
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tscharts',
-        'USER': 'root',
-        'PASSWORD': 'tscharts',
-        'HOST': '',
-        'PORT': '',
+        'NAME': os.environ.get('DATABASE_NAME', 'tscharts'),
+        'USER': os.environ.get('DATABASE_USER', 'root'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'tscharts'),
+        'HOST': os.environ.get('DATABASE_HOST', 'db'), # Use the service name as the host
+        'PORT': os.environ.get('DATABASE_PORT', '3306'),
         'OPTIONS': {
            "init_command": "SET default_storage_engine=MyISAM",
            'sql_mode': 'traditional',
@@ -192,7 +278,8 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
+       'rest_framework.permissions.IsAuthenticated',
+       #'rest_framework.permissions.IsAdminUser'
     ]
 }
 
@@ -234,3 +321,6 @@ LOGGING = {
         },
     }
 }
+
+# Match restored MySQL schema (int(11) AUTO_INCREMENT primary keys).
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
