@@ -7,11 +7,11 @@ For background and overview on the context in which this project is being develo
 
  * [Registration requirements document](../master/docs/requirements/pdf/registration_requirements_1.2.pdf)
 
-# Development setup
+# Deployment
 
-Run the containerized stack from the `docker/` directory. See
-[docker/README.md](docker/README.md) for prerequisites, bring-up, database
-import, and verification.
+This project is deployed and developed using Docker Compose. See
+[docker/README.md](docker/README.md) for stack setup, database import,
+migrations, and verification.
 
 # API
 
