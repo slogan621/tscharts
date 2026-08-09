@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2021
-#(C) Copyright Thousand Smiles Foundation 2021
+#(C) Copyright Syd Logan 2021-2026
+#(C) Copyright Thousand Smiles Foundation 2021-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -834,7 +834,7 @@ class CreateVaccine(ServiceAPI):
         self._v  = Vaccine()
 
     def setVaccine(self, vaccine):
-        for k, v in vaccine.iteritems():
+        for k, v in vaccine.items():
             self._payload[k] = v
         self.setPayload(self._payload)
 
@@ -904,7 +904,7 @@ class UpdateVaccine(ServiceAPI):
         self._v  = Vaccine()
 
     def setVaccine(self, vaccine):
-        for k, v in vaccine.iteritems():
+        for k, v in vaccine.items():
             self._payload[k] = v
         self.setPayload(self._payload)
 

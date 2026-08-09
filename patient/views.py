@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#(C) Copyright Syd Logan 2016-2022
-#(C) Copyright Thousand Smiles Foundation 2016-2022
+#(C) Copyright Syd Logan 2016-2026
+#(C) Copyright Thousand Smiles Foundation 2016-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -352,7 +352,7 @@ class PatientView(APIView):
 
         optional = ["oldid"]
 
-        for key, val in data.iteritems():
+        for key, val in data.items():
             if not key in required and not key in optional:
                 valid = False
                 break

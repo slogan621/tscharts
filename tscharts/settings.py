@@ -163,6 +163,9 @@ MIDDLEWARE = [
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 
+FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 
+
 #CSRF_COOKIE_SECURE = True
 
 CSRF_TRUSTED_ORIGINS = [
@@ -200,24 +203,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'tscharts.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'tscharts',
-#        'USER': 'root',
-#        'PASSWORD': 'tscharts',
-#        'HOST': '',
-#        'PORT': '',
-#        'OPTIONS': {
-#           "init_command": "SET default_storage_engine=MyISAM",
-#           'sql_mode': 'traditional',
-#        }
-#    }
-#}
 
 DATABASES = {
     'default': {

@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2021
-#(C) Copyright Thousand Smiles Foundation 2021
+#(C) Copyright Syd Logan 2021-2026
+#(C) Copyright Thousand Smiles Foundation 2021-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -228,7 +228,7 @@ class VaccineView(APIView):
         kwargs = data
 
         try:
-            for key, val in data.iteritems():
+            for key, val in data.items():
                 if not (key in self._vaccNames or key in self._vaccDates or key in self._integerNames or key in self._otherFields):
                     LOG.error("validatePostArgs invalid key {}".format(key))
                     return False, kwargs
@@ -288,7 +288,7 @@ class VaccineView(APIView):
         valid = True
 
         try:
-            for key, val in data.iteritems():
+            for key, val in data.items():
                 if not (key in self._vaccNames or key in self._vaccDates or key in self._integerNames or key in self._otherFields or key in self._otherPutFields):
                     LOG.error("validatePutArgs invalid key {}".format(key))
                     return False, vaccine

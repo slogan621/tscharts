@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2021
-#(C) Copyright Thousand Smiles Foundation 2017-2021
+#(C) Copyright Syd Logan 2017-2026
+#(C) Copyright Thousand Smiles Foundation 2017-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ class CreateMedicalHistory(ServiceAPI):
         self.setURL("tscharts/v1/medicalhistory/")
 
     def setMedicalHistory(self, history):
-        for k, v in history.iteritems():
+        for k, v in history.items():
             self._payload[k] = v
         self.setPayload(self._payload)
     
@@ -108,7 +108,7 @@ class UpdateMedicalHistory(ServiceAPI):
         self.setURL("tscharts/v1/medicalhistory/{}/".format(id))
 
     def setMedicalHistory(self, history):
-        for k, v in history.iteritems():
+        for k, v in history.items():
             self._payload[k] = v
         self.setPayload(self._payload)
 

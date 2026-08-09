@@ -1,5 +1,5 @@
-#(C) Copyright Syd Logan 2017-2019
-#(C) Copyright Thousand Smiles Foundation 2017-2019
+#(C) Copyright Syd Logan 2017-2026
+#(C) Copyright Thousand Smiles Foundation 2017-2026
 #
 #Licensed under the Apache License, Version 2.0 (the "License");
 #you may not use this file except in compliance with the License.
@@ -436,7 +436,7 @@ class Scheduler():
 
     def getEmptyQueues(self):
         ret = []
-        for k, v in self._queues.iteritems():
+        for k, v in self._queues.items():
             active = self._clinicStationActiveMap[str(k)]
             finished = self._clinicStationFinishedMap[str(k)]
             away = self._clinicStationAwayMap[str(k)]
@@ -448,7 +448,7 @@ class Scheduler():
         empty = self.getEmptyQueues()
         for x in empty:
             station = self._clinicStationToStationMap[str(x)]
-            for k, v in self._queues.iteritems():
+            for k, v in self._queues.items():
                 active = self._clinicStationActiveMap[str(k)]
                 finished = self._clinicStationFinishedMap[str(k)]
                 away = self._clinicStationAwayMap[str(k)]
@@ -502,7 +502,7 @@ class Scheduler():
         numQueues = 0
         totalWait = datetime.timedelta(seconds=0)
         print("\nClinic queue report time {}\n".format(datetime.datetime.now().strftime("%m/%d/%Y %H:%M:%S")))
-        for k, v in self._queues.iteritems():
+        for k, v in self._queues.items():
             away = self._clinicStationAwayMap[k]
             finished = self._clinicStationFinishedMap[k]
             print("***** Station {} id {} Away {} Finished {} *****".format(self.getClinicStationName(int(k)), k, away, finished))
@@ -973,7 +973,7 @@ class Scheduler():
                             entries = self.findRemovedRoutingSlipEntries(slip)
                             if entries and len(entries) > 0:
                                 for rseId in entries:
-                                    for k, v in self._queues.iteritems():
+                                    for k, v in self._queues.items():
                                         dbQueue = self._dbQueues[k]
                                         for item in v:
                                             qent = item["qent"] 
@@ -1003,7 +1003,7 @@ class Scheduler():
 
             # process queues
 
-            for k, v in self._queues.iteritems():
+            for k, v in self._queues.items():
                 for y in v:
                     ret = y["qent"].update(self)
                     if not ret:
