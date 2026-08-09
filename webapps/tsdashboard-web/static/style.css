@@ -219,11 +219,14 @@ input, select {
 form.inline { display: inline; margin: 0; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
 
-.curp-cell {
+.id-cell, .curp-cell {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   white-space: nowrap;
+}
+.id-num {
+  font-variant-numeric: tabular-nums;
 }
 .curp-short {
   font-family: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, monospace;

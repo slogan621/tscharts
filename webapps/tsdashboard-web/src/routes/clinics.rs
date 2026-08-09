@@ -34,7 +34,7 @@ use crate::clinic_stats::{
     ClinicStats, GenderBucket, PerformanceRanking, RatePace, StartTiming,
 };
 use crate::client::{format_mdy, format_weekday_mdy, Patient, Registration};
-use crate::html::{escape, flash_err, flash_ok, layout};
+use crate::html::{copy_icon_btn, escape, flash_err, flash_ok, layout};
 use crate::session::require_token;
 use crate::AppState;
 
@@ -138,7 +138,7 @@ pub async fn list(
         }
         rows.push_str(&format!(
             r#"<tr>
-              <td><a href="/clinics/{id}">{id}</a></td>
+              <td><span class="id-cell"><a href="/clinics/{id}">{id}</a>{copy}</span></td>
               <td>{loc}</td>
               <td>{start}</td>
               <td>{end}</td>
@@ -148,6 +148,7 @@ pub async fn list(
               <td class="actions">{ops}</td>
             </tr>"#,
             id = c.id,
+            copy = copy_icon_btn(&c.id.to_string(), "Copy clinic ID"),
             loc = escape(&c.place),
             start = format_mdy(c.start),
             end = format_mdy(c.end),
@@ -1458,11 +1459,7 @@ fn curp_cell(curp: &str) -> String {
     format!(
         r#"<span class="curp-cell" title="{full}">
       <code class="curp-short">{short}</code>
-      <button type="button" class="icon-btn" data-copy="{full}" title="Copy full CURP" aria-label="Copy CURP">
-        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-        </svg>
-      </button>
+      {copy}
       <a class="icon-btn curp-lookup" href="{lookup}" target="_blank" rel="noopener noreferrer"
          data-copy="{full}"
          title="Open gob.mx CURP lookup (new tab). CURP is copied — paste into the form to search."
@@ -1474,6 +1471,7 @@ fn curp_cell(curp: &str) -> String {
     </span>"#,
         full = full,
         short = escape(&short),
+        copy = copy_icon_btn(curp, "Copy full CURP"),
         lookup = lookup,
     )
 }

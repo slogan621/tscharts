@@ -80,7 +80,7 @@ pub fn layout(title: &str, body: &str) -> Html {
         btn.classList.add("copied");
         window.setTimeout(() => btn.classList.remove("copied"), 1200);
       }} catch (_err) {{
-        window.prompt("Copy CURP:", text);
+        window.prompt("Copy:", text);
       }}
     }});
   </script>
@@ -97,4 +97,26 @@ pub fn flash_ok(msg: &str) -> String {
 
 pub fn flash_err(msg: &str) -> String {
     format!(r#"<p class="flash err">{}</p>"#, escape(msg))
+}
+
+/// Clipboard copy control (uses global `[data-copy]` handler in [`layout`]).
+pub fn copy_icon_btn(value: &str, label: &str) -> String {
+    let value = escape(value);
+    let label = escape(label);
+    format!(
+        r#"<button type="button" class="icon-btn" data-copy="{value}" title="{label}" aria-label="{label}">
+        <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </svg>
+      </button>"#
+    )
+}
+
+/// Numeric ID with a small copy control beside it.
+pub fn id_with_copy(id: i64, label: &str) -> String {
+    format!(
+        r#"<span class="id-cell"><span class="id-num">{id}</span>{btn}</span>"#,
+        id = id,
+        btn = copy_icon_btn(&id.to_string(), label),
+    )
 }

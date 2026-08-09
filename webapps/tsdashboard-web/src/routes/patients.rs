@@ -21,7 +21,7 @@ use tower_sessions::Session;
 
 use crate::avatar::headshot_img;
 use crate::client::{Patient, TschartsClient};
-use crate::html::{escape, flash_err, flash_ok, layout, Html};
+use crate::html::{escape, flash_err, flash_ok, id_with_copy, layout, Html};
 use crate::session::require_token;
 use crate::AppState;
 
@@ -665,12 +665,13 @@ pub async fn search(
         rows.push_str(&format!(
             r#"<tr>
               <td class="photo-cell">{avatar}</td>
-              <td>{id}</td>
+              <td>{id_cell}</td>
               <td>{name}</td>
               <td>{dob}</td>
               <td><a class="btn" href="/patients/{id}/edit">Edit</a></td>
             </tr>"#,
             avatar = headshot_img(*id, "sm", name.trim()),
+            id_cell = id_with_copy(*id, "Copy patient ID"),
             id = id,
             name = escape(name.trim()),
             dob = escape(&p.dob),
