@@ -19,7 +19,7 @@ docker compose up -d --build
 | Mode | When | `TSCHARTS_BASE_URL` | Notes |
 |------|------|---------------------|--------|
 | **A. Tablet-style HTTPS** | Other host, or same host without joining compose network | `https://<ec2-ip-or-dns>` or `https://host.docker.internal` | Needs firewall allow from this host; set `TSCHARTS_TLS_INSECURE=1` if cert hostname does not match |
-| **B. Internal Docker network** | Same machine as tscharts compose | `http://django_app:8000` | Attach to tscharts network (below); no TLS |
+| **B. Internal Docker network** | Same machine as tscharts compose | `http://django:8000` | Attach to tscharts network (below); no TLS. Use the Compose **service** name `django`, not container name `django_app` (underscores are invalid in HTTP Host / Django `ALLOWED_HOSTS`) |
 
 ### Mode A — like a tablet
 
@@ -45,14 +45,16 @@ docker network ls | grep app-network
 # e.g. docker_app-network
 
 # .env
-TSCHARTS_BASE_URL=http://django_app:8000
+TSCHARTS_BASE_URL=http://django:8000
 TSCHARTS_TLS_INSECURE=0
 TSCHARTS_COMPOSE_NETWORK=docker_app-network
 
 docker compose -f docker-compose.yml -f docker-compose.tscharts-net.yml up -d --build
 ```
 
-Django is reached as service name `django_app` on port 8000 (gunicorn), not via nginx.
+Django is reached as Compose service name `django` on port 8000 (gunicorn), not
+via nginx. Ensure `ALLOWED_HOSTS` includes `django` (or rely on Mode A /
+`host.docker.internal` with Host rewriting).
 
 ## Firewall
 

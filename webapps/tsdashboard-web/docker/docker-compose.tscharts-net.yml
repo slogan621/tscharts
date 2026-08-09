@@ -14,7 +14,9 @@
 #limitations under the License.
 
 # Optional overlay: attach tsdashboard-web to the tscharts Compose network so
-# it can call Django over plain HTTP as http://django_app:8000.
+# it can call Django over plain HTTP as http://django:8000 (Compose service
+# name). Do not use container_name django_app as a hostname — underscores are
+# rejected by Django ALLOWED_HOSTS / HTTP Host rules.
 #
 # Prerequisites:
 #   - tscharts stack already up from tscharts/docker/
@@ -25,7 +27,7 @@
 # Usage:
 #   export TSCHARTS_COMPOSE_NETWORK=docker_app-network
 #   # in .env also set:
-#   #   TSCHARTS_BASE_URL=http://django_app:8000
+#   #   TSCHARTS_BASE_URL=http://django:8000
 #   #   TSCHARTS_TLS_INSECURE=0
 #   docker compose -f docker-compose.yml -f docker-compose.tscharts-net.yml up -d --build
 

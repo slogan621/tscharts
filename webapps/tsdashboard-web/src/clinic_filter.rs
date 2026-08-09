@@ -28,8 +28,8 @@ pub enum ClinicPhase {
 #[derive(Debug, Clone, Serialize)]
 pub struct Clinic {
     pub id: i64,
-    /// Clinic site name (API JSON key is loca + t/i/o/n).
-    #[serde(rename = "loca\u{0074}\u{0069}\u{006f}\u{006e}")]
+    /// Clinic site name. Serialized as API field `location`.
+    #[serde(rename = "location")]
     pub place: String,
     pub start: NaiveDate,
     pub end: NaiveDate,

@@ -20,6 +20,7 @@ mod types;
 pub use types::*;
 
 use anyhow::{anyhow, Context, Result};
+use reqwest::header::AUTHORIZATION;
 use reqwest::{Client, StatusCode};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -28,25 +29,9 @@ use serde_json::{json, Map, Value};
 use crate::clinic_filter::Clinic;
 use crate::config::Config;
 
-/// HTTP header name Authoriza + t/i/o/n (built without a contiguous ASCII run).
-fn hdr_auth() -> String {
-    format!("Authoriza{}\u{0069}\u{006f}\u{006e}", '\u{0074}')
-}
-
-/// JSON/API field loca + t/i/o/n.
-fn key_place() -> String {
-    format!("loca{}\u{0069}\u{006f}\u{006e}", '\u{0074}')
-}
-
-/// Path segment for clinic patient enroll API.
-fn path_enroll() -> String {
-    ['r', 'e', 'g', 'i', 's', 't', 'e', 'r'].iter().collect()
-}
-
-fn bearer(cred: &str) -> String {
-    let mut s: String = ['T', 'o', 'k', 'e', 'n', ' '].iter().collect();
-    s.push_str(cred);
-    s
+/// Django REST framework TokenAuthentication value: `Token <key>`.
+fn token_auth(cred: &str) -> String {
+    format!("Token {cred}")
 }
 
 #[derive(Clone)]
@@ -54,7 +39,7 @@ pub struct TschartsClient {
     http: Client,
     base: String,
     /// When set, sent as HTTP Host so Django ALLOWED_HOSTS / nginx `server_name`
-    /// accept the request (e.g. base URL is host.docker.internal or django_app).
+    /// accept the request (e.g. base URL is host.docker.internal or an IP).
     host_header: Option<String>,
 }
 
@@ -151,7 +136,7 @@ impl TschartsClient {
     pub async fn list_clinics(&self, cred: &str) -> Result<Vec<Clinic>> {
         let resp = self
             .get(self.url("/tscharts/v1/clinic/"))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("list clinics")?;
@@ -162,7 +147,7 @@ impl TschartsClient {
     pub async fn get_clinic(&self, cred: &str, id: i64) -> Result<Clinic> {
         let resp = self
             .get(self.url(&format!("/tscharts/v1/clinic/{id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("get clinic")?;
@@ -177,14 +162,15 @@ impl TschartsClient {
         start: &str,
         end: &str,
     ) -> Result<i64> {
-        let mut map = Map::new();
-        map.insert(key_place(), Value::String(place.to_string()));
-        map.insert("start".into(), Value::String(start.to_string()));
-        map.insert("end".into(), Value::String(end.to_string()));
+        let body = json!({
+            "location": place,
+            "start": start,
+            "end": end,
+        });
         let resp = self
             .post(self.url("/tscharts/v1/clinic/"))
-            .header(hdr_auth(), bearer(cred))
-            .json(&Value::Object(map))
+            .header(AUTHORIZATION, token_auth(cred))
+            .json(&body)
             .send()
             .await
             .context("create clinic")?;
@@ -202,14 +188,15 @@ impl TschartsClient {
         start: &str,
         end: &str,
     ) -> Result<()> {
-        let mut map = Map::new();
-        map.insert(key_place(), Value::String(place.to_string()));
-        map.insert("start".into(), Value::String(start.to_string()));
-        map.insert("end".into(), Value::String(end.to_string()));
+        let body = json!({
+            "location": place,
+            "start": start,
+            "end": end,
+        });
         let resp = self
             .put(self.url(&format!("/tscharts/v1/clinic/{id}/")))
-            .header(hdr_auth(), bearer(cred))
-            .json(&Value::Object(map))
+            .header(AUTHORIZATION, token_auth(cred))
+            .json(&body)
             .send()
             .await
             .context("update clinic")?;
@@ -219,7 +206,7 @@ impl TschartsClient {
     pub async fn delete_clinic(&self, cred: &str, id: i64) -> Result<()> {
         let resp = self
             .delete(self.url(&format!("/tscharts/v1/clinic/{id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("delete clinic")?;
@@ -227,10 +214,11 @@ impl TschartsClient {
     }
 
     pub async fn list_enrollments(&self, cred: &str, clinic_id: i64) -> Result<Vec<Registration>> {
-        let seg = path_enroll();
         let resp = self
-            .get(self.url(&format!("/tscharts/v1/{seg}/?clinic={clinic_id}")))
-            .header(hdr_auth(), bearer(cred))
+            .get(self.url(&format!(
+                "/tscharts/v1/register/?clinic={clinic_id}"
+            )))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("list enrollments")?;
@@ -245,10 +233,11 @@ impl TschartsClient {
         cred: &str,
         patient_id: i64,
     ) -> Result<Vec<Registration>> {
-        let seg = path_enroll();
         let resp = self
-            .get(self.url(&format!("/tscharts/v1/{seg}/?patient={patient_id}")))
-            .header(hdr_auth(), bearer(cred))
+            .get(self.url(&format!(
+                "/tscharts/v1/register/?patient={patient_id}"
+            )))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("list enrollments for patient")?;
@@ -264,11 +253,10 @@ impl TschartsClient {
         clinic_id: i64,
         patient_id: i64,
     ) -> Result<i64> {
-        let seg = path_enroll();
         let body = json!({ "clinic": clinic_id, "patient": patient_id });
         let resp = self
-            .post(self.url(&format!("/tscharts/v1/{seg}/")))
-            .header(hdr_auth(), bearer(cred))
+            .post(self.url("/tscharts/v1/register/"))
+            .header(AUTHORIZATION, token_auth(cred))
             .json(&body)
             .send()
             .await
@@ -285,10 +273,9 @@ impl TschartsClient {
     }
 
     pub async fn delete_enrollment(&self, cred: &str, enroll_id: i64) -> Result<()> {
-        let seg = path_enroll();
         let resp = self
-            .delete(self.url(&format!("/tscharts/v1/{seg}/{enroll_id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .delete(self.url(&format!("/tscharts/v1/register/{enroll_id}/")))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("delete enrollment")?;
@@ -298,7 +285,7 @@ impl TschartsClient {
     pub async fn get_patient(&self, cred: &str, id: i64) -> Result<Patient> {
         let resp = self
             .get(self.url(&format!("/tscharts/v1/patient/{id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("get patient")?;
@@ -322,7 +309,7 @@ impl TschartsClient {
         }
         let resp = self
             .get(url)
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("search patients")?;
@@ -335,7 +322,7 @@ impl TschartsClient {
     pub async fn create_patient(&self, cred: &str, body: &impl Serialize) -> Result<i64> {
         let resp = self
             .post(self.url("/tscharts/v1/patient/"))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .json(body)
             .send()
             .await
@@ -360,7 +347,7 @@ impl TschartsClient {
     ) -> Result<()> {
         let resp = self
             .put(self.url(&format!("/tscharts/v1/patient/{id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .json(body)
             .send()
             .await
@@ -378,7 +365,7 @@ impl TschartsClient {
             .get(self.url(&format!(
                 "/tscharts/v1/image/?patient={patient_id}&type=Headshot&newest=true"
             )))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("get newest headshot")?;
@@ -394,7 +381,7 @@ impl TschartsClient {
             .get(self.url(&format!(
                 "/tscharts/v1/image/?patient={patient_id}&type=Headshot&sort=true"
             )))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("list headshots")?;
@@ -420,7 +407,7 @@ impl TschartsClient {
         }
         let resp = self
             .post(self.url("/tscharts/v1/image/"))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .json(&Value::Object(map))
             .send()
             .await
@@ -434,7 +421,7 @@ impl TschartsClient {
     pub async fn delete_image(&self, cred: &str, image_id: i64) -> Result<()> {
         let resp = self
             .delete(self.url(&format!("/tscharts/v1/image/{image_id}/")))
-            .header(hdr_auth(), bearer(cred))
+            .header(AUTHORIZATION, token_auth(cred))
             .send()
             .await
             .context("delete image")?;

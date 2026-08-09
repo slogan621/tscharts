@@ -94,7 +94,8 @@ pub struct LoginResponse {
 #[derive(Debug, Deserialize)]
 pub struct ClinicDto {
     pub id: i64,
-    #[serde(rename = "loca\u{0074}\u{0069}\u{006f}\u{006e}")]
+    /// API JSON field is `location`; Rust/UI use `place` (clinic site name).
+    #[serde(rename = "location")]
     pub place: String,
     pub start: String,
     pub end: String,

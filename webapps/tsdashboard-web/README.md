@@ -59,7 +59,7 @@ docker compose up -d --build
 ```
 
 Modes: tablet-style HTTPS to the API, or optional join of the tscharts Docker
-network for `http://django_app:8000`.
+network for `http://django:8000` (Compose service name).
 
 ## Layout
 
