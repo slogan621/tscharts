@@ -1,0 +1,28 @@
+[package]
+name = "tsdashboard-web"
+version = "0.1.0"
+edition = "2021"
+description = "Thousand Smiles clinic ops web dashboard (Rust/Axum)"
+license = "Apache-2.0"
+
+[dependencies]
+anyhow = "1"
+axum = { version = "0.7", features = ["form", "macros", "multipart"] }
+base64 = "0.22"
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+futures = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.5", features = ["fs", "trace"] }
+tower-sessions = "0.13"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+urlencoding = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }

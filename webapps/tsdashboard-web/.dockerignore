@@ -1,0 +1,5 @@
+target
+.env
+.git
+**/*.swp
+docker/.env

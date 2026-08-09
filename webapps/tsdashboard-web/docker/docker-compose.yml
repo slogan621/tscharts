@@ -1,0 +1,47 @@
+#(C) Copyright Syd Logan 2026
+#(C) Copyright Thousand Smiles Foundation 2026
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#
+#You may obtain a copy of the License at
+#http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+
+# Standalone clinic-ops dashboard. Not part of tscharts/docker/docker-compose.yml.
+#
+# From this directory:
+#   cp .env.example .env   # edit TSCHARTS_BASE_URL
+#   docker compose up -d --build
+#
+# Optional: join the running tscharts Compose network for internal HTTP:
+#   docker compose -f docker-compose.yml -f docker-compose.tscharts-net.yml up -d
+# (see docker-compose.tscharts-net.yml and README.md)
+
+services:
+  tsdashboard-web:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: tsdashboard-web:local
+    container_name: tsdashboard_web
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      TSCHARTS_BASE_URL: ${TSCHARTS_BASE_URL:-https://127.0.0.1}
+      TSCHARTS_TLS_INSECURE: ${TSCHARTS_TLS_INSECURE:-0}
+      LISTEN_ADDR: 0.0.0.0:3000
+      STATIC_DIR: /app/static
+      RUST_LOG: ${RUST_LOG:-info}
+    # Default: bridge network, reach API like a tablet (host IP / public URL).
+    # For same-host tscharts via published 443, use host.docker.internal or the
+    # EC2 private/public IP in TSCHARTS_BASE_URL — 127.0.0.1 inside the
+    # container is the container itself, not the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
