@@ -14,9 +14,11 @@ __pycache__/
 # docker compose up --profile debug (traffic-monitor)
 docker/tcpdump_data/*
 !docker/tcpdump_data/.gitkeep
+*.pcap
 
-# collectstatic output (STATIC_ROOT)
-static/
+# Django collectstatic output (STATIC_ROOT) — do not ignore webapps/*/static/
+/static/
+/staticfiles/
 
 # Editor temporaries
 *.swp
