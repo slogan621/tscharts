@@ -157,6 +157,75 @@ class ClinicView(APIView):
             return HttpResponseServerError() 
         else:
             return Response({'id': clinic.id})
+
+    @log_request
+    def put(self, request, clinic_id=None, format=None):
+        """Update an existing clinic's location and date range."""
+        badRequest = False
+        implError = False
+        notFound = False
+        conflict = False
+
+        if not clinic_id:
+            return HttpResponseBadRequest()
+
+        try:
+            clinic = Clinic.objects.get(id=clinic_id)
+        except Clinic.DoesNotExist:
+            clinic = None
+            notFound = True
+        except Exception:
+            clinic = None
+            implError = True
+
+        data = {}
+        if not notFound and not implError:
+            try:
+                data = json.loads(request.body)
+            except Exception:
+                badRequest = True
+
+        location = None
+        start = None
+        end = None
+        if not badRequest and not notFound and not implError:
+            try:
+                location = data["location"]
+                start = datetime.strptime(data["start"], "%m/%d/%Y").date()
+                end = datetime.strptime(data["end"], "%m/%d/%Y").date()
+            except Exception:
+                badRequest = True
+
+        if not badRequest and not notFound and not implError:
+            if end < start:
+                badRequest = True
+
+        if not badRequest and not notFound and not implError:
+            # Reject updates that would share any day with another clinic.
+            others = Clinic.objects.exclude(id=clinic_id)
+            for other in others:
+                if start <= other.end and end >= other.start:
+                    conflict = True
+                    break
+
+        if not badRequest and not notFound and not implError and not conflict:
+            try:
+                clinic.location = location
+                clinic.start = start
+                clinic.end = end
+                clinic.save()
+            except Exception:
+                implError = True
+
+        if badRequest:
+            return HttpResponseBadRequest()
+        if notFound:
+            return HttpResponseNotFound()
+        if conflict:
+            return HttpResponse(status=409, reason="Clinic dates overlap an existing clinic")
+        if implError:
+            return HttpResponseServerError()
+        return Response({"id": clinic.id})
        
     @log_request 
     def delete(self, request, clinic_id=None, format=None):
