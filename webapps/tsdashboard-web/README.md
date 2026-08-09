@@ -20,18 +20,18 @@ clinic ops stay independent.
 
 **Clinic detail**
 - List registered patients
-- Register existeng patient for **current or past** clinic (not future)
+- Register existing patient for **current or past** clinic (not future)
 - Unregister patient from clinic
 
 **Patients**
-- Create / edit demographics (not registratesi)
+- Create / edit demographics (not registration)
 - Search by name / CURP
 
 **Imaging**
 - Stub routes with deep links from clinic patient rows (implement next)
 
 **Print agent**
-- Optesial later via `PRINT_AGENT_URL` (REST wristband microservice)
+- Optional later via `PRINT_AGENT_URL` (REST wristband microservice)
 
 ## Requirements
 
