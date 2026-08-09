@@ -60,6 +60,18 @@ DUMP_FILE=/secure/path/outside-repo/tscharts-dump.sql ./scripts/import-db-exclud
 See `scripts/import-db-excluding-logs.sh` for how to produce a suitable `mysqldump`.
 Scripts read MySQL credentials from `docker/.env` via the running container.
 
+A dump alone does **not** restore patient headshots or X-ray files. After import,
+copy the legacy image tree into the `chart_images` volume — see
+[Patient images (headshots and X-rays)](#patient-images-headshots-and-x-rays).
+
+To produce a smaller dump **before** copying it to another host (same log tables
+omitted, no Docker required):
+
+```bash
+./scripts/filter-db-dump-to-file.sh /path/to/db-8.sql
+# writes /path/to/db-8-filtered.sql — then scp that file instead
+```
+
 **Why import + fake?** The dump already contains table definitions and data. The
 `django_migrations` table in an older backup may not match Django 5.2 or the
 migration files in this repo. `fake-initial-migrate.sh`:
@@ -107,6 +119,108 @@ existing schema you applied by hand.
 
 **Do not** run `fake-initial-migrate.sh` on a database that was built with
 `migrate` on an empty DB; it is only for post-restore alignment.
+
+## Patient images (headshots and X-rays)
+
+A SQL dump restores `image_image` rows (metadata: patient id, type, path uuid,
+timestamps) but **not** the image files themselves. Those live on disk under
+Django’s `CHART_IMAGES_DIR` (default `/opt/thousandsmiles/images`).
+
+Layout on the legacy host (and inside the container after migration):
+
+```text
+/opt/thousandsmiles/images/{patient_id}/{path}
+```
+
+`path` is the uuid stored in `image_image.path`. Headshots use `imagetype='h'`;
+X-rays use `imagetype='x'`. Without the files, the image API returns empty data
+even when the database has thousands of rows.
+
+### Docker volume
+
+The `django` service mounts a named volume `chart_images` at
+`/opt/thousandsmiles/images`. Docker creates it on first `compose up`. It
+persists across container restarts and `docker compose down`, but is removed by
+`docker compose down -v` (same caveat as `db_data`).
+
+```bash
+docker volume ls | grep chart_images
+# typically: docker_chart_images  (project directory name + "_chart_images")
+```
+
+### Migrate files from a legacy / existing deployment
+
+Do this after the stack is up (so the volume exists) and preferably after the
+database restore so patient ids match.
+
+1. **On the legacy host**, confirm the tree and approximate size:
+
+   ```bash
+   sudo ls /opt/thousandsmiles/images | head
+   sudo du -sh /opt/thousandsmiles/images
+   ```
+
+2. **Copy to a staging directory on the new host** (example with `rsync`):
+
+   ```bash
+   # on the new Docker host
+   mkdir -p /tmp/ts-images
+   rsync -aH --info=progress2 \
+     USER@LEGACY_HOST:/opt/thousandsmiles/images/ \
+     /tmp/ts-images/
+   ```
+
+   Preserve directory structure (`patient_id` folders and uuid filenames). Do not
+   commit these files to git; they are private patient data.
+
+3. **Load the staging tree into the `chart_images` volume** (from this `docker/`
+   directory):
+
+   ```bash
+   VOLUME=$(docker volume ls -q | grep chart_images | head -1)
+   docker run --rm \
+     -v "${VOLUME}:/dest" \
+     -v /tmp/ts-images:/src:ro \
+     alpine cp -a /src/. /dest/
+   ```
+
+4. **Verify inside the Django container**:
+
+   ```bash
+   docker exec django_app ls /opt/thousandsmiles/images | head
+   # pick a patient_id that has a headshot row in image_image:
+   docker exec django_app ls "/opt/thousandsmiles/images/<patient_id>" | head
+   ```
+
+   Optionally compare counts: number of headshot files on disk vs
+   `SELECT COUNT(*) FROM image_image WHERE imagetype='h';` (counts need not match
+   exactly if some historical files were pruned, but a large gap usually means
+   the copy was incomplete).
+
+5. **Smoke-test the API** (after login; use a patient that has a headshot):
+
+   ```bash
+   curl -sk -H "Authorization: Token $TOKEN" \
+     "https://localhost/tscharts/v1/image/?patient=<patient_id>&type=Headshot&newest=true"
+   ```
+
+   A successful response includes image metadata and base64 `data` when the file
+   is present. Empty or missing `data` usually means the file was not copied.
+
+### Alternative: bind-mount a host directory
+
+If you prefer to `rsync` directly to a host path (for example on EC2), replace
+the named volume in `docker-compose.yml` with a bind mount:
+
+```yaml
+# under django.volumes — instead of chart_images:/opt/thousandsmiles/images
+- /opt/thousandsmiles/images:/opt/thousandsmiles/images
+```
+
+Create the host directory, copy files there with `rsync`, then recreate the
+Django service. Path inside the container must remain
+`/opt/thousandsmiles/images` unless you also change `CHART_IMAGES_DIR` in
+settings.
 
 ## End-to-end bring-up and verification
 

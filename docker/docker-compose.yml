@@ -54,6 +54,9 @@ services:
     command: sh -c "python manage.py collectstatic --noinput && gunicorn --timeout 120 --bind 0.0.0.0:8000 tscharts.wsgi:application"
     volumes:
       - ..:/app
+      # Patient headshots / X-rays (settings.CHART_IMAGES_DIR). Persists across
+      # container restarts; survives `docker compose down` (not `down -v`).
+      - chart_images:/opt/thousandsmiles/images
     environment:
       DATABASE_HOST: db
       DATABASE_NAME: ${MYSQL_DATABASE}
@@ -108,6 +111,7 @@ services:
 
 volumes:
   db_data:
+  chart_images:
 
 networks:
   app-network:
