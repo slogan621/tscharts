@@ -163,8 +163,10 @@ MIDDLEWARE = [
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 
+# Allow large tablet uploads (e.g. base64 images). Keep in sync with
+# client_max_body_size in docker/nginxdjangoconfig/nginx/conf.d/default.conf.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MiB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MiB
 
 #CSRF_COOKIE_SECURE = True
 
