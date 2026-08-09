@@ -55,17 +55,47 @@ def filter_sql(lines):
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print(f"usage: {sys.argv[0]} dump.sql", file=sys.stderr)
+    if len(sys.argv) not in (2, 3):
+        print(
+            f"usage: {sys.argv[0]} dump.sql [filtered.sql]",
+            file=sys.stderr,
+        )
+        print(
+            "  With one argument, writes filtered SQL to stdout.",
+            file=sys.stderr,
+        )
+        print(
+            "  With two arguments, writes filtered SQL to filtered.sql.",
+            file=sys.stderr,
+        )
         return 1
+
+    src = sys.argv[1]
+    dest = sys.argv[2] if len(sys.argv) == 3 else None
 
     print(
         f"# Skipping log tables: {', '.join(sorted(SKIP_TABLES))}",
         file=sys.stderr,
     )
 
-    with open(sys.argv[1], "r", encoding="utf-8", errors="replace") as infile:
-        sys.stdout.writelines(filter_sql(infile))
+    with open(src, "r", encoding="utf-8", errors="replace") as infile:
+        if dest is None:
+            sys.stdout.writelines(filter_sql(infile))
+        else:
+            written = 0
+            last_report = 0
+            report_every = 256 * 1024 * 1024
+            with open(dest, "w", encoding="utf-8") as outfile:
+                for line in filter_sql(infile):
+                    outfile.write(line)
+                    written += len(line)
+                    if written - last_report >= report_every:
+                        print(
+                            f"# wrote ~{written // (1024 * 1024)} MiB ...",
+                            file=sys.stderr,
+                        )
+                        last_report = written
+            print(f"# done: {dest} (~{written // (1024 * 1024)} MiB)", file=sys.stderr)
 
     return 0
 
