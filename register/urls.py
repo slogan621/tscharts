@@ -18,5 +18,5 @@ from register.views import RegisterView
 
 urlpatterns = [
     re_path(r'^$', RegisterView.as_view()),
-    re_path(r'^([0-9]+)/$', RegisterView.as_view()),
+    re_path(r'^(?P<register_id>[0-9]+)/$', RegisterView.as_view()),
 ]
