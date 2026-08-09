@@ -1216,7 +1216,7 @@ pub async fn detail(
               <td class="actions">
                 <a class="btn" href="/patients/{pid}/edit">Edit</a>
                 <a class="btn" href="/imaging/clinic/{cid}/patient/{pid}">X-rays</a>
-                <form class="inline" method="post" {attr}="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
+                <form class="inline" method="post" action="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
                   <button type="submit" class="btn danger">Unregister</button>
                 </form>
               </td>
@@ -1230,7 +1230,6 @@ pub async fn detail(
                 curp = curp_cell(&patient.curp),
                 cid = id,
                 rid = r.id,
-                attr = "act\u{0074}\u{0069}\u{006f}\u{006e}",
             ));
         }
         if rows.is_empty() {
@@ -1370,7 +1369,7 @@ pub async fn detail(
               <td>{curp}</td>
               <td class="actions">
                 <a class="btn" href="/patients/{pid}/edit">Edit</a>
-                <form class="inline" method="post" {attr}="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
+                <form class="inline" method="post" action="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
                   <button type="submit" class="btn danger">Unregister</button>
                 </form>
               </td>
@@ -1384,7 +1383,6 @@ pub async fn detail(
                 curp = curp_cell(&patient.curp),
                 cid = id,
                 rid = r.id,
-                attr = "act\u{0074}\u{0069}\u{006f}\u{006e}",
             ));
         }
         outside_section = format!(

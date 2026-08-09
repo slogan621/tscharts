@@ -26,13 +26,13 @@ use axum::Router;
 use crate::AppState;
 
 pub fn router() -> Router<AppState> {
+    // More specific /clinics/:id/... routes before /clinics/:id.
     Router::new()
         .route("/", get(clinics::home))
         .route("/login", get(login::login_form).post(login::login_submit))
         .route("/logout", get(login::logout))
         .route("/clinics", get(clinics::list))
         .route("/clinics/new", get(clinics::new_form).post(clinics::create))
-        .route("/clinics/:id", get(clinics::detail))
         .route("/clinics/:id/stats", get(clinics::stats))
         .route(
             "/clinics/:id/edit",
@@ -44,9 +44,10 @@ pub fn router() -> Router<AppState> {
             get(register::register_form).post(register::register_submit),
         )
         .route(
-            "/clinics/:clinic_id/unregister/:register_id",
+            "/clinics/:id/unregister/:register_id",
             post(register::unregister),
         )
+        .route("/clinics/:id", get(clinics::detail))
         .route("/patients/new", get(patients::new_form).post(patients::create))
         .route("/patients/match-check", get(patients::match_check))
         .route(

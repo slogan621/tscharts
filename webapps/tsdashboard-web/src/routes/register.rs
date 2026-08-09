@@ -117,6 +117,12 @@ pub async fn unregister(
         .api
         .delete_enrollment(&token, register_id)
         .await
-        .map_err(|e| layout("Error", &flash_err(&e.to_string())).into_response())?;
+        .map_err(|e| {
+            Redirect::to(&format!(
+                "/clinics/{clinic_id}?err={}",
+                urlencoding::encode(&e.to_string())
+            ))
+            .into_response()
+        })?;
     Ok(Redirect::to(&format!("/clinics/{clinic_id}?msg=Unregistered")).into_response())
 }
