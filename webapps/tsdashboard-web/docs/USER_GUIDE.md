@@ -127,15 +127,20 @@ The same patient can appear on multiple days if they checked in more than once
 counts use **unique patients**, so multi-day re-check-ins are not double-counted
 for boys/girls.
 
-### Outside clinic dates
+### Outside clinic dates and All
 
 If someone was enrolled when the check-in timestamp fell **before start or after
-end** (common when staff use Clinic Ops between events), those rows appear under
-**Outside clinic dates**.
+end** (common when staff use Clinic Ops on a **past** clinic between events),
+those rows appear in an **Outside clinic dates** tab to the right of the
+clinic-day tabs (only shown when such enrollments exist).
 
-- They remain visible so you can edit or unregister them.  
-- They are **excluded** from day tabs, header summary counts, and **Stats**
-  ranking — they do not represent day-of clinic performance.
+When there is more than one day tab, or an outside tab, an **All** tab lists
+every enrollment for the clinic (clinic-day and outside). Outside rows are
+marked in that list.
+
+- Outside enrollments remain visible so you can edit or unregister them.  
+- Header summary counts and **Stats** use **clinic-day check-ins only** — outside
+  enrollments do not affect rankings or boys/girls/unique totals.
 
 ---
 
@@ -211,8 +216,8 @@ For a **past** or **current** clinic you may **Register patient** by patient ID
 Be aware:
 
 - Check-in time is recorded as **now**.  
-- If “now” is outside the clinic’s start–end dates, the enrollment appears under
-  **Outside clinic dates** and is excluded from Stats.  
+- If “now” is outside the clinic’s start–end dates, the enrollment appears in the
+  **Outside clinic dates** tab (and in **All**) and is excluded from Stats.  
 - Prefer registering on a real clinic day when performance metrics matter; use
   between-clinic enrollments for roster correctness, not for inflating daily
   rankings.
@@ -288,7 +293,7 @@ imaging tools until this section is enabled.
 | Remove a bad enrollment | Row → **Unregister** |
 | Find someone by CURP | **Find patient** |
 | Review day performance | Clinic → **Stats** → day tab |
-| See admin enrollments after clinic | Clinic → **Outside clinic dates** |
+| See admin enrollments after clinic | Clinic → **Outside clinic dates** tab |
 
 ---
 

@@ -71,16 +71,33 @@ pub fn layout(title: &str, body: &str) -> Html {
     {body}
   </main>
   <script>
+    async function copyText(text) {{
+      if (navigator.clipboard && window.isSecureContext) {{
+        await navigator.clipboard.writeText(text);
+        return;
+      }}
+      // Fallback for plain HTTP / older browsers — no dialog.
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;left:-9999px;top:0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      if (!ok) throw new Error("copy failed");
+    }}
     document.addEventListener("click", async (event) => {{
       const btn = event.target.closest("[data-copy]");
       if (!btn) return;
       const text = btn.getAttribute("data-copy") || "";
       try {{
-        await navigator.clipboard.writeText(text);
+        await copyText(text);
         btn.classList.add("copied");
         window.setTimeout(() => btn.classList.remove("copied"), 1200);
       }} catch (_err) {{
-        window.prompt("Copy:", text);
+        // Keep UI quiet if the browser blocks clipboard access.
       }}
     }});
   </script>

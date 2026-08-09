@@ -287,6 +287,9 @@ td.num { font-variant-numeric: tabular-nums; text-align: right; }
   color: var(--accent-ink);
   font-weight: 650;
 }
+.day-tab-outside:not(.active) {
+  border-style: dashed;
+}
 .day-tab-count {
   display: inline-block;
   margin-left: 0.25rem;

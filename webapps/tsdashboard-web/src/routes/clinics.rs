@@ -1259,24 +1259,206 @@ pub async fn detail(
         ));
     }
 
-    let day_section = if regs.is_empty() {
+    // Outside-window enrollments (typical after a past clinic ends): after day tabs.
+    let has_outside = !outside_regs.is_empty();
+    let in_window_ids: HashSet<i64> = regs.iter().map(|r| r.id).collect();
+    if has_outside {
+        let idx = day_keys.len();
+        let selected = day_keys.is_empty(); // only tab when there are no clinic-day tabs
+        let outside_unique = {
+            let mut s = HashSet::new();
+            for r in &outside_regs {
+                s.insert(r.patient);
+            }
+            s.len()
+        };
+        tabs.push_str(&format!(
+            r#"<button type="button" class="day-tab day-tab-outside{active}" role="tab" aria-selected="{sel}" aria-controls="day-panel-{idx}" id="day-tab-{idx}" data-day-tab="{idx}">Outside clinic dates <span class="day-tab-count">{n}</span></button>"#,
+            active = if selected { " active" } else { "" },
+            sel = if selected { "true" } else { "false" },
+            idx = idx,
+            n = outside_regs.len(),
+        ));
+        let mut rows = String::new();
+        for r in &outside_regs {
+            let patient = patients.get(&r.patient).cloned().unwrap_or_else(|| Patient {
+                id: Some(r.patient),
+                first: "(missing)".into(),
+                ..Patient::default()
+            });
+            let name = format!(
+                "{} {} {}",
+                patient.first, patient.paternal_last, patient.maternal_last
+            );
+            let when = r
+                .timein
+                .as_deref()
+                .and_then(parse_timein)
+                .map(|dt| dt.format("%m/%d/%Y %H:%M").to_string())
+                .unwrap_or_else(|| "—".into());
+            rows.push_str(&format!(
+                r#"<tr>
+              <td class="photo-cell">{avatar}</td>
+              <td>{pid}</td>
+              <td>{name}</td>
+              <td>{when}</td>
+              <td>{dob}</td>
+              <td>{gender}</td>
+              <td>{curp}</td>
+              <td class="actions">
+                <a class="btn" href="/patients/{pid}/edit">Edit</a>
+                <a class="btn" href="/imaging/clinic/{cid}/patient/{pid}">X-rays</a>
+                <form class="inline" method="post" action="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
+                  <button type="submit" class="btn danger">Unregister</button>
+                </form>
+              </td>
+            </tr>"#,
+                avatar = headshot_img(r.patient, "sm", name.trim()),
+                pid = r.patient,
+                name = escape(name.trim()),
+                when = escape(&when),
+                dob = escape(&patient.dob),
+                gender = escape(&patient.gender),
+                curp = curp_cell(&patient.curp),
+                cid = id,
+                rid = r.id,
+            ));
+        }
+        panels.push_str(&format!(
+            r#"<div class="day-panel{hidden}" role="tabpanel" id="day-panel-{idx}" aria-labelledby="day-tab-{idx}" data-day-panel="{idx}"{hidden_attr}>
+      <p class="muted">Check-in before {start} or after {end} (usually admin enroll after a past clinic). Excluded from summary counts and Stats. {checkins} enrollment{checkins_s} · {unique} unique patient{unique_s}.</p>
+      <table>
+        <thead><tr><th></th><th>Patient ID</th><th>Name</th><th>Check-in</th><th>DOB</th><th>Gender</th><th>CURP</th><th></th></tr></thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>"#,
+            hidden = if selected { "" } else { " is-hidden" },
+            hidden_attr = if selected {
+                ""
+            } else {
+                " hidden"
+            },
+            idx = idx,
+            start = escape(&format_mdy(clinic.start)),
+            end = escape(&format_mdy(clinic.end)),
+            checkins = outside_regs.len(),
+            checkins_s = if outside_regs.len() == 1 { "" } else { "s" },
+            unique = outside_unique,
+            unique_s = if outside_unique == 1 { "" } else { "s" },
+            rows = rows,
+        ));
+    }
+
+    // All enrollments (clinic days + outside). Shown when there is more than one view.
+    let show_all_tab = !all_regs.is_empty() && (day_keys.len() > 1 || has_outside);
+    if show_all_tab {
+        let idx = day_keys.len() + usize::from(has_outside);
+        let all_unique = {
+            let mut s = HashSet::new();
+            for r in &all_regs {
+                s.insert(r.patient);
+            }
+            s.len()
+        };
+        tabs.push_str(&format!(
+            r#"<button type="button" class="day-tab day-tab-all" role="tab" aria-selected="false" aria-controls="day-panel-{idx}" id="day-tab-{idx}" data-day-tab="{idx}">All <span class="day-tab-count">{n}</span></button>"#,
+            idx = idx,
+            n = all_regs.len(),
+        ));
+        let mut rows = String::new();
+        for r in &all_regs {
+            let patient = patients.get(&r.patient).cloned().unwrap_or_else(|| Patient {
+                id: Some(r.patient),
+                first: "(missing)".into(),
+                ..Patient::default()
+            });
+            let name = format!(
+                "{} {} {}",
+                patient.first, patient.paternal_last, patient.maternal_last
+            );
+            let when = r
+                .timein
+                .as_deref()
+                .and_then(parse_timein)
+                .map(|dt| dt.format("%m/%d/%Y %H:%M").to_string())
+                .unwrap_or_else(|| "—".into());
+            let outside_mark = if in_window_ids.contains(&r.id) {
+                String::new()
+            } else {
+                r#" <span class="badge past" title="Outside clinic dates">outside</span>"#.into()
+            };
+            rows.push_str(&format!(
+                r#"<tr>
+              <td class="photo-cell">{avatar}</td>
+              <td>{pid}</td>
+              <td>{name}{outside_mark}</td>
+              <td>{when}</td>
+              <td>{dob}</td>
+              <td>{gender}</td>
+              <td>{curp}</td>
+              <td class="actions">
+                <a class="btn" href="/patients/{pid}/edit">Edit</a>
+                <a class="btn" href="/imaging/clinic/{cid}/patient/{pid}">X-rays</a>
+                <form class="inline" method="post" action="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
+                  <button type="submit" class="btn danger">Unregister</button>
+                </form>
+              </td>
+            </tr>"#,
+                avatar = headshot_img(r.patient, "sm", name.trim()),
+                pid = r.patient,
+                name = escape(name.trim()),
+                outside_mark = outside_mark,
+                when = escape(&when),
+                dob = escape(&patient.dob),
+                gender = escape(&patient.gender),
+                curp = curp_cell(&patient.curp),
+                cid = id,
+                rid = r.id,
+            ));
+        }
+        panels.push_str(&format!(
+            r#"<div class="day-panel is-hidden" role="tabpanel" id="day-panel-{idx}" aria-labelledby="day-tab-{idx}" data-day-panel="{idx}" hidden>
+      <p class="muted">Every enrollment for this clinic. Header counts and <a href="/clinics/{cid}/stats">Stats</a> use clinic-day check-ins only ({in_window} of {total}); outside rows are marked and excluded from rankings. {unique} unique patient{unique_s}.</p>
+      <table>
+        <thead><tr><th></th><th>Patient ID</th><th>Name</th><th>Check-in</th><th>DOB</th><th>Gender</th><th>CURP</th><th></th></tr></thead>
+        <tbody>{rows}</tbody>
+      </table>
+    </div>"#,
+            idx = idx,
+            cid = id,
+            in_window = regs.len(),
+            total = all_regs.len(),
+            unique = all_unique,
+            unique_s = if all_unique == 1 { "" } else { "s" },
+            rows = rows,
+        ));
+    }
+
+    // Tabs when multiple clinic days, outside-dates, and/or All is present.
+    let use_tabs = day_keys.len() > 1 || has_outside;
+    let day_section = if regs.is_empty() && !has_outside {
         r#"<h2>Registered patients</h2>
     <table>
       <thead><tr><th></th><th>Patient ID</th><th>Name</th><th>Time</th><th>DOB</th><th>Gender</th><th>CURP</th><th></th></tr></thead>
       <tbody><tr><td colspan="8">No patients registered.</td></tr></tbody>
     </table>"#
             .into()
-    } else if day_keys.len() <= 1 {
-        // Single day: no tab chrome.
+    } else if !use_tabs {
+        // Single in-window day and no outside enrollments: no tab chrome.
         format!(
             r#"<h2>Registered patients</h2>
     {panels}"#,
             panels = panels
         )
     } else {
+        let heading = if day_keys.is_empty() {
+            "Registered patients"
+        } else {
+            "Registered patients by day"
+        };
         format!(
-            r#"<h2>Registered patients by day</h2>
-    <div class="day-tabs" role="tablist" aria-label="Clinic days">{tabs}</div>
+            r#"<h2>{heading}</h2>
+    <div class="day-tabs" role="tablist" aria-label="Clinic registration days">{tabs}</div>
     {panels}
     <script>
     (() => {{
@@ -1297,6 +1479,7 @@ pub async fn detail(
       tabs.forEach((t) => t.addEventListener("click", () => activate(t.getAttribute("data-day-tab"))));
     }})();
     </script>"#,
+            heading = heading,
             tabs = tabs,
             panels = panels
         )
@@ -1335,69 +1518,11 @@ pub async fn detail(
         String::new()
     } else {
         format!(
-            r#"<p class="flash warn">{n} enrollment{s} outside the clinic dates are listed below and excluded from day tabs and summary counts.</p>"#,
+            r#"<p class="flash warn">{n} enrollment{s} outside the clinic dates are in the <strong>Outside clinic dates</strong> tab (also listed under <strong>All</strong>) and excluded from summary counts and Stats.</p>"#,
             n = outside_regs.len(),
             s = if outside_regs.len() == 1 { "" } else { "s" },
         )
     };
-    let mut outside_section = String::new();
-    if !outside_regs.is_empty() {
-        let mut rows = String::new();
-        for r in &outside_regs {
-            let patient = patients.get(&r.patient).cloned().unwrap_or_else(|| Patient {
-                id: Some(r.patient),
-                first: "(missing)".into(),
-                ..Patient::default()
-            });
-            let name = format!(
-                "{} {} {}",
-                patient.first, patient.paternal_last, patient.maternal_last
-            );
-            let when = r
-                .timein
-                .as_deref()
-                .and_then(parse_timein)
-                .map(|dt| dt.format("%m/%d/%Y %H:%M").to_string())
-                .unwrap_or_else(|| "—".into());
-            rows.push_str(&format!(
-                r#"<tr>
-              <td class="photo-cell">{avatar}</td>
-              <td>{pid}</td>
-              <td>{name}</td>
-              <td>{when}</td>
-              <td>{dob}</td>
-              <td>{gender}</td>
-              <td>{curp}</td>
-              <td class="actions">
-                <a class="btn" href="/patients/{pid}/edit">Edit</a>
-                <form class="inline" method="post" action="/clinics/{cid}/unregister/{rid}" onsubmit="return confirm('Unregister this patient?');">
-                  <button type="submit" class="btn danger">Unregister</button>
-                </form>
-              </td>
-            </tr>"#,
-                avatar = headshot_img(r.patient, "sm", name.trim()),
-                pid = r.patient,
-                name = escape(name.trim()),
-                when = escape(&when),
-                dob = escape(&patient.dob),
-                gender = escape(&patient.gender),
-                curp = curp_cell(&patient.curp),
-                cid = id,
-                rid = r.id,
-            ));
-        }
-        outside_section = format!(
-            r#"<h2>Outside clinic dates</h2>
-    <p class="muted">Enrollments with check-in times before {start} or after {end} (often made between clinics). Not used for performance stats.</p>
-    <table>
-      <thead><tr><th></th><th>Patient ID</th><th>Name</th><th>Check-in</th><th>DOB</th><th>Gender</th><th>CURP</th><th></th></tr></thead>
-      <tbody>{rows}</tbody>
-    </table>"#,
-            start = escape(&format_mdy(clinic.start)),
-            end = escape(&format_mdy(clinic.end)),
-            rows = rows,
-        );
-    }
 
     let body = format!(
         r#"
@@ -1419,7 +1544,6 @@ pub async fn detail(
       <a class="btn" href="/clinics">Back to clinics</a>
     </div>
     {day_section}
-    {outside_section}
     "#,
         id = id,
         loc = escape(&loc),
@@ -1431,7 +1555,6 @@ pub async fn detail(
         checkins = regs.len(),
         register_link = register_link,
         day_section = day_section,
-        outside_section = outside_section,
     );
 
     Ok(layout("Clinic", &body).into_response())
