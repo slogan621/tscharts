@@ -17,7 +17,12 @@
 #
 # From this directory:
 #   cp .env.example .env   # edit TSCHARTS_BASE_URL
+#   ./gen-cert.sh <public-ip-or-dns>
 #   docker compose up -d --build
+#
+# UI is HTTPS on HOST_HTTPS_PORT. Port 443 on the tscharts host stays the API.
+# The app container is not published; nginx terminates TLS. Set APP_PORT and
+# HOST_HTTPS_PORT in .env (they are deployment-specific).
 #
 # Optional: join the running tscharts Compose network for internal HTTP:
 #   docker compose -f docker-compose.yml -f docker-compose.tscharts-net.yml up -d
@@ -28,16 +33,21 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
+      args:
+        APP_PORT: ${APP_PORT:?set APP_PORT in .env}
     image: tsdashboard-web:local
     container_name: tsdashboard_web
     restart: unless-stopped
-    ports:
-      - "${HOST_PORT:-3000}:3000"
+    expose:
+      - "${APP_PORT:?set APP_PORT in .env}"
     environment:
       TSCHARTS_BASE_URL: ${TSCHARTS_BASE_URL:-https://127.0.0.1}
       TSCHARTS_TLS_INSECURE: ${TSCHARTS_TLS_INSECURE:-0}
-      LISTEN_ADDR: 0.0.0.0:3000
+      # Always 0.0.0.0 so nginx can connect. A cargo-run LISTEN_ADDR may use
+      # another IP; this file does not pass that through.
+      LISTEN_ADDR: 0.0.0.0:${APP_PORT:?set APP_PORT in .env}
       STATIC_DIR: /app/static
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-1}
       RUST_LOG: ${RUST_LOG:-info}
     # Default: bridge network, reach API like a tablet (host IP / public URL).
     # For same-host tscharts via published 443, use host.docker.internal or the
@@ -45,3 +55,17 @@ services:
     # container is the container itself, not the host.
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  nginx:
+    image: nginx:alpine
+    container_name: tsdashboard_web_nginx
+    restart: unless-stopped
+    depends_on:
+      - tsdashboard-web
+    environment:
+      APP_PORT: ${APP_PORT:?set APP_PORT in .env}
+    ports:
+      - "${HOST_HTTPS_PORT:?set HOST_HTTPS_PORT in .env}:443"
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - ./certs:/etc/nginx/ssl:ro

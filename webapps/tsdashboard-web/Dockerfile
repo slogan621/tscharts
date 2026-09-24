@@ -14,8 +14,8 @@
 #limitations under the License.
 
 # Build from repository context: webapps/tsdashboard-web/
-#   docker build -t tsdashboard-web .
-# Or via docker/docker-compose.yml (build context is ..).
+#   docker build --build-arg APP_PORT=<port> -t tsdashboard-web .
+# Or via docker/docker-compose.yml (build context is ..), which passes APP_PORT.
 
 FROM rust:1.97-bookworm AS builder
 WORKDIR /src
@@ -31,8 +31,11 @@ RUN apt-get update \
 WORKDIR /app
 COPY --from=builder /src/target/release/tsdashboard-web /app/tsdashboard-web
 COPY --from=builder /src/static /app/static
+# Listen on every interface so another container can connect. Override
+# LISTEN_ADDR at runtime to bind a different IP. Compose sets 0.0.0.0:$APP_PORT.
+ARG APP_PORT
 ENV STATIC_DIR=/app/static \
-    LISTEN_ADDR=0.0.0.0:3000
-EXPOSE 3000
+    LISTEN_ADDR=0.0.0.0:${APP_PORT}
+EXPOSE ${APP_PORT}
 USER nobody
 CMD ["/app/tsdashboard-web"]

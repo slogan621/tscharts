@@ -24,21 +24,40 @@ pub struct Config {
     pub listen_addr: String,
     pub tls_insecure: bool,
     pub print_agent_url: Option<String>,
+    /// Set the session cookie `Secure` flag. Enable when the browser reaches
+    /// this app over HTTPS (including TLS terminated by a reverse proxy).
+    pub session_cookie_secure: bool,
 }
 
 impl Config {
     pub fn from_env() -> Result<Self> {
         let _ = dotenvy::dotenv();
+        // LISTEN_ADDR is a full socket address, so the IP can be something
+        // other than 0.0.0.0. APP_PORT is only a port and always binds 0.0.0.0.
+        // Docker Compose sets LISTEN_ADDR itself to 0.0.0.0:$APP_PORT.
+        let listen_addr = env::var("LISTEN_ADDR")
+            .ok()
+            .filter(|s| !s.is_empty())
+            .or_else(|| {
+                env::var("APP_PORT")
+                    .ok()
+                    .filter(|s| !s.is_empty())
+                    .map(|port| format!("0.0.0.0:{port}"))
+            })
+            .context("set LISTEN_ADDR or APP_PORT")?;
         Ok(Self {
             tscharts_base_url: env::var("TSCHARTS_BASE_URL")
                 .unwrap_or_else(|_| "https://127.0.0.1".into())
                 .trim_end_matches('/')
                 .to_string(),
-            listen_addr: env::var("LISTEN_ADDR").unwrap_or_else(|_| "0.0.0.0:3000".into()),
+            listen_addr,
             tls_insecure: env::var("TSCHARTS_TLS_INSECURE")
                 .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
                 .unwrap_or(false),
             print_agent_url: env::var("PRINT_AGENT_URL").ok().filter(|s| !s.is_empty()),
+            session_cookie_secure: env::var("SESSION_COOKIE_SECURE")
+                .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+                .unwrap_or(false),
         })
     }
 

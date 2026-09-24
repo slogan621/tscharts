@@ -59,7 +59,8 @@ async fn main() -> anyhow::Result<()> {
     };
 
     let session_store = MemoryStore::default();
-    let session_layer = SessionManagerLayer::new(session_store).with_secure(false);
+    let session_layer =
+        SessionManagerLayer::new(session_store).with_secure(config.session_cookie_secure);
 
     let static_dir = resolve_static_dir();
     tracing::info!(?static_dir, "serving static assets");

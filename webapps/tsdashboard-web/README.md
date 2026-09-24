@@ -45,7 +45,7 @@ cd webapps/tsdashboard-web
 cp .env.example .env
 # edit TSCHARTS_BASE_URL
 cargo run
-# open http://127.0.0.1:3000
+# open http://127.0.0.1:<port> using the port in LISTEN_ADDR
 ```
 
 ## Run (Docker, standalone)
@@ -55,8 +55,13 @@ Not part of `tscharts/docker` compose. See **[docker/README.md](docker/README.md
 ```bash
 cd webapps/tsdashboard-web/docker
 cp .env.example .env
+./gen-cert.sh <public-ip-or-dns>
 docker compose up -d --build
+# UI: https://<host>:<HOST_HTTPS_PORT>
 ```
+
+HTTPS is terminated by nginx in that compose file. Host port 443 stays the
+tscharts API.
 
 Modes: tablet-style HTTPS to the API, or optional join of the tscharts Docker
 network for `http://django:8000` (Compose service name).

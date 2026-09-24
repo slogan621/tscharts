@@ -29,8 +29,7 @@ registration lines.
 
 ## Sign in
 
-1. Open the Clinic Ops URL provided by your administrator (often
-   `http://<host>:3000`).
+1. Open the Clinic Ops URL provided by your administrator.
 2. Sign in with your **tscharts** username and password (same account as other
    Thousand Smiles chart tools).
 3. Use **Logout** in the top navigation when finished, especially on shared

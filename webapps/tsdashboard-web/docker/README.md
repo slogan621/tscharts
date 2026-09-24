@@ -10,9 +10,22 @@ another host).
 cd webapps/tsdashboard-web/docker
 cp .env.example .env
 # edit TSCHARTS_BASE_URL
+./gen-cert.sh <public-ip-or-dns>
 docker compose up -d --build
-# UI: http://<host>:3000
+# UI: https://<host>:<HOST_HTTPS_PORT>
 ```
+
+Set `APP_PORT` and `HOST_HTTPS_PORT` in `.env` before starting. Neither has a
+default in this repo.
+
+`gen-cert.sh` writes a self-signed certificate into `docker/certs/` (gitignored).
+The certificate name must match the host you type in the browser (`IP:` SAN for
+an address, `DNS:` SAN for a hostname). Replace those two PEM files with a
+publicly trusted certificate when you have one; nginx reads
+`certs/dashboard.pem` and `certs/dashboard-key.pem`.
+
+Port **443** on the tscharts host stays the API. The dashboard publishes HTTPS
+on `HOST_HTTPS_PORT`. Plain HTTP on that port will no longer answer.
 
 ## How it reaches the tscharts API
 
@@ -25,9 +38,10 @@ docker compose up -d --build
 
 ```bash
 # .env
-TSCHARTS_BASE_URL=https://52.x.x.x          # or host.docker.internal on same box
+TSCHARTS_BASE_URL=https://<ec2-ip-or-dns>   # or host.docker.internal on same box
 TSCHARTS_TLS_INSECURE=1
-HOST_PORT=3000
+APP_PORT=<port>
+HOST_HTTPS_PORT=<port>
 docker compose up -d --build
 ```
 
@@ -58,8 +72,10 @@ via nginx. Ensure `ALLOWED_HOSTS` includes `django` (or rely on Mode A /
 
 ## Firewall
 
-If the UI is on EC2, allow `HOST_PORT` (e.g. 3000) from the same admin IPs as
-443. You do **not** need to open Django’s 8000 publicly for Mode B.
+If the UI is on EC2, allow `HOST_HTTPS_PORT` from the same admin
+IPs as 443. That port is now TLS, not plain HTTP. You do **not** need to open
+Django’s 8000 publicly for Mode B, and you do **not** move the dashboard onto
+443 (that listener is the tscharts API).
 
 ## Layout
 
@@ -67,8 +83,10 @@ If the UI is on EC2, allow `HOST_PORT` (e.g. 3000) from the same admin IPs as
 webapps/tsdashboard-web/
   Dockerfile                 # multi-stage Rust build
   docker/
-    docker-compose.yml       # standalone
+    docker-compose.yml       # standalone (app + nginx TLS)
     docker-compose.tscharts-net.yml   # optional network join
+    gen-cert.sh              # self-signed cert into certs/
+    nginx/templates/default.conf.template
     .env.example
     README.md
 ```
