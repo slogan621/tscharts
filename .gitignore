@@ -8,6 +8,7 @@ __pycache__/
 .env.*
 !.env.example
 docker/backup.env
+docker/image-backup.toc
 
 # Database dumps — private data; never commit
 *.sql

@@ -15,8 +15,11 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 
-# Weekly backup: gzipped mysqldump of tscharts, plus a tarball of the
-# chart image volume. Both are uploaded to S3 and removed from the host.
+# Weekly backup: gzipped mysqldump of tscharts, plus a tarball of chart
+# images. Image backups are incremental. docker/image-backup.toc lists
+# every relative path successfully uploaded since the last full archive.
+# A deletion makes the next archive a full copy of the volume.
+# Restore images from the newest *-full.tar.gz, then each later *-incr.tar.gz.
 #
 # Configure docker/backup.env from backup.env.example. Cron installs
 # docker/cron/tscharts-backup.
@@ -42,31 +45,133 @@ if [[ -z "${S3_PREFIX:-}" || "$S3_PREFIX" == *YOUR_BUCKET* ]]; then
 fi
 
 IMAGE_VOLUME="${IMAGE_VOLUME:-docker_chart_images}"
+
+# Cron runs as root and does not see a user's ~/.aws. Use that home's
+# credentials when the root environment has none of its own.
+if [[ -z "${AWS_SHARED_CREDENTIALS_FILE:-}${AWS_ACCESS_KEY_ID:-}${AWS_PROFILE:-}" ]]; then
+  aws_home="${AWS_CONFIG_HOME:-}"
+  if [[ -z "$aws_home" && "$(id -u)" -eq 0 && -f /home/ubuntu/.aws/credentials ]]; then
+    aws_home=/home/ubuntu
+  fi
+  if [[ -n "$aws_home" && -f "$aws_home/.aws/credentials" ]]; then
+    export AWS_SHARED_CREDENTIALS_FILE="$aws_home/.aws/credentials"
+    if [[ -f "$aws_home/.aws/config" ]]; then
+      export AWS_CONFIG_FILE="$aws_home/.aws/config"
+    fi
+  fi
+fi
+
 STAMP="$(date +%F)"
 WORKDIR="$(mktemp -d /var/tmp/tscharts-backup.XXXXXX)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
+# Publish a streamed upload only when every pipeline stage succeeded.
+# The object is stored under dest.partial first. A disk-full or quota
+# error makes tar, gzip, or aws exit non-zero; the partial object is
+# removed and the script stops before the image manifest is updated.
+publish_stream() {
+  local dest="$1"
+  shift
+  local failed=0 code
+  for code in "$@"; do
+    if [[ "$code" -ne 0 ]]; then
+      failed=1
+    fi
+  done
+  if [[ "$failed" -ne 0 ]]; then
+    echo "Backup aborted (pipeline status: $*). Incomplete upload removed." >&2
+    aws s3 rm "${dest}.partial" >/dev/null 2>&1 || true
+    exit 1
+  fi
+  aws s3 mv "${dest}.partial" "$dest"
+}
+
 echo "=== Backup $STAMP started $(date -Is) ==="
 
-DUMP="$WORKDIR/tscharts-$STAMP.sql.gz"
+# Stream to S3. A local copy of either archive can exceed the account
+# disk quota (the image set already did, under /tmp).
 # MyISAM is the default engine, so lock tables for a consistent dump.
+sql_dest="$S3_PREFIX/tscharts-$STAMP.sql.gz"
 docker exec mysql_db sh -c \
   'mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --lock-tables --routines --events tscharts' \
-  | gzip > "$DUMP"
-aws s3 cp "$DUMP" "$S3_PREFIX/tscharts-$STAMP.sql.gz"
+  | gzip \
+  | aws s3 cp - "${sql_dest}.partial"
+sql_status=("${PIPESTATUS[@]}")
+publish_stream "$sql_dest" "${sql_status[@]}"
 echo "Uploaded database dump"
 
-IMAGES="$(docker volume inspect "$IMAGE_VOLUME" --format '{{.Mountpoint}}')"
-if [[ ! -d "$IMAGES" ]]; then
-  echo "Image volume mount not found: $IMAGES" >&2
-  exit 1
+# Paths relative to the volume root, one per line. This does not read
+# file contents. nginx:alpine supplies find/tar; the caller never opens
+# the root-owned volume directory on the host.
+list_image_files() {
+  docker run --rm --entrypoint find \
+    -v "${IMAGE_VOLUME}:/images:ro" \
+    nginx:alpine \
+    /images -type f \
+    | sed 's|^/images/||' \
+    | LC_ALL=C sort -u
+}
+
+TOC="$DOCKER_DIR/image-backup.toc"
+TOC_S3="$S3_PREFIX/tscharts-images.toc"
+CURRENT="$WORKDIR/images.current"
+PREV="$WORKDIR/images.prev"
+list_image_files > "$CURRENT"
+
+if [[ -s "$TOC" ]]; then
+  LC_ALL=C sort -u "$TOC" > "$PREV"
+elif aws s3 cp "$TOC_S3" "$PREV"; then
+  LC_ALL=C sort -u "$PREV" -o "$PREV"
+  echo "Loaded image manifest from S3"
+else
+  : > "$PREV"
+  echo "No image manifest; full image backup"
 fi
 
-TAR="$WORKDIR/tscharts-images-$STAMP.tar.gz"
-# Archive contents are <patient_id>/<file>, which is the layout of
-# /opt/thousandsmiles/images (the volume root).
-tar -C "$IMAGES" -czf "$TAR" .
-aws s3 cp "$TAR" "$S3_PREFIX/tscharts-images-$STAMP.tar.gz"
-echo "Uploaded image tarball"
+DELETED="$WORKDIR/images.deleted"
+NEW="$WORKDIR/images.new"
+comm -23 "$PREV" "$CURRENT" > "$DELETED"
+comm -13 "$PREV" "$CURRENT" > "$NEW"
+
+KIND=""
+LIST=""
+if [[ -s "$DELETED" ]]; then
+  KIND=full
+  LIST="$CURRENT"
+  echo "Image files removed ($(wc -l < "$DELETED")); full image backup"
+elif [[ ! -s "$PREV" ]]; then
+  KIND=full
+  LIST="$CURRENT"
+  echo "Full image backup ($(wc -l < "$CURRENT") files)"
+elif [[ -s "$NEW" ]]; then
+  KIND=incr
+  LIST="$NEW"
+  echo "Incremental image backup ($(wc -l < "$NEW") new files)"
+else
+  echo "No image changes"
+fi
+
+if [[ -n "$KIND" && -s "$LIST" ]]; then
+  image_dest="$S3_PREFIX/tscharts-images-$STAMP-$KIND.tar.gz"
+  docker run --rm --entrypoint tar \
+    -v "${IMAGE_VOLUME}:/images:ro" \
+    -v "$LIST:/filelist:ro" \
+    nginx:alpine \
+    -C /images -czf - -T /filelist \
+    | aws s3 cp - "${image_dest}.partial"
+  image_status=("${PIPESTATUS[@]}")
+  publish_stream "$image_dest" "${image_status[@]}"
+  echo "Uploaded image tarball"
+elif [[ -n "$KIND" ]]; then
+  echo "No image files remain"
+fi
+
+if [[ -n "$KIND" ]]; then
+  # CURRENT is every path stored by the latest full archive plus later
+  # incrementals. Record it only after the tarball upload succeeds.
+  aws s3 cp "$CURRENT" "$TOC_S3"
+  cp "$CURRENT" "$TOC"
+  echo "Updated image manifest ($(wc -l < "$TOC") files)"
+fi
 
 echo "=== Backup $STAMP finished $(date -Is) ==="
