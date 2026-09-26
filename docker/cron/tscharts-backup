@@ -1,0 +1,13 @@
+# Weekly tscharts backup at 02:00 America/Los_Angeles.
+# Install on the host:
+#   sudo cp docker/cron/tscharts-backup /etc/cron.d/tscharts-backup
+#   sudo chmod 644 /etc/cron.d/tscharts-backup
+#
+# Requires docker/backup.env (see backup.env.example) and the aws CLI
+# for the root account cron will use.
+
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+CRON_TZ=America/Los_Angeles
+
+0 2 * * 0 root /home/ubuntu/tscharts/docker/scripts/backup-to-s3.sh >> /var/log/tscharts-backup.log 2>&1
